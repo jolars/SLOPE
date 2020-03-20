@@ -252,10 +252,10 @@
 #' # Poisson response, OSCAR-type lambda sequence
 #'
 #' fit <- SLOPE(abalone$x,
-#'            abalone$y,
-#'            family = "poisson",
-#'            lambda = "oscar",
-#'            q = 0.4)
+#'              abalone$y,
+#'              family = "poisson",
+#'              lambda = "oscar",
+#'              q = 0.4)
 #'
 #' # Multinomial response, custom sigma and lambda
 #'
@@ -266,10 +266,10 @@
 #' lambda <- exp(seq(log(2), log(1.8), length.out = p*m))
 #'
 #' fit <- SLOPE(wine$x,
-#'            wine$y,
-#'            family = "multinomial",
-#'            lambda = lambda,
-#'            sigma = sigma)
+#'              wine$y,
+#'              family = "multinomial",
+#'              lambda = lambda,
+#'              sigma = sigma)
 #'
 SLOPE <- function(x,
                   y,
@@ -339,13 +339,6 @@ SLOPE <- function(x,
     scale <- ifelse(scale, "l2", "none")
   } else {
     stop("'scale' must be logical or a character")
-  }
-
-  if (!missing(standardize_features)) {
-    warning("`standardize_features` is deprectated, setting scale = 'l2'",
-            "and center = TRUE.")
-    scale <- "l2"
-    center <- TRUE
   }
 
   n <- NROW(x)
