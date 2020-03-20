@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# SLOPE <img src='man/figures/logo.svg' align="right" height="139" />
+# SLOPE <a href='https:/jolars.github.io/SLOPE'><img src='man/figures/logo.svg' align="right" height="139" /></a>
 
 <!-- badges: start -->
 
