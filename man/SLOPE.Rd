@@ -303,10 +303,10 @@ fit <- SLOPE(heart$x, heart$y, family = "binomial", lambda = "bh")
 # Poisson response, OSCAR-type lambda sequence
 
 fit <- SLOPE(abalone$x,
-           abalone$y,
-           family = "poisson",
-           lambda = "oscar",
-           q = 0.4)
+             abalone$y,
+             family = "poisson",
+             lambda = "oscar",
+             q = 0.4)
 
 # Multinomial response, custom sigma and lambda
 
@@ -317,10 +317,10 @@ sigma <- 0.005
 lambda <- exp(seq(log(2), log(1.8), length.out = p*m))
 
 fit <- SLOPE(wine$x,
-           wine$y,
-           family = "multinomial",
-           lambda = lambda,
-           sigma = sigma)
+             wine$y,
+             family = "multinomial",
+             lambda = lambda,
+             sigma = sigma)
 
 }
 \references{
