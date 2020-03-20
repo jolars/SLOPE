@@ -1,0 +1,66 @@
+Package: SLOPE
+Title: Sorted L1 Penalized Estimation
+Version: 0.1.3.9000
+Authors@R: 
+    c(person("Johan", "Larsson", role = c("aut", "cre"),
+             email = "johan.larsson@stat.lu.se",
+             comment = c(ORCID = "0000-0002-4029-5945")),
+      person("Jonas",  "Wallin", role = "aut",
+             email = "jonas.wallin@stat.lu.se",
+             comment = c(ORCID = "0000-0003-0381-6593")),
+      person("Malgorzata", "Bogdan", role = "aut"),
+      person("Ewout", "van den Berg", role = "aut"),
+      person("Chiara", "Sabatti", role = "aut"),
+      person("Emmanuel", "Candes", role = "aut"),
+      person("Evan", "Patterson", role = "aut"),
+      person("Weijie", "Su", role = "aut"),
+      person("Jerome", "Friedman", role = "ctb",
+             comment = "code adapted from 'glmnet'"),
+      person("Trevor", "Hastie", role = "ctb",
+             comment = "code adapted from 'glmnet'"),
+      person("Rob", "Tibshirani", role = "ctb",
+             comment = "code adapted from 'glmnet'"),
+      person("Balasubramanian", "Narasimhan", role = "ctb",
+             comment = "code adapted from 'glmnet'"),
+      person("Noah", "Simon", role = "ctb",
+             comment = "code adapted from 'glmnet'"),
+      person("Junyang", "Qian", role = "ctb",
+             comment = "code adapted from 'glmnet'"))
+Description: Efficient implementations for Sorted L-One Penalized Estimation
+    (SLOPE): generalized linear models regularized with the 
+    sorted L1-norm (Bogdan et al. (2015) <doi:10/gfgwzt>).
+    Supported models include ordinary least-squares regression, 
+    binomial regression, multinomial
+    regression, and Poisson regression. Both dense and sparse 
+    predictor matrices are supported. In addition, the package features
+    predictor screening rules that enable fast and efficient solutions to 
+    high-dimensional problems.
+License: GPL-3
+LazyData: true
+Depends:
+    R (>= 3.3.0)
+Imports:
+    lattice,
+    Matrix,
+    methods,
+    Rcpp
+LinkingTo:
+    Rcpp,
+    RcppArmadillo (>= 0.9.850.1.0)
+Suggests:
+    caret,
+    covr,
+    glmnet,
+    knitr,
+    rmarkdown,
+    spelling,
+    testthat (>= 2.1.0),
+    R.matlab,
+    isotone
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.0
+Language: en-US
+Encoding: UTF-8
+URL: https://github.com/jolars/SLOPE, https://jolars.github.io/SLOPE
+BugReports: https://github.com/jolars/SLOPE/issues
+VignetteBuilder: knitr

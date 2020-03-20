@@ -1,0 +1,15 @@
+^tic\.R$
+^data-raw$
+^CODE_OF_CONDUCT\.md$
+^docs$
+^_pkgdown\.yml$
+^LICENSE\.md$
+^codecov\.yml$
+^appveyor\.yml$
+^\.travis\.yml$
+^README\.Rmd$
+^SLOPE\.Rproj$
+^\.Rproj\.user$
+^pkgdown$
+^cran-comments\.md$
+^CRAN-RELEASE$

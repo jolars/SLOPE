@@ -1,0 +1,52 @@
+Files: *
+
+    SLOPE Copyright (C) 2020 Johan Larsson, Jonas Wallin, Malgorzata Bogdan,
+    Ewout van den Berg, Chiara Sabatti, Emmanuel Candes, Evan Patterson,
+    Weijie Su
+    This program comes with ABSOLUTELY NO WARRANTY; for details type 'show w'.
+    This is free software, and you are welcome to redistribute it
+    under certain conditions; type 'show c' for details.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+--------------------------------------------------------------------------------
+
+Files: R/utils.R
+       R/trainSLOPE.R
+       R/score.R
+       R/predict.R
+       R/deviance.R
+       R/interpolateCoefficients.R
+       R/interpolatePenalty.R
+
+contain modified code from
+the glmnet package, which is licened under GPL-2.
+
+    glmnet: Lasso and Elastic-Net Regularized Generalized Linear Models
+    Copyright (C) 2020 Jerome Friedman, Trevor Hastie, Rob Tibshirani,
+    Balasubramanian Narasimhan, Noah Simon
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA

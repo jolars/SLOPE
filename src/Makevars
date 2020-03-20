@@ -1,0 +1,7 @@
+CXX_STD = CXX11
+PKG_LIBS = $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
+
+#PKG_CXXFLAGS += -g -fno-omit-frame-pointer -shared-libgcc # for intel vtune with gcc
+
+#PKG_CXXFLAGS += -g -fno-omit-frame-pointer -shared-intel -debug inline-debug-info -qopenmp  # for intel vtune with intel compiler
+
