@@ -134,7 +134,6 @@
 #'   binomial models, it can be a factor.
 #' @param family response type. See **Families** for details.
 #' @param intercept whether to fit an intercept
-#' @param standardize_features (deprecated)
 #' @param center whether to center predictors or not by their mean. Defaults
 #'   to true if dense matrix, false otherwise.
 #' @param scale type of scaling to apply to predictors, `"l1"` scales
@@ -173,6 +172,10 @@
 #'   Gaussian dense designs)
 #' @param tol_rel relative tolerance criterion for ADMM solver (used for
 #'   Gaussian dense designs)
+#' @param X deprecated. please use `x` instead
+#' @param fdr deprecated. please use `q` instead
+#' @param normalize deprecated. please use `scale` and `center` instead
+#' @param solver deprecated
 #'
 #' @return An object of class `"SLOPE"` with the following slots:
 #' \item{coefficients}{

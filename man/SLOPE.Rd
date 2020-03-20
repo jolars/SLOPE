@@ -11,7 +11,7 @@ SLOPE(
   intercept = TRUE,
   center = !inherits(x, "sparseMatrix"),
   scale = c("l2", "l1", "sd", "none"),
-  sigma = NULL,
+  sigma = c("path", "estimate"),
   lambda = c("gaussian", "bh", "oscar"),
   lambda_min_ratio = if (n < p) 0.01 else 1e-04,
   n_sigma = 100,
@@ -102,7 +102,13 @@ program. Setting this to 1 displays basic information on the path level,
 2 a little bit more information on the path level, and 3 displays
 information from the solver.}
 
-\item{standardize_features}{(deprecated)}
+\item{X}{deprecated. please use \code{x} instead}
+
+\item{fdr}{deprecated. please use \code{q} instead}
+
+\item{normalize}{deprecated. please use \code{scale} and \code{center} instead}
+
+\item{solver}{deprecated}
 }
 \value{
 An object of class \code{"SLOPE"} with the following slots:
