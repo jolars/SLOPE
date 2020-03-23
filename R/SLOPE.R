@@ -238,7 +238,6 @@
 #' Biometrics, 64(1), 115–123. JSTOR.
 #' <https://doi.org/10.1111/j.1541-0420.2007.00843.x>
 #'
-#'
 #' @examples
 #'
 #' # Gaussian response, default lambda sequence
