@@ -8,6 +8,6 @@ estimateNoise <- function(x, y, intercept = TRUE) {
 
   stopifnot(n > p)
 
-  fit <- lm.fit(x, y)
+  fit <- stats::lm.fit(x, y)
   sqrt(sum(fit$residuals^2) / (n-p))
 }

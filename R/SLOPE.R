@@ -325,14 +325,6 @@ SLOPE <- function(x,
 
   family <- match.arg(family)
 
-  if (is.character(sigma)) {
-    sigma <- match.arg(sigma)
-    if (sigma == "estimate" && family != "gaussian")
-      stop("sigma == 'estimate' can only be used if family == 'gaussian'")
-  } else {
-    sigma <- as.double(sigma)
-  }
-
   if (is.character(scale)) {
     scale <- match.arg(scale)
   } else if (is.logical(scale) && length(scale) == 1L) {
@@ -403,15 +395,29 @@ SLOPE <- function(x,
   if (is.null(response_names))
     response_names <- paste0("y", seq_len(m))
 
-  if (sigma == "path") {
-    sigma_type <- "auto"
-    sigma <- double(n_sigma)
-  } else if (sigma == "estimate") {
-    sigma_type <- "estimate"
-    sigma <- NULL
-    if (n_sigma > 1)
-      warning("'n_sigma' ignored since sigma == 'estimate'")
+  if (is.character(sigma)) {
+    sigma <- match.arg(sigma)
+    if (sigma == "estimate" && family != "gaussian")
+      stop("sigma == 'estimate' can only be used if family == 'gaussian'")
+
+    if (sigma == "path") {
+
+      sigma_type <- "auto"
+      sigma <- double(n_sigma)
+
+    } else if (sigma == "estimate") {
+
+      if (family != "gaussian")
+        stop("sigma == 'estimate' can only be used if family == 'gaussian'")
+
+      sigma_type <- "estimate"
+      sigma <- NULL
+
+      if (n_sigma > 1)
+        warning("'n_sigma' ignored since sigma == 'estimate'")
+    }
   } else {
+    sigma <- as.double(sigma)
     sigma_type <- "user"
 
     sigma <- as.double(sigma)

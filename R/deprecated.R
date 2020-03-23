@@ -29,7 +29,7 @@ create_lambda <- function(n, p, fdr = 0.20, method = c('bhq','gaussian')) {
 
 create_lambda_bhq <- function(n, p, fdr) {
   q = (1:p) * fdr / (2*p)
-  qnorm(1 - q)
+  stats::qnorm(1 - q)
 }
 
 create_lambda_gaussian <- function(n, p, fdr) {
@@ -44,14 +44,14 @@ create_lambda_gaussian <- function(n, p, fdr) {
       lambda[i] <- lambda.bhq[i] * sqrt(1 + w(i-1) * sum_sq)
     }
   }
-  return(lambda)
+  lambda
 }
 
 create_lambda_gaussian_truncated <- function(n, p, fdr) {
   lambda = create_lambda_gaussian(n, p, fdr)
   k = which.min(lambda)
   lambda[k:p] <- lambda[k]
-  return(lambda)
+  lambda
 }
 
 
@@ -75,41 +75,10 @@ create_lambda_gaussian_truncated <- function(n, p, fdr) {
 #' primarily for testing.
 #'
 #' @export
-prox_sorted_L1 <- function(x, lambda, method=c('c','isotone')) {
-  # Normalize input
-  if (is.complex(x)) {
-    sign = complex(argument = Arg(x))
-    x = Mod(x)
-  } else {
-    sign = sign(x)
-    x = abs(x)
-  }
+prox_sorted_L1 <- function(x, lambda, method = c('c','isotone')) {
+  .Deprecated()
 
-  # Sort input
-  s = sort(x, decreasing=TRUE, index.return=TRUE)
-
-  # Compute prox
-  impl = switch(match.arg(method),
-                c = prox_sorted_L1_C,
-                isotone = prox_sorted_L1_isotone)
-  result = impl(s$x, lambda)
-
-  # Restore original order and sign
-  result[s$ix] <- result
-  result * sign
-}
-
-prox_sorted_L1_isotone <- function(y, lambda) {
-  loadNamespace('isotone')
-  n = length(y)
-
-  # Solve the quadratic programming problem:
-  #   min ||y - lambda - x||_2 s.t. x_1 >= x_2 >= ... >= x_n
-  A_total_order = cbind(2:n, 1:(n-1))
-  result = isotone::activeSet(A_total_order, y=y-lambda, weights=rep(1,n))
-
-  # Enforce non-negativity constraint.
-  pmax(result$x, 0)
+  sorted_l1_prox(x, lambda);
 }
 
 #' Sorted L1 solver (deprecated)
@@ -144,128 +113,10 @@ SLOPE_solver <- function(A, b, lambda, initial = NULL, prox = prox_sorted_L1,
                          tol_infeas = 1e-6, tol_rel_gap = 1e-6) {
   .Deprecated("SLOPE")
 
-  # Get problem dimension.
-  n = ncol(A)
-
-  # Get initial lower bound on the Lipschitz constant.
-  x = with_seed(0, rnorm(n))
-  x = x / sqrt(sum(x^2))
-  x = t(A) %*% (A %*% x)
-  L = sqrt(sum(x^2))
-
-  # Initialize parameters and iterates.
-  x.init = if (is.null(initial)) rep(0,n) else initial
-  t      = 1
-  eta    = 2
-  x      = x.init
-  y      = x
-  Ax     = A %*% x
-  f.prev = Inf
-  iter   = 0
-  optimal = FALSE
-
-  # Main loop.
-  repeat {
-    # Compute the gradient at f(y).
-    if ((iter %% grad_iter) == 0) # Includes first iterations
-      r = (A %*% y) - b
-    else
-      r = (Ax + ((t.prev - 1) / t) * (Ax - Ax.prev)) - b
-    g = t(A) %*% r
-    f = as.double(crossprod(r)) / 2
-
-    # Increment iteration count.
-    iter = iter + 1
-
-    # Check optimality conditions.
-    if ((iter %% opt_iter) == 0) {
-      # Compute 'dual', check infeasibility and gap.
-      gs     = sort(abs(g), decreasing=TRUE)
-      ys     = sort(abs(y), decreasing=TRUE)
-      infeas = max(max(cumsum(gs-lambda)),0)
-
-      # Compute primal and dual objective.
-      obj_primal =  f + as.double(crossprod(lambda,ys))
-      obj_dual   = -f - as.double(crossprod(r,b))
-
-      # Check primal-dual gap.
-      if ((abs(obj_primal - obj_dual)/max(1,obj_primal) < tol_rel_gap) &&
-          (infeas < tol_infeas * lambda[[1]]))
-        optimal = TRUE;
-    }
-
-    # Stopping criteria.
-    if (optimal || (iter >= max_iter))
-      break;
-
-    # Store copies of previous values.
-    Ax.prev = Ax
-    x.prev = x; f.prev = f; t.prev = t
-
-    # Lipschitz search.
-    repeat {
-      # Compute prox mapping.
-      x = prox(y - (1/L)*g, lambda/L)
-      d = x - y
-
-      Ax = A %*% x
-      r  = Ax-b
-      f  = as.double(crossprod(r))/2
-      q  = f.prev + as.double(crossprod(d,g)) + (L/2)*as.double(crossprod(d))
-
-      if (q < f*(1-1e-12))
-        L = L * eta
-      else
-        break
-    }
-
-    # Update.
-    t <- (1 + sqrt(1 + 4*t^2)) / 2
-    y <- x + ((t.prev - 1) / t) * (x - x.prev)
-  }
-  if (!optimal)
-    warning('SLOPE solver reached iteration limit')
-
-  # Package up the results.
-  structure(list(x = as.vector(y),
-                 optimal = optimal,
-                 iter = iter,
-                 infeas = infeas,
-                 obj_primal = obj_primal,
-                 obj_dual = obj_dual,
-                 lipschitz = L),
-            class = 'SLOPE_solver.result')
-}
-
-#' Interface to MATLAB sorted L1 solver (deprecated)
-#'
-#' This function is deprecated, please use [SLOPE()] directly instead.
-#'
-#' @param A an \eqn{n}-by-\eqn{p} matrix
-#' @param b vector of length \eqn{n}
-#' @param lambda vector of length \eqn{p}, sorted in decreasing order
-#' @param initial initial guess for \eqn{x}
-#' @param matlab MATLAB client object (instance of class \code{Matlab}).
-#'  If supplied, the client object should be connected to a running MATLAB
-#'  server. If not supplied, a MATLAB server will be started (requires 'matlab'
-#'  to be on the PATH).
-#'
-#' @return The solution vector \eqn{x}.
-#'
-#' @export
-#' @keywords internal
-SLOPE_solver_matlab <- function(A, b, lambda,
-                                initial = numeric(),
-                                matlab = NULL) {
-  if (is.null(matlab)) {
-    R.matlab::Matlab$startServer()
-    matlab = R.matlab::Matlab()
-    open(matlab)
-    on.exit(close(matlab))
-  }
-
-  R.matlab::setVariable(matlab, A=A, b=b, lambda=lambda, x0=initial)
-  R.matlab::evaluate(matlab, 'x = solver_SLOPE(A, b, lambda, x0);')
-  result = R.matlab::getVariable(matlab, 'x')
-  as.vector(result$x)
+  SLOPE(A,
+        b,
+        lambda = lambda,
+        max_passes = max_iter,
+        tol_infeas = tol_infeas,
+        tol_rel_gap = tol_rel_gap)
 }

@@ -32,10 +32,23 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// sorted_l1_prox
+arma::mat sorted_l1_prox(const arma::mat& x, const arma::vec& lambda);
+RcppExport SEXP _SLOPE_sorted_l1_prox(SEXP xSEXP, SEXP lambdaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type lambda(lambdaSEXP);
+    rcpp_result_gen = Rcpp::wrap(sorted_l1_prox(x, lambda));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_SLOPE_sparseSLOPE", (DL_FUNC) &_SLOPE_sparseSLOPE, 3},
     {"_SLOPE_denseSLOPE", (DL_FUNC) &_SLOPE_denseSLOPE, 3},
+    {"_SLOPE_sorted_l1_prox", (DL_FUNC) &_SLOPE_sorted_l1_prox, 2},
     {NULL, NULL, 0}
 };
 

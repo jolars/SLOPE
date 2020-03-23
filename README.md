@@ -14,7 +14,7 @@ status](https://codecov.io/gh/jolars/SLOPE/branch/master/graph/badge.svg)](https
 [![CRAN
 status](https://www.r-pkg.org/badges/version/SLOPE)](https://CRAN.R-project.org/package=SLOPE)
 [![Lifecycle:
-maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 <!-- badges: end -->
 
 Efficient implementations for Sorted L-One Penalized Estimation (SLOPE):
