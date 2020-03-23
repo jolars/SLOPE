@@ -8,7 +8,7 @@ means there are several changes to the API, including deprecated functions.
 
 * `SLOPE_solver()`, `SLOPE_solver_matlab()`, `create_lambda()`, and
   `prox_sorted_L1()` have been deprecated (and will be defunct in the
-  next version of SLOPE).
+  next version of SLOPE)
 * arguments `X`, `fdr`, `normalize`, and `solver` have been deprecated
   in `SLOPE()` and replaced by `x`, `q`, `scale` and `center`, respectively.
   `solver` has not been replaced.
