@@ -151,7 +151,7 @@
 #' @param diagnostics should diagnostics be saved for the model fit (timings,
 #'   primal and dual objectives, and infeasibility)
 #' @param screen whether to use predictor screening rules
-#' @param screen_set what type of screening algorithm to use.
+#' @param screen_alg what type of screening algorithm to use.
 #'   * `"working"` is the approach used in glmnet, where
 #'     the previously active set is used as a working set that is
 #'     iteratively expanded by examining violations to the KKT rules in the
