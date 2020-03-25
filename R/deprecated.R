@@ -95,7 +95,7 @@ SLOPE_solver <- function(A, b, lambda, initial = NULL, prox = prox_sorted_L1,
   n = ncol(A)
 
   # Get initial lower bound on the Lipschitz constant.
-  x = with_seed(0, rnorm(n))
+  x = with_seed(0, stats::rnorm(n))
   x = x / sqrt(sum(x^2))
   x = t(A) %*% (A %*% x)
   L = sqrt(sum(x^2))
