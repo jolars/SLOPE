@@ -12,7 +12,7 @@ SLOPE(
   center = !inherits(x, "sparseMatrix"),
   scale = c("l2", "l1", "sd", "none"),
   sigma = c("path", "estimate"),
-  lambda = c("gaussian", "bh", "oscar"),
+  lambda = c("gaussian", "bh", "oscar", "bhq"),
   lambda_min_ratio = if (n < p) 0.01 else 1e-04,
   n_sigma = 100,
   q = 0.1 * min(1, n/p),
