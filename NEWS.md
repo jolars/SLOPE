@@ -17,6 +17,9 @@ means there are several changes to the API, including deprecated functions.
   `family` argument in `SLOPE()`)
 * input to `lambda` is now scaled (divided by) the number of observations (rows)
   in `x`
+* predictor screening rules have been implemented and are activated by
+  calling `screen = TRUE` in `SLOPE()`. The type of algorithm can also
+  be set via `screen_alg`.
 * `SLOPE()` now returns an object of class `"SLOPE"` (and an additional
   class depending on input to `family` in `SLOPE()`
 * `SLOPE` objects gain `coef()` and `plot()` methods.

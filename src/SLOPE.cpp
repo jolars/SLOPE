@@ -36,8 +36,9 @@ List cppSLOPE(T& x, mat& y, const List control)
   auto tol_rel     = as<double>(control["tol_rel"]);
 
   auto family_choice = as<std::string>(control["family"]);
-  auto intercept = as<bool>(control["fit_intercept"]);
-  auto screening = as<bool>(control["screening"]);
+  auto intercept     = as<bool>(control["fit_intercept"]);
+  auto screen        = as<bool>(control["screen"]);
+  auto screen_alg    = as<std::string>(control["screen_alg"]);
 
   auto n = x.n_rows;
   auto p = x.n_cols;
@@ -146,11 +147,10 @@ List cppSLOPE(T& x, mat& y, const List control)
 
     violations.clear();
 
-    if (screening) {
+    if (screen) {
       // NOTE(JL): the screening rules should probably not be used if
       // the coefficients from the previous fit are already very dense
 
-      // step 1: compute strong set
       gradient_prev = family->gradient(x, y, x*beta_prev);
 
       double sigma_prev = k == 0 ? sigma_max : sigma(k-1);
@@ -160,17 +160,21 @@ List cppSLOPE(T& x, mat& y, const List control)
                              lambda*sigma_prev,
                              intercept);
 
-      // step 2: start by fitting for ever active set
       uvec prev_active = find(any(beta_prev != 0, 1));
-
       ever_active_set = setUnion(ever_active_set, prev_active);
-      active_set = ever_active_set;
+      strong_set = setUnion(strong_set, ever_active_set);
+
+      if (screen_alg == "working") {
+        active_set = ever_active_set;
+      } else {
+        active_set = strong_set;
+      }
     }
 
-    if (active_set.n_elem == p/m || !screening) {
+    if (active_set.n_elem == p/m || !screen) {
 
       // stop screening
-      screening = false;
+      screen = false;
 
       // all features active
       // factorize once if fitting all
@@ -216,7 +220,10 @@ List cppSLOPE(T& x, mat& y, const List control)
 
       bool kkt_violation = true;
 
-      do {
+      while (kkt_violation) {
+
+        kkt_violation = false;
+
         x_subset = matrixSubset(x, active_set);
 
         if (active_set.n_elem == 0) {
@@ -274,29 +281,40 @@ List cppSLOPE(T& x, mat& y, const List control)
           passes(k) = res.passes;
         }
 
-        gradient_prev = family->gradient(x, y, x*beta);
+        uvec check_failures;
+        uword n_strong =
+          (strong_set.n_elem - static_cast<uword>(intercept))*m;
 
-        uvec possible_failures =
-          kktCheck(gradient_prev, beta, lambda*sigma(k), tol_infeas, intercept);
+        if (screen_alg == "working" && n_strong > 0) {
+          // check against strong set
+          x_subset = matrixSubset(x, strong_set);
+          gradient_prev = family->gradient(x_subset,
+                                           y,
+                                           x_subset*beta.rows(strong_set));
+          uvec tmp = kktCheck(gradient_prev,
+                              beta.rows(strong_set),
+                              lambda.head(n_strong)*sigma(k),
+                              tol_infeas,
+                              intercept);
+          uvec strong_failures = strong_set(tmp);
+          check_failures = setDiff(strong_failures, active_set);
 
-        uvec strong_failures = intersect(possible_failures, strong_set);
+          kkt_violation = check_failures.n_elem > 0;
 
-        uvec check_failures = setDiff(strong_failures, active_set);
-
-        if (verbosity >= 2) {
-          Rcout << "kkt-failures at: " << std::endl;
-          check_failures.print();
-          Rcout << std::endl;
+          if (diagnostics)
+            violations.push_back(check_failures.n_elem);
         }
-
-        kkt_violation = check_failures.n_elem > 0;
-
-        if (diagnostics)
-          violations.push_back(check_failures.n_elem);
 
         if (!kkt_violation) {
           // check against whole set
-          check_failures = setDiff(possible_failures, active_set);
+          gradient_prev = family->gradient(x, y, x*beta);
+          uvec tmp = kktCheck(gradient_prev,
+                              beta,
+                              lambda*sigma(k),
+                              tol_infeas,
+                              intercept);
+
+          check_failures = setDiff(tmp, active_set);
 
           kkt_violation = check_failures.n_elem > 0;
 

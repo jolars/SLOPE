@@ -16,6 +16,11 @@ uvec kktCheck(mat          gradient,
     beta.shed_row(0);
   }
 
+  if (beta.n_rows == 0) {
+    uvec tmp;
+    return tmp;
+  }
+
   uvec nonzeros = find(beta != 0);
   uvec ord = sort_index(abs(gradient), "descend");
   vec abs_gradient_sorted = abs(gradient(ord));

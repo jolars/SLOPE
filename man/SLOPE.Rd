@@ -16,7 +16,8 @@ SLOPE(
   lambda_min_ratio = if (n < p) 0.01 else 1e-04,
   n_sigma = 100,
   q = 0.1 * min(1, n/p),
-  screening = TRUE,
+  screen = TRUE,
+  screen_alg = c("working", "strong"),
   tol_dev_change = 1e-05,
   tol_dev_ratio = 0.995,
   tol_abs = 1e-05,
@@ -66,8 +67,7 @@ of coefficients in the model}
 
 \item{q}{shape of lambda sequence}
 
-\item{screening}{whether the strong rule for SLOPE be used to screen
-variables for inclusion}
+\item{screen}{whether to use predictor screening rules}
 
 \item{tol_dev_change}{the regularization path is stopped if the
 fractional change in deviance falls below this value. Note that this is
@@ -109,6 +109,18 @@ information from the solver.}
 \item{normalize}{deprecated. please use \code{scale} and \code{center} instead}
 
 \item{solver}{deprecated}
+
+\item{screen_set}{what type of screening algorithm to use.
+\itemize{
+\item \code{"working"} is the approach used in glmnet, where
+the previously active set is used as a working set that is
+iteratively expanded by examining violations to the KKT rules in the
+strong set and when there are no failures in the strong set, checked
+against the full set of predictors; this approach is
+particularly useful when there is considerable correlation
+\item \code{"strong"} uses the strong set as working set and checks for KKT
+violations in the full set of predictors
+}}
 }
 \value{
 An object of class \code{"SLOPE"} with the following slots:
