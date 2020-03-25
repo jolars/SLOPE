@@ -2,7 +2,7 @@
 % Please edit documentation in R/deprecated.R
 \name{create_lambda}
 \alias{create_lambda}
-\title{Lambda sequences for SLOPE}
+\title{Lambda sequences for SLOPE (deprecated)}
 \usage{
 create_lambda(n, p, fdr = 0.2, method = c("bhq", "gaussian"))
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/deprecated.R
 \name{SLOPE_solver}
 \alias{SLOPE_solver}
-\title{Sorted L1 solver (deprecated)}
+\title{Sorted L1 solver}
 \usage{
 SLOPE_solver(
   A,
@@ -47,7 +47,11 @@ containing at least the following components:
 \item{iter}{number of iterations}
 }
 \description{
-This function is deprecated. Please call \code{\link[=SLOPE]{SLOPE()}} directly instead.
+Solves the sorted L1 penalized regression problem: given a matrix \eqn{A},
+a vector \eqn{b}, and a decreasing vector \eqn{\lambda}, find the vector
+\eqn{x} minimizing
+\deqn{\frac{1}{2}\Vert Ax - b \Vert_2^2 +
+      \sum_{i=1}^p \lambda_i |x|_{(i)}.}
 }
 \details{
 This optimization problem is convex and is solved using an

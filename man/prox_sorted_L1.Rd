@@ -2,24 +2,23 @@
 % Please edit documentation in R/deprecated.R
 \name{prox_sorted_L1}
 \alias{prox_sorted_L1}
-\title{Prox for sorted L1 norm}
+\title{Prox for sorted L1 norm (deprecated)}
 \usage{
-prox_sorted_L1(x, lambda, method = c("c", "isotone"))
+prox_sorted_L1(x, lambda, method)
 }
 \arguments{
 \item{x}{input vector}
 
 \item{lambda}{vector of \eqn{\lambda}'s, sorted in decreasing order}
 
-\item{method}{underlying prox implementation, either 'c' or 'isotone'
-(see Details)}
+\item{method}{deprecated}
 }
 \description{
 Compute the prox for the sorted L1 norm. That is, given a vector \eqn{x}
 and a decreasing vector \eqn{\lambda}, compute the unique value of \eqn{y}
 minimizing
 \deqn{\frac{1}{2} \Vert x - y \Vert_2^2 +
-      \sum_{i=1}^n \lambda_i |x|_{(i)}.}
+      \sum_{i=1}^n \lambda_i |y|_{(i)}.}
 }
 \details{
 At present, two methods for computing the sorted L1 prox are
