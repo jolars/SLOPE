@@ -277,7 +277,7 @@ SLOPE <- function(x,
                   center = !inherits(x, "sparseMatrix"),
                   scale = c("l2", "l1", "sd", "none"),
                   sigma = c("path", "estimate"),
-                  lambda = c("gaussian", "bh", "oscar"),
+                  lambda = c("gaussian", "bh", "oscar", "bhq"),
                   lambda_min_ratio = if (n < p) 1e-2 else 1e-4,
                   n_sigma = 100,
                   q = 0.1*min(1, n/p),
@@ -437,6 +437,11 @@ SLOPE <- function(x,
     lambda <- double(n_lambda)
   } else if (is.character(lambda)) {
     lambda_type <- match.arg(lambda)
+
+    if (lambda_type == "bhq")
+      warning("'bhq' option to argument lambda has been depracted and will",
+              "will be defunct in the next release; please use 'bh' instead")
+
     lambda <- double(n_lambda)
   } else {
     lambda_type <- "user"
