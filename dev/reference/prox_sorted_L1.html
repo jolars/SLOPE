@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Prox for sorted L1 norm — prox_sorted_L1 • SLOPE</title>
+<title>Prox for sorted L1 norm (deprecated) — prox_sorted_L1 • SLOPE</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,12 +42,12 @@
 
 
 
-<meta property="og:title" content="Prox for sorted L1 norm — prox_sorted_L1" />
+<meta property="og:title" content="Prox for sorted L1 norm (deprecated) — prox_sorted_L1" />
 <meta property="og:description" content="Compute the prox for the sorted L1 norm. That is, given a vector \(x\)
 and a decreasing vector \(\lambda\), compute the unique value of \(y\)
 minimizing
 $$\frac{1}{2} \Vert x - y \Vert_2^2 +
-      \sum_{i=1}^n \lambda_i |x|_{(i)}.$$" />
+      \sum_{i=1}^n \lambda_i |y|_{(i)}.$$" />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -132,7 +132,7 @@ $$\frac{1}{2} \Vert x - y \Vert_2^2 +
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Prox for sorted L1 norm</h1>
+    <h1>Prox for sorted L1 norm (deprecated)</h1>
     <small class="dont-index">Source: <a href='https://github.com/jolars/SLOPE/blob/master/R/deprecated.R'><code>R/deprecated.R</code></a></small>
     <div class="hidden name"><code>prox_sorted_L1.Rd</code></div>
     </div>
@@ -142,10 +142,10 @@ $$\frac{1}{2} \Vert x - y \Vert_2^2 +
 and a decreasing vector \(\lambda\), compute the unique value of \(y\)
 minimizing
 $$\frac{1}{2} \Vert x - y \Vert_2^2 +
-      \sum_{i=1}^n \lambda_i |x|_{(i)}.$$</p>
+      \sum_{i=1}^n \lambda_i |y|_{(i)}.$$</p>
     </div>
 
-    <pre class="usage"><span class='fu'>prox_sorted_L1</span>(<span class='no'>x</span>, <span class='no'>lambda</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"c"</span>, <span class='st'>"isotone"</span>))</pre>
+    <pre class="usage"><span class='fu'>prox_sorted_L1</span>(<span class='no'>x</span>, <span class='no'>lambda</span>, <span class='no'>method</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -160,8 +160,7 @@ $$\frac{1}{2} \Vert x - y \Vert_2^2 +
     </tr>
     <tr>
       <th>method</th>
-      <td><p>underlying prox implementation, either 'c' or 'isotone'
-(see Details)</p></td>
+      <td><p>deprecated</p></td>
     </tr>
     </table>
 

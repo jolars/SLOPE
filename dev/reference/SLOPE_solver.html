@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Sorted L1 solver (deprecated) — SLOPE_solver • SLOPE</title>
+<title>Sorted L1 solver — SLOPE_solver • SLOPE</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,8 +42,12 @@
 
 
 
-<meta property="og:title" content="Sorted L1 solver (deprecated) — SLOPE_solver" />
-<meta property="og:description" content="This function is deprecated. Please call SLOPE() directly instead." />
+<meta property="og:title" content="Sorted L1 solver — SLOPE_solver" />
+<meta property="og:description" content="Solves the sorted L1 penalized regression problem: given a matrix \(A\),
+a vector \(b\), and a decreasing vector \(\lambda\), find the vector
+\(x\) minimizing
+$$\frac{1}{2}\Vert Ax - b \Vert_2^2 +
+      \sum_{i=1}^p \lambda_i |x|_{(i)}.$$" />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -128,13 +132,17 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Sorted L1 solver (deprecated)</h1>
+    <h1>Sorted L1 solver</h1>
     <small class="dont-index">Source: <a href='https://github.com/jolars/SLOPE/blob/master/R/deprecated.R'><code>R/deprecated.R</code></a></small>
     <div class="hidden name"><code>SLOPE_solver.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function is deprecated. Please call <code><a href='SLOPE.html'>SLOPE()</a></code> directly instead.</p>
+    <p>Solves the sorted L1 penalized regression problem: given a matrix \(A\),
+a vector \(b\), and a decreasing vector \(\lambda\), find the vector
+\(x\) minimizing
+$$\frac{1}{2}\Vert Ax - b \Vert_2^2 +
+      \sum_{i=1}^p \lambda_i |x|_{(i)}.$$</p>
     </div>
 
     <pre class="usage"><span class='fu'>SLOPE_solver</span>(
