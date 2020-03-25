@@ -157,7 +157,8 @@ in decreasing order according  to its absolute values.</p>
   <span class='kw'>lambda_min_ratio</span> <span class='kw'>=</span> <span class='kw'>if</span> (<span class='no'>n</span> <span class='kw'>&lt;</span> <span class='no'>p</span>) <span class='fl'>0.01</span> <span class='kw'>else</span> <span class='fl'>1e-04</span>,
   <span class='kw'>n_sigma</span> <span class='kw'>=</span> <span class='fl'>100</span>,
   <span class='kw'>q</span> <span class='kw'>=</span> <span class='fl'>0.1</span> * <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span>(<span class='fl'>1</span>, <span class='no'>n</span>/<span class='no'>p</span>),
-  <span class='kw'>screening</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>screen</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>screen_alg</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"working"</span>, <span class='st'>"strong"</span>),
   <span class='kw'>tol_dev_change</span> <span class='kw'>=</span> <span class='fl'>1e-05</span>,
   <span class='kw'>tol_dev_ratio</span> <span class='kw'>=</span> <span class='fl'>0.995</span>,
   <span class='kw'>tol_abs</span> <span class='kw'>=</span> <span class='fl'>1e-05</span>,
@@ -232,9 +233,21 @@ of coefficients in the model</p></td>
       <td><p>shape of lambda sequence</p></td>
     </tr>
     <tr>
-      <th>screening</th>
-      <td><p>whether the strong rule for SLOPE be used to screen
-variables for inclusion</p></td>
+      <th>screen</th>
+      <td><p>whether to use predictor screening rules</p></td>
+    </tr>
+    <tr>
+      <th>screen_alg</th>
+      <td><p>what type of screening algorithm to use.</p><ul>
+<li><p><code>"working"</code> is the approach used in glmnet, where
+the previously active set is used as a working set that is
+iteratively expanded by examining violations to the KKT rules in the
+strong set and when there are no failures in the strong set, checked
+against the full set of predictors; this approach is
+particularly useful when there is considerable correlation</p></li>
+<li><p><code>"strong"</code> uses the strong set as working set and checks for KKT
+violations in the full set of predictors</p></li>
+</ul></td>
     </tr>
     <tr>
       <th>tol_dev_change</th>

@@ -147,6 +147,7 @@
 <li>binomial, poisson, and multinomial families are now supported (using <code>family</code> argument in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>)</li>
 <li>input to <code>lambda</code> is now scaled (divided by) the number of observations (rows) in <code>x</code>
 </li>
+<li>predictor screening rules have been implemented and are activated by calling <code>screen = TRUE</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>. The type of algorithm can also be set via <code>screen_alg</code>.</li>
 <li>
 <code><a href="../reference/SLOPE.html">SLOPE()</a></code> now returns an object of class <code>"SLOPE"</code> (and an additional class depending on input to <code>family</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>
 </li>
