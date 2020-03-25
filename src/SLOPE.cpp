@@ -130,7 +130,6 @@ List cppSLOPE(T& x, mat& y, const List control)
   vec xTy;
   T x_subset;
 
-  // factorize xx if gaussian
   if (family->name() == "gaussian") {
     // initialize auxiliary variables
     z.zeros();
@@ -252,7 +251,8 @@ List cppSLOPE(T& x, mat& y, const List control)
             u_subset = u(active_set);
           }
 
-          uword n_active = (active_set.n_elem - static_cast<uword>(intercept))*m;
+          uword n_active =
+            (active_set.n_elem - static_cast<uword>(intercept))*m;
 
           res = family->fit(x_subset,
                             y,
