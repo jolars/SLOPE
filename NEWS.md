@@ -6,14 +6,17 @@ means there are several changes to the API, including deprecated functions.
 
 ## Major changes
 
-* `SLOPE_solver()`, `SLOPE_solver_matlab()`, `create_lambda()`, and
-  `prox_sorted_L1()` have been deprecated (and will be defunct in the
+* `SLOPE_solver()`, `SLOPE_solver_matlab()`, `prox_sorted_L1()`,
+  and `create_lambda()`
+  have been deprecated (and will be defunct in the
   next version of SLOPE)
-* arguments `X`, `fdr`, `normalize`, and `solver` have been deprecated
-  in `SLOPE()` and replaced by `x`, `q`, `scale` and `center`, respectively.
-  `solver` has not been replaced.
+* arguments `X`, `fdr`, and `normalize` have been deprecated
+  in `SLOPE()` and replaced by `x`, `q`, `scale` and `center`, respectively
+* argument `sovler` in `SLOPE()` has been deprecated
 * binomial, poisson, and multinomial families are now supported (using
   `family` argument in `SLOPE()`)
+* input to `lambda` is now scaled (divided by) the number of observations (rows)
+  in `x`
 * `SLOPE()` now returns an object of class `"SLOPE"` (and an additional
   class depending on input to `family` in `SLOPE()`
 * `SLOPE` objects gain `coef()` and `plot()` methods.
