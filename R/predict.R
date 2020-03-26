@@ -23,7 +23,6 @@
 #'
 #' @return Predictions from the model with scale determined by `type`.
 #'
-#'
 #' @examples
 #' fit <- with(mtcars, SLOPE(cbind(mpg, hp), vs, family = "binomial"))
 #' predict(fit, with(mtcars, cbind(mpg, hp)), type = "class")
