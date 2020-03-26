@@ -17,7 +17,7 @@ SLOPE(
   n_sigma = 100,
   q = 0.1 * min(1, n/p),
   screen = TRUE,
-  screen_alg = c("working", "strong"),
+  screen_alg = c("strong", "working"),
   tol_dev_change = 1e-05,
   tol_dev_ratio = 0.995,
   tol_abs = 1e-05,
