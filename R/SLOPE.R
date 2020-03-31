@@ -434,6 +434,12 @@ SLOPE <- function(x,
 
     stopifnot(n_sigma > 0)
 
+    if (!all(order(sigma) == rev(seq_along(sigma))))
+      stop("'sigma' must be decreasing")
+
+    if (anyDuplicated(sigma) > 0)
+      stop("all values in 'sigma' must be unique")
+
     # do not stop path early if user requests specific sigma
     tol_dev_change <- 0
     tol_dev_ratio <- 1
