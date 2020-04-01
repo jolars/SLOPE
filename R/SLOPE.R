@@ -126,6 +126,12 @@
 #'   \lambda_i = q(p - i) + 1.
 #' }
 #'
+#' @section Solvers:
+#'
+#' There are currently two solvers available for SLOPE: FISTA (Beck and
+#' Teboulle 2009) and ADMM (Boyd et al. 2008). FISTA is available for
+#' families but ADMM is currently only available for `family = "gaussian"`.
+#'
 #' @param x the feature matrix, which can be either a dense
 #'   matrix of the standard *matrix* class, or a sparse matrix
 #'   inheriting from [Matrix::sparseMatrix] Data frames will
@@ -246,6 +252,15 @@
 #' Variable Selection, and Supervised Clustering of Predictors with OSCAR.
 #' Biometrics, 64(1), 115–123. JSTOR.
 #' <https://doi.org/10.1111/j.1541-0420.2007.00843.x>
+#'
+#' Boyd, S., Parikh, N., Chu, E., Peleato, B., & Eckstein, J. (2010).
+#' Distributed Optimization and Statistical Learning via the Alternating
+#' Direction Method of Multipliers. Foundations and Trends® in Machine Learning,
+#' 3(1), 1–122. https://doi.org/10.1561/2200000016
+#'
+#' Beck, A., & Teboulle, M. (2009). A Fast Iterative Shrinkage-Thresholding
+#' Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
+#' 2(1), 183–202. https://doi.org/10.1137/080716542
 #'
 #' @examples
 #'
