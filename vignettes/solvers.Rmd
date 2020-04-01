@@ -1,0 +1,60 @@
+---
+title: "Solvers in the SLOPE package"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Solvers in the SLOPE package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(SLOPE)
+library(gridExtra)
+```
+
+For sorted $\ell_1$-penalized ordinary least-squares regression, there
+are tw
+
+
+```{r}
+n <- 100
+p <- 5000
+k <- 20
+
+out <- data.frame()
+
+for (solver in c("fista", "admm")) {
+  for (rho in c(0, 0.8)) {
+    
+    x <- matrix(rnorm(n*p), n)
+    
+    # add correlation structure
+    x <- x + sqrt(rho/(1 - rho))*rnorm(n)
+  
+    beta <- double(p)
+    beta[1:k] <- rnorm(k)
+    y <- x %*% beta + rnorm(n)
+    
+    time <- system.time({
+      fit <- SLOPE(x, y, solver = solver, diagnostics = TRUE)
+    })
+    
+    out <- rbind(out, data.frame(solver = solver,
+                                 time = time[3],
+                                 rho = rho))
+  }
+}
+
+
+
+
+
+```
+

@@ -183,7 +183,8 @@
 #' @param X deprecated. please use `x` instead
 #' @param fdr deprecated. please use `q` instead
 #' @param normalize deprecated. please use `scale` and `center` instead
-#' @param solver deprecated
+#' @param solver type of solver use. All families currently support
+#'   FISTA. Only `family = "gaussian"` supports ADMM.
 #'
 #' @return An object of class `"SLOPE"` with the following slots:
 #' \item{coefficients}{
@@ -286,25 +287,26 @@ SLOPE <- function(x,
                   scale = c("l2", "l1", "sd", "none"),
                   sigma = c("path", "estimate"),
                   lambda = c("gaussian", "bh", "oscar", "bhq"),
-                  lambda_min_ratio = if (n < p) 1e-2 else 1e-4,
+                  lambda_min_ratio = ifelse(NROW(x) < NCOL(x), 1e-2, 1e-4),
                   n_sigma = 100,
-                  q = 0.1*min(1, n/p),
+                  q = 0.1*min(1, NROW(x)/NCOL(x)),
                   screen = TRUE,
                   screen_alg = c("strong", "working"),
                   tol_dev_change = 1e-5,
                   tol_dev_ratio = 0.995,
+                  max_variables = NROW(x)*
+                    ifelse(family == "multinomial", length(unique(y)) - 1, 1),
+                  solver = c("fista", "admm"),
+                  max_passes = 1e6,
                   tol_abs = 1e-5,
                   tol_rel = 1e-4,
-                  max_variables = n*m,
-                  max_passes = 1e6,
                   tol_rel_gap = 1e-5,
                   tol_infeas = 1e-3,
                   diagnostics = FALSE,
                   verbosity = 0,
                   X,
                   fdr,
-                  normalize,
-                  solver
+                  normalize
 ) {
 
   if (!missing(X)) {
@@ -325,21 +327,25 @@ SLOPE <- function(x,
     scale <- "l2"
   }
 
-  if (!missing(solver)) {
-    warning("'solver' argument is deprecated")
-  }
-
   ocall <- match.call()
 
   family <- match.arg(family)
+  solver <- match.arg(solver)
   screen_alg <- match.arg(screen_alg)
+
+  if (solver %in% c("default", "matlab"))
+    warning("`solver = '", solver, "'` is deprecated; ",
+            "using `solver = 'fista'` instead")
+
+  if (solver == "admm" && family != "gaussian")
+    stop("ADMM solver is only supported with `family = 'gaussian'`")
 
   if (is.character(scale)) {
     scale <- match.arg(scale)
   } else if (is.logical(scale) && length(scale) == 1L) {
     scale <- ifelse(scale, "l2", "none")
   } else {
-    stop("'scale' must be logical or a character")
+    stop("`scale` must be logical or a character")
   }
 
   n <- NROW(x)
@@ -370,13 +376,13 @@ SLOPE <- function(x,
   is_sparse <- inherits(x, "sparseMatrix")
 
   if (NROW(y) != NROW(x))
-    stop("the number of samples in 'x' and 'y' must match")
+    stop("the number of samples in `x` and `y` must match")
 
   if (NROW(y) == 0)
-    stop("y is empty")
+    stop("`y` is empty")
 
   if (NROW(x) == 0)
-    stop("x is empty")
+    stop("`x` is empty")
 
   if (anyNA(y) || anyNA(x))
     stop("missing values are not allowed")
@@ -388,7 +394,7 @@ SLOPE <- function(x,
   }
 
   if (is_sparse && center)
-    stop("centering would destroy sparsity in x (predictors)")
+    stop("centering would destroy sparsity in `x` (predictor matrix)")
 
   res <- preprocessResponse(family, y)
   y <- as.matrix(res$y)
@@ -406,8 +412,6 @@ SLOPE <- function(x,
 
   if (is.character(sigma)) {
     sigma <- match.arg(sigma)
-    if (sigma == "estimate" && family != "gaussian")
-      stop("sigma == 'estimate' can only be used if family == 'gaussian'")
 
     if (sigma == "path") {
 
@@ -417,13 +421,13 @@ SLOPE <- function(x,
     } else if (sigma == "estimate") {
 
       if (family != "gaussian")
-        stop("sigma == 'estimate' can only be used if family == 'gaussian'")
+        stop("sigma = 'estimate' can only be used if `family = 'gaussian'`")
 
       sigma_type <- "estimate"
       sigma <- NULL
 
       if (n_sigma > 1)
-        warning("'n_sigma' ignored since sigma == 'estimate'")
+        warning("`n_sigma` ignored since `sigma = 'estimate'`")
     }
   } else {
     sigma <- as.double(sigma)
@@ -435,10 +439,10 @@ SLOPE <- function(x,
     stopifnot(n_sigma > 0)
 
     if (!all(order(sigma) == rev(seq_along(sigma))))
-      stop("'sigma' must be decreasing")
+      stop("`sigma` must be decreasing")
 
     if (anyDuplicated(sigma) > 0)
-      stop("all values in 'sigma' must be unique")
+      stop("all values in `sigma` must be unique")
 
     # do not stop path early if user requests specific sigma
     tol_dev_change <- 0
@@ -464,13 +468,13 @@ SLOPE <- function(x,
     lambda <- as.double(lambda)
 
     if (length(lambda) != n_lambda)
-      stop("lambda sequence must be as long as there are variables")
+      stop("`lambda` must be as long as there are variables")
 
     if (is.unsorted(rev(lambda)))
-      stop("lambda sequence must be non-increasing")
+      stop("`lambda` must be non-increasing")
 
     if (any(lambda < 0))
-      stop("lambda sequence cannot contain negative values")
+      stop("`lambda` cannot contain negative values")
   }
 
   control <- list(family = family,
@@ -494,6 +498,7 @@ SLOPE <- function(x,
                   diagnostics = diagnostics,
                   verbosity = verbosity,
                   max_variables = max_variables,
+                  solver = solver,
                   tol_dev_change = tol_dev_change,
                   tol_dev_ratio = tol_dev_ratio,
                   tol_rel_gap = tol_rel_gap,

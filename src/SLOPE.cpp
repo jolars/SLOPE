@@ -29,6 +29,7 @@ List cppSLOPE(T& x, mat& y, const List control)
   auto verbosity = as<uword>(control["verbosity"]);
 
   // solver arguments
+  auto solver      = as<std::string>(control["solver"]);
   auto max_passes  = as<uword>(control["max_passes"]);
   auto tol_rel_gap = as<double>(control["tol_rel_gap"]);
   auto tol_infeas  = as<double>(control["tol_infeas"]);
@@ -131,7 +132,7 @@ List cppSLOPE(T& x, mat& y, const List control)
   vec xTy;
   T x_subset;
 
-  if (family->name() == "gaussian") {
+  if (family->name() == "gaussian" && solver == "admm") {
     // initialize auxiliary variables
     z.zeros();
     u.zeros();
@@ -178,7 +179,7 @@ List cppSLOPE(T& x, mat& y, const List control)
 
       // all features active
       // factorize once if fitting all
-      if (!factorized && family->name() == "gaussian") {
+      if (!factorized && family->name() == "gaussian" && solver == "admm") {
         // precompute x^Ty
         xTy = x.t() * y;
 
@@ -205,7 +206,8 @@ List cppSLOPE(T& x, mat& y, const List control)
         factorized = true;
       }
 
-      res = family->fit(x, y, beta, z, u, L, U, xTy, lambda*sigma(k), rho);
+      res =
+        family->fit(x, y, beta, z, u, L, U, xTy, lambda*sigma(k), rho, solver);
       passes(k) = res.passes;
       beta = res.beta;
 
@@ -233,7 +235,7 @@ List cppSLOPE(T& x, mat& y, const List control)
 
         } else {
 
-          if (family->name() == "gaussian") {
+          if (family->name() == "gaussian" && solver == "admm") {
             if (x_subset.n_rows >= x_subset.n_cols) {
               xx = x_subset.t()*x_subset;
             } else {
@@ -270,9 +272,10 @@ List cppSLOPE(T& x, mat& y, const List control)
                             U,
                             xTy,
                             lambda.head(n_active)*sigma(k),
-                            rho);
+                            rho,
+                            solver);
 
-          if (family->name() == "gaussian") {
+          if (family->name() == "gaussian" && solver == "admm") {
             z(active_set) = z_subset;
             u(active_set) = u_subset;
           }
