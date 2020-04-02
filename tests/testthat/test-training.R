@@ -25,7 +25,7 @@ test_that("plot.trainSLOPE works as expected", {
   expect_error(plot(fit, measure = "auc"))
   p <- plot(fit)
   expect_s3_class(p, "trellis")
-  expect_silent(plot(p))
+  expect_silent(dont_plot(p))
 
   fit <- trainSLOPE(x, y, q = c(0.1, 0.2), number = 2, solver = "admm")
 
