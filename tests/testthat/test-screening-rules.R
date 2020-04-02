@@ -1,13 +1,19 @@
 test_that("screening rules return correct results for instances with known violations", {
   set.seed(216) # there is a violation for this seed and this setup
 
-  for (family in c("gaussian", "binomial", "poisson", "multinomial")) {
-    d <- SLOPE:::randomProblem(100, 10, q = 0.1, response = family)
+  for (solver in c("fista", "admm")) {
+    for (family in c("gaussian", "binomial", "poisson", "multinomial")) {
 
-    fit0 <- SLOPE(d$x, d$y, family = family, screen = FALSE)
-    fit1 <- SLOPE(d$x, d$y, family = family, screen = TRUE)
+      if (family != "gaussian" && solver == "admm")
+        next
 
-    expect_equivalent(coef(fit0), coef(fit1), 1e-4)
+      d <- SLOPE:::randomProblem(100, 10, q = 0.1, response = family)
+
+      fit0 <- SLOPE(d$x, d$y, family = family, screen = FALSE)
+      fit1 <- SLOPE(d$x, d$y, family = family, screen = TRUE)
+
+      expect_equivalent(coef(fit0), coef(fit1), 1e-4)
+    }
   }
 })
 

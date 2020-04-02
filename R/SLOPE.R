@@ -178,8 +178,9 @@
 #'   \eqn{1 - \mathrm{deviance}/\mathrm{(null-deviance)}}{1 - deviance/(null deviance)}
 #'   is above this threshold
 #' @param max_variables criterion for stopping the path in terms of the
-#'   maximum number of unique, nonzero
-#'   coefficients in absolute value in model
+#'   maximum number of unique, nonzero coefficients in absolute value in model.
+#'   For the multinomial family, this value will be multiplied internally with
+#'   the number of levels of the response minus one.
 #' @param tol_rel_gap stopping criterion for the duality gap
 #' @param tol_infeas stopping criterion for the level of infeasibility
 #' @param tol_abs absolute tolerance criterion for ADMM solver (used for
@@ -189,7 +190,8 @@
 #' @param X deprecated. please use `x` instead
 #' @param fdr deprecated. please use `q` instead
 #' @param normalize deprecated. please use `scale` and `center` instead
-#' @param solver type of solver use. All families currently support
+#' @param solver type of solver use, either `"fista"` or `"admm"`. (`"default"`
+#'   and `"matlab"` are deprecated). All families currently support
 #'   FISTA. Only `family = "gaussian"` supports ADMM.
 #'
 #' @return An object of class `"SLOPE"` with the following slots:
@@ -302,16 +304,15 @@ SLOPE <- function(x,
                   scale = c("l2", "l1", "sd", "none"),
                   sigma = c("path", "estimate"),
                   lambda = c("gaussian", "bh", "oscar", "bhq"),
-                  lambda_min_ratio = ifelse(NROW(x) < NCOL(x), 1e-2, 1e-4),
-                  n_sigma = 100,
+                  lambda_min_ratio = if (NROW(x) < NCOL(x)) 1e-2 else 1e-4,
+                  n_sigma = if (sigma[1] == "estimate") 1 else 100,
                   q = 0.1*min(1, NROW(x)/NCOL(x)),
                   screen = TRUE,
                   screen_alg = c("strong", "working"),
                   tol_dev_change = 1e-5,
                   tol_dev_ratio = 0.995,
-                  max_variables = NROW(x)*
-                    ifelse(family == "multinomial", length(unique(y)) - 1, 1),
-                  solver = c("fista", "admm"),
+                  max_variables = NROW(x),
+                  solver = c("fista", "admm", "matlab", "default"),
                   max_passes = 1e6,
                   tol_abs = 1e-5,
                   tol_rel = 1e-4,
@@ -419,6 +420,7 @@ SLOPE <- function(x,
   m <- n_targets <- res$n_targets
   response_names <- res$response_names
   variable_names <- colnames(x)
+  max_variables <- max_variables*m
 
   if (is.null(variable_names))
     variable_names <- paste0("V", seq_len(p))
@@ -436,7 +438,7 @@ SLOPE <- function(x,
     } else if (sigma == "estimate") {
 
       if (family != "gaussian")
-        stop("sigma = 'estimate' can only be used if `family = 'gaussian'`")
+        stop("`sigma = 'estimate'` can only be used if `family = 'gaussian'`")
 
       sigma_type <- "estimate"
       sigma <- NULL
@@ -453,7 +455,10 @@ SLOPE <- function(x,
 
     stopifnot(n_sigma > 0)
 
-    if (!all(order(sigma) == rev(seq_along(sigma))))
+    if (any(sigma < 0))
+      stop("`sigma` cannot contain negative values")
+
+    if (is.unsorted(rev(sigma)))
       stop("`sigma` must be decreasing")
 
     if (anyDuplicated(sigma) > 0)
@@ -467,10 +472,8 @@ SLOPE <- function(x,
 
   n_lambda <- m*p
 
-  if (is.null(lambda)) {
-    lambda_type <- "bh"
-    lambda <- double(n_lambda)
-  } else if (is.character(lambda)) {
+  if (is.character(lambda)) {
+
     lambda_type <- match.arg(lambda)
 
     if (lambda_type == "bhq")
@@ -478,11 +481,13 @@ SLOPE <- function(x,
               "will be defunct in the next release; please use 'bh' instead")
 
     lambda <- double(n_lambda)
+
   } else {
+
     lambda_type <- "user"
     lambda <- as.double(lambda)
 
-    if (length(lambda) != n_lambda)
+    if (length(lambda) != m*p)
       stop("`lambda` must be as long as there are variables")
 
     if (is.unsorted(rev(lambda)))

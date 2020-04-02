@@ -13,15 +13,15 @@ SLOPE(
   scale = c("l2", "l1", "sd", "none"),
   sigma = c("path", "estimate"),
   lambda = c("gaussian", "bh", "oscar", "bhq"),
-  lambda_min_ratio = ifelse(NROW(x) < NCOL(x), 0.01, 1e-04),
-  n_sigma = 100,
+  lambda_min_ratio = if (NROW(x) < NCOL(x)) 0.01 else 1e-04,
+  n_sigma = if (match.arg(sigma) == "estimate") 1 else 100,
   q = 0.1 * min(1, NROW(x)/NCOL(x)),
   screen = TRUE,
   screen_alg = c("strong", "working"),
   tol_dev_change = 1e-05,
   tol_dev_ratio = 0.995,
-  max_variables = NROW(x) * ifelse(family == "multinomial", length(unique(y)) - 1, 1),
-  solver = c("fista", "admm"),
+  max_variables = NROW(x),
+  solver = c("fista", "admm", "matlab", "default"),
   max_passes = 1e+06,
   tol_abs = 1e-05,
   tol_rel = 1e-04,
@@ -91,10 +91,12 @@ deviance ratio
 is above this threshold}
 
 \item{max_variables}{criterion for stopping the path in terms of the
-maximum number of unique, nonzero
-coefficients in absolute value in model}
+maximum number of unique, nonzero coefficients in absolute value in model.
+For the multinomial family, this value will be multiplied internally with
+the number of levels of the response minus one.}
 
-\item{solver}{type of solver use. All families currently support
+\item{solver}{type of solver use, either \code{"fista"} or \code{"admm"}. (\code{"default"}
+and \code{"matlab"} are deprecated). All families currently support
 FISTA. Only \code{family = "gaussian"} supports ADMM.}
 
 \item{max_passes}{maximum number of passes for optimizer}
