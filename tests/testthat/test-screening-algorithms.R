@@ -2,7 +2,7 @@ test_that("different screening algorithms return equivalent results", {
 
   set.seed(1119)
 
-  xy <- SLOPE:::randomProblem()
+  xy <- SLOPE:::randomProblem(100, 1000)
   x <- xy$x
   y <- xy$y
 
