@@ -126,6 +126,12 @@
 #'   \lambda_i = q(p - i) + 1.
 #' }
 #'
+#' @section Solvers:
+#'
+#' There are currently two solvers available for SLOPE: FISTA (Beck and
+#' Teboulle 2009) and ADMM (Boyd et al. 2008). FISTA is available for
+#' families but ADMM is currently only available for `family = "gaussian"`.
+#'
 #' @param x the feature matrix, which can be either a dense
 #'   matrix of the standard *matrix* class, or a sparse matrix
 #'   inheriting from [Matrix::sparseMatrix] Data frames will
@@ -172,8 +178,9 @@
 #'   \eqn{1 - \mathrm{deviance}/\mathrm{(null-deviance)}}{1 - deviance/(null deviance)}
 #'   is above this threshold
 #' @param max_variables criterion for stopping the path in terms of the
-#'   maximum number of unique, nonzero
-#'   coefficients in absolute value in model
+#'   maximum number of unique, nonzero coefficients in absolute value in model.
+#'   For the multinomial family, this value will be multiplied internally with
+#'   the number of levels of the response minus one.
 #' @param tol_rel_gap stopping criterion for the duality gap
 #' @param tol_infeas stopping criterion for the level of infeasibility
 #' @param tol_abs absolute tolerance criterion for ADMM solver (used for
@@ -183,7 +190,9 @@
 #' @param X deprecated. please use `x` instead
 #' @param fdr deprecated. please use `q` instead
 #' @param normalize deprecated. please use `scale` and `center` instead
-#' @param solver deprecated
+#' @param solver type of solver use, either `"fista"` or `"admm"`. (`"default"`
+#'   and `"matlab"` are deprecated). All families currently support
+#'   FISTA. Only `family = "gaussian"` supports ADMM.
 #'
 #' @return An object of class `"SLOPE"` with the following slots:
 #' \item{coefficients}{
@@ -246,6 +255,15 @@
 #' Biometrics, 64(1), 115–123. JSTOR.
 #' <https://doi.org/10.1111/j.1541-0420.2007.00843.x>
 #'
+#' Boyd, S., Parikh, N., Chu, E., Peleato, B., & Eckstein, J. (2010).
+#' Distributed Optimization and Statistical Learning via the Alternating
+#' Direction Method of Multipliers. Foundations and Trends® in Machine Learning,
+#' 3(1), 1–122. https://doi.org/10.1561/2200000016
+#'
+#' Beck, A., & Teboulle, M. (2009). A Fast Iterative Shrinkage-Thresholding
+#' Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
+#' 2(1), 183–202. https://doi.org/10.1137/080716542
+#'
 #' @examples
 #'
 #' # Gaussian response, default lambda sequence
@@ -286,25 +304,25 @@ SLOPE <- function(x,
                   scale = c("l2", "l1", "sd", "none"),
                   sigma = c("path", "estimate"),
                   lambda = c("gaussian", "bh", "oscar", "bhq"),
-                  lambda_min_ratio = if (n < p) 1e-2 else 1e-4,
-                  n_sigma = 100,
-                  q = 0.1*min(1, n/p),
+                  lambda_min_ratio = if (NROW(x) < NCOL(x)) 1e-2 else 1e-4,
+                  n_sigma = if (sigma[1] == "estimate") 1 else 100,
+                  q = 0.1*min(1, NROW(x)/NCOL(x)),
                   screen = TRUE,
                   screen_alg = c("strong", "working"),
                   tol_dev_change = 1e-5,
                   tol_dev_ratio = 0.995,
+                  max_variables = NROW(x),
+                  solver = c("fista", "admm", "matlab", "default"),
+                  max_passes = 1e6,
                   tol_abs = 1e-5,
                   tol_rel = 1e-4,
-                  max_variables = n*m,
-                  max_passes = 1e6,
                   tol_rel_gap = 1e-5,
                   tol_infeas = 1e-3,
                   diagnostics = FALSE,
                   verbosity = 0,
                   X,
                   fdr,
-                  normalize,
-                  solver
+                  normalize
 ) {
 
   if (!missing(X)) {
@@ -325,21 +343,25 @@ SLOPE <- function(x,
     scale <- "l2"
   }
 
-  if (!missing(solver)) {
-    warning("'solver' argument is deprecated")
-  }
-
   ocall <- match.call()
 
   family <- match.arg(family)
+  solver <- match.arg(solver)
   screen_alg <- match.arg(screen_alg)
+
+  if (solver %in% c("default", "matlab"))
+    warning("`solver = '", solver, "'` is deprecated; ",
+            "using `solver = 'fista'` instead")
+
+  if (solver == "admm" && family != "gaussian")
+    stop("ADMM solver is only supported with `family = 'gaussian'`")
 
   if (is.character(scale)) {
     scale <- match.arg(scale)
   } else if (is.logical(scale) && length(scale) == 1L) {
     scale <- ifelse(scale, "l2", "none")
   } else {
-    stop("'scale' must be logical or a character")
+    stop("`scale` must be logical or a character")
   }
 
   n <- NROW(x)
@@ -370,13 +392,13 @@ SLOPE <- function(x,
   is_sparse <- inherits(x, "sparseMatrix")
 
   if (NROW(y) != NROW(x))
-    stop("the number of samples in 'x' and 'y' must match")
+    stop("the number of samples in `x` and `y` must match")
 
   if (NROW(y) == 0)
-    stop("y is empty")
+    stop("`y` is empty")
 
   if (NROW(x) == 0)
-    stop("x is empty")
+    stop("`x` is empty")
 
   if (anyNA(y) || anyNA(x))
     stop("missing values are not allowed")
@@ -388,7 +410,7 @@ SLOPE <- function(x,
   }
 
   if (is_sparse && center)
-    stop("centering would destroy sparsity in x (predictors)")
+    stop("centering would destroy sparsity in `x` (predictor matrix)")
 
   res <- preprocessResponse(family, y)
   y <- as.matrix(res$y)
@@ -398,6 +420,7 @@ SLOPE <- function(x,
   m <- n_targets <- res$n_targets
   response_names <- res$response_names
   variable_names <- colnames(x)
+  max_variables <- max_variables*m
 
   if (is.null(variable_names))
     variable_names <- paste0("V", seq_len(p))
@@ -406,8 +429,6 @@ SLOPE <- function(x,
 
   if (is.character(sigma)) {
     sigma <- match.arg(sigma)
-    if (sigma == "estimate" && family != "gaussian")
-      stop("sigma == 'estimate' can only be used if family == 'gaussian'")
 
     if (sigma == "path") {
 
@@ -417,13 +438,13 @@ SLOPE <- function(x,
     } else if (sigma == "estimate") {
 
       if (family != "gaussian")
-        stop("sigma == 'estimate' can only be used if family == 'gaussian'")
+        stop("`sigma = 'estimate'` can only be used if `family = 'gaussian'`")
 
       sigma_type <- "estimate"
       sigma <- NULL
 
       if (n_sigma > 1)
-        warning("'n_sigma' ignored since sigma == 'estimate'")
+        warning("`n_sigma` ignored since `sigma = 'estimate'`")
     }
   } else {
     sigma <- as.double(sigma)
@@ -434,11 +455,14 @@ SLOPE <- function(x,
 
     stopifnot(n_sigma > 0)
 
-    if (!all(order(sigma) == rev(seq_along(sigma))))
-      stop("'sigma' must be decreasing")
+    if (any(sigma < 0))
+      stop("`sigma` cannot contain negative values")
+
+    if (is.unsorted(rev(sigma)))
+      stop("`sigma` must be decreasing")
 
     if (anyDuplicated(sigma) > 0)
-      stop("all values in 'sigma' must be unique")
+      stop("all values in `sigma` must be unique")
 
     # do not stop path early if user requests specific sigma
     tol_dev_change <- 0
@@ -448,10 +472,8 @@ SLOPE <- function(x,
 
   n_lambda <- m*p
 
-  if (is.null(lambda)) {
-    lambda_type <- "bh"
-    lambda <- double(n_lambda)
-  } else if (is.character(lambda)) {
+  if (is.character(lambda)) {
+
     lambda_type <- match.arg(lambda)
 
     if (lambda_type == "bhq")
@@ -459,18 +481,20 @@ SLOPE <- function(x,
               "will be defunct in the next release; please use 'bh' instead")
 
     lambda <- double(n_lambda)
+
   } else {
+
     lambda_type <- "user"
     lambda <- as.double(lambda)
 
-    if (length(lambda) != n_lambda)
-      stop("lambda sequence must be as long as there are variables")
+    if (length(lambda) != m*p)
+      stop("`lambda` must be as long as there are variables")
 
     if (is.unsorted(rev(lambda)))
-      stop("lambda sequence must be non-increasing")
+      stop("`lambda` must be non-increasing")
 
     if (any(lambda < 0))
-      stop("lambda sequence cannot contain negative values")
+      stop("`lambda` cannot contain negative values")
   }
 
   control <- list(family = family,
@@ -494,6 +518,7 @@ SLOPE <- function(x,
                   diagnostics = diagnostics,
                   verbosity = verbosity,
                   max_variables = max_variables,
+                  solver = solver,
                   tol_dev_change = tol_dev_change,
                   tol_dev_ratio = tol_dev_ratio,
                   tol_rel_gap = tol_rel_gap,
@@ -510,13 +535,13 @@ SLOPE <- function(x,
       fit <- fitSLOPE(x, y, control)
     }
   } else {
-    # Estimate the noise level, if possible.
+    # estimate the noise level, if possible
     if (is.null(sigma) && n >= p + 30)
       sigma <- estimateNoise(x, y)
 
-    # Run the solver, iteratively if necessary.
+    # run the solver, iteratively if necessary.
     if (is.null(sigma)) {
-      # Run Algorithm 5 of Section 3.2.3.
+      # Run Algorithm 5 of Section 3.2.3. (Bogdan et al.)
       selected <- integer(0)
       repeat {
         selected_prev <- selected
@@ -528,11 +553,11 @@ SLOPE <- function(x,
         } else {
           fit <- fitSLOPE(x, y, control)
         }
-        # result <- SLOPE_solver_call(solver, X, y, tail(sigma, 1) * lambda)
+
         selected <- which(abs(drop(fit$betas)) > 0)
 
         if (fit_intercept)
-          selected <- selected[-1, , , drop = FALSE]
+          selected <- selected[-1]
 
         if (identical(selected, selected_prev))
           break

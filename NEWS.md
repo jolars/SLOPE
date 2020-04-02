@@ -12,7 +12,12 @@ means there are several changes to the API, including deprecated functions.
   next version of SLOPE)
 * arguments `X`, `fdr`, and `normalize` have been deprecated
   in `SLOPE()` and replaced by `x`, `q`, `scale` and `center`, respectively
-* argument `sovler` in `SLOPE()` has been deprecated
+* options `"default"` and `"matlab"` to argument
+  `solver` in `SLOPE()` have been deprecated and replaced with `"fista"`
+  and `"admm"`, which uses the accelerated proximal gradient method
+  FISTA and alternating direction of multipliers method (ADMM)
+  respectively
+* ADMM has been implemented as a solver for `family = "gaussian"`
 * binomial, poisson, and multinomial families are now supported (using
   `family` argument in `SLOPE()`)
 * input to `lambda` is now scaled (divided by) the number of observations (rows)

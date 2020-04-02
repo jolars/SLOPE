@@ -44,46 +44,46 @@ public:
     return "gaussian";
   }
 
-  virtual Results fit(const mat& x,
-                      const mat& y,
-                      mat beta,
-                      vec& z,
-                      vec& u,
-                      const mat& L,
-                      const mat& U,
-                      const vec& xTy,
-                      vec lambda,
-                      double rho)
+  Results ADMM(const mat& x,
+               const mat& y,
+               mat beta,
+               vec& z,
+               vec& u,
+               const mat& L,
+               const mat& U,
+               const vec& xTy,
+               vec lambda,
+               double rho)
   {
-    return fitImpl(x, y, beta, z, u, L, U, xTy, lambda, rho);
+    return ADMMImpl(x, y, beta, z, u, L, U, xTy, lambda, rho);
   }
 
-  virtual Results fit(const sp_mat& x,
-                      const mat& y,
-                      mat beta,
-                      vec& z,
-                      vec& u,
-                      const mat& L,
-                      const mat& U,
-                      const vec& xTy,
-                      vec lambda,
-                      double rho)
+  Results ADMM(const sp_mat& x,
+               const mat& y,
+               mat beta,
+               vec& z,
+               vec& u,
+               const mat& L,
+               const mat& U,
+               const vec& xTy,
+               vec lambda,
+               double rho)
   {
-    return fitImpl(x, y, beta, z, u, L, U, xTy, lambda, rho);
+    return ADMMImpl(x, y, beta, z, u, L, U, xTy, lambda, rho);
   }
 
   // ADMM
   template <typename T>
-  Results fitImpl(const T& x,
-                  const mat& y,
-                  mat beta,
-                  vec& z,
-                  vec& u,
-                  const mat& L,
-                  const mat& U,
-                  const vec& xTy,
-                  vec lambda,
-                  double rho)
+  Results ADMMImpl(const T& x,
+                   const mat& y,
+                   mat beta,
+                   vec& z,
+                   vec& u,
+                   const mat& L,
+                   const mat& U,
+                   const vec& xTy,
+                   vec lambda,
+                   double rho)
   {
     std::vector<double> primals;
     std::vector<double> duals;

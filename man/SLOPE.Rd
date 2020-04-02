@@ -13,25 +13,25 @@ SLOPE(
   scale = c("l2", "l1", "sd", "none"),
   sigma = c("path", "estimate"),
   lambda = c("gaussian", "bh", "oscar", "bhq"),
-  lambda_min_ratio = if (n < p) 0.01 else 1e-04,
-  n_sigma = 100,
-  q = 0.1 * min(1, n/p),
+  lambda_min_ratio = if (NROW(x) < NCOL(x)) 0.01 else 1e-04,
+  n_sigma = if (sigma[1] == "estimate") 1 else 100,
+  q = 0.1 * min(1, NROW(x)/NCOL(x)),
   screen = TRUE,
   screen_alg = c("strong", "working"),
   tol_dev_change = 1e-05,
   tol_dev_ratio = 0.995,
+  max_variables = NROW(x),
+  solver = c("fista", "admm", "matlab", "default"),
+  max_passes = 1e+06,
   tol_abs = 1e-05,
   tol_rel = 1e-04,
-  max_variables = n * m,
-  max_passes = 1e+06,
   tol_rel_gap = 1e-05,
   tol_infeas = 0.001,
   diagnostics = FALSE,
   verbosity = 0,
   X,
   fdr,
-  normalize,
-  solver
+  normalize
 )
 }
 \arguments{
@@ -90,17 +90,22 @@ deviance ratio
 \eqn{1 - \mathrm{deviance}/\mathrm{(null-deviance)}}{1 - deviance/(null deviance)}
 is above this threshold}
 
+\item{max_variables}{criterion for stopping the path in terms of the
+maximum number of unique, nonzero coefficients in absolute value in model.
+For the multinomial family, this value will be multiplied internally with
+the number of levels of the response minus one.}
+
+\item{solver}{type of solver use, either \code{"fista"} or \code{"admm"}. (\code{"default"}
+and \code{"matlab"} are deprecated). All families currently support
+FISTA. Only \code{family = "gaussian"} supports ADMM.}
+
+\item{max_passes}{maximum number of passes for optimizer}
+
 \item{tol_abs}{absolute tolerance criterion for ADMM solver (used for
 Gaussian dense designs)}
 
 \item{tol_rel}{relative tolerance criterion for ADMM solver (used for
 Gaussian dense designs)}
-
-\item{max_variables}{criterion for stopping the path in terms of the
-maximum number of unique, nonzero
-coefficients in absolute value in model}
-
-\item{max_passes}{maximum number of passes for optimizer}
 
 \item{tol_rel_gap}{stopping criterion for the duality gap}
 
@@ -119,8 +124,6 @@ information from the solver.}
 \item{fdr}{deprecated. please use \code{q} instead}
 
 \item{normalize}{deprecated. please use \code{scale} and \code{center} instead}
-
-\item{solver}{deprecated}
 }
 \value{
 An object of class \code{"SLOPE"} with the following slots:
@@ -302,6 +305,14 @@ sequence such that
 }
 }
 
+\section{Solvers}{
+
+
+There are currently two solvers available for SLOPE: FISTA (Beck and
+Teboulle 2009) and ADMM (Boyd et al. 2008). FISTA is available for
+families but ADMM is currently only available for \code{family = "gaussian"}.
+}
+
 \examples{
 
 # Gaussian response, default lambda sequence
@@ -344,6 +355,15 @@ Bondell, H. D., & Reich, B. J. (2008). Simultaneous Regression Shrinkage,
 Variable Selection, and Supervised Clustering of Predictors with OSCAR.
 Biometrics, 64(1), 115–123. JSTOR.
 \url{https://doi.org/10.1111/j.1541-0420.2007.00843.x}
+
+Boyd, S., Parikh, N., Chu, E., Peleato, B., & Eckstein, J. (2010).
+Distributed Optimization and Statistical Learning via the Alternating
+Direction Method of Multipliers. Foundations and Trends® in Machine Learning,
+3(1), 1–122. https://doi.org/10.1561/2200000016
+
+Beck, A., & Teboulle, M. (2009). A Fast Iterative Shrinkage-Thresholding
+Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
+2(1), 183–202. https://doi.org/10.1137/080716542
 }
 \seealso{
 \code{\link[=plot.SLOPE]{plot.SLOPE()}}, \code{\link[=plotDiagnostics]{plotDiagnostics()}}, \code{\link[=score]{score()}}, \code{\link[=predict.SLOPE]{predict.SLOPE()}},
