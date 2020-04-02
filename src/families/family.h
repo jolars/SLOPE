@@ -57,16 +57,16 @@ public:
 
   template <typename T>
   Results fit(const T& x,
-                      const mat& y,
-                      mat beta,
-                      vec& z,
-                      vec& u,
-                      const mat& L,
-                      const mat& U,
-                      const vec& xTy,
-                      vec lambda,
-                      double rho,
-                      const std::string solver)
+              const mat& y,
+              mat beta,
+              vec& z,
+              vec& u,
+              const mat& L,
+              const mat& U,
+              const vec& xTy,
+              vec lambda,
+              double rho,
+              const std::string solver)
   {
     if (solver == "admm")
       return ADMM(x, y, beta, z, u, L, U, xTy, lambda, rho);
