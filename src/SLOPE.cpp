@@ -204,8 +204,8 @@ List cppSLOPE(T& x, mat& y, const List control)
 
         xx.diag() += rho;
 
-        L = chol(xx, "lower");
-        U = L.t();
+        U = chol(xx);
+        L = U.t();
 
         factorized = true;
       }
@@ -260,8 +260,8 @@ List cppSLOPE(T& x, mat& y, const List control)
 
             xx.diag() += rho;
 
-            L = chol(xx, "lower");
-            U = L.t();
+            U = chol(xx);
+            L = U.t();
 
             xTy = x_subset.t() * y;
 
@@ -377,20 +377,20 @@ List cppSLOPE(T& x, mat& y, const List control)
             << ", n unique: "   << setw(5) << n_unique(k)
             << endl;
 
-      if (n_coefs > 0 && k > 0) {
-        // stop path if fractional deviance change is small
-        if (deviance_change < tol_dev_change || deviance_ratio > tol_dev_ratio) {
-          k++;
-          break;
-        }
-      }
-
-      if (n_unique(k) > max_variables)
+    if (n_coefs > 0 && k > 0) {
+      // stop path if fractional deviance change is small
+      if (deviance_change < tol_dev_change || deviance_ratio > tol_dev_ratio) {
+        k++;
         break;
+      }
+    }
 
-      k++;
+    if (n_unique(k) > max_variables)
+      break;
 
-      checkUserInterrupt();
+    k++;
+
+    checkUserInterrupt();
   }
 
   betas.resize(p, m, k);
