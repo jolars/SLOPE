@@ -530,13 +530,13 @@ SLOPE <- function(x,
       fit <- fitSLOPE(x, y, control)
     }
   } else {
-    # Estimate the noise level, if possible.
+    # estimate the noise level, if possible
     if (is.null(sigma) && n >= p + 30)
       sigma <- estimateNoise(x, y)
 
-    # Run the solver, iteratively if necessary.
+    # run the solver, iteratively if necessary.
     if (is.null(sigma)) {
-      # Run Algorithm 5 of Section 3.2.3.
+      # Run Algorithm 5 of Section 3.2.3. (Bogdan et al.)
       selected <- integer(0)
       repeat {
         selected_prev <- selected
@@ -548,11 +548,11 @@ SLOPE <- function(x,
         } else {
           fit <- fitSLOPE(x, y, control)
         }
-        # result <- SLOPE_solver_call(solver, X, y, tail(sigma, 1) * lambda)
+
         selected <- which(abs(drop(fit$betas)) > 0)
 
         if (fit_intercept)
-          selected <- selected[-1, , , drop = FALSE]
+          selected <- selected[-1]
 
         if (identical(selected, selected_prev))
           break
