@@ -151,8 +151,9 @@ Regularization path for a binomial regression model fit to the heart data set.
 <span class="no">tune</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/trainSLOPE.html">trainSLOPE</a></span>(<span class="no">x</span>,
                    <span class="no">y</span>,
                    <span class="kw">q</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.1</span>, <span class="fl">0.2</span>),
-                   <span class="kw">number</span> <span class="kw">=</span> <span class="fl">10</span>,
-                   <span class="kw">repeats</span> <span class="kw">=</span> <span class="fl">3</span>)</pre></body></html></div>
+                   <span class="kw">number</span> <span class="kw">=</span> <span class="fl">5</span>,
+                   <span class="kw">solver</span> <span class="kw">=</span> <span class="st">"admm"</span>,
+                   <span class="kw">repeats</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
 <p>As before, the plot method offers the best summary.</p>
 <div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="no">tune</span>, <span class="kw">measure</span> <span class="kw">=</span> <span class="st">"mae"</span>) <span class="co"># plot mean absolute error</span></pre></body></html></div>
 <div class="figure">
@@ -164,12 +165,13 @@ Model tuning results from Gaussian SLOPE on the bodyfat dataset.
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">tune</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Call:</span>
-<span class="co">#&gt; trainSLOPE(x = x, y = y, q = c(0.1, 0.2), number = 10, repeats = 3)</span>
+<span class="co">#&gt; trainSLOPE(x = x, y = y, q = c(0.1, 0.2), number = 5, repeats = 2, </span>
+<span class="co">#&gt;     solver = "admm")</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Optimum values:</span>
-<span class="co">#&gt;     q     sigma measure      mean         se       lo        hi</span>
-<span class="co">#&gt; 1 0.2 0.2921868     mae  3.631925 0.08095219  3.46636  3.797491</span>
-<span class="co">#&gt; 2 0.2 0.2210286     mse 19.911041 0.86688597 18.13806 21.684022</span></pre></body></html></div>
+<span class="co">#&gt;     q     sigma measure      mean        se        lo        hi</span>
+<span class="co">#&gt; 1 0.1 0.1264807     mae  3.632983 0.1164238  3.369614  3.896352</span>
+<span class="co">#&gt; 2 0.2 0.1152445     mse 19.786523 1.1095689 17.276504 22.296542</span></pre></body></html></div>
 </div>
 <div id="false-discovery-rate" class="section level2">
 <h2 class="hasAnchor">
@@ -194,6 +196,7 @@ Model tuning results from Gaussian SLOPE on the bodyfat dataset.
   <span class="no">fit</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/SLOPE.html">SLOPE</a></span>(<span class="no">x</span>,
                <span class="no">y</span>,
                <span class="kw">lambda</span> <span class="kw">=</span> <span class="st">"gaussian"</span>,
+               <span class="kw">solver</span> <span class="kw">=</span> <span class="st">"admm"</span>,
                <span class="kw">q</span> <span class="kw">=</span> <span class="fl">0.1</span>,
                <span class="kw">sigma</span> <span class="kw">=</span> <span class="no">sigma</span>)
 

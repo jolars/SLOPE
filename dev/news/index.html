@@ -146,7 +146,9 @@
 <li>
 <code><a href="../reference/SLOPE_solver.html">SLOPE_solver()</a></code>, <code>SLOPE_solver_matlab()</code>, <code><a href="../reference/prox_sorted_L1.html">prox_sorted_L1()</a></code>, and <code><a href="../reference/lambda.html">create_lambda()</a></code> have been deprecated (and will be defunct in the next version of SLOPE)</li>
 <li>arguments <code>X</code>, <code>fdr</code>, and <code>normalize</code> have been deprecated in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> and replaced by <code>x</code>, <code>q</code>, <code>scale</code> and <code>center</code>, respectively</li>
-<li>argument <code>sovler</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> has been deprecated</li>
+<li>options <code>"default"</code> and <code>"matlab"</code> to argument <code>solver</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> have been deprecated and replaced with <code>"fista"</code> and <code>"admm"</code>, which uses the accelerated proximal gradient method FISTA and alternating direction of multipliers method (ADMM) respectively</li>
+<li>ADMM has been implemented as a solver for <code>family = "gaussian"</code>
+</li>
 <li>binomial, poisson, and multinomial families are now supported (using <code>family</code> argument in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>)</li>
 <li>input to <code>lambda</code> is now scaled (divided by) the number of observations (rows) in <code>x</code>
 </li>

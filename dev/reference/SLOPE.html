@@ -157,25 +157,25 @@ in decreasing order according  to its absolute values.</p>
   <span class='kw'>scale</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"l2"</span>, <span class='st'>"l1"</span>, <span class='st'>"sd"</span>, <span class='st'>"none"</span>),
   <span class='kw'>sigma</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"path"</span>, <span class='st'>"estimate"</span>),
   <span class='kw'>lambda</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"gaussian"</span>, <span class='st'>"bh"</span>, <span class='st'>"oscar"</span>, <span class='st'>"bhq"</span>),
-  <span class='kw'>lambda_min_ratio</span> <span class='kw'>=</span> <span class='kw'>if</span> (<span class='no'>n</span> <span class='kw'>&lt;</span> <span class='no'>p</span>) <span class='fl'>0.01</span> <span class='kw'>else</span> <span class='fl'>1e-04</span>,
-  <span class='kw'>n_sigma</span> <span class='kw'>=</span> <span class='fl'>100</span>,
-  <span class='kw'>q</span> <span class='kw'>=</span> <span class='fl'>0.1</span> * <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span>(<span class='fl'>1</span>, <span class='no'>n</span>/<span class='no'>p</span>),
+  <span class='kw'>lambda_min_ratio</span> <span class='kw'>=</span> <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span>(<span class='no'>x</span>) <span class='kw'>&lt;</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NCOL</a></span>(<span class='no'>x</span>)) <span class='fl'>0.01</span> <span class='kw'>else</span> <span class='fl'>1e-04</span>,
+  <span class='kw'>n_sigma</span> <span class='kw'>=</span> <span class='kw'>if</span> (<span class='no'>sigma</span>[<span class='fl'>1</span>] <span class='kw'>==</span> <span class='st'>"estimate"</span>) <span class='fl'>1</span> <span class='kw'>else</span> <span class='fl'>100</span>,
+  <span class='kw'>q</span> <span class='kw'>=</span> <span class='fl'>0.1</span> * <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span>(<span class='no'>x</span>)/<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NCOL</a></span>(<span class='no'>x</span>)),
   <span class='kw'>screen</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>screen_alg</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"strong"</span>, <span class='st'>"working"</span>),
   <span class='kw'>tol_dev_change</span> <span class='kw'>=</span> <span class='fl'>1e-05</span>,
   <span class='kw'>tol_dev_ratio</span> <span class='kw'>=</span> <span class='fl'>0.995</span>,
+  <span class='kw'>max_variables</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span>(<span class='no'>x</span>),
+  <span class='kw'>solver</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"fista"</span>, <span class='st'>"admm"</span>, <span class='st'>"matlab"</span>, <span class='st'>"default"</span>),
+  <span class='kw'>max_passes</span> <span class='kw'>=</span> <span class='fl'>1e+06</span>,
   <span class='kw'>tol_abs</span> <span class='kw'>=</span> <span class='fl'>1e-05</span>,
   <span class='kw'>tol_rel</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>,
-  <span class='kw'>max_variables</span> <span class='kw'>=</span> <span class='no'>n</span> * <span class='no'>m</span>,
-  <span class='kw'>max_passes</span> <span class='kw'>=</span> <span class='fl'>1e+06</span>,
   <span class='kw'>tol_rel_gap</span> <span class='kw'>=</span> <span class='fl'>1e-05</span>,
   <span class='kw'>tol_infeas</span> <span class='kw'>=</span> <span class='fl'>0.001</span>,
   <span class='kw'>diagnostics</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>verbosity</span> <span class='kw'>=</span> <span class='fl'>0</span>,
   <span class='no'>X</span>,
   <span class='no'>fdr</span>,
-  <span class='no'>normalize</span>,
-  <span class='no'>solver</span>
+  <span class='no'>normalize</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -266,6 +266,23 @@ deviance ratio
 is above this threshold</p></td>
     </tr>
     <tr>
+      <th>max_variables</th>
+      <td><p>criterion for stopping the path in terms of the
+maximum number of unique, nonzero coefficients in absolute value in model.
+For the multinomial family, this value will be multiplied internally with
+the number of levels of the response minus one.</p></td>
+    </tr>
+    <tr>
+      <th>solver</th>
+      <td><p>type of solver use, either <code>"fista"</code> or <code>"admm"</code>. (<code>"default"</code>
+and <code>"matlab"</code> are deprecated). All families currently support
+FISTA. Only <code>family = "gaussian"</code> supports ADMM.</p></td>
+    </tr>
+    <tr>
+      <th>max_passes</th>
+      <td><p>maximum number of passes for optimizer</p></td>
+    </tr>
+    <tr>
       <th>tol_abs</th>
       <td><p>absolute tolerance criterion for ADMM solver (used for
 Gaussian dense designs)</p></td>
@@ -274,16 +291,6 @@ Gaussian dense designs)</p></td>
       <th>tol_rel</th>
       <td><p>relative tolerance criterion for ADMM solver (used for
 Gaussian dense designs)</p></td>
-    </tr>
-    <tr>
-      <th>max_variables</th>
-      <td><p>criterion for stopping the path in terms of the
-maximum number of unique, nonzero
-coefficients in absolute value in model</p></td>
-    </tr>
-    <tr>
-      <th>max_passes</th>
-      <td><p>maximum number of passes for optimizer</p></td>
     </tr>
     <tr>
       <th>tol_rel_gap</th>
@@ -316,10 +323,6 @@ information from the solver.</p></td>
     <tr>
       <th>normalize</th>
       <td><p>deprecated. please use <code>scale</code> and <code>center</code> instead</p></td>
-    </tr>
-    <tr>
-      <th>solver</th>
-      <td><p>deprecated</p></td>
     </tr>
     </table>
 
@@ -449,6 +452,14 @@ sequence such that
 $$
   \lambda_i = q(p - i) + 1.
 $$</p>
+    <h2 class="hasAnchor" id="solvers"><a class="anchor" href="#solvers"></a>Solvers</h2>
+
+    
+
+
+<p>There are currently two solvers available for SLOPE: FISTA (Beck and
+Teboulle 2009) and ADMM (Boyd et al. 2008). FISTA is available for
+families but ADMM is currently only available for <code>family = "gaussian"</code>.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Bogdan, M., van den Berg, E., Sabatti, C., Su, W., &amp; Candès, E. J. (2015).
@@ -458,6 +469,13 @@ Applied Statistics, 9(3), 1103–1140. <a href='https://doi.org/10/gfgwzt'>https
 Variable Selection, and Supervised Clustering of Predictors with OSCAR.
 Biometrics, 64(1), 115–123. JSTOR.
 <a href='https://doi.org/10.1111/j.1541-0420.2007.00843.x'>https://doi.org/10.1111/j.1541-0420.2007.00843.x</a></p>
+<p>Boyd, S., Parikh, N., Chu, E., Peleato, B., &amp; Eckstein, J. (2010).
+Distributed Optimization and Statistical Learning via the Alternating
+Direction Method of Multipliers. Foundations and Trends® in Machine Learning,
+3(1), 1–122. https://doi.org/10.1561/2200000016</p>
+<p>Beck, A., &amp; Teboulle, M. (2009). A Fast Iterative Shrinkage-Thresholding
+Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
+2(1), 183–202. https://doi.org/10.1137/080716542</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='plot.SLOPE.html'>plot.SLOPE()</a></code>, <code><a href='plotDiagnostics.html'>plotDiagnostics()</a></code>, <code><a href='score.html'>score()</a></code>, <code><a href='predict.SLOPE.html'>predict.SLOPE()</a></code>,
