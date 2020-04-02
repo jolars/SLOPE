@@ -190,10 +190,14 @@ List cppSLOPE(T& x, mat& y, const List control)
           xx = x*x.t();
         }
 
-        // TODO(jolars): should rho be updated for each new run?
         vec eigval = eig_sym(xx);
-        rho =
-          std::pow(eigval.max(), 1/3)*std::pow(lambda.max()*sigma(k), 2/3);
+
+        if (lambda.max()*sigma(k) == 0) {
+          rho = eigval.max();
+        } else {
+          rho =
+            std::pow(eigval.max(), 1/3)*std::pow(lambda.max()*sigma(k), 2/3);
+        }
 
         if (n < p)
           xx /= rho;
@@ -243,8 +247,13 @@ List cppSLOPE(T& x, mat& y, const List control)
             }
 
             vec eigval = eig_sym(xx);
-            rho =
-              std::pow(eigval.max(), 1/3)*std::pow(lambda.max()*sigma(k), 2/3);
+
+            if (lambda.max()*sigma(k) == 0) {
+              rho = eigval.max();
+            } else {
+              rho = std::pow(eigval.max(), 2/3)*
+                std::pow(lambda.max()*sigma(k), 1/3);
+            }
 
             if (x_subset.n_rows < x_subset.n_cols)
               xx /= rho;
@@ -368,20 +377,20 @@ List cppSLOPE(T& x, mat& y, const List control)
             << ", n unique: "   << setw(5) << n_unique(k)
             << endl;
 
-    if (n_coefs > 0 && k > 0) {
-      // stop path if fractional deviance change is small
-      if (deviance_change < tol_dev_change || deviance_ratio > tol_dev_ratio) {
-        k++;
-        break;
+      if (n_coefs > 0 && k > 0) {
+        // stop path if fractional deviance change is small
+        if (deviance_change < tol_dev_change || deviance_ratio > tol_dev_ratio) {
+          k++;
+          break;
+        }
       }
-    }
 
-    if (n_unique(k) > max_variables)
-      break;
+      if (n_unique(k) > max_variables)
+        break;
 
-    k++;
+      k++;
 
-    checkUserInterrupt();
+      checkUserInterrupt();
   }
 
   betas.resize(p, m, k);
