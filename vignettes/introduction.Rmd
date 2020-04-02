@@ -105,8 +105,9 @@ y <- bodyfat$y
 tune <- trainSLOPE(x,
                    y,
                    q = c(0.1, 0.2),
-                   number = 10,
-                   repeats = 3)
+                   number = 5,
+                   solver = "admm",
+                   repeats = 2)
 ```
 
 As before, the plot method offers the best summary.
@@ -155,6 +156,7 @@ for (i in seq_along(q)) {
   fit <- SLOPE(x,
                y,
                lambda = "gaussian",
+               solver = "admm",
                q = 0.1,
                sigma = sigma)
   
