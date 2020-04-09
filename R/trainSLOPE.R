@@ -36,7 +36,7 @@
 #'
 #' @export
 #'
-#' @seealso [foreach::foreach], [plot.TrainedSLOPE()]
+#' @seealso [foreach::foreach()], [plot.TrainedSLOPE()]
 #'
 #' @examples
 #' # 8-fold cross-validation repeated 5 times

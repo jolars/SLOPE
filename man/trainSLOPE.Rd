@@ -75,5 +75,5 @@ tune <- trainSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
                    repeats = 5)
 }
 \seealso{
-\link[foreach:foreach]{foreach::foreach}, \code{\link[=plot.TrainedSLOPE]{plot.TrainedSLOPE()}}
+\code{\link[foreach:foreach]{foreach::foreach()}}, \code{\link[=plot.TrainedSLOPE]{plot.TrainedSLOPE()}}
 }
