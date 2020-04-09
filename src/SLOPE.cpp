@@ -96,8 +96,8 @@ List cppSLOPE(T& x, mat& y, const List control)
   mat linear_predictor = x*beta;
 
   double null_deviance = 2*family->primal(y, linear_predictor);
-  std::vector<double> deviances;
-  std::vector<double> deviance_ratios;
+  vec deviance_ratios(n_sigma);
+  vec deviances(n_sigma);
   double deviance_change{0};
 
   mat beta_prev(p, m, fill::zeros);
@@ -351,13 +351,11 @@ List cppSLOPE(T& x, mat& y, const List control)
     // store coefficients and intercept
     double deviance = res.deviance;
     double deviance_ratio = 1.0 - deviance/null_deviance;
-    deviances.push_back(deviance);
-    deviance_ratios.push_back(deviance_ratio);
+    deviances(k) = deviance;
+    deviance_ratios(k) = deviance_ratio;
 
-    if (k > 0) {
-      deviance_change =
-        std::abs((deviances[k-1] - deviance)/deviances[k-1]);
-    }
+    deviance_change =
+      k == 0 ? 0.0 : std::abs((deviances(k-1) - deviance)/deviances(k-1));
 
     betas.slice(k) = beta;
     beta_prev = beta;
@@ -397,6 +395,8 @@ List cppSLOPE(T& x, mat& y, const List control)
   passes.resize(k);
   sigma.resize(k);
   n_unique.resize(k);
+  deviances.resize(k);
+  deviance_ratios.resize(k);
   active_sets = active_sets.rows(0, std::max(static_cast<int>(k-1), 0));
 
   rescale(betas,
