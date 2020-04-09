@@ -26,7 +26,7 @@ print.SLOPE <- function(x, ...) {
       "\n\n", sep = "")
 
   # print path summary
-  cat("\nPath summary:\n")
+  cat("Path summary:\n")
   print(out, ...)
 }
 
