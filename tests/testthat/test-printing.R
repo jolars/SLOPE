@@ -3,7 +3,7 @@ test_that("verbosity returns printouts", {
   x <- xy$x
   y <- xy$y
 
-  expect_output(SLOPE(x, y, verbosity = 1))
-  expect_output(SLOPE(x, y, verbosity = 2))
-  expect_output(SLOPE(x, y, verbosity = 3))
+  expect_output(print(SLOPE(x, y, verbosity = 1)))
+  expect_output(print(SLOPE(x, y, verbosity = 2)))
+  expect_output(print(SLOPE(x, y, verbosity = 3)))
 })
