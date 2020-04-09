@@ -46,16 +46,16 @@
 #'                    number = 8,
 #'                    repeats = 5)
 trainSLOPE <- function(x,
-                     y,
-                     q = 0.2,
-                     number = 10,
-                     repeats = 1,
-                     measure = c("mse",
-                                 "mae",
-                                 "deviance",
-                                 "missclass",
-                                 "auc"),
-                     ...) {
+                       y,
+                       q = 0.2,
+                       number = 10,
+                       repeats = 1,
+                       measure = c("mse",
+                                   "mae",
+                                   "deviance",
+                                   "missclass",
+                                   "auc"),
+                       ...) {
   ocall <- match.call()
 
   n <- NROW(x)
@@ -103,6 +103,8 @@ trainSLOPE <- function(x,
   # prevent warnings if no backend registered
   if (!foreach::getDoParRegistered())
     foreach::registerDoSEQ()
+
+  i <- 1 # fixes R CMD check NOTE
 
   r <- foreach(i = seq_len(nrow(grid)), .packages = c("SLOPE")) %dopar% {
     id <- grid$fold[i]
