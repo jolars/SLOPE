@@ -161,7 +161,7 @@ in decreasing order according  to its absolute values.</p>
   <span class='kw'>n_sigma</span> <span class='kw'>=</span> <span class='kw'>if</span> (<span class='no'>sigma</span>[<span class='fl'>1</span>] <span class='kw'>==</span> <span class='st'>"estimate"</span>) <span class='fl'>1</span> <span class='kw'>else</span> <span class='fl'>100</span>,
   <span class='kw'>q</span> <span class='kw'>=</span> <span class='fl'>0.1</span> * <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span>(<span class='no'>x</span>)/<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NCOL</a></span>(<span class='no'>x</span>)),
   <span class='kw'>screen</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>screen_alg</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"strong"</span>, <span class='st'>"working"</span>),
+  <span class='kw'>screen_alg</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"strong"</span>, <span class='st'>"previous"</span>),
   <span class='kw'>tol_dev_change</span> <span class='kw'>=</span> <span class='fl'>1e-05</span>,
   <span class='kw'>tol_dev_ratio</span> <span class='kw'>=</span> <span class='fl'>0.995</span>,
   <span class='kw'>max_variables</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span>(<span class='no'>x</span>),
@@ -242,14 +242,11 @@ of coefficients in the model</p></td>
     <tr>
       <th>screen_alg</th>
       <td><p>what type of screening algorithm to use.</p><ul>
-<li><p><code>"working"</code> is the approach used in glmnet, where
-the previously active set is used as a working set that is
-iteratively expanded by examining violations to the KKT rules in the
-strong set and when there are no failures in the strong set, checked
-against the full set of predictors; this approach is
-particularly useful when there is considerable correlation</p></li>
-<li><p><code>"strong"</code> uses the strong set as working set and checks for KKT
-violations in the full set of predictors</p></li>
+<li><p><code>"strong"</code> uses the set from the strong screening rule and check
+against the full set</p></li>
+<li><p><code>"previous"</code> first fits with the previous active set, then checks
+against the strong set, and finally against the full set if there are
+no violations in the strong set</p></li>
 </ul></td>
     </tr>
     <tr>
