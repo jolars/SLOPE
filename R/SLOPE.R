@@ -158,14 +158,11 @@
 #'   primal and dual objectives, and infeasibility)
 #' @param screen whether to use predictor screening rules
 #' @param screen_alg what type of screening algorithm to use.
-#'   * `"working"` is the approach used in glmnet, where
-#'     the previously active set is used as a working set that is
-#'     iteratively expanded by examining violations to the KKT rules in the
-#'     strong set and when there are no failures in the strong set, checked
-#'     against the full set of predictors; this approach is
-#'     particularly useful when there is considerable correlation
-#'   * `"strong"` uses the strong set as working set and checks for KKT
-#'     violations in the full set of predictors
+#'   * `"strong"` uses the set from the strong screening rule and check
+#'     against the full set
+#'   * `"previous"` first fits with the previous active set, then checks
+#'     against the strong set, and finally against the full set if there are
+#'     no violations in the strong set
 #' @param verbosity level of verbosity for displaying output from the
 #'   program. Setting this to 1 displays basic information on the path level,
 #'   2 a little bit more information on the path level, and 3 displays
@@ -308,7 +305,7 @@ SLOPE <- function(x,
                   n_sigma = if (sigma[1] == "estimate") 1 else 100,
                   q = 0.1*min(1, NROW(x)/NCOL(x)),
                   screen = TRUE,
-                  screen_alg = c("strong", "working"),
+                  screen_alg = c("strong", "previous"),
                   tol_dev_change = 1e-5,
                   tol_dev_ratio = 0.995,
                   max_variables = NROW(x),

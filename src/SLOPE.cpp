@@ -117,9 +117,9 @@ List cppSLOPE(T& x, mat& y, const List control)
   field<uvec> active_sets(n_sigma);
   uvec active_set = regspace<uvec>(0, p-1);
   uvec strong_set;
-  uvec ever_active_set;
+  uvec previous_set;
   if (intercept)
-    ever_active_set.insert_rows(0, 1);
+    previous_set.insert_rows(0, 1);
 
   // object for use in ADMM
   double rho = 0.0;
@@ -154,19 +154,22 @@ List cppSLOPE(T& x, mat& y, const List control)
 
       gradient_prev = family->gradient(x, y, x*beta_prev);
 
-      double sigma_prev = k == 0 ? sigma_max : sigma(k-1);
+      double sigma_prev = (k == 0) ? sigma_max : sigma(k-1);
 
-      strong_set = activeSet(gradient_prev,
+      strong_set = strongSet(gradient_prev,
                              lambda*sigma(k),
                              lambda*sigma_prev,
                              intercept);
 
-      uvec prev_active = find(any(beta_prev != 0, 1));
-      ever_active_set = setUnion(ever_active_set, prev_active);
-      strong_set = setUnion(strong_set, ever_active_set);
+      previous_set = find(any(beta_prev != 0, 1));
 
-      if (screen_alg == "working") {
-        active_set = ever_active_set;
+      if (intercept)
+        previous_set = setUnion(previous_set, {0});
+
+      strong_set = setUnion(strong_set, previous_set);
+
+      if (screen_alg == "previous") {
+        active_set = previous_set;
       } else {
         active_set = strong_set;
       }
@@ -297,7 +300,7 @@ List cppSLOPE(T& x, mat& y, const List control)
         uword n_strong =
           (strong_set.n_elem - static_cast<uword>(intercept))*m;
 
-        if (screen_alg == "working" && n_strong > 0) {
+        if (screen_alg == "previous" && n_strong > 0) {
           // check against strong set
           x_subset = matrixSubset(x, strong_set);
           gradient_prev = family->gradient(x_subset,

@@ -4,7 +4,7 @@
 
 using namespace arma;
 
-uvec activeSet(const mat& gradient_prev,
+uvec strongSet(const mat& gradient_prev,
                const vec& lambda,
                const vec& lambda_prev,
                const bool intercept)
