@@ -17,7 +17,7 @@ SLOPE(
   n_sigma = if (sigma[1] == "estimate") 1 else 100,
   q = 0.1 * min(1, NROW(x)/NCOL(x)),
   screen = TRUE,
-  screen_alg = c("strong", "working"),
+  screen_alg = c("strong", "previous"),
   tol_dev_change = 1e-05,
   tol_dev_ratio = 0.995,
   max_variables = NROW(x),
@@ -71,14 +71,11 @@ of coefficients in the model}
 
 \item{screen_alg}{what type of screening algorithm to use.
 \itemize{
-\item \code{"working"} is the approach used in glmnet, where
-the previously active set is used as a working set that is
-iteratively expanded by examining violations to the KKT rules in the
-strong set and when there are no failures in the strong set, checked
-against the full set of predictors; this approach is
-particularly useful when there is considerable correlation
-\item \code{"strong"} uses the strong set as working set and checks for KKT
-violations in the full set of predictors
+\item \code{"strong"} uses the set from the strong screening rule and check
+against the full set
+\item \code{"previous"} first fits with the previous active set, then checks
+against the strong set, and finally against the full set if there are
+no violations in the strong set
 }}
 
 \item{tol_dev_change}{the regularization path is stopped if the
