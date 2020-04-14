@@ -55,7 +55,7 @@ create_lambda_gaussian_truncated <- function(n, p, fdr) {
   lambda
 }
 
-#' Sorted L1 solver
+#' Sorted L1 solver (deprecated)
 #'
 #' Solves the sorted L1 penalized regression problem: given a matrix \eqn{A},
 #' a vector \eqn{b}, and a decreasing vector \eqn{\lambda}, find the vector
