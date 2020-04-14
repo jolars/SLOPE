@@ -30,7 +30,7 @@ means there are several changes to the API, including deprecated functions.
 * `SLOPE` objects gain `coef()` and `plot()` methods.
 * `SLOPE` now uses screening rules to speed up model fitting in the
   high-dimensional regime
-* the solver is now written in C++ using the **Rcpp** and **RcppArmadillo**
+* most of the code is now written in C++ using the **Rcpp** and **RcppArmadillo**
   packages
 * a new function `trainSLOPE()` trains SLOPE with repeated k-folds 
   cross-validation
