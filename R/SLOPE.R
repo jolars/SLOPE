@@ -528,12 +528,12 @@ SLOPE <- function(x,
 
   fitSLOPE <- if (is_sparse) sparseSLOPE else denseSLOPE
 
+  if (intercept) {
+    x <- cbind(1, x)
+  }
+
   if (sigma_type %in% c("path", "user")) {
-    if (intercept) {
-      fit <- fitSLOPE(cbind(1, x), y, control)
-    } else {
-      fit <- fitSLOPE(x, y, control)
-    }
+    fit <- fitSLOPE(x, y, control)
   } else {
     # estimate the noise level, if possible
     if (is.null(sigma) && n >= p + 30)
@@ -542,22 +542,23 @@ SLOPE <- function(x,
     # run the solver, iteratively if necessary.
     if (is.null(sigma)) {
       # Run Algorithm 5 of Section 3.2.3. (Bogdan et al.)
-      selected <- integer(0)
+      if (intercept)
+        selected <- 1
+      else
+        selected <- integer(0)
+
       repeat {
         selected_prev <- selected
+
         sigma <- estimateNoise(x[, selected, drop = FALSE], y, intercept)
         control$sigma <- sigma
 
-        if (intercept) {
-          fit <- fitSLOPE(cbind(1, x), y, control)
-        } else {
-          fit <- fitSLOPE(x, y, control)
-        }
+        fit <- fitSLOPE(x, y, control)
 
         selected <- which(abs(drop(fit$betas)) > 0)
 
         if (fit_intercept)
-          selected <- selected[-1]
+          selected <- union(1, selected)
 
         if (identical(selected, selected_prev))
           break
@@ -567,11 +568,7 @@ SLOPE <- function(x,
       }
     } else {
       control$sigma <- sigma
-      if (intercept) {
-        fit <- fitSLOPE(cbind(1, x), y, control)
-      } else {
-        fit <- fitSLOPE(x, y, control)
-      }
+      fit <- fitSLOPE(x, y, control)
     }
   }
 
