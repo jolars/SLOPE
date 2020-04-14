@@ -12,8 +12,7 @@ status](https://codecov.io/gh/jolars/SLOPE/branch/master/graph/badge.svg)](https
 [![CRAN
 status](https://www.r-pkg.org/badges/version/SLOPE)](https://CRAN.R-project.org/package=SLOPE)
 [![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-
+maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 <!-- badges: end -->
 
 Efficient implementations for Sorted L-One Penalized Estimation (SLOPE):
@@ -47,5 +46,6 @@ SLOPE uses [semantic versioning](http://semver.org).
 ## Code of conduct
 
 Please note that the ‘SLOPE’ project is released with a [Contributor
-Code of Conduct](https://jolars.github.io/SLOPE/CODE_OF_CONDUCT.html).
+Code of
+Conduct](https://github.com/jolars/SLOPE/blob/master/CODE_OF_CONDUCT.md).
 By contributing to this project, you agree to abide by its terms.
