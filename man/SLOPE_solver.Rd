@@ -2,7 +2,7 @@
 % Please edit documentation in R/deprecated.R
 \name{SLOPE_solver}
 \alias{SLOPE_solver}
-\title{Sorted L1 solver}
+\title{Sorted L1 solver (deprecated)}
 \usage{
 SLOPE_solver(
   A,

@@ -20,7 +20,7 @@ matrix of the standard \emph{matrix} class, or a sparse matrix
 inheriting from \link[Matrix:sparseMatrix]{Matrix::sparseMatrix} Data frames will
 be converted to matrices internally.}
 
-\item{y}{the response. For Gaussian models this must be numeric; for
+\item{y}{the response, which for Gaussian models must be numeric; for
 binomial models, it can be a factor.}
 
 \item{q}{shape of lambda sequence}

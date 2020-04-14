@@ -2,7 +2,7 @@
 % Please edit documentation in R/SLOPE.R
 \name{SLOPE}
 \alias{SLOPE}
-\title{Generalized linear models regularized with the Sorted L1 Norm}
+\title{Sorted L-One Penalized Estimation}
 \usage{
 SLOPE(
   x,
@@ -40,25 +40,27 @@ matrix of the standard \emph{matrix} class, or a sparse matrix
 inheriting from \link[Matrix:sparseMatrix]{Matrix::sparseMatrix} Data frames will
 be converted to matrices internally.}
 
-\item{y}{the response. For Gaussian models this must be numeric; for
+\item{y}{the response, which for Gaussian models must be numeric; for
 binomial models, it can be a factor.}
 
-\item{family}{response type. See \strong{Families} for details.}
+\item{family}{response type; see \strong{Families} for details.}
 
 \item{intercept}{whether to fit an intercept}
 
 \item{center}{whether to center predictors or not by their mean. Defaults
-to true if dense matrix, false otherwise.}
+to \code{TRUE} if \code{x} is dense and \code{FALSE} otherwise.}
 
-\item{scale}{type of scaling to apply to predictors, \code{"l1"} scales
+\item{scale}{type of scaling to apply to predictors; \code{"l1"} scales
 predictors to have L1-norm of one, \code{"l2"} scales predictors to have
 L2-norm one, \code{"sd"} scales predictors to have standard deviation one.}
 
 \item{sigma}{scale of lambda sequence}
 
 \item{lambda}{either a character vector indicating the method used
-to construct the lambda path or a vector with length equal to the number
-of coefficients in the model}
+to construct the lambda path or a numeric non-decreasing
+vector with length equal to the number
+of coefficients in the model; see section \strong{Regularization sequences}
+for details.}
 
 \item{lambda_min_ratio}{smallest value for \code{lambda} as a fraction of
 \code{lambda_max}}
@@ -93,20 +95,20 @@ For the multinomial family, this value will be multiplied internally with
 the number of levels of the response minus one.}
 
 \item{solver}{type of solver use, either \code{"fista"} or \code{"admm"}. (\code{"default"}
-and \code{"matlab"} are deprecated). All families currently support
-FISTA. Only \code{family = "gaussian"} supports ADMM.}
+and \code{"matlab"} are deprecated); all families currently support
+FISTA but only \code{family = "gaussian"} supports ADMM.}
 
 \item{max_passes}{maximum number of passes for optimizer}
 
-\item{tol_abs}{absolute tolerance criterion for ADMM solver (used for
-Gaussian dense designs)}
+\item{tol_abs}{absolute tolerance criterion for ADMM solver}
 
-\item{tol_rel}{relative tolerance criterion for ADMM solver (used for
-Gaussian dense designs)}
+\item{tol_rel}{relative tolerance criterion for ADMM solver}
 
-\item{tol_rel_gap}{stopping criterion for the duality gap}
+\item{tol_rel_gap}{stopping criterion for the duality gap; used with
+FISTA solver.}
 
-\item{tol_infeas}{stopping criterion for the level of infeasibility}
+\item{tol_infeas}{stopping criterion for the level of infeasibility; used
+with FISTA solver and KKT checks in screening algorithm.}
 
 \item{diagnostics}{should diagnostics be saved for the model fit (timings,
 primal and dual objectives, and infeasibility)}
@@ -172,34 +174,36 @@ available if \code{diagnostics = TRUE} in the call to \code{\link[=SLOPE]{SLOPE(
 }
 \description{
 Fit a generalized linear model regularized with the
-SLOPE (Sorted L-One Penalized Estimation) norm, which applies a
-decreasing \eqn{\lambda} (penalty sequence) to the
+sorted L1 norm, which applies a
+non-increasing regularization sequence to the
 coefficient vector (\eqn{\beta}) after having sorted it
 in decreasing order according  to its absolute values.
 }
 \details{
-\code{SLOPE()} tries to minimize the following composite objective, given
-in Lagrangian form.
+\code{SLOPE()} solves a convex minimization problem with the
+following composite objective:
 \deqn{
   f(\beta) + \sigma \sum_{i=j}^p \lambda_j |\beta|_{(j)},
 }{
   f(\beta) + \sigma \sum \lambda |\beta|(j),
 }
-where \eqn{f(\beta)} is a smooth, convex function of \eqn{\beta}, whereas
-the second part is the SLOPE norm, which is convex but non-smooth.
-In ordinary least-squares regression, for instance,
+where \eqn{f(\beta)} is a smooth and convex function of \eqn{\beta} and
+the second part is the sorted L1-norm.
+In ordinary least-squares regression,
 \eqn{f(\beta)} is simply the squared norm of the least-squares residuals.
 See section \strong{Families} for specifics regarding the various types of
 \eqn{f(\beta)} (model families) that are allowed in \code{SLOPE()}.
 
-By default, \code{SLOPE()} fits a path of \code{lambda} sequences, starting from
+By default, \code{SLOPE()} fits a path of models, each corresponding to
+a separate regularization sequence, starting from
 the null (intercept-only) model to an almost completely unregularized
-model. The path will end prematurely, however, if the criteria
-related to \emph{any} of the
-arguments \code{tol_dev_change}, \code{tol_dev_ratio}, or \code{max_variables}
-are reached before the path is complete. This means that unless these
-arguments are modified, the path is not guaranteed to be of
-length \code{n_sigma}.
+model. These regularization sequences are parameterized using
+\eqn{lambda} and \eqn{sigma}, with only \eqn{sigma} varying along the
+path. The length of the path can be manually, but will terminate
+prematurely depending on
+arguments \code{tol_dev_change}, \code{tol_dev_ratio}, and \code{max_variables}.
+This means that unless these arguments are modified, the path is not
+guaranteed to be of length \code{n_sigma}.
 }
 \section{Families}{
 
@@ -207,14 +211,16 @@ length \code{n_sigma}.
 \strong{Gaussian}
 
 The Gaussian model (Ordinary Least Squares) minimizes the following
-objective.
+objective:
 \deqn{
-  ||y - X\beta||_2^2
+  \frac 12 \Vert y - X\beta\Vert_2^2
+}{
+  (1/2)||y - X \beta||_2^2
 }
 
 \strong{Binomial}
 
-The binomial model (logistic regression) has the following objective.
+The binomial model (logistic regression) has the following objective:
 \deqn{
   \sum_{i=1}^n \log\left(1+ \exp\left(- y_i \left(x_i^T\beta + \alpha \right) \right) \right)
 }{
@@ -224,7 +230,7 @@ with \eqn{y \in \{-1, 1\}}{y in {-1, 1}}.
 
 \strong{Poisson}
 
-In poisson regression, we use the following objective.
+In poisson regression, we use the following objective:
 
 \deqn{
   -\sum_{i=1}^n \left(y_i\left(x_i^T\beta + \alpha\right) - \exp\left(x_i^T\beta + \alpha\right)\right)
@@ -274,9 +280,9 @@ as \eqn{\lambda^{(\mathrm{BH})}}{\lambda^(BH)} by Bogdan et al, which sets
 }{
   \lambda_i = \Phi^-1(1 - iq/(2p)),
 }
-where \eqn{\Phi^{-1}}{\Phi^-1} is the quantile function for the standard
-normal distribution and \eqn{q} is a parameter that can be
-set by the user in the call to \code{SLOPE()}.
+for \eqn{i=1,\dots,p}, where \eqn{\Phi^{-1}}{\Phi^-1} is the quantile
+function for the standard normal distribution and \eqn{q} is a parameter
+that can be set by the user in the call to \code{SLOPE()}.
 
 \strong{Gaussian}
 
@@ -286,7 +292,7 @@ This penalty sequence is related to BH, such that
 }{
   \lambda_i = \lambda^(BH)_i \sqrt{1 + w(i-1) * cumsum(\lambda^2)_i},
 }
-where \eqn{w(k) = 1/(n-k-1)}. We let
+for \eqn{i=1,\dots,p}, where \eqn{w(k) = 1/(n-k-1)}. We let
 \eqn{\lambda_1 = \lambda^{(\mathrm{BH})}_1}{\lambda_1 = \lambda^(BH)_1} and
 adjust the sequence to make sure that it's non-increasing.
 Note that if \eqn{p} is large relative
@@ -300,6 +306,7 @@ sequence such that
 \deqn{
   \lambda_i = q(p - i) + 1.
 }
+for \eqn{i = 1,\dots,p}.
 }
 
 \section{Solvers}{
@@ -313,15 +320,12 @@ families but ADMM is currently only available for \code{family = "gaussian"}.
 \examples{
 
 # Gaussian response, default lambda sequence
-
 fit <- SLOPE(bodyfat$x, bodyfat$y)
 
 # Binomial response, BH-type lambda sequence
-
 fit <- SLOPE(heart$x, heart$y, family = "binomial", lambda = "bh")
 
 # Poisson response, OSCAR-type lambda sequence
-
 fit <- SLOPE(abalone$x,
              abalone$y,
              family = "poisson",
@@ -329,7 +333,6 @@ fit <- SLOPE(abalone$x,
              q = 0.4)
 
 # Multinomial response, custom sigma and lambda
-
 m <- length(unique(wine$y)) - 1
 p <- ncol(wine$x)
 
@@ -356,11 +359,11 @@ Biometrics, 64(1), 115–123. JSTOR.
 Boyd, S., Parikh, N., Chu, E., Peleato, B., & Eckstein, J. (2010).
 Distributed Optimization and Statistical Learning via the Alternating
 Direction Method of Multipliers. Foundations and Trends® in Machine Learning,
-3(1), 1–122. https://doi.org/10.1561/2200000016
+3(1), 1–122. \url{https://doi.org/10.1561/2200000016}
 
 Beck, A., & Teboulle, M. (2009). A Fast Iterative Shrinkage-Thresholding
 Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
-2(1), 183–202. https://doi.org/10.1137/080716542
+2(1), 183–202. \url{https://doi.org/10.1137/080716542}
 }
 \seealso{
 \code{\link[=plot.SLOPE]{plot.SLOPE()}}, \code{\link[=plotDiagnostics]{plotDiagnostics()}}, \code{\link[=score]{score()}}, \code{\link[=predict.SLOPE]{predict.SLOPE()}},
