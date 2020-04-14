@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# SLOPE <a href='https:/jolars.github.io/SLOPE'><img src='man/figures/logo.svg' align="right" height="139" /></a>
+# SLOPE <img src='man/figures/logo.svg' align="right" height="139" />
 
 <!-- badges: start -->
 [![R CMD Check via {tic}](https://github.com/jolars/SLOPE/workflows/R%20CMD%20Check%20via%20{tic}/badge.svg?branch=master)](https://github.com/jolars/SLOPE/actions)
