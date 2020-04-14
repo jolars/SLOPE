@@ -1,47 +1,51 @@
-#' Generalized linear models regularized with the Sorted L1 Norm
+#' Sorted L-One Penalized Estimation
 #'
 #' Fit a generalized linear model regularized with the
-#' SLOPE (Sorted L-One Penalized Estimation) norm, which applies a
-#' decreasing \eqn{\lambda} (penalty sequence) to the
+#' sorted L1 norm, which applies a
+#' non-increasing regularization sequence to the
 #' coefficient vector (\eqn{\beta}) after having sorted it
 #' in decreasing order according  to its absolute values.
 #'
-#' `SLOPE()` tries to minimize the following composite objective, given
-#' in Lagrangian form.
+#' `SLOPE()` solves a convex minimization problem with the
+#' following composite objective:
 #' \deqn{
 #'   f(\beta) + \sigma \sum_{i=j}^p \lambda_j |\beta|_{(j)},
 #' }{
 #'   f(\beta) + \sigma \sum \lambda |\beta|(j),
 #' }
-#' where \eqn{f(\beta)} is a smooth, convex function of \eqn{\beta}, whereas
-#' the second part is the SLOPE norm, which is convex but non-smooth.
-#' In ordinary least-squares regression, for instance,
+#' where \eqn{f(\beta)} is a smooth and convex function of \eqn{\beta} and
+#' the second part is the sorted L1-norm.
+#' In ordinary least-squares regression,
 #' \eqn{f(\beta)} is simply the squared norm of the least-squares residuals.
 #' See section **Families** for specifics regarding the various types of
 #' \eqn{f(\beta)} (model families) that are allowed in `SLOPE()`.
 #'
-#' By default, `SLOPE()` fits a path of `lambda` sequences, starting from
+#' By default, `SLOPE()` fits a path of models, each corresponding to
+#' a separate regularization sequence, starting from
 #' the null (intercept-only) model to an almost completely unregularized
-#' model. The path will end prematurely, however, if the criteria
-#' related to *any* of the
-#' arguments `tol_dev_change`, `tol_dev_ratio`, or `max_variables`
-#' are reached before the path is complete. This means that unless these
-#' arguments are modified, the path is not guaranteed to be of
-#' length `n_sigma`.
+#' model. These regularization sequences are parameterized using
+#' \eqn{lambda} and \eqn{sigma}, with only \eqn{sigma} varying along the
+#' path. The length of the path can be manually, but will terminate
+#' prematurely depending on
+#' arguments `tol_dev_change`, `tol_dev_ratio`, and `max_variables`.
+#' This means that unless these arguments are modified, the path is not
+#' guaranteed to be of length `n_sigma`.
 #'
 #' @section Families:
 #'
 #' **Gaussian**
 #'
 #' The Gaussian model (Ordinary Least Squares) minimizes the following
-#' objective.
+#' objective:
 #' \deqn{
-#'   ||y - X\beta||_2^2
+#'   \frac 12 \Vert y - X\beta\Vert_2^2
+#' }{
+#'   (1/2)||y - X \beta||_2^2
 #' }
 #'
 #' **Binomial**
 #'
-#' The binomial model (logistic regression) has the following objective.
+#' The binomial model (logistic regression) has the following objective:
 #' \deqn{
 #'   \sum_{i=1}^n \log\left(1+ \exp\left(- y_i \left(x_i^T\beta + \alpha \right) \right) \right)
 #' }{
@@ -51,7 +55,7 @@
 #'
 #' **Poisson**
 #'
-#' In poisson regression, we use the following objective.
+#' In poisson regression, we use the following objective:
 #'
 #' \deqn{
 #'   -\sum_{i=1}^n \left(y_i\left(x_i^T\beta + \alpha\right) - \exp\left(x_i^T\beta + \alpha\right)\right)
@@ -99,9 +103,9 @@
 #' }{
 #'   \lambda_i = \Phi^-1(1 - iq/(2p)),
 #' }
-#' where \eqn{\Phi^{-1}}{\Phi^-1} is the quantile function for the standard
-#' normal distribution and \eqn{q} is a parameter that can be
-#' set by the user in the call to `SLOPE()`.
+#' for \eqn{i=1,\dots,p}, where \eqn{\Phi^{-1}}{\Phi^-1} is the quantile
+#' function for the standard normal distribution and \eqn{q} is a parameter
+#' that can be set by the user in the call to `SLOPE()`.
 #'
 #' **Gaussian**
 #'
@@ -111,7 +115,7 @@
 #' }{
 #'   \lambda_i = \lambda^(BH)_i \sqrt{1 + w(i-1) * cumsum(\lambda^2)_i},
 #' }
-#' where \eqn{w(k) = 1/(n-k-1)}. We let
+#' for \eqn{i=1,\dots,p}, where \eqn{w(k) = 1/(n-k-1)}. We let
 #' \eqn{\lambda_1 = \lambda^{(\mathrm{BH})}_1}{\lambda_1 = \lambda^(BH)_1} and
 #' adjust the sequence to make sure that it's non-increasing.
 #' Note that if \eqn{p} is large relative
@@ -125,6 +129,7 @@
 #' \deqn{
 #'   \lambda_i = q(p - i) + 1.
 #' }
+#' for \eqn{i = 1,\dots,p}.
 #'
 #' @section Solvers:
 #'
@@ -136,20 +141,22 @@
 #'   matrix of the standard *matrix* class, or a sparse matrix
 #'   inheriting from [Matrix::sparseMatrix] Data frames will
 #'   be converted to matrices internally.
-#' @param y the response. For Gaussian models this must be numeric; for
+#' @param y the response, which for Gaussian models must be numeric; for
 #'   binomial models, it can be a factor.
-#' @param family response type. See **Families** for details.
+#' @param family response type; see **Families** for details.
 #' @param intercept whether to fit an intercept
 #' @param center whether to center predictors or not by their mean. Defaults
-#'   to true if dense matrix, false otherwise.
-#' @param scale type of scaling to apply to predictors, `"l1"` scales
+#'   to `TRUE` if `x` is dense and `FALSE` otherwise.
+#' @param scale type of scaling to apply to predictors; `"l1"` scales
 #'   predictors to have L1-norm of one, `"l2"` scales predictors to have
 #'   L2-norm one, `"sd"` scales predictors to have standard deviation one.
 #' @param sigma scale of lambda sequence
 #' @param n_sigma length of regularization path
 #' @param lambda either a character vector indicating the method used
-#'   to construct the lambda path or a vector with length equal to the number
-#'   of coefficients in the model
+#'   to construct the lambda path or a numeric non-decreasing
+#'   vector with length equal to the number
+#'   of coefficients in the model; see section **Regularization sequences**
+#'   for details.
 #' @param lambda_min_ratio smallest value for `lambda` as a fraction of
 #'   `lambda_max`
 #' @param q shape of lambda sequence
@@ -178,18 +185,18 @@
 #'   maximum number of unique, nonzero coefficients in absolute value in model.
 #'   For the multinomial family, this value will be multiplied internally with
 #'   the number of levels of the response minus one.
-#' @param tol_rel_gap stopping criterion for the duality gap
-#' @param tol_infeas stopping criterion for the level of infeasibility
-#' @param tol_abs absolute tolerance criterion for ADMM solver (used for
-#'   Gaussian dense designs)
-#' @param tol_rel relative tolerance criterion for ADMM solver (used for
-#'   Gaussian dense designs)
+#' @param tol_rel_gap stopping criterion for the duality gap; used with
+#'   FISTA solver.
+#' @param tol_infeas stopping criterion for the level of infeasibility; used
+#'   with FISTA solver and KKT checks in screening algorithm.
+#' @param tol_abs absolute tolerance criterion for ADMM solver
+#' @param tol_rel relative tolerance criterion for ADMM solver
 #' @param X deprecated. please use `x` instead
 #' @param fdr deprecated. please use `q` instead
 #' @param normalize deprecated. please use `scale` and `center` instead
 #' @param solver type of solver use, either `"fista"` or `"admm"`. (`"default"`
-#'   and `"matlab"` are deprecated). All families currently support
-#'   FISTA. Only `family = "gaussian"` supports ADMM.
+#'   and `"matlab"` are deprecated); all families currently support
+#'   FISTA but only `family = "gaussian"` supports ADMM.
 #'
 #' @return An object of class `"SLOPE"` with the following slots:
 #' \item{coefficients}{
@@ -255,24 +262,21 @@
 #' Boyd, S., Parikh, N., Chu, E., Peleato, B., & Eckstein, J. (2010).
 #' Distributed Optimization and Statistical Learning via the Alternating
 #' Direction Method of Multipliers. Foundations and Trends® in Machine Learning,
-#' 3(1), 1–122. https://doi.org/10.1561/2200000016
+#' 3(1), 1–122. <https://doi.org/10.1561/2200000016>
 #'
 #' Beck, A., & Teboulle, M. (2009). A Fast Iterative Shrinkage-Thresholding
 #' Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
-#' 2(1), 183–202. https://doi.org/10.1137/080716542
+#' 2(1), 183–202. <https://doi.org/10.1137/080716542>
 #'
 #' @examples
 #'
 #' # Gaussian response, default lambda sequence
-#'
 #' fit <- SLOPE(bodyfat$x, bodyfat$y)
 #'
 #' # Binomial response, BH-type lambda sequence
-#'
 #' fit <- SLOPE(heart$x, heart$y, family = "binomial", lambda = "bh")
 #'
 #' # Poisson response, OSCAR-type lambda sequence
-#'
 #' fit <- SLOPE(abalone$x,
 #'              abalone$y,
 #'              family = "poisson",
@@ -280,7 +284,6 @@
 #'              q = 0.4)
 #'
 #' # Multinomial response, custom sigma and lambda
-#'
 #' m <- length(unique(wine$y)) - 1
 #' p <- ncol(wine$x)
 #'
