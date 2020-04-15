@@ -61,7 +61,7 @@ List cppSLOPE(T& x, mat& y, const List control)
   auto sigma_type = as<std::string>(control["sigma_type"]);
   auto lambda_min_ratio = as<double>(control["lambda_min_ratio"]);
   auto q = as<double>(control["q"]);
-  uword n_sigma = sigma.n_elem;
+  const uword n_sigma = sigma.n_elem;
   double sigma_max = 0;
 
   regularizationPath(sigma,
