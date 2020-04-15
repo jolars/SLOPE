@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Generalized linear models regularized with the Sorted L1 Norm — SLOPE • SLOPE</title>
+<title>Sorted L-One Penalized Estimation — SLOPE • SLOPE</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,10 +46,10 @@
 
 
 
-<meta property="og:title" content="Generalized linear models regularized with the Sorted L1 Norm — SLOPE" />
+<meta property="og:title" content="Sorted L-One Penalized Estimation — SLOPE" />
 <meta property="og:description" content="Fit a generalized linear model regularized with the
-SLOPE (Sorted L-One Penalized Estimation) norm, which applies a
-decreasing \(\lambda\) (penalty sequence) to the
+sorted L1 norm, which applies a
+non-increasing regularization sequence to the
 coefficient vector (\(\beta\)) after having sorted it
 in decreasing order according  to its absolute values." />
 <meta property="og:image" content="/logo.svg" />
@@ -135,15 +135,15 @@ in decreasing order according  to its absolute values." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Generalized linear models regularized with the Sorted L1 Norm</h1>
+    <h1>Sorted L-One Penalized Estimation</h1>
     <small class="dont-index">Source: <a href='https://github.com/jolars/SLOPE/blob/master/R/SLOPE.R'><code>R/SLOPE.R</code></a></small>
     <div class="hidden name"><code>SLOPE.Rd</code></div>
     </div>
 
     <div class="ref-description">
     <p>Fit a generalized linear model regularized with the
-SLOPE (Sorted L-One Penalized Estimation) norm, which applies a
-decreasing \(\lambda\) (penalty sequence) to the
+sorted L1 norm, which applies a
+non-increasing regularization sequence to the
 coefficient vector (\(\beta\)) after having sorted it
 in decreasing order according  to its absolute values.</p>
     </div>
@@ -190,12 +190,12 @@ be converted to matrices internally.</p></td>
     </tr>
     <tr>
       <th>y</th>
-      <td><p>the response. For Gaussian models this must be numeric; for
+      <td><p>the response, which for Gaussian models must be numeric; for
 binomial models, it can be a factor.</p></td>
     </tr>
     <tr>
       <th>family</th>
-      <td><p>response type. See <strong>Families</strong> for details.</p></td>
+      <td><p>response type; see <strong>Families</strong> for details.</p></td>
     </tr>
     <tr>
       <th>intercept</th>
@@ -204,11 +204,11 @@ binomial models, it can be a factor.</p></td>
     <tr>
       <th>center</th>
       <td><p>whether to center predictors or not by their mean. Defaults
-to true if dense matrix, false otherwise.</p></td>
+to <code>TRUE</code> if <code>x</code> is dense and <code>FALSE</code> otherwise.</p></td>
     </tr>
     <tr>
       <th>scale</th>
-      <td><p>type of scaling to apply to predictors, <code>"l1"</code> scales
+      <td><p>type of scaling to apply to predictors; <code>"l1"</code> scales
 predictors to have L1-norm of one, <code>"l2"</code> scales predictors to have
 L2-norm one, <code>"sd"</code> scales predictors to have standard deviation one.</p></td>
     </tr>
@@ -219,8 +219,10 @@ L2-norm one, <code>"sd"</code> scales predictors to have standard deviation one.
     <tr>
       <th>lambda</th>
       <td><p>either a character vector indicating the method used
-to construct the lambda path or a vector with length equal to the number
-of coefficients in the model</p></td>
+to construct the lambda path or a numeric non-decreasing
+vector with length equal to the number
+of coefficients in the model; see section <strong>Regularization sequences</strong>
+for details.</p></td>
     </tr>
     <tr>
       <th>lambda_min_ratio</th>
@@ -272,8 +274,8 @@ the number of levels of the response minus one.</p></td>
     <tr>
       <th>solver</th>
       <td><p>type of solver use, either <code>"fista"</code> or <code>"admm"</code>. (<code>"default"</code>
-and <code>"matlab"</code> are deprecated). All families currently support
-FISTA. Only <code>family = "gaussian"</code> supports ADMM.</p></td>
+and <code>"matlab"</code> are deprecated); all families currently support
+FISTA but only <code>family = "gaussian"</code> supports ADMM.</p></td>
     </tr>
     <tr>
       <th>max_passes</th>
@@ -281,21 +283,21 @@ FISTA. Only <code>family = "gaussian"</code> supports ADMM.</p></td>
     </tr>
     <tr>
       <th>tol_abs</th>
-      <td><p>absolute tolerance criterion for ADMM solver (used for
-Gaussian dense designs)</p></td>
+      <td><p>absolute tolerance criterion for ADMM solver</p></td>
     </tr>
     <tr>
       <th>tol_rel</th>
-      <td><p>relative tolerance criterion for ADMM solver (used for
-Gaussian dense designs)</p></td>
+      <td><p>relative tolerance criterion for ADMM solver</p></td>
     </tr>
     <tr>
       <th>tol_rel_gap</th>
-      <td><p>stopping criterion for the duality gap</p></td>
+      <td><p>stopping criterion for the duality gap; used with
+FISTA solver.</p></td>
     </tr>
     <tr>
       <th>tol_infeas</th>
-      <td><p>stopping criterion for the level of infeasibility</p></td>
+      <td><p>stopping criterion for the level of infeasibility; used
+with FISTA solver and KKT checks in screening algorithm.</p></td>
     </tr>
     <tr>
       <th>diagnostics</th>
@@ -354,25 +356,27 @@ available if <code>diagnostics = TRUE</code> in the call to <code>SLOPE()</code>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><code>SLOPE()</code> tries to minimize the following composite objective, given
-in Lagrangian form.
+    <p><code>SLOPE()</code> solves a convex minimization problem with the
+following composite objective:
 $$
   f(\beta) + \sigma \sum_{i=j}^p \lambda_j |\beta|_{(j)},
 $$
-where \(f(\beta)\) is a smooth, convex function of \(\beta\), whereas
-the second part is the SLOPE norm, which is convex but non-smooth.
-In ordinary least-squares regression, for instance,
+where \(f(\beta)\) is a smooth and convex function of \(\beta\) and
+the second part is the sorted L1-norm.
+In ordinary least-squares regression,
 \(f(\beta)\) is simply the squared norm of the least-squares residuals.
 See section <strong>Families</strong> for specifics regarding the various types of
 \(f(\beta)\) (model families) that are allowed in <code>SLOPE()</code>.</p>
-<p>By default, <code>SLOPE()</code> fits a path of <code>lambda</code> sequences, starting from
+<p>By default, <code>SLOPE()</code> fits a path of models, each corresponding to
+a separate regularization sequence, starting from
 the null (intercept-only) model to an almost completely unregularized
-model. The path will end prematurely, however, if the criteria
-related to <em>any</em> of the
-arguments <code>tol_dev_change</code>, <code>tol_dev_ratio</code>, or <code>max_variables</code>
-are reached before the path is complete. This means that unless these
-arguments are modified, the path is not guaranteed to be of
-length <code>n_sigma</code>.</p>
+model. These regularization sequences are parameterized using
+\(lambda\) and \(sigma\), with only \(sigma\) varying along the
+path. The length of the path can be manually, but will terminate
+prematurely depending on
+arguments <code>tol_dev_change</code>, <code>tol_dev_ratio</code>, and <code>max_variables</code>.
+This means that unless these arguments are modified, the path is not
+guaranteed to be of length <code>n_sigma</code>.</p>
     <h2 class="hasAnchor" id="families"><a class="anchor" href="#families"></a>Families</h2>
 
     
@@ -380,18 +384,18 @@ length <code>n_sigma</code>.</p>
 
 <p><strong>Gaussian</strong></p>
 <p>The Gaussian model (Ordinary Least Squares) minimizes the following
-objective.
+objective:
 $$
-  ||y - X\beta||_2^2
+  \frac 12 \Vert y - X\beta\Vert_2^2
 $$</p>
 <p><strong>Binomial</strong></p>
-<p>The binomial model (logistic regression) has the following objective.
+<p>The binomial model (logistic regression) has the following objective:
 $$
   \sum_{i=1}^n \log\left(1+ \exp\left(- y_i \left(x_i^T\beta + \alpha \right) \right) \right)
 $$
 with \(y \in \{-1, 1\}\).</p>
 <p><strong>Poisson</strong></p>
-<p>In poisson regression, we use the following objective.</p>
+<p>In poisson regression, we use the following objective:</p>
 <p>$$
   -\sum_{i=1}^n \left(y_i\left(x_i^T\beta + \alpha\right) - \exp\left(x_i^T\beta + \alpha\right)\right)
 $$</p>
@@ -429,15 +433,15 @@ as \(\lambda^{(\mathrm{BH})}\) by Bogdan et al, which sets
 $$
   \lambda_i = \Phi^{-1}(1 - iq/(2p)),
 $$
-where \(\Phi^{-1}\) is the quantile function for the standard
-normal distribution and \(q\) is a parameter that can be
-set by the user in the call to <code>SLOPE()</code>.</p>
+for \(i=1,\dots,p\), where \(\Phi^{-1}\) is the quantile
+function for the standard normal distribution and \(q\) is a parameter
+that can be set by the user in the call to <code>SLOPE()</code>.</p>
 <p><strong>Gaussian</strong></p>
 <p>This penalty sequence is related to BH, such that
 $$
   \lambda_i = \lambda^{(\mathrm{BH})}_i \sqrt{1 + w(i-1)\cdot \mathrm{cumsum}(\lambda^2)_i},
 $$
-where \(w(k) = 1/(n-k-1)\). We let
+for \(i=1,\dots,p\), where \(w(k) = 1/(n-k-1)\). We let
 \(\lambda_1 = \lambda^{(\mathrm{BH})}_1\) and
 adjust the sequence to make sure that it's non-increasing.
 Note that if \(p\) is large relative
@@ -448,7 +452,8 @@ usually not what you would want.</p>
 sequence such that
 $$
   \lambda_i = q(p - i) + 1.
-$$</p>
+$$
+for \(i = 1,\dots,p\).</p>
     <h2 class="hasAnchor" id="solvers"><a class="anchor" href="#solvers"></a>Solvers</h2>
 
     
@@ -469,10 +474,10 @@ Biometrics, 64(1), 115–123. JSTOR.
 <p>Boyd, S., Parikh, N., Chu, E., Peleato, B., &amp; Eckstein, J. (2010).
 Distributed Optimization and Statistical Learning via the Alternating
 Direction Method of Multipliers. Foundations and Trends® in Machine Learning,
-3(1), 1–122. https://doi.org/10.1561/2200000016</p>
+3(1), 1–122. <a href='https://doi.org/10.1561/2200000016'>https://doi.org/10.1561/2200000016</a></p>
 <p>Beck, A., &amp; Teboulle, M. (2009). A Fast Iterative Shrinkage-Thresholding
 Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
-2(1), 183–202. https://doi.org/10.1137/080716542</p>
+2(1), 183–202. <a href='https://doi.org/10.1137/080716542'>https://doi.org/10.1137/080716542</a></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='plot.SLOPE.html'>plot.SLOPE()</a></code>, <code><a href='plotDiagnostics.html'>plotDiagnostics()</a></code>, <code><a href='score.html'>score()</a></code>, <code><a href='predict.SLOPE.html'>predict.SLOPE()</a></code>,
@@ -481,15 +486,12 @@ Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'># Gaussian response, default lambda sequence</span>
-
 <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'>SLOPE</span>(<span class='no'>bodyfat</span>$<span class='no'>x</span>, <span class='no'>bodyfat</span>$<span class='no'>y</span>)
 
 <span class='co'># Binomial response, BH-type lambda sequence</span>
-
 <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'>SLOPE</span>(<span class='no'>heart</span>$<span class='no'>x</span>, <span class='no'>heart</span>$<span class='no'>y</span>, <span class='kw'>family</span> <span class='kw'>=</span> <span class='st'>"binomial"</span>, <span class='kw'>lambda</span> <span class='kw'>=</span> <span class='st'>"bh"</span>)
 
 <span class='co'># Poisson response, OSCAR-type lambda sequence</span>
-
 <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'>SLOPE</span>(<span class='no'>abalone</span>$<span class='no'>x</span>,
              <span class='no'>abalone</span>$<span class='no'>y</span>,
              <span class='kw'>family</span> <span class='kw'>=</span> <span class='st'>"poisson"</span>,
@@ -497,7 +499,6 @@ Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
              <span class='kw'>q</span> <span class='kw'>=</span> <span class='fl'>0.4</span>)
 
 <span class='co'># Multinomial response, custom sigma and lambda</span>
-
 <span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span>(<span class='no'>wine</span>$<span class='no'>y</span>)) - <span class='fl'>1</span>
 <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span>(<span class='no'>wine</span>$<span class='no'>x</span>)
 
