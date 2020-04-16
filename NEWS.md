@@ -1,4 +1,4 @@
-# SLOPE (development version)
+# SLOPE 0.2.0
 
 This version of SLOPE represents a major change to the package. We have
 merged functionality from the owl package into this package, which
