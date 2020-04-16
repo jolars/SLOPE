@@ -1,3 +1,5 @@
+# SLOPE (development version)
+
 # SLOPE 0.2.1
 
 ## Minor changes
