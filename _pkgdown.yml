@@ -2,3 +2,8 @@ destination: docs
 development:
   mode: auto
 url: https://jolars.github.io/SLOPE/
+
+news:
+  releases:
+  - text: "Version 0.2.0"
+    href: https://larssonjohan.com/post/slope-0-2-0/
