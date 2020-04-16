@@ -48,7 +48,7 @@
 
 <meta property="og:title" content="Model deviance — deviance.SLOPE" />
 <meta property="og:description" content="Model deviance" />
-<meta property="og:image" content="/logo.svg" />
+<meta property="og:image" content="https://jolars.github.io/SLOPE/logo.svg" />
 
 
 <meta name="robots" content="noindex">
@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SLOPE</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.1.3.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.2.1.9000</span>
       </span>
     </div>
 
@@ -107,8 +107,22 @@
     </li>
   </ul>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    News
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Releases</li>
+    <li>
+      <a href="https://larssonjohan.com/post/slope-0-2-0/">Version 0.2.0</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="../news/index.html">Changelog</a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -162,18 +176,17 @@
 all other models, two times the negative loglikelihood is returned.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='SLOPE.html'>SLOPE</a></span>(<span class='no'>heart</span>$<span class='no'>x</span>, <span class='no'>heart</span>$<span class='no'>y</span>, <span class='kw'>family</span> <span class='kw'>=</span> <span class='st'>"binomial"</span>)
-<span class='fu'><a href='https://rdrr.io/r/stats/deviance.html'>deviance</a></span>(<span class='no'>fit</span>)</div><div class='output co'>#&gt;  [1] 374.2995 374.2995 335.5373 320.6967 307.3978 295.8861 284.7133 274.4445
-#&gt;  [9] 265.4250 257.5443 250.5870 244.1222 238.4380 232.3275 226.2262 220.7925
-#&gt; [17] 215.8417 211.5264 207.4409 203.8190 200.6200 197.7982 195.3319 193.2309
-#&gt; [25] 191.3185 189.6012 188.0917 186.7159 185.5211 184.4934 183.5830 182.7930
-#&gt; [33] 182.1122 181.5189 181.0046 180.5680 179.8512 178.8020 177.5680 176.5844
-#&gt; [41] 175.8327 175.0133 174.4435 173.7988 173.1948 172.8435 172.3317 171.8640
-#&gt; [49] 171.4949 171.2087 170.9059 170.6504 170.4349 170.2533 170.0999 169.9663
-#&gt; [57] 169.8328 169.6833 169.5587 169.4520 169.3632 169.2861 169.2233 169.1706
-#&gt; [65] 169.1253 169.0879 169.0560 169.0294 169.0071 168.9886 168.9731 168.9611
-#&gt; [73] 168.9501 168.9410 168.9337 168.9274 168.9222 168.9178 168.9141 168.9111
-#&gt; [81] 168.9086 168.9065 168.9048 168.9033</div></pre>
+    <pre class="examples"><div class='input'><span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='SLOPE.html'>SLOPE</a></span>(<span class='no'>abalone</span>$<span class='no'>x</span>, <span class='no'>abalone</span>$<span class='no'>y</span>, <span class='kw'>family</span> <span class='kw'>=</span> <span class='st'>"poisson"</span>)
+<span class='fu'><a href='https://rdrr.io/r/stats/deviance.html'>deviance</a></span>(<span class='no'>fit</span>)</div><div class='output co'>#&gt;  [1] 6822.7872 1026.6163 1018.0849 1010.0639 1003.8413  998.6156  993.9010
+#&gt;  [8]  989.1671  985.8107  982.9873  980.2945  977.8246  975.9313  974.3124
+#&gt; [15]  972.9612  971.8876  970.9016  970.0228  969.2916  968.6316  968.0704
+#&gt; [22]  966.8109  963.6936  961.0821  958.9515  957.2989  955.2906  953.6264
+#&gt; [29]  952.3298  951.1846  950.1994  949.3810  948.7004  948.1341  947.6637
+#&gt; [36]  947.2721  946.8823  946.5156  946.2148  945.7857  945.3086  944.7726
+#&gt; [43]  944.3939  943.8796  943.5149  943.1791  942.8186  942.5244  942.3303
+#&gt; [50]  942.1444  941.9637  941.8125  941.6787  941.5672  941.4741  941.3968
+#&gt; [57]  941.3324  941.2788  941.2341  941.1974  941.1671  941.1413  941.1198
+#&gt; [64]  941.1019  941.0871  941.0747  941.0645  941.0571</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -48,7 +48,7 @@
 
 <meta property="og:title" content="Plot results from cross-validation — plot.TrainedSLOPE" />
 <meta property="og:description" content="Plot results from cross-validation" />
-<meta property="og:image" content="/logo.svg" />
+<meta property="og:image" content="https://jolars.github.io/SLOPE/logo.svg" />
 
 
 <meta name="robots" content="noindex">
@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SLOPE</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.1.3.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.2.1.9000</span>
       </span>
     </div>
 
@@ -107,8 +107,22 @@
     </li>
   </ul>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    News
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Releases</li>
+    <li>
+      <a href="https://larssonjohan.com/post/slope-0-2-0/">Version 0.2.0</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="../news/index.html">Changelog</a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -192,9 +206,9 @@ confidence limits</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An object of class <code>'trellis'</code> is returned and, if used
+    <p>An object of class <code>"trellis"</code> is returned and, if used
 interactively, will most likely have its print function
-<code><a href='https://rdrr.io/pkg/lattice/man/print.trellis.html'>lattice::print.trellis()</a></code>) invoked, which draws the plot on the
+<code><a href='https://rdrr.io/pkg/lattice/man/print.trellis.html'>lattice::print.trellis()</a></code> invoked, which draws the plot on the
 current display device.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
@@ -204,9 +218,9 @@ current display device.</p>
     <pre class="examples"><div class='input'><span class='co'># Cross-validation for a SLOPE binomial model</span>
 <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>123</span>)
 <span class='no'>tune</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='trainSLOPE.html'>trainSLOPE</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span>(<span class='no'>mtcars</span>, <span class='kw'>select</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"mpg"</span>, <span class='st'>"drat"</span>, <span class='st'>"wt"</span>)),
-                 <span class='no'>mtcars</span>$<span class='no'>hp</span>,
-                 <span class='kw'>q</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.1</span>, <span class='fl'>0.2</span>),
-                 <span class='kw'>number</span> <span class='kw'>=</span> <span class='fl'>10</span>)
+                   <span class='no'>mtcars</span>$<span class='no'>hp</span>,
+                   <span class='kw'>q</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.1</span>, <span class='fl'>0.2</span>),
+                   <span class='kw'>number</span> <span class='kw'>=</span> <span class='fl'>10</span>)
 <span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>tune</span>, <span class='kw'>ci_col</span> <span class='kw'>=</span> <span class='st'>"salmon"</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"black"</span>)</div><div class='img'><img src='plot.TrainedSLOPE-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -52,7 +52,7 @@ sorted L1 norm, which applies a
 non-increasing regularization sequence to the
 coefficient vector (\(\beta\)) after having sorted it
 in decreasing order according  to its absolute values." />
-<meta property="og:image" content="/logo.svg" />
+<meta property="og:image" content="https://jolars.github.io/SLOPE/logo.svg" />
 
 
 <meta name="robots" content="noindex">
@@ -84,7 +84,7 @@ in decreasing order according  to its absolute values." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SLOPE</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.1.3.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.2.1.9000</span>
       </span>
     </div>
 
@@ -111,8 +111,22 @@ in decreasing order according  to its absolute values." />
     </li>
   </ul>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    News
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Releases</li>
+    <li>
+      <a href="https://larssonjohan.com/post/slope-0-2-0/">Version 0.2.0</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="../news/index.html">Changelog</a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -183,19 +197,19 @@ in decreasing order according  to its absolute values.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>the feature matrix, which can be either a dense
+      <td><p>the design matrix, which can be either a dense
 matrix of the standard <em>matrix</em> class, or a sparse matrix
-inheriting from <a href='https://rdrr.io/pkg/Matrix/man/sparseMatrix.html'>Matrix::sparseMatrix</a> Data frames will
+inheriting from <a href='https://rdrr.io/pkg/Matrix/man/sparseMatrix.html'>Matrix::sparseMatrix</a>. Data frames will
 be converted to matrices internally.</p></td>
     </tr>
     <tr>
       <th>y</th>
-      <td><p>the response, which for Gaussian models must be numeric; for
-binomial models, it can be a factor.</p></td>
+      <td><p>the response, which for <code>family = "gaussian"</code> must be numeric; for
+<code>family = "binomial"</code> or <code>family = "multinomial"</code>, it can be a factor.</p></td>
     </tr>
     <tr>
       <th>family</th>
-      <td><p>response type; see <strong>Families</strong> for details.</p></td>
+      <td><p>model family (objective); see <strong>Families</strong> for details.</p></td>
     </tr>
     <tr>
       <th>intercept</th>
@@ -214,7 +228,13 @@ L2-norm one, <code>"sd"</code> scales predictors to have standard deviation one.
     </tr>
     <tr>
       <th>sigma</th>
-      <td><p>scale of lambda sequence</p></td>
+      <td><p>regularization path: either a decreasing numeric
+vector or a character vector; in the latter case, the choices are:</p><ul>
+<li><p><code>sigma = "path"</code>, which computes a <code>sigma</code> sequence
+where the first value corresponds to the intercept-only (null) model, and</p></li>
+<li><p><code>sigma = "estimate"</code>, which estimates a <em>single</em> <code>sigma</code> using a technique
+outlined in Bogdan et al. (2015).</p></li>
+</ul></td>
     </tr>
     <tr>
       <th>lambda</th>
@@ -227,7 +247,7 @@ for details.</p></td>
     <tr>
       <th>lambda_min_ratio</th>
       <td><p>smallest value for <code>lambda</code> as a fraction of
-<code>lambda_max</code></p></td>
+<code>lambda_max</code>; used in the selection of <code>sigma</code> when <code>sigma = "path"</code>.</p></td>
     </tr>
     <tr>
       <th>n_sigma</th>
@@ -235,11 +255,16 @@ for details.</p></td>
     </tr>
     <tr>
       <th>q</th>
-      <td><p>shape of lambda sequence</p></td>
+      <td><p>parameter controlling the shape of the lambda sequence, with
+usage varying depending on the type of path used and has no effect
+is a custom <code>lambda</code> sequence is used.</p></td>
     </tr>
     <tr>
       <th>screen</th>
-      <td><p>whether to use predictor screening rules</p></td>
+      <td><p>whether to use predictor screening rules (rules that allow
+some predictors to be discarded prior to fitting), which improve speed
+greately when the number of predictors is larger than the number
+of observations.</p></td>
     </tr>
     <tr>
       <th>screen_alg</th>
@@ -254,7 +279,7 @@ no violations in the strong set</p></li>
     <tr>
       <th>tol_dev_change</th>
       <td><p>the regularization path is stopped if the
-fractional change in deviance falls below this value. Note that this is
+fractional change in deviance falls below this value; note that this is
 automatically set to 0 if a sigma is manually entered</p></td>
     </tr>
     <tr>
@@ -279,7 +304,7 @@ FISTA but only <code>family = "gaussian"</code> supports ADMM.</p></td>
     </tr>
     <tr>
       <th>max_passes</th>
-      <td><p>maximum number of passes for optimizer</p></td>
+      <td><p>maximum number of passes (outer iterations) for solver</p></td>
     </tr>
     <tr>
       <th>tol_abs</th>
@@ -291,7 +316,7 @@ FISTA but only <code>family = "gaussian"</code> supports ADMM.</p></td>
     </tr>
     <tr>
       <th>tol_rel_gap</th>
-      <td><p>stopping criterion for the duality gap; used with
+      <td><p>stopping criterion for the duality gap; used only with
 FISTA solver.</p></td>
     </tr>
     <tr>
@@ -301,8 +326,8 @@ with FISTA solver and KKT checks in screening algorithm.</p></td>
     </tr>
     <tr>
       <th>diagnostics</th>
-      <td><p>should diagnostics be saved for the model fit (timings,
-primal and dual objectives, and infeasibility)</p></td>
+      <td><p>whether to save diagnostics from the solver
+(timings and other values depending on type of solver)</p></td>
     </tr>
     <tr>
       <th>verbosity</th>
@@ -333,7 +358,7 @@ model fit, including the intercept if it was fit.
 There is one row for each coefficient, one column
 for each target (dependent variable), and
 one slice for each penalty.</p></dd>
-<dt>nonzeros</dt><dd><p>a three-dimensional boolean array indicating whether a
+<dt>nonzeros</dt><dd><p>a three-dimensional logical array indicating whether a
 coefficient was zero or not</p></dd>
 <dt>lambda</dt><dd><p>the lambda vector that when multiplied by a value in <code>sigma</code>
 gives the penalty vector at that point along the regularization
@@ -341,8 +366,9 @@ path</p></dd>
 <dt>sigma</dt><dd><p>the vector of sigma, indicating the scale of the lambda vector</p></dd>
 <dt>class_names</dt><dd><p>a character vector giving the names of the classes for binomial and
 multinomial families</p></dd>
-<dt>passes</dt><dd><p>the number of passes the solver took at each path</p></dd>
-<dt>violations</dt><dd><p>the number of violations of the screening rule</p></dd>
+<dt>passes</dt><dd><p>the number of passes the solver took at each step on the path</p></dd>
+<dt>violations</dt><dd><p>the number of violations of the screening rule at each step on the path;
+only available if <code>diagnostics = TRUE</code> in the call to <code>SLOPE()</code>.</p></dd>
 <dt>active_sets</dt><dd><p>a list where each element indicates the indices of the
 coefficients that were active at that point in the regularization path</p></dd>
 <dt>unique</dt><dd><p>the number of unique predictors (in absolute value)</p></dd>
@@ -350,7 +376,7 @@ coefficients that were active at that point in the regularization path</p></dd>
 <dt>null_deviance</dt><dd><p>the deviance of the null (intercept-only) model</p></dd>
 <dt>family</dt><dd><p>the name of the family used in the model fit</p></dd>
 <dt>diagnostics</dt><dd><p>a <code>data.frame</code> of objective values for the primal and dual problems, as
-well as a measure of the infeasibility, time, and iteration. Only
+well as a measure of the infeasibility, time, and iteration; only
 available if <code>diagnostics = TRUE</code> in the call to <code>SLOPE()</code>.</p></dd>
 <dt>call</dt><dd><p>the call used for fitting the model</p></dd>
 
@@ -371,7 +397,7 @@ See section <strong>Families</strong> for specifics regarding the various types 
 a separate regularization sequence, starting from
 the null (intercept-only) model to an almost completely unregularized
 model. These regularization sequences are parameterized using
-\(lambda\) and \(sigma\), with only \(sigma\) varying along the
+\(\lambda\) and \(\sigma\), with only \(\sigma\) varying along the
 path. The length of the path can be manually, but will terminate
 prematurely depending on
 arguments <code>tol_dev_change</code>, <code>tol_dev_ratio</code>, and <code>max_variables</code>.
@@ -487,9 +513,6 @@ Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
     <pre class="examples"><div class='input'>
 <span class='co'># Gaussian response, default lambda sequence</span>
 <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'>SLOPE</span>(<span class='no'>bodyfat</span>$<span class='no'>x</span>, <span class='no'>bodyfat</span>$<span class='no'>y</span>)
-
-<span class='co'># Binomial response, BH-type lambda sequence</span>
-<span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'>SLOPE</span>(<span class='no'>heart</span>$<span class='no'>x</span>, <span class='no'>heart</span>$<span class='no'>y</span>, <span class='kw'>family</span> <span class='kw'>=</span> <span class='st'>"binomial"</span>, <span class='kw'>lambda</span> <span class='kw'>=</span> <span class='st'>"bh"</span>)
 
 <span class='co'># Poisson response, OSCAR-type lambda sequence</span>
 <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'>SLOPE</span>(<span class='no'>abalone</span>$<span class='no'>x</span>,
