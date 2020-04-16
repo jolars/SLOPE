@@ -84,7 +84,7 @@ in decreasing order according  to its absolute values." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SLOPE</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
       </span>
     </div>
 
@@ -499,9 +499,6 @@ Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
     <pre class="examples"><div class='input'>
 <span class='co'># Gaussian response, default lambda sequence</span>
 <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'>SLOPE</span>(<span class='no'>bodyfat</span>$<span class='no'>x</span>, <span class='no'>bodyfat</span>$<span class='no'>y</span>)
-
-<span class='co'># Binomial response, BH-type lambda sequence</span>
-<span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'>SLOPE</span>(<span class='no'>heart</span>$<span class='no'>x</span>, <span class='no'>heart</span>$<span class='no'>y</span>, <span class='kw'>family</span> <span class='kw'>=</span> <span class='st'>"binomial"</span>, <span class='kw'>lambda</span> <span class='kw'>=</span> <span class='st'>"bh"</span>)
 
 <span class='co'># Poisson response, OSCAR-type lambda sequence</span>
 <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'>SLOPE</span>(<span class='no'>abalone</span>$<span class='no'>x</span>,
