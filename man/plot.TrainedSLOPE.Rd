@@ -36,9 +36,9 @@ confidence limits}
 \item{...}{other arguments that are passed on to \code{\link[lattice:xyplot]{lattice::xyplot()}}}
 }
 \value{
-An object of class \code{'trellis'} is returned and, if used
+An object of class \code{"trellis"} is returned and, if used
 interactively, will most likely have its print function
-\code{\link[lattice:print.trellis]{lattice::print.trellis()}}) invoked, which draws the plot on the
+\code{\link[lattice:print.trellis]{lattice::print.trellis()}} invoked, which draws the plot on the
 current display device.
 }
 \description{
@@ -48,9 +48,9 @@ Plot results from cross-validation
 # Cross-validation for a SLOPE binomial model
 set.seed(123)
 tune <- trainSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
-                 mtcars$hp,
-                 q = c(0.1, 0.2),
-                 number = 10)
+                   mtcars$hp,
+                   q = c(0.1, 0.2),
+                   number = 10)
 plot(tune, ci_col = "salmon", col = "black")
 }
 \seealso{

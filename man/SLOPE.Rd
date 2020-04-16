@@ -35,15 +35,15 @@ SLOPE(
 )
 }
 \arguments{
-\item{x}{the feature matrix, which can be either a dense
+\item{x}{the design matrix, which can be either a dense
 matrix of the standard \emph{matrix} class, or a sparse matrix
-inheriting from \link[Matrix:sparseMatrix]{Matrix::sparseMatrix} Data frames will
+inheriting from \link[Matrix:sparseMatrix]{Matrix::sparseMatrix}. Data frames will
 be converted to matrices internally.}
 
-\item{y}{the response, which for Gaussian models must be numeric; for
-binomial models, it can be a factor.}
+\item{y}{the response, which for \code{family = "gaussian"} must be numeric; for
+\code{family = "binomial"} or \code{family = "multinomial"}, it can be a factor.}
 
-\item{family}{response type; see \strong{Families} for details.}
+\item{family}{model family (objective); see \strong{Families} for details.}
 
 \item{intercept}{whether to fit an intercept}
 
@@ -54,7 +54,14 @@ to \code{TRUE} if \code{x} is dense and \code{FALSE} otherwise.}
 predictors to have L1-norm of one, \code{"l2"} scales predictors to have
 L2-norm one, \code{"sd"} scales predictors to have standard deviation one.}
 
-\item{sigma}{scale of lambda sequence}
+\item{sigma}{regularization path: either a decreasing numeric
+vector or a character vector; in the latter case, the choices are:
+\itemize{
+\item \code{sigma = "path"}, which computes a \code{sigma} sequence
+where the first value corresponds to the intercept-only (null) model, and
+\item \code{sigma = "estimate"}, which estimates a \emph{single} \code{sigma} using a technique
+outlined in Bogdan et al. (2015).
+}}
 
 \item{lambda}{either a character vector indicating the method used
 to construct the lambda path or a numeric non-decreasing
@@ -63,13 +70,18 @@ of coefficients in the model; see section \strong{Regularization sequences}
 for details.}
 
 \item{lambda_min_ratio}{smallest value for \code{lambda} as a fraction of
-\code{lambda_max}}
+\code{lambda_max}; used in the selection of \code{sigma} when \code{sigma = "path"}.}
 
 \item{n_sigma}{length of regularization path}
 
-\item{q}{shape of lambda sequence}
+\item{q}{parameter controlling the shape of the lambda sequence, with
+usage varying depending on the type of path used and has no effect
+is a custom \code{lambda} sequence is used.}
 
-\item{screen}{whether to use predictor screening rules}
+\item{screen}{whether to use predictor screening rules (rules that allow
+some predictors to be discarded prior to fitting), which improve speed
+greately when the number of predictors is larger than the number
+of observations.}
 
 \item{screen_alg}{what type of screening algorithm to use.
 \itemize{
@@ -81,7 +93,7 @@ no violations in the strong set
 }}
 
 \item{tol_dev_change}{the regularization path is stopped if the
-fractional change in deviance falls below this value. Note that this is
+fractional change in deviance falls below this value; note that this is
 automatically set to 0 if a sigma is manually entered}
 
 \item{tol_dev_ratio}{the regularization path is stopped if the
@@ -98,20 +110,20 @@ the number of levels of the response minus one.}
 and \code{"matlab"} are deprecated); all families currently support
 FISTA but only \code{family = "gaussian"} supports ADMM.}
 
-\item{max_passes}{maximum number of passes for optimizer}
+\item{max_passes}{maximum number of passes (outer iterations) for solver}
 
 \item{tol_abs}{absolute tolerance criterion for ADMM solver}
 
 \item{tol_rel}{relative tolerance criterion for ADMM solver}
 
-\item{tol_rel_gap}{stopping criterion for the duality gap; used with
+\item{tol_rel_gap}{stopping criterion for the duality gap; used only with
 FISTA solver.}
 
 \item{tol_infeas}{stopping criterion for the level of infeasibility; used
 with FISTA solver and KKT checks in screening algorithm.}
 
-\item{diagnostics}{should diagnostics be saved for the model fit (timings,
-primal and dual objectives, and infeasibility)}
+\item{diagnostics}{whether to save diagnostics from the solver
+(timings and other values depending on type of solver)}
 
 \item{verbosity}{level of verbosity for displaying output from the
 program. Setting this to 1 displays basic information on the path level,
@@ -134,7 +146,7 @@ for each target (dependent variable), and
 one slice for each penalty.
 }
 \item{nonzeros}{
-a three-dimensional boolean array indicating whether a
+a three-dimensional logical array indicating whether a
 coefficient was zero or not
 }
 \item{lambda}{
@@ -147,8 +159,11 @@ path
 a character vector giving the names of the classes for binomial and
 multinomial families
 }
-\item{passes}{the number of passes the solver took at each path}
-\item{violations}{the number of violations of the screening rule}
+\item{passes}{the number of passes the solver took at each step on the path}
+\item{violations}{
+the number of violations of the screening rule at each step on the path;
+only available if \code{diagnostics = TRUE} in the call to \code{\link[=SLOPE]{SLOPE()}}.
+}
 \item{active_sets}{
 a list where each element indicates the indices of the
 coefficients that were active at that point in the regularization path
@@ -167,7 +182,7 @@ the name of the family used in the model fit
 }
 \item{diagnostics}{
 a \code{data.frame} of objective values for the primal and dual problems, as
-well as a measure of the infeasibility, time, and iteration. Only
+well as a measure of the infeasibility, time, and iteration; only
 available if \code{diagnostics = TRUE} in the call to \code{\link[=SLOPE]{SLOPE()}}.
 }
 \item{call}{the call used for fitting the model}
@@ -198,7 +213,7 @@ By default, \code{SLOPE()} fits a path of models, each corresponding to
 a separate regularization sequence, starting from
 the null (intercept-only) model to an almost completely unregularized
 model. These regularization sequences are parameterized using
-\eqn{lambda} and \eqn{sigma}, with only \eqn{sigma} varying along the
+\eqn{\lambda} and \eqn{\sigma}, with only \eqn{\sigma} varying along the
 path. The length of the path can be manually, but will terminate
 prematurely depending on
 arguments \code{tol_dev_change}, \code{tol_dev_ratio}, and \code{max_variables}.

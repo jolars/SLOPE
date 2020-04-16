@@ -15,20 +15,22 @@ trainSLOPE(
 )
 }
 \arguments{
-\item{x}{the feature matrix, which can be either a dense
+\item{x}{the design matrix, which can be either a dense
 matrix of the standard \emph{matrix} class, or a sparse matrix
-inheriting from \link[Matrix:sparseMatrix]{Matrix::sparseMatrix} Data frames will
+inheriting from \link[Matrix:sparseMatrix]{Matrix::sparseMatrix}. Data frames will
 be converted to matrices internally.}
 
-\item{y}{the response, which for Gaussian models must be numeric; for
-binomial models, it can be a factor.}
+\item{y}{the response, which for \code{family = "gaussian"} must be numeric; for
+\code{family = "binomial"} or \code{family = "multinomial"}, it can be a factor.}
 
-\item{q}{shape of lambda sequence}
+\item{q}{parameter controlling the shape of the lambda sequence, with
+usage varying depending on the type of path used and has no effect
+is a custom \code{lambda} sequence is used.}
 
 \item{number}{number of folds (cross-validation)}
 
-\item{repeats}{number of repeats for each fold (for repeated \emph{k}-fold
-cross validation)}
+\item{repeats}{number of repeats for each fold (for repeated \emph{k}-fold cross
+validation)}
 
 \item{measure}{measure to try to optimize; note that you may
 supply \emph{multiple} values here and that, by default,

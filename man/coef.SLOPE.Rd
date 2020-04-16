@@ -32,7 +32,7 @@ Coefficients from the model.
 This function returns coefficients from a model fit by \code{\link[=SLOPE]{SLOPE()}}.
 }
 \details{
-If \code{exact == FALSE} and \code{sigma} is not in \code{object},
+If \code{exact = FALSE} and \code{sigma} is not in \code{object},
 then the returned coefficients will be approximated by linear interpolation.
 If coefficients from another type of penalty sequence
 (with a different \code{lambda}) are required, however,

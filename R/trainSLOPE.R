@@ -18,8 +18,8 @@
 #'
 #' @inheritParams SLOPE
 #' @param number number of folds (cross-validation)
-#' @param repeats number of repeats for each fold (for repeated *k*-fold
-#'   cross validation)
+#' @param repeats number of repeats for each fold (for repeated *k*-fold cross
+#'   validation)
 #' @param measure measure to try to optimize; note that you may
 #'   supply *multiple* values here and that, by default,
 #'   all the possible measures for the given model will be used.

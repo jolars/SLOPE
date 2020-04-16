@@ -1,6 +1,7 @@
 #' Plot coefficients
 #'
-#' Plot the model's coefficient along the regularization path.
+#' Plot the fitted model's regression
+#' coefficients along the regularization path.
 #'
 #' @param x an object of class `"SLOPE"`
 #' @param ... parameters that will be used to modify the call to
@@ -126,9 +127,9 @@ plot.SLOPE = function(x, intercept = FALSE, ...) {
 #'
 #' @seealso [trainSLOPE()], [lattice::xyplot()], [lattice::panel.xyplot()]
 #'
-#' @return An object of class `'trellis'` is returned and, if used
+#' @return An object of class `"trellis"` is returned and, if used
 #'   interactively, will most likely have its print function
-#'   [lattice::print.trellis()]) invoked, which draws the plot on the
+#'   [lattice::print.trellis()] invoked, which draws the plot on the
 #'   current display device.
 #'
 #' @export
@@ -137,9 +138,9 @@ plot.SLOPE = function(x, intercept = FALSE, ...) {
 #' # Cross-validation for a SLOPE binomial model
 #' set.seed(123)
 #' tune <- trainSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
-#'                  mtcars$hp,
-#'                  q = c(0.1, 0.2),
-#'                  number = 10)
+#'                    mtcars$hp,
+#'                    q = c(0.1, 0.2),
+#'                    number = 10)
 #' plot(tune, ci_col = "salmon", col = "black")
 plot.TrainedSLOPE <-
   function(x,

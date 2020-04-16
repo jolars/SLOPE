@@ -2,7 +2,7 @@
 #'
 #' This function returns coefficients from a model fit by [SLOPE()].
 #'
-#' If `exact == FALSE` and `sigma` is not in `object`,
+#' If `exact = FALSE` and `sigma` is not in `object`,
 #' then the returned coefficients will be approximated by linear interpolation.
 #' If coefficients from another type of penalty sequence
 #' (with a different `lambda`) are required, however,

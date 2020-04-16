@@ -19,7 +19,8 @@ An object of class \code{"trellis"}, which will be plotted on the
 current device unless stored in a variable.
 }
 \description{
-Plot the model's coefficient along the regularization path.
+Plot the fitted model's regression
+coefficients along the regularization path.
 }
 \examples{
 fit <- SLOPE(heart$x, heart$y)
