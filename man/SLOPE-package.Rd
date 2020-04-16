@@ -17,6 +17,7 @@ Efficient implementations for Sorted L-One Penalized Estimation
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://jolars.github.io/SLOPE/}
   \item \url{https://github.com/jolars/SLOPE}
   \item Report bugs at \url{https://github.com/jolars/SLOPE/issues}
 }

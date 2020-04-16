@@ -337,9 +337,6 @@ families but ADMM is currently only available for \code{family = "gaussian"}.
 # Gaussian response, default lambda sequence
 fit <- SLOPE(bodyfat$x, bodyfat$y)
 
-# Binomial response, BH-type lambda sequence
-fit <- SLOPE(heart$x, heart$y, family = "binomial", lambda = "bh")
-
 # Poisson response, OSCAR-type lambda sequence
 fit <- SLOPE(abalone$x,
              abalone$y,

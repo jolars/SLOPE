@@ -8,7 +8,7 @@
 #' @export
 #'
 #' @examples
-#' fit <- SLOPE(heart$x, heart$y, family = "binomial")
+#' fit <- SLOPE(abalone$x, abalone$y, family = "poisson")
 #' deviance(fit)
 deviance.SLOPE <- function(object, ...) {
   deviance_ratio <- object$deviance_ratio
