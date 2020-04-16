@@ -59,6 +59,7 @@ I believe these are also false positives. I can access both of these
 URLs without problem.
 
   
-  
+### Resubmission
 
-
+This is a resubmission. In this version I have modifed some examples
+in order to make them run faster and pass the automated checks.
