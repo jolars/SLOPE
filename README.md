@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# SLOPE <img src='man/figures/logo.svg' align="right" height="139" />
+# SLOPE <a href="https://jolars.github.io/SLOPE/"><img src='man/figures/logo.svg' align="right" height="139" /></a>
 
 <!-- badges: start -->
 
@@ -46,6 +46,5 @@ SLOPE uses [semantic versioning](http://semver.org).
 ## Code of conduct
 
 Please note that the ‘SLOPE’ project is released with a [Contributor
-Code of
-Conduct](https://github.com/jolars/SLOPE/blob/master/CODE_OF_CONDUCT.md).
+Code of Conduct](https://jolars.github.io/SLOPE/CODE_OF_CONDUCT.html).
 By contributing to this project, you agree to abide by its terms.

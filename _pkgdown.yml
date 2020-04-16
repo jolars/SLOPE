@@ -1,3 +1,4 @@
 destination: docs
 development:
   mode: auto
+url: https://jolars.github.io/SLOPE/

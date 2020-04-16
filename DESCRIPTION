@@ -58,6 +58,6 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.0
 Language: en-US
 Encoding: UTF-8
-URL: https://github.com/jolars/SLOPE
+URL: https://jolars.github.io/SLOPE/, https://github.com/jolars/SLOPE
 BugReports: https://github.com/jolars/SLOPE/issues
 VignetteBuilder: knitr
