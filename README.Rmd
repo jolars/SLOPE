@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 # SLOPE <a href="https://jolars.github.io/SLOPE/"><img src='man/figures/logo.svg' align="right" height="139" /></a>
 
 <!-- badges: start -->
-[![R CMD Check via {tic}](https://github.com/jolars/SLOPE/workflows/R%20CMD%20Check%20via%20{tic}/badge.svg?branch=master)](https://github.com/jolars/SLOPE/actions)
+[![R build status](https://github.com/jolars/SLOPE/workflows/R-CMD-check/badge.svg)](https://github.com/jolars/SLOPE/actions)
 [![Coverage status](https://codecov.io/gh/jolars/SLOPE/branch/master/graph/badge.svg)](https://codecov.io/github/jolars/SLOPE?branch=master)
 [![CRAN status](https://www.r-pkg.org/badges/version/SLOPE)](https://CRAN.R-project.org/package=SLOPE)
 [![Lifecycle: maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
