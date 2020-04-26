@@ -5,8 +5,8 @@
 
 <!-- badges: start -->
 
-[![R CMD Check via
-{tic}](https://github.com/jolars/SLOPE/workflows/R%20CMD%20Check%20via%20%7Btic%7D/badge.svg?branch=master)](https://github.com/jolars/SLOPE/actions)
+[![R build
+status](https://github.com/jolars/SLOPE/workflows/R-CMD-check/badge.svg)](https://github.com/jolars/SLOPE/actions)
 [![Coverage
 status](https://codecov.io/gh/jolars/SLOPE/branch/master/graph/badge.svg)](https://codecov.io/github/jolars/SLOPE?branch=master)
 [![CRAN
