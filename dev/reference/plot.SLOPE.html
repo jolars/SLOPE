@@ -157,7 +157,12 @@ coefficients along the regularization path.</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for SLOPE</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>x</span>, <span class='kw'>intercept</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
+<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(
+  <span class='no'>x</span>,
+  <span class='kw'>intercept</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>x_variable</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"alpha"</span>, <span class='st'>"deviance_ratio"</span>, <span class='st'>"step"</span>),
+  <span class='no'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -169,6 +174,12 @@ coefficients along the regularization path.</p>
     <tr>
       <th>intercept</th>
       <td><p>whether to plot the intercept</p></td>
+    </tr>
+    <tr>
+      <th>x_variable</th>
+      <td><p>what to plot on the x axis. <code>"alpha"</code> plots
+the scaling parameter for the sequence, <code>"deviance_ratio"</code> plots
+the fraction of deviance explained, and <code>"step"</code> plots step number.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -187,7 +198,7 @@ current device unless stored in a variable.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='SLOPE.html'>SLOPE</a></span>(<span class='no'>heart</span>$<span class='no'>x</span>, <span class='no'>heart</span>$<span class='no'>y</span>)
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>fit</span>)</div><div class='img'><img src='plot.SLOPE-1.png' alt='' width='700' height='433' /></div></pre>
+<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>fit</span>)</div><div class='img'><img src='plot.SLOPE-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

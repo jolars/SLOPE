@@ -107,7 +107,7 @@
       <h1 data-toc-skip>An introduction to SLOPE</h1>
                         <h4 class="author">Johan Larsson</h4>
             
-            <h4 class="date">2020-04-26</h4>
+            <h4 class="date">2020-05-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jolars/SLOPE/blob/master/vignettes/introduction.Rmd"><code>vignettes/introduction.Rmd</code></a></small>
       <div class="hidden name"><code>introduction.Rmd</code></div>
@@ -120,10 +120,10 @@
 <h2 class="hasAnchor">
 <a href="#background" class="anchor"></a>Background</h2>
 <p>The functions in this package solves problems of the type <span class="math display">\[
-\mathrm{minimize}\left\{f(\beta) + J(\beta; \sigma,\lambda) \right\},
+\mathrm{minimize}\left\{f(\beta) + J(\beta; \alpha,\lambda) \right\},
 \]</span> where the second part of the objective is the sorted L1-norm <span class="math display">\[
-J(\beta; \sigma,\lambda) = \sigma \sum_{j=1}^p \lambda_j \lvert \beta \rvert_{(j)},
-\]</span> where <span class="math inline">\(\sigma \in \mathbb{R}_{+}\)</span>, <span class="math inline">\(\lambda \in \mathbb{R}_+^p\)</span> and <span class="math inline">\((j)\)</span> represents an rank of the magnitudes of <span class="math inline">\(\beta\)</span> in descending order. <span class="math inline">\(\lambda\)</span> controls the shape of the penalty sequence, which needs to be non-increasing, and <span class="math inline">\(\sigma\)</span> controls the scale of that sequence.</p>
+J(\beta; \alpha,\lambda) = \alpha \sum_{j=1}^p \lambda_j \lvert \beta \rvert_{(j)},
+\]</span> where <span class="math inline">\(\alpha \in \mathbb{R}_{+}\)</span>, <span class="math inline">\(\lambda \in \mathbb{R}_+^p\)</span> and <span class="math inline">\((j)\)</span> represents an rank of the magnitudes of <span class="math inline">\(\beta\)</span> in descending order. <span class="math inline">\(\lambda\)</span> controls the shape of the penalty sequence, which needs to be non-increasing, and <span class="math inline">\(\alpha\)</span> controls the scale of that sequence.</p>
 <p>Solving this problem is called SLOPE (Sorted L-One Penalized Estimation) <span class="citation">(Bogdan et al. 2015)</span>.</p>
 <p>In this problem, <span class="math inline">\(f(\beta)\)</span> is a smooth and convex objective, which for this package so far includes four models from the family of generalized linear models:</p>
 <ul>
@@ -146,7 +146,7 @@ J(\beta; \sigma,\lambda) = \sigma \sum_{j=1}^p \lambda_j \lvert \beta \rvert_{(j
 
 <span class="no">fit</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/SLOPE.html">SLOPE</a></span>(<span class="no">x</span>, <span class="no">y</span>, <span class="kw">family</span> <span class="kw">=</span> <span class="st">"binomial"</span>, <span class="kw">lambda</span> <span class="kw">=</span> <span class="st">"bh"</span>)</pre></body></html></div>
 <p>The default print method gives a summary of the regularization path but it is usually more informative to study a plot of the path.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="no">fit</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">fit</span>)</pre></body></html></div>
 <div class="figure">
 <img src="introduction_files/figure-html/unnamed-chunk-2-1.png" alt="Regularization path for a binomial regression model fit to the heart data set." width="576"><p class="caption">
 Regularization path for a binomial regression model fit to the heart data set.
@@ -169,7 +169,7 @@ Regularization path for a binomial regression model fit to the heart data set.
                    <span class="kw">solver</span> <span class="kw">=</span> <span class="st">"admm"</span>,
                    <span class="kw">repeats</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
 <p>As before, the plot method offers the best summary.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="no">tune</span>, <span class="kw">measure</span> <span class="kw">=</span> <span class="st">"mae"</span>) <span class="co"># plot mean absolute error</span></pre></body></html></div>
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">tune</span>, <span class="kw">measure</span> <span class="kw">=</span> <span class="st">"mae"</span>) <span class="co"># plot mean absolute error</span></pre></body></html></div>
 <div class="figure">
 <img src="introduction_files/figure-html/unnamed-chunk-4-1.png" alt="Model tuning results from Gaussian SLOPE on the bodyfat dataset." width="528"><p class="caption">
 Model tuning results from Gaussian SLOPE on the bodyfat dataset.
@@ -183,9 +183,9 @@ Model tuning results from Gaussian SLOPE on the bodyfat dataset.
 <span class="co">#&gt;     solver = "admm")</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Optimum values:</span>
-<span class="co">#&gt;     q     sigma measure      mean        se        lo        hi</span>
-<span class="co">#&gt; 1 0.1 0.1264807     mae  3.632983 0.1164238  3.369614  3.896352</span>
-<span class="co">#&gt; 2 0.2 0.1152445     mse 19.786523 1.1095689 17.276504 22.296542</span></pre></body></html></div>
+<span class="co">#&gt;     q     alpha measure      mean        se        lo        hi</span>
+<span class="co">#&gt; 1 0.1 0.1204367     mae  3.633138 0.1165305  3.369527  3.896748</span>
+<span class="co">#&gt; 2 0.2 0.1204367     mse 19.786670 1.1108891 17.273664 22.299676</span></pre></body></html></div>
 </div>
 <div id="false-discovery-rate" class="section level2">
 <h2 class="hasAnchor">
@@ -200,8 +200,8 @@ Model tuning results from Gaussian SLOPE on the bodyfat dataset.
 <span class="kw">for</span> (<span class="no">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span>(<span class="no">q</span>)) {
   <span class="no">n</span> <span class="kw">&lt;-</span> <span class="fl">1000</span>
   <span class="no">p</span> <span class="kw">&lt;-</span> <span class="no">n</span>/<span class="fl">2</span>
-  <span class="no">sigma</span> <span class="kw">&lt;-</span> <span class="fl">1</span>
-  <span class="no">problem</span> <span class="kw">&lt;-</span> <span class="kw pkg">SLOPE</span><span class="kw ns">:::</span><span class="fu">randomProblem</span>(<span class="no">n</span>, <span class="no">p</span>, <span class="kw">q</span> <span class="kw">=</span> <span class="no">q</span>[<span class="no">i</span>], <span class="kw">sigma</span> <span class="kw">=</span> <span class="no">sigma</span>)
+  <span class="no">alpha</span> <span class="kw">&lt;-</span> <span class="fl">1</span>
+  <span class="no">problem</span> <span class="kw">&lt;-</span> <span class="kw pkg">SLOPE</span><span class="kw ns">:::</span><span class="fu">randomProblem</span>(<span class="no">n</span>, <span class="no">p</span>, <span class="kw">q</span> <span class="kw">=</span> <span class="no">q</span>[<span class="no">i</span>], <span class="kw">alpha</span> <span class="kw">=</span> <span class="no">alpha</span>)
 
   <span class="no">x</span> <span class="kw">&lt;-</span> <span class="no">problem</span>$<span class="no">x</span>
   <span class="no">y</span> <span class="kw">&lt;-</span> <span class="no">problem</span>$<span class="no">y</span>
@@ -212,7 +212,7 @@ Model tuning results from Gaussian SLOPE on the bodyfat dataset.
                <span class="kw">lambda</span> <span class="kw">=</span> <span class="st">"gaussian"</span>,
                <span class="kw">solver</span> <span class="kw">=</span> <span class="st">"admm"</span>,
                <span class="kw">q</span> <span class="kw">=</span> <span class="fl">0.1</span>,
-               <span class="kw">sigma</span> <span class="kw">=</span> <span class="no">sigma</span>)
+               <span class="kw">alpha</span> <span class="kw">=</span> <span class="no">alpha</span>)
 
   <span class="no">selected_slope</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span>(<span class="no">fit</span>$<span class="no">nonzeros</span>)
   <span class="no">V</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/sets.html">setdiff</a></span>(<span class="no">selected_slope</span>, <span class="no">signals</span>))
@@ -238,7 +238,7 @@ Control of false discovery rate using SLOPE.
 <a href="#references" class="anchor"></a>References</h2>
 <div id="refs" class="references">
 <div id="ref-bogdan2015">
-<p>Bogdan, Małgorzata, Ewout van den Berg, Chiara Sabatti, Weijie Su, and Emmanuel J. Candès. 2015. “SLOPE - Adaptive Variable Selection via Convex Optimization.” <em>The Annals of Applied Statistics</em> 9 (3): 1103–40. <a href="https://doi.org/10/gfgwzt">https://doi.org/10/gfgwzt</a>.</p>
+<p>Bogdan, Małgorzata, Ewout van den Berg, Chiara Sabatti, Weijie Su, and Emmanuel J. Candès. 2015. “SLOPE - Adaptive Variable Selection via Convex Optimization.” <em>The Annals of Applied Statistics</em> 9 (3): 1103–40. <a href="https://doi.org/10.1214/15-AOAS842">https://doi.org/10.1214/15-AOAS842</a>.</p>
 </div>
 <div id="ref-jia2010">
 <p>Jia, J., and B. Yu. 2010. “On Model Selection Consistency of the Elastic Net When P <span class="math inline">\(&gt;&gt;\)</span> N.” <em>Statistica Sinica</em> 20 (2): 595–611.</p>

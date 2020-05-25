@@ -169,10 +169,10 @@ in decreasing order according  to its absolute values.</p>
   <span class='kw'>intercept</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>center</span> <span class='kw'>=</span> !<span class='fu'><a href='https://rdrr.io/r/base/class.html'>inherits</a></span>(<span class='no'>x</span>, <span class='st'>"sparseMatrix"</span>),
   <span class='kw'>scale</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"l2"</span>, <span class='st'>"l1"</span>, <span class='st'>"sd"</span>, <span class='st'>"none"</span>),
-  <span class='kw'>sigma</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"path"</span>, <span class='st'>"estimate"</span>),
+  <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"path"</span>, <span class='st'>"estimate"</span>),
   <span class='kw'>lambda</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"gaussian"</span>, <span class='st'>"bh"</span>, <span class='st'>"oscar"</span>, <span class='st'>"bhq"</span>),
   <span class='kw'>lambda_min_ratio</span> <span class='kw'>=</span> <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span>(<span class='no'>x</span>) <span class='kw'>&lt;</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NCOL</a></span>(<span class='no'>x</span>)) <span class='fl'>0.01</span> <span class='kw'>else</span> <span class='fl'>1e-04</span>,
-  <span class='kw'>n_sigma</span> <span class='kw'>=</span> <span class='kw'>if</span> (<span class='no'>sigma</span>[<span class='fl'>1</span>] <span class='kw'>==</span> <span class='st'>"estimate"</span>) <span class='fl'>1</span> <span class='kw'>else</span> <span class='fl'>100</span>,
+  <span class='kw'>path_length</span> <span class='kw'>=</span> <span class='kw'>if</span> (<span class='no'>alpha</span>[<span class='fl'>1</span>] <span class='kw'>==</span> <span class='st'>"estimate"</span>) <span class='fl'>1</span> <span class='kw'>else</span> <span class='fl'>20</span>,
   <span class='kw'>q</span> <span class='kw'>=</span> <span class='fl'>0.1</span> * <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span>(<span class='no'>x</span>)/<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NCOL</a></span>(<span class='no'>x</span>)),
   <span class='kw'>screen</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>screen_alg</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"strong"</span>, <span class='st'>"previous"</span>),
@@ -189,7 +189,9 @@ in decreasing order according  to its absolute values.</p>
   <span class='kw'>verbosity</span> <span class='kw'>=</span> <span class='fl'>0</span>,
   <span class='no'>X</span>,
   <span class='no'>fdr</span>,
-  <span class='no'>normalize</span>
+  <span class='no'>normalize</span>,
+  <span class='no'>sigma</span>,
+  <span class='no'>n_sigma</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -227,16 +229,6 @@ predictors to have L1-norm of one, <code>"l2"</code> scales predictors to have
 L2-norm one, <code>"sd"</code> scales predictors to have standard deviation one.</p></td>
     </tr>
     <tr>
-      <th>sigma</th>
-      <td><p>regularization path: either a decreasing numeric
-vector or a character vector; in the latter case, the choices are:</p><ul>
-<li><p><code>sigma = "path"</code>, which computes a <code>sigma</code> sequence
-where the first value corresponds to the intercept-only (null) model, and</p></li>
-<li><p><code>sigma = "estimate"</code>, which estimates a <em>single</em> <code>sigma</code> using a technique
-outlined in Bogdan et al. (2015).</p></li>
-</ul></td>
-    </tr>
-    <tr>
       <th>lambda</th>
       <td><p>either a character vector indicating the method used
 to construct the lambda path or a numeric non-decreasing
@@ -247,10 +239,10 @@ for details.</p></td>
     <tr>
       <th>lambda_min_ratio</th>
       <td><p>smallest value for <code>lambda</code> as a fraction of
-<code>lambda_max</code>; used in the selection of <code>sigma</code> when <code>sigma = "path"</code>.</p></td>
+<code>lambda_max</code>; used in the selection of <code>alpha</code> when <code>alpha = "path"</code>.</p></td>
     </tr>
     <tr>
-      <th>n_sigma</th>
+      <th>path_length</th>
       <td><p>length of regularization path</p></td>
     </tr>
     <tr>
@@ -280,7 +272,7 @@ no violations in the strong set</p></li>
       <th>tol_dev_change</th>
       <td><p>the regularization path is stopped if the
 fractional change in deviance falls below this value; note that this is
-automatically set to 0 if a sigma is manually entered</p></td>
+automatically set to 0 if a alpha is manually entered</p></td>
     </tr>
     <tr>
       <th>tol_dev_ratio</th>
@@ -348,6 +340,26 @@ information from the solver.</p></td>
       <th>normalize</th>
       <td><p>deprecated. please use <code>scale</code> and <code>center</code> instead</p></td>
     </tr>
+    <tr>
+      <th>sigma</th>
+      <td><p>deprecated. please use <code>alpha</code> instead</p></td>
+    </tr>
+    <tr>
+      <th>n_sigma</th>
+      <td><p>deprecated. please use <code>path_length</code> instead</p></td>
+    </tr>
+    <tr>
+      <th>s</th>
+      <td><p>scale for regularization path: either a decreasing numeric
+vector (possible of length 1) or a character vector; in the latter case,
+the choices are:</p><ul>
+<li><p><code>alpha = "path"</code>, which computes a regularization sequence
+where the first value corresponds to the intercept-only (null) model and
+the last to the almost-saturated model, and</p></li>
+<li><p><code>alpha = "estimate"</code>, which estimates a <em>single</em> <code>alpha</code>
+using Algorithm 5 in Bogdan et al. (2015), Algorithm 5.</p></li>
+</ul></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -360,10 +372,10 @@ for each target (dependent variable), and
 one slice for each penalty.</p></dd>
 <dt>nonzeros</dt><dd><p>a three-dimensional logical array indicating whether a
 coefficient was zero or not</p></dd>
-<dt>lambda</dt><dd><p>the lambda vector that when multiplied by a value in <code>sigma</code>
+<dt>lambda</dt><dd><p>the lambda vector that when multiplied by a value in <code>alpha</code>
 gives the penalty vector at that point along the regularization
 path</p></dd>
-<dt>sigma</dt><dd><p>the vector of sigma, indicating the scale of the lambda vector</p></dd>
+<dt>alpha</dt><dd><p>vector giving the scaling of the lambda sequence</p></dd>
 <dt>class_names</dt><dd><p>a character vector giving the names of the classes for binomial and
 multinomial families</p></dd>
 <dt>passes</dt><dd><p>the number of passes the solver took at each step on the path</p></dd>
@@ -385,7 +397,7 @@ available if <code>diagnostics = TRUE</code> in the call to <code>SLOPE()</code>
     <p><code>SLOPE()</code> solves a convex minimization problem with the
 following composite objective:
 $$
-  f(\beta) + \sigma \sum_{i=j}^p \lambda_j |\beta|_{(j)},
+  f(\beta) + \alpha \sum_{i=j}^p \lambda_j |\beta|_{(j)},
 $$
 where \(f(\beta)\) is a smooth and convex function of \(\beta\) and
 the second part is the sorted L1-norm.
@@ -397,12 +409,12 @@ See section <strong>Families</strong> for specifics regarding the various types 
 a separate regularization sequence, starting from
 the null (intercept-only) model to an almost completely unregularized
 model. These regularization sequences are parameterized using
-\(\lambda\) and \(\sigma\), with only \(\sigma\) varying along the
+\(\lambda\) and \(\alpha\), with only \(\alpha\) varying along the
 path. The length of the path can be manually, but will terminate
 prematurely depending on
 arguments <code>tol_dev_change</code>, <code>tol_dev_ratio</code>, and <code>max_variables</code>.
 This means that unless these arguments are modified, the path is not
-guaranteed to be of length <code>n_sigma</code>.</p>
+guaranteed to be of length <code>path_length</code>.</p>
     <h2 class="hasAnchor" id="families"><a class="anchor" href="#families"></a>Families</h2>
 
     
@@ -445,10 +457,10 @@ If all <code>lambda</code> are the same value, this will
 lead to the ordinary lasso penalty. The greater the differences are between
 consecutive values along the sequence, the more clustering behavior
 will the model exhibit. Note, also, that the scale of the \(\lambda\)
-vector makes no difference if <code>sigma = NULL</code>, since <code>sigma</code> will be
+vector makes no difference if <code>alpha = NULL</code>, since <code>alpha</code> will be
 selected automatically to ensure that the model is completely sparse at the
 beginning and almost unregularized at the end. If, however, both
-<code>sigma</code> and <code>lambda</code> are manually specified, both of the scales will
+<code>alpha</code> and <code>lambda</code> are manually specified, both of the scales will
 matter.</p>
 <p>Instead of choosing the sequence manually, one of the following
 automatically generated sequences may be chosen.</p>
@@ -521,18 +533,18 @@ Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
              <span class='kw'>lambda</span> <span class='kw'>=</span> <span class='st'>"oscar"</span>,
              <span class='kw'>q</span> <span class='kw'>=</span> <span class='fl'>0.4</span>)
 
-<span class='co'># Multinomial response, custom sigma and lambda</span>
+<span class='co'># Multinomial response, custom alpha and lambda</span>
 <span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span>(<span class='no'>wine</span>$<span class='no'>y</span>)) - <span class='fl'>1</span>
 <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span>(<span class='no'>wine</span>$<span class='no'>x</span>)
 
-<span class='no'>sigma</span> <span class='kw'>&lt;-</span> <span class='fl'>0.005</span>
+<span class='no'>alpha</span> <span class='kw'>&lt;-</span> <span class='fl'>0.005</span>
 <span class='no'>lambda</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>exp</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span>(<span class='fl'>2</span>), <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span>(<span class='fl'>1.8</span>), <span class='kw'>length.out</span> <span class='kw'>=</span> <span class='no'>p</span>*<span class='no'>m</span>))
 
 <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'>SLOPE</span>(<span class='no'>wine</span>$<span class='no'>x</span>,
              <span class='no'>wine</span>$<span class='no'>y</span>,
              <span class='kw'>family</span> <span class='kw'>=</span> <span class='st'>"multinomial"</span>,
              <span class='kw'>lambda</span> <span class='kw'>=</span> <span class='no'>lambda</span>,
-             <span class='kw'>sigma</span> <span class='kw'>=</span> <span class='no'>sigma</span>)</div></pre>
+             <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='no'>alpha</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

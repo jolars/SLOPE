@@ -152,14 +152,35 @@
 <h1 class="page-header" data-toc-text="development version">
 <a href="#slope-development-version" class="anchor"></a>SLOPE (development version)<small> Unreleased </small>
 </h1>
+<div id="major-changes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#major-changes" class="anchor"></a>Major changes</h2>
+<ul>
+<li>
+<code>sigma</code> argument is deprecated in favor of <code>alpha</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>, <code><a href="../reference/coef.SLOPE.html">coef.SLOPE()</a></code>, and <code><a href="../reference/predict.SLOPE.html">predict.SLOPE()</a></code>
+</li>
+<li>
+<code>n_sigma</code> argument is deprecated in favor of <code>path_length</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>
+</li>
+</ul>
+</div>
+<div id="minor-changes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#minor-changes" class="anchor"></a>Minor changes</h2>
+<ul>
+<li>default <code>path_length</code> changed from 100 to 20</li>
+<li>
+<code><a href="../reference/plot.SLOPE.html">plot.SLOPE()</a></code> gains an argument <code>x_variable</code> that controls what is plotted on the x axis</li>
+</ul>
+</div>
 </div>
     <div id="slope-021" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.1">
 <a href="#slope-021" class="anchor"></a>SLOPE 0.2.1<small> 2020-04-16 </small>
 </h1>
-<div id="minor-changes" class="section level2">
+<div id="minor-changes-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-changes" class="anchor"></a>Minor changes</h2>
+<a href="#minor-changes-1" class="anchor"></a>Minor changes</h2>
 <ul>
 <li>A few examples in <code><a href="https://rdrr.io/r/stats/deviance.html">deviance()</a></code> and <code><a href="../reference/SLOPE.html">SLOPE()</a></code> that were taking too long to execute have been removed or modified.</li>
 </ul>
@@ -170,9 +191,9 @@
 <a href="#slope-020" class="anchor"></a>SLOPE 0.2.0<small> Unreleased </small>
 </h1>
 <p>This version of SLOPE represents a major change to the package. We have merged functionality from the owl package into this package, which means there are several changes to the API, including deprecated functions.</p>
-<div id="major-changes" class="section level2">
+<div id="major-changes-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#major-changes" class="anchor"></a>Major changes</h2>
+<a href="#major-changes-1" class="anchor"></a>Major changes</h2>
 <ul>
 <li>
 <code><a href="../reference/SLOPE_solver.html">SLOPE_solver()</a></code>, <code>SLOPE_solver_matlab()</code>, <code><a href="../reference/prox_sorted_L1.html">prox_sorted_L1()</a></code>, and <code><a href="../reference/lambda.html">create_lambda()</a></code> have been deprecated (and will be defunct in the next version of SLOPE)</li>
@@ -188,7 +209,7 @@
 <code><a href="../reference/SLOPE.html">SLOPE()</a></code> now returns an object of class <code>"SLOPE"</code> (and an additional class depending on input to <code>family</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>
 </li>
 <li>
-<code>SLOPE</code> objects gain <code><a href="https://rdrr.io/r/stats/coef.html">coef()</a></code> and <code><a href="https://rdrr.io/r/graphics/plot.html">plot()</a></code> methods.</li>
+<code>SLOPE</code> objects gain <code><a href="https://rdrr.io/r/stats/coef.html">coef()</a></code> and <code><a href="https://rdrr.io/r/base/plot.html">plot()</a></code> methods.</li>
 <li>
 <code>SLOPE</code> now uses screening rules to speed up model fitting in the high-dimensional regime</li>
 <li>most of the code is now written in C++ using the <strong>Rcpp</strong> and <strong>RcppArmadillo</strong> packages</li>
@@ -202,9 +223,9 @@
 <li>the introductory vignette has been replaced</li>
 </ul>
 </div>
-<div id="minor-changes-1" class="section level2">
+<div id="minor-changes-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-changes-1" class="anchor"></a>Minor changes</h2>
+<a href="#minor-changes-2" class="anchor"></a>Minor changes</h2>
 <ul>
 <li>a new function <code><a href="https://rdrr.io/r/stats/deviance.html">deviance()</a></code> returns the deviance from the fit</li>
 <li>a new function <code><a href="../reference/score.html">score()</a></code> can be used to assess model performance against new data</li>
