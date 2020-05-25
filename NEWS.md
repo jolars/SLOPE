@@ -9,6 +9,8 @@
 ## Minor changes
 
 * default `path_length` changed from 100 to 20
+* `plot.SLOPE()` gains an argument `x_variable` that controls what is
+  plotted on the x axis
 
 # SLOPE 0.2.1
 

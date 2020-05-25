@@ -4,12 +4,21 @@
 \alias{plot.SLOPE}
 \title{Plot coefficients}
 \usage{
-\method{plot}{SLOPE}(x, intercept = FALSE, ...)
+\method{plot}{SLOPE}(
+  x,
+  intercept = FALSE,
+  x_variable = c("alpha", "deviance_ratio", "step"),
+  ...
+)
 }
 \arguments{
 \item{x}{an object of class \code{"SLOPE"}}
 
 \item{intercept}{whether to plot the intercept}
+
+\item{x_variable}{what to plot on the x axis. \code{"alpha"} plots
+the scaling parameter for the sequence, \code{"deviance_ratio"} plots
+the fraction of deviance explained, and \code{"step"} plots step number.}
 
 \item{...}{parameters that will be used to modify the call to
 \code{\link[lattice:xyplot]{lattice::xyplot()}}}

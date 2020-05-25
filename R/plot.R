@@ -7,6 +7,9 @@
 #' @param ... parameters that will be used to modify the call to
 #'   [lattice::xyplot()]
 #' @param intercept whether to plot the intercept
+#' @param x_variable what to plot on the x axis. `"alpha"` plots
+#'   the scaling parameter for the sequence, `"deviance_ratio"` plots
+#'   the fraction of deviance explained, and `"step"` plots step number.
 #'
 #' @seealso [lattice::xyplot()], [SLOPE()], [plotDiagnostics()]
 #'
@@ -17,8 +20,12 @@
 #' @examples
 #' fit <- SLOPE(heart$x, heart$y)
 #' plot(fit)
-plot.SLOPE = function(x, intercept = FALSE, ...) {
+plot.SLOPE = function(x,
+                      intercept = FALSE,
+                      x_variable = c("alpha", "deviance_ratio", "step"),
+                      ...) {
   object <- x
+  x_variable <- match.arg(x_variable)
 
   coefs <- object$coefficients
 
@@ -43,8 +50,15 @@ plot.SLOPE = function(x, intercept = FALSE, ...) {
 
   args <- list()
 
-  x <- object$alpha
-  xlab <- expression(alpha)
+  x <- switch(x_variable,
+              alpha = object$alpha,
+              deviance_ratio = object$deviance_ratio,
+              step = seq_along(object$alpha))
+
+  xlab <- switch(x_variable,
+                 alpha = expression(alpha),
+                 deviance_ratio = "Fraction Deviance Explained",
+                 step = "Step")
 
   n_x <- length(x)
   d <- as.data.frame(as.table(coefs))
