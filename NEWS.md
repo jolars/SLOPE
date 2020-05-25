@@ -1,5 +1,9 @@
 # SLOPE (development version)
 
+## Minor changes
+
+* default `n_sigma` changed from 100 to 20
+
 # SLOPE 0.2.1
 
 ## Minor changes

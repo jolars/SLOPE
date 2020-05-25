@@ -14,7 +14,7 @@ SLOPE(
   sigma = c("path", "estimate"),
   lambda = c("gaussian", "bh", "oscar", "bhq"),
   lambda_min_ratio = if (NROW(x) < NCOL(x)) 0.01 else 1e-04,
-  n_sigma = if (sigma[1] == "estimate") 1 else 100,
+  n_sigma = if (sigma[1] == "estimate") 1 else 20,
   q = 0.1 * min(1, NROW(x)/NCOL(x)),
   screen = TRUE,
   screen_alg = c("strong", "previous"),
