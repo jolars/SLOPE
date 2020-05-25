@@ -1,8 +1,14 @@
 # SLOPE (development version)
 
+## Major changes
+
+* `sigma` argument is deprecated in favor of `alpha` in `SLOPE()`, 
+  `coef.SLOPE()`, and `predict.SLOPE()`
+* `n_sigma` argument is deprecated in favor of `path_length` in `SLOPE()`
+
 ## Minor changes
 
-* default `n_sigma` changed from 100 to 20
+* default `path_length` changed from 100 to 20
 
 # SLOPE 0.2.1
 

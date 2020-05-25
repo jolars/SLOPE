@@ -14,9 +14,9 @@ void rescale(cube& betas,
 {
   const uword p = betas.n_rows;
   const uword m = betas.n_cols;
-  const uword n_sigma = betas.n_slices;
+  const uword path_length = betas.n_slices;
 
-  cube x_bar_beta_sum(1, m, n_sigma, fill::zeros);
+  cube x_bar_beta_sum(1, m, path_length, fill::zeros);
 
   for (uword k = 0; k < m; ++k) {
     for (uword j = static_cast<uword>(intercept); j < p; ++j) {

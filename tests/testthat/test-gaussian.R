@@ -9,7 +9,7 @@ test_that("unregularized gaussian models work as expected", {
   g <- SLOPE(x,
            y,
            family = "gaussian",
-           sigma = 1e-12)
+           alpha = 1e-12)
 
   expect_equivalent(coef(lm_fit),
                     coef(g),
@@ -31,6 +31,6 @@ test_that("wide and tall inputs work correctly", {
 
     xy <- SLOPE:::randomProblem(n, p, density = d)
 
-    expect_silent(SLOPE(xy$x, xy$y, n_sigma = 5))
+    expect_silent(SLOPE(xy$x, xy$y, path_length = 5))
   }
 })

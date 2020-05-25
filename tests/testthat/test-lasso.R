@@ -14,7 +14,7 @@ test_that("lasso and slope fits are equivalent if all lambda are equal", {
                  center = FALSE,
                  scale = FALSE,
                  lambda = rep(lambda[1], ncol(x)),
-                 sigma = exp(seq(log(1), log(1e-4), length.out = 100)))
+                 alpha = exp(seq(log(1), log(1e-4), length.out = 100)))
 
   lasso_coef <- coef(lasso)
   slope_coef <- coef(slope)

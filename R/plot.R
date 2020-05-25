@@ -43,8 +43,8 @@ plot.SLOPE = function(x, intercept = FALSE, ...) {
 
   args <- list()
 
-  x <- object$sigma
-  xlab <- expression(sigma)
+  x <- object$alpha
+  xlab <- expression(alpha)
 
   n_x <- length(x)
   d <- as.data.frame(as.table(coefs))
@@ -186,16 +186,16 @@ plot.TrainedSLOPE <-
   optimum <- object$optima[ind, , drop = FALSE]
   model <- object$model
 
-  sigma <- unique(summary$sigma)
+  alpha <- unique(summary$alpha)
   q <- unique(summary$q)
 
   summary$q <- as.factor(summary$q)
 
   # get indices of best fit
-  best_ind <- match(optimum$sigma, summary$sigma)
+  best_ind <- match(optimum$alpha, summary$alpha)
 
   if (length(q) > 1) {
-    x <- quote(mean ~ sigma | q)
+    x <- quote(mean ~ alpha | q)
 
     strip <- lattice::strip.custom(
       var.name = "q",
@@ -204,12 +204,12 @@ plot.TrainedSLOPE <-
     )
     best_outer_ind <- match(optimum$q, unique(summary$q))
   } else {
-    x <- quote(mean ~ sigma)
+    x <- quote(mean ~ alpha)
     strip <- lattice::strip.default
     best_outer_ind <- 1
   }
 
-  xlab <- expression(log[e](sigma))
+  xlab <- expression(log[e](alpha))
 
   args <- list(
     x = x,

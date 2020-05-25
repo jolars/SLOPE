@@ -84,9 +84,9 @@ trainSLOPE <- function(x,
   if (length(measure) == 0)
     stop("measure needs to be one of ", ok)
 
-  sigma <- fit$sigma
+  alpha <- fit$alpha
 
-  n_sigma <- length(sigma)
+  path_length <- length(alpha)
   n_q <- length(q)
   n_measure <- length(measure)
 
@@ -121,7 +121,7 @@ trainSLOPE <- function(x,
     args <- utils::modifyList(list(x = x_train,
                                    y = y_train,
                                    q = q,
-                                   sigma = sigma), list(...))
+                                   alpha = alpha), list(...))
     s <- lapply(measure, function(m) {
       SLOPE::score(do.call(SLOPE::SLOPE, args), x_test, y_test, m)
     })
@@ -129,8 +129,8 @@ trainSLOPE <- function(x,
     unlist(s)
   }
 
-  tmp <- array(unlist(r), c(n_sigma*n_q, n_measure, number*repeats))
-  d <- matrix(tmp, c(n_sigma*n_q*n_measure, number*repeats))
+  tmp <- array(unlist(r), c(path_length*n_q, n_measure, number*repeats))
+  d <- matrix(tmp, c(path_length*n_q*n_measure, number*repeats))
 
   means <- rowMeans(d)
   se <- apply(d, 1, stats::sd)/sqrt(repeats*number)
@@ -138,9 +138,9 @@ trainSLOPE <- function(x,
   lo <- means - ci
   hi <- means + ci
 
-  summary <- data.frame(q = rep(q, each = n_sigma*n_measure),
-                        sigma = rep(sigma, n_measure*n_q),
-                        measure = rep(measure, each = n_sigma, times = n_q),
+  summary <- data.frame(q = rep(q, each = path_length*n_measure),
+                        alpha = rep(alpha, n_measure*n_q),
+                        measure = rep(measure, each = path_length, times = n_q),
                         mean = means,
                         se = se,
                         lo = lo,

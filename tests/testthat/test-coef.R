@@ -6,7 +6,7 @@ test_that("intepolating coefficients works properly", {
   fit <- SLOPE(xy$x, xy$y)
 
   expect_type(coef(fit), "double")
-  expect_silent(coef(fit, sigma = c(0.001, 0.04)))
+  expect_silent(coef(fit, alpha = c(0.001, 0.04)))
 
   # check for lasso
   fit <- SLOPE(xy$x, xy$y)
@@ -41,7 +41,7 @@ test_that("refitting works if exact = TRUE", {
   fit <- SLOPE(xy$x, xy$y)
 
   # check simplify
-  coefs <- coef(fit, sigma = 0.4, exact = TRUE, x = xy$x, y = xy$y)
+  coefs <- coef(fit, alpha = 0.4, exact = TRUE, x = xy$x, y = xy$y)
 
   expect_type(coefs, "double")
 })

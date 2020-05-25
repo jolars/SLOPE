@@ -20,7 +20,7 @@ randomProblem <-
            n_targets = if (match.arg(response) == "multinomial") 3 else 1,
            density = 1,
            amplitude = if (match.arg(response) == "poisson") 1 else 3,
-           sigma = 1,
+           alpha = 1,
            response = c("gaussian", "binomial", "poisson", "multinomial"),
            rho = 0) {
   m <- n_targets
@@ -48,9 +48,9 @@ randomProblem <-
   beta <- signs * amplitude * (1:(p*m) %in% nonzero)
 
   y <- switch(match.arg(response),
-              gaussian = x %*% beta + stats::rnorm(n, sd = sigma),
+              gaussian = x %*% beta + stats::rnorm(n, sd = alpha),
               binomial = {
-                y <- x %*% beta + stats::rnorm(n, sd = sigma)
+                y <- x %*% beta + stats::rnorm(n, sd = alpha)
                 (sign(y) + 1)/2
               },
               multinomial = {

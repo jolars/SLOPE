@@ -12,11 +12,11 @@
 #' @method print SLOPE
 #' @export
 print.SLOPE <- function(x, ...) {
-  sigma <- x$sigma
+  alpha <- x$alpha
   n_nonzero <- apply(x$nonzeros, 3, sum)
   deviance_ratio <- x$deviance_ratio
 
-  out <- data.frame(sigma = sigma,
+  out <- data.frame(alpha = alpha,
                     deviance_ratio = deviance_ratio,
                     n_nonzero = n_nonzero)
 

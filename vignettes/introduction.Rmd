@@ -21,17 +21,17 @@ knitr::opts_chunk$set(
 
 The functions in this package solves problems of the type
 $$
-\mathrm{minimize}\left\{f(\beta) + J(\beta; \sigma,\lambda) \right\},
+\mathrm{minimize}\left\{f(\beta) + J(\beta; \alpha,\lambda) \right\},
 $$
 where the second part of the objective is the 
 sorted L1-norm
 $$
-J(\beta; \sigma,\lambda) = \sigma \sum_{j=1}^p \lambda_j \lvert \beta \rvert_{(j)},
+J(\beta; \alpha,\lambda) = \alpha \sum_{j=1}^p \lambda_j \lvert \beta \rvert_{(j)},
 $$
-where $\sigma \in \mathbb{R}_{+}$, $\lambda \in \mathbb{R}_+^p$ and
+where $\alpha \in \mathbb{R}_{+}$, $\lambda \in \mathbb{R}_+^p$ and
 $(j)$ represents an rank of the magnitudes of $\beta$ in descending order.
 $\lambda$ controls the shape of the penalty sequence, which needs to be
-non-increasing, and $\sigma$ controls the scale of that sequence.
+non-increasing, and $\alpha$ controls the scale of that sequence.
 
 Solving this problem is called SLOPE (Sorted L-One Penalized Estimation)
 [@bogdan2015].
@@ -146,8 +146,8 @@ set.seed(1)
 for (i in seq_along(q)) {
   n <- 1000
   p <- n/2
-  sigma <- 1
-  problem <- SLOPE:::randomProblem(n, p, q = q[i], sigma = sigma)
+  alpha <- 1
+  problem <- SLOPE:::randomProblem(n, p, q = q[i], alpha = alpha)
   
   x <- problem$x
   y <- problem$y
@@ -158,7 +158,7 @@ for (i in seq_along(q)) {
                lambda = "gaussian",
                solver = "admm",
                q = 0.1,
-               sigma = sigma)
+               alpha = alpha)
   
   selected_slope <- which(fit$nonzeros)
   V <- length(setdiff(selected_slope, signals))

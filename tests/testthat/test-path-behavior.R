@@ -9,9 +9,9 @@ test_that("regularization path correctly stops if max_variables reached", {
                intercept = FALSE,
                lambda = "bh")
 
-  n_sigma <- length(fit$sigma)
+  path_length <- length(fit$alpha)
 
-  n_var <- sum(unique(abs(signif(coef(fit)[, n_sigma - 1])), 4) != 0)
+  n_var <- sum(unique(abs(signif(coef(fit)[, path_length - 1])), 4) != 0)
 
   expect_lte(n_var, 10)
 })

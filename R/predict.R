@@ -9,7 +9,7 @@
 #'   `"response"` returns the result of applying the link function,
 #'    and `"class"` returns class predictions.
 #' @param ... ignored and only here for method consistency
-#' @param sigma penalty parameter for SLOPE models; if `NULL`, the
+#' @param alpha penalty parameter for SLOPE models; if `NULL`, the
 #'   values used in the original fit will be used
 #' @param simplify if `TRUE`, [base::drop()] will be called before returning
 #'   the coefficients to drop extraneous dimensions
@@ -18,6 +18,7 @@
 #'   the object with the new parameters. If `FALSE`, the predicted values
 #'   will be based on interpolated coefficients from the original
 #'   penalty path.
+#' @param sigma deprecated. Please use `alpha` instead.
 #'
 #' @seealso [stats::predict()], [stats::predict.glm()]
 #'
@@ -30,9 +31,10 @@
 #' @export
 predict.SLOPE <- function(object,
                           x,
-                          sigma = NULL,
+                          alpha = NULL,
                           type = "link",
                           simplify = TRUE,
+                          sigma,
                           ...) {
   # This method (the base method) only generates linear predictors
 
@@ -42,7 +44,12 @@ predict.SLOPE <- function(object,
   if (inherits(x, "data.frame"))
     x <- as.matrix(x)
 
-  beta <- stats::coef(object, sigma = sigma, simplify = FALSE)
+  if (!missing(sigma)) {
+    warning("`sigma` is deprecated. Please use `alpha` instead.")
+    alpha <- sigma
+  }
+
+  beta <- stats::coef(object, alpha = alpha, simplify = FALSE)
 
   intercept <- "(Intercept)" %in% dimnames(beta)[[1]]
 
@@ -165,9 +172,9 @@ predict.MultinomialSLOPE <- function(object,
     response = {
       n <- nrow(lin_pred)
       m <- ncol(lin_pred)
-      n_sigma <- dim(lin_pred)[3]
+      path_length <- dim(lin_pred)[3]
 
-      tmp <- array(0, c(n, m + 1, n_sigma))
+      tmp <- array(0, c(n, m + 1, path_length))
       tmp[, 1:m, ] <- lin_pred
 
       aperm(apply(tmp, c(1, 3), function(x) exp(x)/sum(exp(x))), c(2, 1, 3))

@@ -4,12 +4,12 @@
 \alias{coef.SLOPE}
 \title{Obtain coefficients}
 \usage{
-\method{coef}{SLOPE}(object, sigma = NULL, exact = FALSE, simplify = TRUE, ...)
+\method{coef}{SLOPE}(object, alpha = NULL, exact = FALSE, simplify = TRUE, sigma, ...)
 }
 \arguments{
 \item{object}{an object of class \code{'SLOPE'}.}
 
-\item{sigma}{penalty parameter for SLOPE models; if \code{NULL}, the
+\item{alpha}{penalty parameter for SLOPE models; if \code{NULL}, the
 values used in the original fit will be used}
 
 \item{exact}{if \code{TRUE} and the given parameter values differ from those in
@@ -20,6 +20,8 @@ penalty path.}
 
 \item{simplify}{if \code{TRUE}, \code{\link[base:drop]{base::drop()}} will be called before returning
 the coefficients to drop extraneous dimensions}
+
+\item{sigma}{deprecated. Please use \code{alpha} instead.}
 
 \item{...}{arguments that are passed on to \code{\link[stats:update]{stats::update()}} (and therefore
 also to \code{\link[=SLOPE]{SLOPE()}}) if \code{exact = TRUE} and the given penalty
@@ -32,13 +34,13 @@ Coefficients from the model.
 This function returns coefficients from a model fit by \code{\link[=SLOPE]{SLOPE()}}.
 }
 \details{
-If \code{exact = FALSE} and \code{sigma} is not in \code{object},
+If \code{exact = FALSE} and \code{alpha} is not in \code{object},
 then the returned coefficients will be approximated by linear interpolation.
 If coefficients from another type of penalty sequence
 (with a different \code{lambda}) are required, however,
 please use \code{\link[=SLOPE]{SLOPE()}} to refit the model.
 }
 \examples{
-fit <- SLOPE(mtcars$mpg, mtcars$vs, n_sigma = 1)
+fit <- SLOPE(mtcars$mpg, mtcars$vs, path_length = 1)
 coef(fit)
 }

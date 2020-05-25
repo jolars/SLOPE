@@ -9,9 +9,9 @@
 #' `SLOPE()` solves a convex minimization problem with the
 #' following composite objective:
 #' \deqn{
-#'   f(\beta) + \sigma \sum_{i=j}^p \lambda_j |\beta|_{(j)},
+#'   f(\beta) + \alpha \sum_{i=j}^p \lambda_j |\beta|_{(j)},
 #' }{
-#'   f(\beta) + \sigma \sum \lambda |\beta|(j),
+#'   f(\beta) + \alpha \sum \lambda |\beta|(j),
 #' }
 #' where \eqn{f(\beta)} is a smooth and convex function of \eqn{\beta} and
 #' the second part is the sorted L1-norm.
@@ -24,12 +24,12 @@
 #' a separate regularization sequence, starting from
 #' the null (intercept-only) model to an almost completely unregularized
 #' model. These regularization sequences are parameterized using
-#' \eqn{\lambda} and \eqn{\sigma}, with only \eqn{\sigma} varying along the
+#' \eqn{\lambda} and \eqn{\alpha}, with only \eqn{\alpha} varying along the
 #' path. The length of the path can be manually, but will terminate
 #' prematurely depending on
 #' arguments `tol_dev_change`, `tol_dev_ratio`, and `max_variables`.
 #' This means that unless these arguments are modified, the path is not
-#' guaranteed to be of length `n_sigma`.
+#' guaranteed to be of length `path_length`.
 #'
 #' @section Families:
 #'
@@ -84,10 +84,10 @@
 #' lead to the ordinary lasso penalty. The greater the differences are between
 #' consecutive values along the sequence, the more clustering behavior
 #' will the model exhibit. Note, also, that the scale of the \eqn{\lambda}
-#' vector makes no difference if `sigma = NULL`, since `sigma` will be
+#' vector makes no difference if `alpha = NULL`, since `alpha` will be
 #' selected automatically to ensure that the model is completely sparse at the
 #' beginning and almost unregularized at the end. If, however, both
-#' `sigma` and `lambda` are manually specified, both of the scales will
+#' `alpha` and `lambda` are manually specified, both of the scales will
 #' matter.
 #'
 #' Instead of choosing the sequence manually, one of the following
@@ -150,20 +150,22 @@
 #' @param scale type of scaling to apply to predictors; `"l1"` scales
 #'   predictors to have L1-norm of one, `"l2"` scales predictors to have
 #'   L2-norm one, `"sd"` scales predictors to have standard deviation one.
-#' @param sigma regularization path: either a decreasing numeric
-#'   vector or a character vector; in the latter case, the choices are:
-#'   * `sigma = "path"`, which computes a `sigma` sequence
-#'     where the first value corresponds to the intercept-only (null) model, and
-#'   * `sigma = "estimate"`, which estimates a *single* `sigma` using a technique
-#'     outlined in Bogdan et al. (2015).
-#' @param n_sigma length of regularization path
+#' @param s scale for regularization path: either a decreasing numeric
+#'   vector (possible of length 1) or a character vector; in the latter case,
+#'   the choices are:
+#'   - `alpha = "path"`, which computes a regularization sequence
+#'     where the first value corresponds to the intercept-only (null) model and
+#'     the last to the almost-saturated model, and
+#'   - `alpha = "estimate"`, which estimates a *single* `alpha`
+#'     using Algorithm 5 in Bogdan et al. (2015), Algorithm 5.
+#' @param path_length length of regularization path
 #' @param lambda either a character vector indicating the method used
 #'   to construct the lambda path or a numeric non-decreasing
 #'   vector with length equal to the number
 #'   of coefficients in the model; see section **Regularization sequences**
 #'   for details.
 #' @param lambda_min_ratio smallest value for `lambda` as a fraction of
-#'   `lambda_max`; used in the selection of `sigma` when `sigma = "path"`.
+#'   `lambda_max`; used in the selection of `alpha` when `alpha = "path"`.
 #' @param q parameter controlling the shape of the lambda sequence, with
 #'   usage varying depending on the type of path used and has no effect
 #'   is a custom `lambda` sequence is used.
@@ -186,7 +188,7 @@
 #'   information from the solver.
 #' @param tol_dev_change the regularization path is stopped if the
 #'   fractional change in deviance falls below this value; note that this is
-#'   automatically set to 0 if a sigma is manually entered
+#'   automatically set to 0 if a alpha is manually entered
 #' @param tol_dev_ratio the regularization path is stopped if the
 #'   deviance ratio
 #'   \eqn{1 - \mathrm{deviance}/\mathrm{(null-deviance)}}{1 - deviance/(null deviance)}
@@ -203,6 +205,8 @@
 #' @param tol_rel relative tolerance criterion for ADMM solver
 #' @param X deprecated. please use `x` instead
 #' @param fdr deprecated. please use `q` instead
+#' @param sigma deprecated. please use `alpha` instead
+#' @param n_sigma deprecated. please use `path_length` instead
 #' @param normalize deprecated. please use `scale` and `center` instead
 #' @param solver type of solver use, either `"fista"` or `"admm"`. (`"default"`
 #'   and `"matlab"` are deprecated); all families currently support
@@ -221,11 +225,11 @@
 #'   coefficient was zero or not
 #' }
 #' \item{lambda}{
-#'   the lambda vector that when multiplied by a value in `sigma`
+#'   the lambda vector that when multiplied by a value in `alpha`
 #'   gives the penalty vector at that point along the regularization
 #'   path
 #' }
-#' \item{sigma}{the vector of sigma, indicating the scale of the lambda vector}
+#' \item{alpha}{vector giving the scaling of the lambda sequence}
 #' \item{class_names}{
 #'   a character vector giving the names of the classes for binomial and
 #'   multinomial families
@@ -293,18 +297,18 @@
 #'              lambda = "oscar",
 #'              q = 0.4)
 #'
-#' # Multinomial response, custom sigma and lambda
+#' # Multinomial response, custom alpha and lambda
 #' m <- length(unique(wine$y)) - 1
 #' p <- ncol(wine$x)
 #'
-#' sigma <- 0.005
+#' alpha <- 0.005
 #' lambda <- exp(seq(log(2), log(1.8), length.out = p*m))
 #'
 #' fit <- SLOPE(wine$x,
 #'              wine$y,
 #'              family = "multinomial",
 #'              lambda = lambda,
-#'              sigma = sigma)
+#'              alpha = alpha)
 #'
 SLOPE <- function(x,
                   y,
@@ -312,10 +316,10 @@ SLOPE <- function(x,
                   intercept = TRUE,
                   center = !inherits(x, "sparseMatrix"),
                   scale = c("l2", "l1", "sd", "none"),
-                  sigma = c("path", "estimate"),
+                  alpha = c("path", "estimate"),
                   lambda = c("gaussian", "bh", "oscar", "bhq"),
                   lambda_min_ratio = if (NROW(x) < NCOL(x)) 1e-2 else 1e-4,
-                  n_sigma = if (sigma[1] == "estimate") 1 else 20,
+                  path_length = if (alpha[1] == "estimate") 1 else 20,
                   q = 0.1*min(1, NROW(x)/NCOL(x)),
                   screen = TRUE,
                   screen_alg = c("strong", "previous"),
@@ -332,7 +336,9 @@ SLOPE <- function(x,
                   verbosity = 0,
                   X,
                   fdr,
-                  normalize
+                  normalize,
+                  sigma,
+                  n_sigma
 ) {
 
   if (!missing(X)) {
@@ -343,6 +349,11 @@ SLOPE <- function(x,
   if (!missing(fdr)) {
     warning("'fdr' argument is deprecated; please use 'q' instead")
     q <- fdr
+  }
+
+  if (!missing(sigma)) {
+    warning("'sigma' argument is deprecated; please use 'gamma' instead")
+    alpha <- sigma
   }
 
   if (!missing(normalize)) {
@@ -383,8 +394,8 @@ SLOPE <- function(x,
     max_passes > 0,
     q > 0,
     q < 1,
-    length(n_sigma) == 1,
-    n_sigma >= 1,
+    length(path_length) == 1,
+    path_length >= 1,
     is.null(lambda) || is.character(lambda) || is.numeric(lambda),
     is.finite(max_passes),
     is.logical(diagnostics),
@@ -437,44 +448,44 @@ SLOPE <- function(x,
   if (is.null(response_names))
     response_names <- paste0("y", seq_len(m))
 
-  if (is.character(sigma)) {
-    sigma <- match.arg(sigma)
+  if (is.character(alpha)) {
+    alpha <- match.arg(alpha)
 
-    if (sigma == "path") {
+    if (alpha == "path") {
 
-      sigma_type <- "auto"
-      sigma <- double(n_sigma)
+      alpha_type <- "auto"
+      alpha <- double(path_length)
 
-    } else if (sigma == "estimate") {
+    } else if (alpha == "estimate") {
 
       if (family != "gaussian")
-        stop("`sigma = 'estimate'` can only be used if `family = 'gaussian'`")
+        stop("`alpha = 'estimate'` can only be used if `family = 'gaussian'`")
 
-      sigma_type <- "estimate"
-      sigma <- NULL
+      alpha_type <- "estimate"
+      alpha <- NULL
 
-      if (n_sigma > 1)
-        warning("`n_sigma` ignored since `sigma = 'estimate'`")
+      if (path_length > 1)
+        warning("`path_length` ignored since `alpha = 'estimate'`")
     }
   } else {
-    sigma <- as.double(sigma)
-    sigma_type <- "user"
+    alpha <- as.double(alpha)
+    alpha_type <- "user"
 
-    sigma <- as.double(sigma)
-    n_sigma <- length(sigma)
+    alpha <- as.double(alpha)
+    path_length <- length(alpha)
 
-    stopifnot(n_sigma > 0)
+    stopifnot(path_length > 0)
 
-    if (any(sigma < 0))
-      stop("`sigma` cannot contain negative values")
+    if (any(alpha < 0))
+      stop("`alpha` cannot contain negative values")
 
-    if (is.unsorted(rev(sigma)))
-      stop("`sigma` must be decreasing")
+    if (is.unsorted(rev(alpha)))
+      stop("`alpha` must be decreasing")
 
-    if (anyDuplicated(sigma) > 0)
-      stop("all values in `sigma` must be unique")
+    if (anyDuplicated(alpha) > 0)
+      stop("all values in `alpha` must be unique")
 
-    # do not stop path early if user requests specific sigma
+    # do not stop path early if user requests specific alpha
     tol_dev_change <- 0
     tol_dev_ratio <- 1
     max_variables <- (NCOL(x) + intercept)*m
@@ -512,12 +523,12 @@ SLOPE <- function(x,
                   is_sparse = is_sparse,
                   scale = scale,
                   center = center,
-                  n_sigma = n_sigma,
+                  path_length = path_length,
                   n_targets = n_targets,
                   screen = screen,
                   screen_alg = screen_alg,
-                  sigma = sigma,
-                  sigma_type = sigma_type,
+                  alpha = alpha,
+                  alpha_type = alpha_type,
                   lambda = lambda,
                   lambda_type = lambda_type,
                   lambda_min_ratio = lambda_min_ratio,
@@ -542,15 +553,15 @@ SLOPE <- function(x,
     x <- cbind(1, x)
   }
 
-  if (sigma_type %in% c("path", "user")) {
+  if (alpha_type %in% c("path", "user")) {
     fit <- fitSLOPE(x, y, control)
   } else {
     # estimate the noise level, if possible
-    if (is.null(sigma) && n >= p + 30)
-      sigma <- estimateNoise(x, y)
+    if (is.null(alpha) && n >= p + 30)
+      alpha <- estimateNoise(x, y)
 
     # run the solver, iteratively if necessary.
-    if (is.null(sigma)) {
+    if (is.null(alpha)) {
       # Run Algorithm 5 of Section 3.2.3. (Bogdan et al.)
       if (intercept)
         selected <- 1
@@ -560,8 +571,8 @@ SLOPE <- function(x,
       repeat {
         selected_prev <- selected
 
-        sigma <- estimateNoise(x[, selected, drop = FALSE], y, intercept)
-        control$sigma <- sigma
+        alpha <- estimateNoise(x[, selected, drop = FALSE], y, intercept)
+        control$alpha <- alpha
 
         fit <- fitSLOPE(x, y, control)
 
@@ -577,14 +588,14 @@ SLOPE <- function(x,
           stop("selected >= n-1 variables; cannot estimate variance")
       }
     } else {
-      control$sigma <- sigma
+      control$alpha <- alpha
       fit <- fitSLOPE(x, y, control)
     }
   }
 
   lambda <- fit$lambda
-  sigma <- fit$sigma
-  n_sigma <- length(sigma)
+  alpha <- fit$alpha
+  path_length <- length(alpha)
   active_sets <- lapply(drop(fit$active_sets), function(x) drop(x) + 1)
   beta <- fit$betas
   nonzeros <- apply(beta, c(2, 3), function(x) abs(x) > 0)
@@ -594,11 +605,11 @@ SLOPE <- function(x,
     nonzeros <- nonzeros[-1, , , drop = FALSE]
     dimnames(coefficients) <- list(c("(Intercept)", variable_names),
                                    response_names[1:n_targets],
-                                   paste0("p", seq_len(n_sigma)))
+                                   paste0("p", seq_len(path_length)))
   } else {
     dimnames(coefficients) <- list(variable_names,
                                    response_names[1:n_targets],
-                                   paste0("p", seq_len(n_sigma)))
+                                   paste0("p", seq_len(path_length)))
   }
 
   diagnostics <- if (diagnostics) setupDiagnostics(fit) else NULL
@@ -612,7 +623,7 @@ SLOPE <- function(x,
   structure(list(coefficients = coefficients,
                  nonzeros = nonzeros,
                  lambda = lambda,
-                 sigma = sigma,
+                 alpha = alpha,
                  class_names = class_names,
                  passes = fit$passes,
                  violations = fit$violations,
