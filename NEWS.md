@@ -17,6 +17,8 @@
 * specification of `alpha` is no longer sensitive to the number of observations
   when using standard deviation to scale, which it (incorrectly) was before
 * plotting models that are completely sparse no longer throws an error
+* `rho` instead of `1` is now used in the factorization part for
+  the ADMM solver
 
 # SLOPE 0.2.1
 
