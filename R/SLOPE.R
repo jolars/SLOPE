@@ -333,7 +333,8 @@ SLOPE <- function(x,
                   diagnostics = FALSE,
                   verbosity = 0,
                   sigma,
-                  n_sigma
+                  n_sigma,
+                  lambda_min_ratio
 ) {
 
   if (!missing(sigma)) {

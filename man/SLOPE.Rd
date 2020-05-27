@@ -13,7 +13,7 @@ SLOPE(
   scale = c("l2", "l1", "sd", "none"),
   alpha = c("path", "estimate"),
   lambda = c("bh", "gaussian", "oscar"),
-  lambda_min_ratio = if (NROW(x) < NCOL(x)) 0.01 else 1e-04,
+  alpha_min_ratio = if (NROW(x) < NCOL(x)) 0.01 else 1e-04,
   path_length = if (alpha[1] == "estimate") 1 else 20,
   q = 0.1 * min(1, NROW(x)/NCOL(x)),
   screen = TRUE,
@@ -30,7 +30,8 @@ SLOPE(
   diagnostics = FALSE,
   verbosity = 0,
   sigma,
-  n_sigma
+  n_sigma,
+  lambda_min_ratio
 )
 }
 \arguments{
@@ -70,7 +71,8 @@ vector with length equal to the number
 of coefficients in the model; see section \strong{Regularization sequences}
 for details.}
 
-\item{lambda_min_ratio}{deprecated. Pelase use \code{alpha_min_ratio}}
+\item{alpha_min_ratio}{smallest value for \code{lambda} as a fraction of
+\code{lambda_max}; used in the selection of \code{alpha} when \code{alpha = "path"}.}
 
 \item{path_length}{length of regularization path}
 
@@ -134,8 +136,7 @@ information from the solver.}
 
 \item{n_sigma}{deprecated. please use \code{path_length} instead}
 
-\item{alpha_min_ratio}{smallest value for \code{lambda} as a fraction of
-\code{lambda_max}; used in the selection of \code{alpha} when \code{alpha = "path"}.}
+\item{lambda_min_ratio}{deprecated. Pelase use \code{alpha_min_ratio}}
 }
 \value{
 An object of class \code{"SLOPE"} with the following slots:
