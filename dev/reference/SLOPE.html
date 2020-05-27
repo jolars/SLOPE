@@ -171,7 +171,7 @@ in decreasing order according  to its absolute values.</p>
   <span class='kw'>scale</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"l2"</span>, <span class='st'>"l1"</span>, <span class='st'>"sd"</span>, <span class='st'>"none"</span>),
   <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"path"</span>, <span class='st'>"estimate"</span>),
   <span class='kw'>lambda</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"bh"</span>, <span class='st'>"gaussian"</span>, <span class='st'>"oscar"</span>),
-  <span class='kw'>lambda_min_ratio</span> <span class='kw'>=</span> <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span>(<span class='no'>x</span>) <span class='kw'>&lt;</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NCOL</a></span>(<span class='no'>x</span>)) <span class='fl'>0.01</span> <span class='kw'>else</span> <span class='fl'>1e-04</span>,
+  <span class='kw'>alpha_min_ratio</span> <span class='kw'>=</span> <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span>(<span class='no'>x</span>) <span class='kw'>&lt;</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NCOL</a></span>(<span class='no'>x</span>)) <span class='fl'>0.01</span> <span class='kw'>else</span> <span class='fl'>1e-04</span>,
   <span class='kw'>path_length</span> <span class='kw'>=</span> <span class='kw'>if</span> (<span class='no'>alpha</span>[<span class='fl'>1</span>] <span class='kw'>==</span> <span class='st'>"estimate"</span>) <span class='fl'>1</span> <span class='kw'>else</span> <span class='fl'>20</span>,
   <span class='kw'>q</span> <span class='kw'>=</span> <span class='fl'>0.1</span> * <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span>(<span class='no'>x</span>)/<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NCOL</a></span>(<span class='no'>x</span>)),
   <span class='kw'>screen</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
@@ -188,7 +188,8 @@ in decreasing order according  to its absolute values.</p>
   <span class='kw'>diagnostics</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>verbosity</span> <span class='kw'>=</span> <span class='fl'>0</span>,
   <span class='no'>sigma</span>,
-  <span class='no'>n_sigma</span>
+  <span class='no'>n_sigma</span>,
+  <span class='no'>lambda_min_ratio</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -246,8 +247,9 @@ of coefficients in the model; see section <strong>Regularization sequences</stro
 for details.</p></td>
     </tr>
     <tr>
-      <th>lambda_min_ratio</th>
-      <td><p>deprecated. Pelase use <code>alpha_min_ratio</code></p></td>
+      <th>alpha_min_ratio</th>
+      <td><p>smallest value for <code>lambda</code> as a fraction of
+<code>lambda_max</code>; used in the selection of <code>alpha</code> when <code>alpha = "path"</code>.</p></td>
     </tr>
     <tr>
       <th>path_length</th>
@@ -345,9 +347,8 @@ information from the solver.</p></td>
       <td><p>deprecated. please use <code>path_length</code> instead</p></td>
     </tr>
     <tr>
-      <th>alpha_min_ratio</th>
-      <td><p>smallest value for <code>lambda</code> as a fraction of
-<code>lambda_max</code>; used in the selection of <code>alpha</code> when <code>alpha = "path"</code>.</p></td>
+      <th>lambda_min_ratio</th>
+      <td><p>deprecated. Pelase use <code>alpha_min_ratio</code></p></td>
     </tr>
     </table>
 
