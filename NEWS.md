@@ -7,6 +7,8 @@
 * `n_sigma` argument is deprecated in favor of `path_length` in `SLOPE()`
 * the default for `lambda` in `SLOPE()` has changed from `"gaussian"` to
   `"bh"`
+* functions and arguments deprecated in 0.2.0 are now defunct and have
+  been removed from the package
 
 ## Minor changes
 

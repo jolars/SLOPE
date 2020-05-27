@@ -203,14 +203,11 @@
 #'   with FISTA solver and KKT checks in screening algorithm.
 #' @param tol_abs absolute tolerance criterion for ADMM solver
 #' @param tol_rel relative tolerance criterion for ADMM solver
-#' @param X deprecated. please use `x` instead
-#' @param fdr deprecated. please use `q` instead
 #' @param sigma deprecated. please use `alpha` instead
 #' @param n_sigma deprecated. please use `path_length` instead
 #' @param lambda_min_ratio deprecated. Pelase use `alpha_min_ratio`
-#' @param normalize deprecated. please use `scale` and `center` instead
-#' @param solver type of solver use, either `"fista"` or `"admm"`. (`"default"`
-#'   and `"matlab"` are deprecated); all families currently support
+#' @param solver type of solver use, either `"fista"` or `"admm"`;
+#'   all families currently support
 #'   FISTA but only `family = "gaussian"` supports ADMM.
 #'
 #' @return An object of class `"SLOPE"` with the following slots:
@@ -318,7 +315,7 @@ SLOPE <- function(x,
                   center = !inherits(x, "sparseMatrix"),
                   scale = c("l2", "l1", "sd", "none"),
                   alpha = c("path", "estimate"),
-                  lambda = c("bh", "gaussian", "oscar", "bhq"),
+                  lambda = c("bh", "gaussian", "oscar"),
                   lambda_min_ratio = if (NROW(x) < NCOL(x)) 1e-2 else 1e-4,
                   path_length = if (alpha[1] == "estimate") 1 else 20,
                   q = 0.1*min(1, NROW(x)/NCOL(x)),
@@ -327,7 +324,7 @@ SLOPE <- function(x,
                   tol_dev_change = 1e-5,
                   tol_dev_ratio = 0.995,
                   max_variables = NROW(x),
-                  solver = c("fista", "admm", "matlab", "default"),
+                  solver = c("fista", "admm"),
                   max_passes = 1e6,
                   tol_abs = 1e-5,
                   tol_rel = 1e-4,
@@ -335,22 +332,9 @@ SLOPE <- function(x,
                   tol_infeas = 1e-3,
                   diagnostics = FALSE,
                   verbosity = 0,
-                  X,
-                  fdr,
-                  normalize,
                   sigma,
                   n_sigma
 ) {
-
-  if (!missing(X)) {
-    x <- X
-    warning("'X' argument is deprecated; please use 'x' instead")
-  }
-
-  if (!missing(fdr)) {
-    warning("'fdr' argument is deprecated; please use 'q' instead")
-    q <- fdr
-  }
 
   if (!missing(sigma)) {
     warning("'sigma' argument is deprecated; please use 'alpha' instead")
@@ -361,23 +345,11 @@ SLOPE <- function(x,
     warning("'n_sigma' argument is deprecated; please use 'path_length' instead")
   }
 
-  if (!missing(normalize)) {
-    warning("'normalize' argument is deprecated; please use 'scale' and",
-            "'center' instead. 'scale' has been set to 'l2', and",
-            "'center' to TRUE")
-    center <- TRUE
-    scale <- "l2"
-  }
-
   ocall <- match.call()
 
   family <- match.arg(family)
   solver <- match.arg(solver)
   screen_alg <- match.arg(screen_alg)
-
-  if (solver %in% c("default", "matlab"))
-    warning("`solver = '", solver, "'` is deprecated; ",
-            "using `solver = 'fista'` instead")
 
   if (solver == "admm" && family != "gaussian")
     stop("ADMM solver is only supported with `family = 'gaussian'`")

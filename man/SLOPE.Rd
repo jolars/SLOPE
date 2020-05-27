@@ -12,7 +12,7 @@ SLOPE(
   center = !inherits(x, "sparseMatrix"),
   scale = c("l2", "l1", "sd", "none"),
   alpha = c("path", "estimate"),
-  lambda = c("bh", "gaussian", "oscar", "bhq"),
+  lambda = c("bh", "gaussian", "oscar"),
   lambda_min_ratio = if (NROW(x) < NCOL(x)) 0.01 else 1e-04,
   path_length = if (alpha[1] == "estimate") 1 else 20,
   q = 0.1 * min(1, NROW(x)/NCOL(x)),
@@ -21,7 +21,7 @@ SLOPE(
   tol_dev_change = 1e-05,
   tol_dev_ratio = 0.995,
   max_variables = NROW(x),
-  solver = c("fista", "admm", "matlab", "default"),
+  solver = c("fista", "admm"),
   max_passes = 1e+06,
   tol_abs = 1e-05,
   tol_rel = 1e-04,
@@ -29,9 +29,6 @@ SLOPE(
   tol_infeas = 0.001,
   diagnostics = FALSE,
   verbosity = 0,
-  X,
-  fdr,
-  normalize,
   sigma,
   n_sigma
 )
@@ -109,8 +106,8 @@ maximum number of unique, nonzero coefficients in absolute value in model.
 For the multinomial family, this value will be multiplied internally with
 the number of levels of the response minus one.}
 
-\item{solver}{type of solver use, either \code{"fista"} or \code{"admm"}. (\code{"default"}
-and \code{"matlab"} are deprecated); all families currently support
+\item{solver}{type of solver use, either \code{"fista"} or \code{"admm"};
+all families currently support
 FISTA but only \code{family = "gaussian"} supports ADMM.}
 
 \item{max_passes}{maximum number of passes (outer iterations) for solver}
@@ -132,12 +129,6 @@ with FISTA solver and KKT checks in screening algorithm.}
 program. Setting this to 1 displays basic information on the path level,
 2 a little bit more information on the path level, and 3 displays
 information from the solver.}
-
-\item{X}{deprecated. please use \code{x} instead}
-
-\item{fdr}{deprecated. please use \code{q} instead}
-
-\item{normalize}{deprecated. please use \code{scale} and \code{center} instead}
 
 \item{sigma}{deprecated. please use \code{alpha} instead}
 
