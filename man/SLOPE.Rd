@@ -56,14 +56,24 @@ to \code{TRUE} if \code{x} is dense and \code{FALSE} otherwise.}
 predictors to have L1-norm of one, \code{"l2"} scales predictors to have
 L2-norm one, \code{"sd"} scales predictors to have standard deviation one.}
 
+\item{alpha}{scale for regularization path: either a decreasing numeric
+vector (possible of length 1) or a character vector; in the latter case,
+the choices are:
+\itemize{
+\item \code{alpha = "path"}, which computes a regularization sequence
+where the first value corresponds to the intercept-only (null) model and
+the last to the almost-saturated model, and
+\item \code{alpha = "estimate"}, which estimates a \emph{single} \code{alpha}
+using Algorithm 5 in Bogdan et al. (2015), Algorithm 5.
+}}
+
 \item{lambda}{either a character vector indicating the method used
 to construct the lambda path or a numeric non-decreasing
 vector with length equal to the number
 of coefficients in the model; see section \strong{Regularization sequences}
 for details.}
 
-\item{lambda_min_ratio}{smallest value for \code{lambda} as a fraction of
-\code{lambda_max}; used in the selection of \code{alpha} when \code{alpha = "path"}.}
+\item{lambda_min_ratio}{deprecated. Pelase use \code{alpha_min_ratio}}
 
 \item{path_length}{length of regularization path}
 
@@ -133,16 +143,8 @@ information from the solver.}
 
 \item{n_sigma}{deprecated. please use \code{path_length} instead}
 
-\item{s}{scale for regularization path: either a decreasing numeric
-vector (possible of length 1) or a character vector; in the latter case,
-the choices are:
-\itemize{
-\item \code{alpha = "path"}, which computes a regularization sequence
-where the first value corresponds to the intercept-only (null) model and
-the last to the almost-saturated model, and
-\item \code{alpha = "estimate"}, which estimates a \emph{single} \code{alpha}
-using Algorithm 5 in Bogdan et al. (2015), Algorithm 5.
-}}
+\item{alpha_min_ratio}{smallest value for \code{lambda} as a fraction of
+\code{lambda_max}; used in the selection of \code{alpha} when \code{alpha = "path"}.}
 }
 \value{
 An object of class \code{"SLOPE"} with the following slots:
@@ -208,7 +210,7 @@ following composite objective:
 \deqn{
   f(\beta) + \alpha \sum_{i=j}^p \lambda_j |\beta|_{(j)},
 }{
-  f(\beta) + \alpha \sum \lambda |\beta|(j),
+  f(\beta) + \alpha \sum \lambda_j |\beta|_(j),
 }
 where \eqn{f(\beta)} is a smooth and convex function of \eqn{\beta} and
 the second part is the sorted L1-norm.
@@ -236,18 +238,18 @@ guaranteed to be of length \code{path_length}.
 The Gaussian model (Ordinary Least Squares) minimizes the following
 objective:
 \deqn{
-  \frac 12 \Vert y - X\beta\Vert_2^2
+  \frac{1}{2n} \Vert y - X\beta\Vert_2^2
 }{
-  (1/2)||y - X \beta||_2^2
+  (1/(2n))||y - X \beta||_2^2
 }
 
 \strong{Binomial}
 
 The binomial model (logistic regression) has the following objective:
 \deqn{
-  \sum_{i=1}^n \log\left(1+ \exp\left(- y_i \left(x_i^T\beta + \alpha \right) \right) \right)
+  \frac 1n \sum_{i=1}^n \log\left(1+ \exp\left(- y_i \left(x_i^T\beta + \beta_0 \right) \right) \right)
 }{
-  \sum log(1+ exp(- y_i x_i^T \beta))
+  (1/n) \sum log(1+ exp(- y_i x_i^T \beta))
 }
 with \eqn{y \in \{-1, 1\}}{y in {-1, 1}}.
 
@@ -256,19 +258,19 @@ with \eqn{y \in \{-1, 1\}}{y in {-1, 1}}.
 In poisson regression, we use the following objective:
 
 \deqn{
-  -\sum_{i=1}^n \left(y_i\left(x_i^T\beta + \alpha\right) - \exp\left(x_i^T\beta + \alpha\right)\right)
+  - \frac 1n \sum_{i=1}^n \left(y_i\left(x_i^T\beta + \beta_0\right) - \exp\left(x_i^T\beta + \beta_0\right)\right)
 }{
-  -\sum (y_i(x_i^T\beta + \alpha) - exp(x_i^T\beta + \alpha))
+  -(1/n)\sum (y_i(x_i^T\beta + \beta_0) - exp(x_i^T\beta + \beta_0))
 }
 
 \strong{Multinomial}
 
 In multinomial regression, we minimize the full-rank objective
 \deqn{
-  -\sum_{i=1}^n\left( \sum_{k=1}^{m-1} y_{ik}(x_i^T\beta_k + \alpha_k)
-                     - \log\sum_{k=1}^{m-1} \exp(x_i^T\beta_k + \alpha_k) \right)
+  -\frac 1n \sum_{i=1}^n\left( \sum_{k=1}^{m-1} y_{ik}(x_i^T\beta_k + \beta_{0,k})
+                     - \log\sum_{k=1}^{m-1} \exp\big(x_i^T\beta_k + \beta_{0,k}\big) \right)
 }{
-  -\sum(y_ik(x_i^T\beta_k + \alpha_k) - log(\sum exp(x_i^T\beta_k + \alpha_k)))
+  -(1/n)\sum(y_ik(x_i^T\beta_k + \beta_{0,k}) - log(\sum exp(x_i^T\beta_k + \alpha_{0,k})))
 }
 with \eqn{y_{ik}} being the element in a \eqn{n} by \eqn{(m-1)} matrix, where
 \eqn{m} is the number of classes in the response.
@@ -279,7 +281,7 @@ with \eqn{y_{ik}} being the element in a \eqn{n} by \eqn{(m-1)} matrix, where
 There are multiple ways of specifying the \code{lambda} sequence
 in \code{SLOPE()}. It is, first of all, possible to select the sequence manually by
 using a non-increasing
-numeric vector as argument instead of a character.
+numeric vector, possible of length one, as argument instead of a character.
 If all \code{lambda} are the same value, this will
 lead to the ordinary lasso penalty. The greater the differences are between
 consecutive values along the sequence, the more clustering behavior

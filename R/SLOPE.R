@@ -11,7 +11,7 @@
 #' \deqn{
 #'   f(\beta) + \alpha \sum_{i=j}^p \lambda_j |\beta|_{(j)},
 #' }{
-#'   f(\beta) + \alpha \sum \lambda |\beta|(j),
+#'   f(\beta) + \alpha \sum \lambda_j |\beta|_(j),
 #' }
 #' where \eqn{f(\beta)} is a smooth and convex function of \eqn{\beta} and
 #' the second part is the sorted L1-norm.
@@ -38,18 +38,18 @@
 #' The Gaussian model (Ordinary Least Squares) minimizes the following
 #' objective:
 #' \deqn{
-#'   \frac 12 \Vert y - X\beta\Vert_2^2
+#'   \frac{1}{2n} \Vert y - X\beta\Vert_2^2
 #' }{
-#'   (1/2)||y - X \beta||_2^2
+#'   (1/(2n))||y - X \beta||_2^2
 #' }
 #'
 #' **Binomial**
 #'
 #' The binomial model (logistic regression) has the following objective:
 #' \deqn{
-#'   \sum_{i=1}^n \log\left(1+ \exp\left(- y_i \left(x_i^T\beta + \alpha \right) \right) \right)
+#'   \frac 1n \sum_{i=1}^n \log\left(1+ \exp\left(- y_i \left(x_i^T\beta + \beta_0 \right) \right) \right)
 #' }{
-#'   \sum log(1+ exp(- y_i x_i^T \beta))
+#'   (1/n) \sum log(1+ exp(- y_i x_i^T \beta))
 #' }
 #' with \eqn{y \in \{-1, 1\}}{y in {-1, 1}}.
 #'
@@ -58,19 +58,19 @@
 #' In poisson regression, we use the following objective:
 #'
 #' \deqn{
-#'   -\sum_{i=1}^n \left(y_i\left(x_i^T\beta + \alpha\right) - \exp\left(x_i^T\beta + \alpha\right)\right)
+#'   - \frac 1n \sum_{i=1}^n \left(y_i\left(x_i^T\beta + \beta_0\right) - \exp\left(x_i^T\beta + \beta_0\right)\right)
 #' }{
-#'   -\sum (y_i(x_i^T\beta + \alpha) - exp(x_i^T\beta + \alpha))
+#'   -(1/n)\sum (y_i(x_i^T\beta + \beta_0) - exp(x_i^T\beta + \beta_0))
 #' }
 #'
 #' **Multinomial**
 #'
 #' In multinomial regression, we minimize the full-rank objective
 #' \deqn{
-#'   -\sum_{i=1}^n\left( \sum_{k=1}^{m-1} y_{ik}(x_i^T\beta_k + \alpha_k)
-#'                      - \log\sum_{k=1}^{m-1} \exp(x_i^T\beta_k + \alpha_k) \right)
+#'   -\frac 1n \sum_{i=1}^n\left( \sum_{k=1}^{m-1} y_{ik}(x_i^T\beta_k + \beta_{0,k})
+#'                      - \log\sum_{k=1}^{m-1} \exp\big(x_i^T\beta_k + \beta_{0,k}\big) \right)
 #' }{
-#'   -\sum(y_ik(x_i^T\beta_k + \alpha_k) - log(\sum exp(x_i^T\beta_k + \alpha_k)))
+#'   -(1/n)\sum(y_ik(x_i^T\beta_k + \beta_{0,k}) - log(\sum exp(x_i^T\beta_k + \alpha_{0,k})))
 #' }
 #' with \eqn{y_{ik}} being the element in a \eqn{n} by \eqn{(m-1)} matrix, where
 #' \eqn{m} is the number of classes in the response.
@@ -79,7 +79,7 @@
 #' There are multiple ways of specifying the `lambda` sequence
 #' in `SLOPE()`. It is, first of all, possible to select the sequence manually by
 #' using a non-increasing
-#' numeric vector as argument instead of a character.
+#' numeric vector, possible of length one, as argument instead of a character.
 #' If all `lambda` are the same value, this will
 #' lead to the ordinary lasso penalty. The greater the differences are between
 #' consecutive values along the sequence, the more clustering behavior
@@ -150,7 +150,7 @@
 #' @param scale type of scaling to apply to predictors; `"l1"` scales
 #'   predictors to have L1-norm of one, `"l2"` scales predictors to have
 #'   L2-norm one, `"sd"` scales predictors to have standard deviation one.
-#' @param s scale for regularization path: either a decreasing numeric
+#' @param alpha scale for regularization path: either a decreasing numeric
 #'   vector (possible of length 1) or a character vector; in the latter case,
 #'   the choices are:
 #'   - `alpha = "path"`, which computes a regularization sequence
@@ -164,7 +164,7 @@
 #'   vector with length equal to the number
 #'   of coefficients in the model; see section **Regularization sequences**
 #'   for details.
-#' @param lambda_min_ratio smallest value for `lambda` as a fraction of
+#' @param alpha_min_ratio smallest value for `lambda` as a fraction of
 #'   `lambda_max`; used in the selection of `alpha` when `alpha = "path"`.
 #' @param q parameter controlling the shape of the lambda sequence, with
 #'   usage varying depending on the type of path used and has no effect
@@ -207,6 +207,7 @@
 #' @param fdr deprecated. please use `q` instead
 #' @param sigma deprecated. please use `alpha` instead
 #' @param n_sigma deprecated. please use `path_length` instead
+#' @param lambda_min_ratio deprecated. Pelase use `alpha_min_ratio`
 #' @param normalize deprecated. please use `scale` and `center` instead
 #' @param solver type of solver use, either `"fista"` or `"admm"`. (`"default"`
 #'   and `"matlab"` are deprecated); all families currently support
@@ -352,7 +353,7 @@ SLOPE <- function(x,
   }
 
   if (!missing(sigma)) {
-    warning("'sigma' argument is deprecated; please use 'gamma' instead")
+    warning("'sigma' argument is deprecated; please use 'alpha' instead")
     alpha <- sigma
   }
 
