@@ -357,6 +357,10 @@ SLOPE <- function(x,
     alpha <- sigma
   }
 
+  if (!missing(n_sigma)) {
+    warning("'n_sigma' argument is deprecated; please use 'path_length' instead")
+  }
+
   if (!missing(normalize)) {
     warning("'normalize' argument is deprecated; please use 'scale' and",
             "'center' instead. 'scale' has been set to 'l2', and",
