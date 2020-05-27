@@ -6,8 +6,10 @@ test_that("different screening algorithms return equivalent results", {
   x <- xy$x
   y <- xy$y
 
-  fit_strong <- SLOPE(x, y, screen_alg = "strong")
-  fit_previous <- SLOPE(x, y, screen_alg = "previous")
+  fit_strong <- SLOPE(x, y, screen_alg = "strong", tol_dev_change = 0,
+                      tol_dev_ratio = 2, max_variables = 500)
+  fit_previous <- SLOPE(x, y, screen_alg = "previous", tol_dev_change = 0,
+                        tol_dev_ratio = 2, max_variables = 500)
 
-  expect_equivalent(coef(fit_strong), coef(fit_previous), tol = 1e-3)
+  expect_equivalent(coef(fit_strong), coef(fit_previous), tol = 6e-3)
 })

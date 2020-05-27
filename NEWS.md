@@ -5,6 +5,8 @@
 * `sigma` argument is deprecated in favor of `alpha` in `SLOPE()`, 
   `coef.SLOPE()`, and `predict.SLOPE()`
 * `n_sigma` argument is deprecated in favor of `path_length` in `SLOPE()`
+* the default for `lambda` in `SLOPE()` has changed from `"gaussian"` to
+  `"bh"`
 
 ## Minor changes
 
