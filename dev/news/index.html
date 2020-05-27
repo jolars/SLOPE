@@ -162,6 +162,12 @@
 <li>
 <code>n_sigma</code> argument is deprecated in favor of <code>path_length</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>
 </li>
+<li>
+<code>lambda_min_ratio</code> argument is deprecated in favor of <code>alpha_min_ratio</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>
+</li>
+<li>the default for <code>lambda</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> has changed from <code>"gaussian"</code> to <code>"bh"</code>
+</li>
+<li>functions and arguments deprecated in 0.2.0 are now defunct and have been removed from the package</li>
 </ul>
 </div>
 <div id="minor-changes" class="section level2">
@@ -171,6 +177,16 @@
 <li>default <code>path_length</code> changed from 100 to 20</li>
 <li>
 <code><a href="../reference/plot.SLOPE.html">plot.SLOPE()</a></code> gains an argument <code>x_variable</code> that controls what is plotted on the x axis</li>
+</ul>
+</div>
+<div id="bug-fixes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bug-fixes" class="anchor"></a>Bug fixes</h2>
+<ul>
+<li>specification of <code>alpha</code> is no longer sensitive to the number of observations when using standard deviation to scale, which it (incorrectly) was before</li>
+<li>plotting models that are completely sparse no longer throws an error</li>
+<li>
+<code>rho</code> instead of <code>1</code> is now used in the factorization part for the ADMM solver</li>
 </ul>
 </div>
 </div>
@@ -196,7 +212,7 @@
 <a href="#major-changes-1" class="anchor"></a>Major changes</h2>
 <ul>
 <li>
-<code><a href="../reference/SLOPE_solver.html">SLOPE_solver()</a></code>, <code>SLOPE_solver_matlab()</code>, <code><a href="../reference/prox_sorted_L1.html">prox_sorted_L1()</a></code>, and <code><a href="../reference/lambda.html">create_lambda()</a></code> have been deprecated (and will be defunct in the next version of SLOPE)</li>
+<code>SLOPE_solver()</code>, <code>SLOPE_solver_matlab()</code>, <code>prox_sorted_L1()</code>, and <code>create_lambda()</code> have been deprecated (and will be defunct in the next version of SLOPE)</li>
 <li>arguments <code>X</code>, <code>fdr</code>, and <code>normalize</code> have been deprecated in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> and replaced by <code>x</code>, <code>q</code>, <code>scale</code> and <code>center</code>, respectively</li>
 <li>options <code>"default"</code> and <code>"matlab"</code> to argument <code>solver</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> have been deprecated and replaced with <code>"fista"</code> and <code>"admm"</code>, which uses the accelerated proximal gradient method FISTA and alternating direction of multipliers method (ADMM) respectively</li>
 <li>ADMM has been implemented as a solver for <code>family = "gaussian"</code>

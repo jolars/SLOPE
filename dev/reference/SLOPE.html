@@ -170,7 +170,7 @@ in decreasing order according  to its absolute values.</p>
   <span class='kw'>center</span> <span class='kw'>=</span> !<span class='fu'><a href='https://rdrr.io/r/base/class.html'>inherits</a></span>(<span class='no'>x</span>, <span class='st'>"sparseMatrix"</span>),
   <span class='kw'>scale</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"l2"</span>, <span class='st'>"l1"</span>, <span class='st'>"sd"</span>, <span class='st'>"none"</span>),
   <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"path"</span>, <span class='st'>"estimate"</span>),
-  <span class='kw'>lambda</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"gaussian"</span>, <span class='st'>"bh"</span>, <span class='st'>"oscar"</span>, <span class='st'>"bhq"</span>),
+  <span class='kw'>lambda</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"bh"</span>, <span class='st'>"gaussian"</span>, <span class='st'>"oscar"</span>),
   <span class='kw'>lambda_min_ratio</span> <span class='kw'>=</span> <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span>(<span class='no'>x</span>) <span class='kw'>&lt;</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NCOL</a></span>(<span class='no'>x</span>)) <span class='fl'>0.01</span> <span class='kw'>else</span> <span class='fl'>1e-04</span>,
   <span class='kw'>path_length</span> <span class='kw'>=</span> <span class='kw'>if</span> (<span class='no'>alpha</span>[<span class='fl'>1</span>] <span class='kw'>==</span> <span class='st'>"estimate"</span>) <span class='fl'>1</span> <span class='kw'>else</span> <span class='fl'>20</span>,
   <span class='kw'>q</span> <span class='kw'>=</span> <span class='fl'>0.1</span> * <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span>(<span class='no'>x</span>)/<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NCOL</a></span>(<span class='no'>x</span>)),
@@ -179,7 +179,7 @@ in decreasing order according  to its absolute values.</p>
   <span class='kw'>tol_dev_change</span> <span class='kw'>=</span> <span class='fl'>1e-05</span>,
   <span class='kw'>tol_dev_ratio</span> <span class='kw'>=</span> <span class='fl'>0.995</span>,
   <span class='kw'>max_variables</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span>(<span class='no'>x</span>),
-  <span class='kw'>solver</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"fista"</span>, <span class='st'>"admm"</span>, <span class='st'>"matlab"</span>, <span class='st'>"default"</span>),
+  <span class='kw'>solver</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"fista"</span>, <span class='st'>"admm"</span>),
   <span class='kw'>max_passes</span> <span class='kw'>=</span> <span class='fl'>1e+06</span>,
   <span class='kw'>tol_abs</span> <span class='kw'>=</span> <span class='fl'>1e-05</span>,
   <span class='kw'>tol_rel</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>,
@@ -187,9 +187,6 @@ in decreasing order according  to its absolute values.</p>
   <span class='kw'>tol_infeas</span> <span class='kw'>=</span> <span class='fl'>0.001</span>,
   <span class='kw'>diagnostics</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>verbosity</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='no'>X</span>,
-  <span class='no'>fdr</span>,
-  <span class='no'>normalize</span>,
   <span class='no'>sigma</span>,
   <span class='no'>n_sigma</span>
 )</pre>
@@ -229,6 +226,18 @@ predictors to have L1-norm of one, <code>"l2"</code> scales predictors to have
 L2-norm one, <code>"sd"</code> scales predictors to have standard deviation one.</p></td>
     </tr>
     <tr>
+      <th>alpha</th>
+      <td><p>scale for regularization path: either a decreasing numeric
+vector (possible of length 1) or a character vector; in the latter case,
+the choices are:</p><ul>
+<li><p><code>alpha = "path"</code>, which computes a regularization sequence
+where the first value corresponds to the intercept-only (null) model and
+the last to the almost-saturated model, and</p></li>
+<li><p><code>alpha = "estimate"</code>, which estimates a <em>single</em> <code>alpha</code>
+using Algorithm 5 in Bogdan et al. (2015), Algorithm 5.</p></li>
+</ul></td>
+    </tr>
+    <tr>
       <th>lambda</th>
       <td><p>either a character vector indicating the method used
 to construct the lambda path or a numeric non-decreasing
@@ -238,8 +247,7 @@ for details.</p></td>
     </tr>
     <tr>
       <th>lambda_min_ratio</th>
-      <td><p>smallest value for <code>lambda</code> as a fraction of
-<code>lambda_max</code>; used in the selection of <code>alpha</code> when <code>alpha = "path"</code>.</p></td>
+      <td><p>deprecated. Pelase use <code>alpha_min_ratio</code></p></td>
     </tr>
     <tr>
       <th>path_length</th>
@@ -290,8 +298,8 @@ the number of levels of the response minus one.</p></td>
     </tr>
     <tr>
       <th>solver</th>
-      <td><p>type of solver use, either <code>"fista"</code> or <code>"admm"</code>. (<code>"default"</code>
-and <code>"matlab"</code> are deprecated); all families currently support
+      <td><p>type of solver use, either <code>"fista"</code> or <code>"admm"</code>;
+all families currently support
 FISTA but only <code>family = "gaussian"</code> supports ADMM.</p></td>
     </tr>
     <tr>
@@ -329,18 +337,6 @@ program. Setting this to 1 displays basic information on the path level,
 information from the solver.</p></td>
     </tr>
     <tr>
-      <th>X</th>
-      <td><p>deprecated. please use <code>x</code> instead</p></td>
-    </tr>
-    <tr>
-      <th>fdr</th>
-      <td><p>deprecated. please use <code>q</code> instead</p></td>
-    </tr>
-    <tr>
-      <th>normalize</th>
-      <td><p>deprecated. please use <code>scale</code> and <code>center</code> instead</p></td>
-    </tr>
-    <tr>
       <th>sigma</th>
       <td><p>deprecated. please use <code>alpha</code> instead</p></td>
     </tr>
@@ -349,16 +345,9 @@ information from the solver.</p></td>
       <td><p>deprecated. please use <code>path_length</code> instead</p></td>
     </tr>
     <tr>
-      <th>s</th>
-      <td><p>scale for regularization path: either a decreasing numeric
-vector (possible of length 1) or a character vector; in the latter case,
-the choices are:</p><ul>
-<li><p><code>alpha = "path"</code>, which computes a regularization sequence
-where the first value corresponds to the intercept-only (null) model and
-the last to the almost-saturated model, and</p></li>
-<li><p><code>alpha = "estimate"</code>, which estimates a <em>single</em> <code>alpha</code>
-using Algorithm 5 in Bogdan et al. (2015), Algorithm 5.</p></li>
-</ul></td>
+      <th>alpha_min_ratio</th>
+      <td><p>smallest value for <code>lambda</code> as a fraction of
+<code>lambda_max</code>; used in the selection of <code>alpha</code> when <code>alpha = "path"</code>.</p></td>
     </tr>
     </table>
 
@@ -424,24 +413,24 @@ guaranteed to be of length <code>path_length</code>.</p>
 <p>The Gaussian model (Ordinary Least Squares) minimizes the following
 objective:
 $$
-  \frac 12 \Vert y - X\beta\Vert_2^2
+  \frac{1}{2n} \Vert y - X\beta\Vert_2^2
 $$</p>
 <p><strong>Binomial</strong></p>
 <p>The binomial model (logistic regression) has the following objective:
 $$
-  \sum_{i=1}^n \log\left(1+ \exp\left(- y_i \left(x_i^T\beta + \alpha \right) \right) \right)
+  \frac 1n \sum_{i=1}^n \log\left(1+ \exp\left(- y_i \left(x_i^T\beta + \beta_0 \right) \right) \right)
 $$
 with \(y \in \{-1, 1\}\).</p>
 <p><strong>Poisson</strong></p>
 <p>In poisson regression, we use the following objective:</p>
 <p>$$
-  -\sum_{i=1}^n \left(y_i\left(x_i^T\beta + \alpha\right) - \exp\left(x_i^T\beta + \alpha\right)\right)
+  - \frac 1n \sum_{i=1}^n \left(y_i\left(x_i^T\beta + \beta_0\right) - \exp\left(x_i^T\beta + \beta_0\right)\right)
 $$</p>
 <p><strong>Multinomial</strong></p>
 <p>In multinomial regression, we minimize the full-rank objective
 $$
-  -\sum_{i=1}^n\left( \sum_{k=1}^{m-1} y_{ik}(x_i^T\beta_k + \alpha_k)
-                     - \log\sum_{k=1}^{m-1} \exp(x_i^T\beta_k + \alpha_k) \right)
+  -\frac 1n \sum_{i=1}^n\left( \sum_{k=1}^{m-1} y_{ik}(x_i^T\beta_k + \beta_{0,k})
+                     - \log\sum_{k=1}^{m-1} \exp\big(x_i^T\beta_k + \beta_{0,k}\big) \right)
 $$
 with \(y_{ik}\) being the element in a \(n\) by \((m-1)\) matrix, where
 \(m\) is the number of classes in the response.</p>
@@ -452,7 +441,7 @@ with \(y_{ik}\) being the element in a \(n\) by \((m-1)\) matrix, where
 <p>There are multiple ways of specifying the <code>lambda</code> sequence
 in <code>SLOPE()</code>. It is, first of all, possible to select the sequence manually by
 using a non-increasing
-numeric vector as argument instead of a character.
+numeric vector, possible of length one, as argument instead of a character.
 If all <code>lambda</code> are the same value, this will
 lead to the ordinary lasso penalty. The greater the differences are between
 consecutive values along the sequence, the more clustering behavior
