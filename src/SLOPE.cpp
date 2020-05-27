@@ -202,10 +202,10 @@ List cppSLOPE(T& x, mat& y, const List control)
             std::pow(eigval.max(), 1/3)*std::pow(lambda.max()*alpha(k), 2/3);
         }
 
+        xx.diag() += rho;
+        
         if (n < p)
           xx /= rho;
-
-        xx.diag() += rho;
 
         U = chol(xx);
         L = U.t();
