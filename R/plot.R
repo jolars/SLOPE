@@ -32,18 +32,11 @@ plot.SLOPE = function(x,
   intercept_in_model <- "(Intercept)" %in% rownames(coefs)
   include_intercept <- intercept && intercept_in_model
 
-  nz <- which(apply(object$nonzeros, 1, any))
-
   if (include_intercept) {
-    ind <- c(1, nz + 1)
+    coefs <- coefs[, , , drop = FALSE]
   } else {
-    ind <- nz + intercept_in_model
+    coefs <- coefs[-1, , , drop = FALSE]
   }
-
-  coefs <- coefs[ind, , , drop = FALSE]
-
-  if (is.null(coefs))
-    stop("nothing to plot since model is yet to be fit")
 
   p <- NROW(coefs) # number of features
   m <- NCOL(coefs) # number of responses
@@ -68,6 +61,17 @@ plot.SLOPE = function(x,
   lty <- rep(1:4, each = n_col)
   superpose.line <- list(lty = lty)
 
+  # setup key
+  if (p <= 20) {
+    if (n_x == 1) {
+      key <- list(space = "right")
+    } else {
+      key <- list(space = "right", lines = TRUE, points = FALSE)
+    }
+  } else {
+    key <- FALSE
+  }
+
   args <- list(
     x = if (m > 1)
       quote(Freq ~ x | Var2)
@@ -85,9 +89,7 @@ plot.SLOPE = function(x,
     #   x$bottom$labels$labels <- parse(text = x$bottom$labels$labels)
     #   x
     # },
-    auto.key = if (p <= 20)
-      list(space = "right", lines = TRUE, points = FALSE)
-    else FALSE,
+    auto.key = key,
     abline = within(lattice::trellis.par.get("reference.line"), {h = 0})
   )
 
