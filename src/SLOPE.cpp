@@ -409,8 +409,8 @@ List cppSLOPE(T& x, mat& y, const List control)
           y_scale,
           intercept);
 
-  // standardize lambda
-  lambda /= n;
+  // rescale alpha
+  alpha /= n;
 
   return List::create(
     Named("betas")               = wrap(betas),

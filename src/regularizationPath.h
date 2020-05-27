@@ -46,12 +46,7 @@ void regularizationPath(vec& alpha,
     }
 
   } else if (lambda_type == "oscar") {
-
     lambda = q*(regspace(n_lambda, 1) - 1) + 1;
-
-  } else if (lambda_type == "user") {
-    // standardize lambda with number of observations
-    lambda *= static_cast<double>(n);
   }
 
   vec lambda_max = lambdaMax(x,
@@ -68,5 +63,7 @@ void regularizationPath(vec& alpha,
     alpha = exp(linspace(log(alpha_max),
                          log(alpha_max*lambda_min_ratio),
                          path_length));
+  } else if (alpha_type == "user") {
+    alpha *= n;
   }
 }

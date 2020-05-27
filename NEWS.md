@@ -11,6 +11,12 @@
 * default `path_length` changed from 100 to 20
 * `plot.SLOPE()` gains an argument `x_variable` that controls what is
   plotted on the x axis
+  
+## Bug fixes
+
+* specification of `alpha` is no longer sensitive to the number of observations
+  when using standard deviation to scale, which it (incorrectly) was before
+* plotting models that are completely sparse no longer throws an error
 
 # SLOPE 0.2.1
 
