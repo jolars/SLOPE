@@ -316,7 +316,7 @@ SLOPE <- function(x,
                   scale = c("l2", "l1", "sd", "none"),
                   alpha = c("path", "estimate"),
                   lambda = c("bh", "gaussian", "oscar"),
-                  lambda_min_ratio = if (NROW(x) < NCOL(x)) 1e-2 else 1e-4,
+                  alpha_min_ratio = if (NROW(x) < NCOL(x)) 1e-2 else 1e-4,
                   path_length = if (alpha[1] == "estimate") 1 else 20,
                   q = 0.1*min(1, NROW(x)/NCOL(x)),
                   screen = TRUE,
@@ -366,8 +366,8 @@ SLOPE <- function(x,
   p <- NCOL(x)
 
   stopifnot(
-    is.null(lambda_min_ratio) ||
-      (lambda_min_ratio > 0 && lambda_min_ratio < 1),
+    is.null(alpha_min_ratio) ||
+      (alpha_min_ratio > 0 && alpha_min_ratio < 1),
     max_passes > 0,
     q > 0,
     q < 1,
@@ -508,7 +508,7 @@ SLOPE <- function(x,
                   alpha_type = alpha_type,
                   lambda = lambda,
                   lambda_type = lambda_type,
-                  lambda_min_ratio = lambda_min_ratio,
+                  alpha_min_ratio = alpha_min_ratio,
                   q = q,
                   y_center = y_center,
                   y_scale = y_scale,

@@ -59,7 +59,7 @@ List cppSLOPE(T& x, mat& y, const List control)
   auto alpha  = as<vec>(control["alpha"]);
   auto lambda_type = as<std::string>(control["lambda_type"]);
   auto alpha_type = as<std::string>(control["alpha_type"]);
-  auto lambda_min_ratio = as<double>(control["lambda_min_ratio"]);
+  auto alpha_min_ratio = as<double>(control["alpha_min_ratio"]);
   auto q = as<double>(control["q"]);
   const uword path_length = alpha.n_elem;
   double alpha_max = 0;
@@ -72,7 +72,7 @@ List cppSLOPE(T& x, mat& y, const List control)
                      y_scale,
                      lambda_type,
                      alpha_type,
-                     lambda_min_ratio,
+                     alpha_min_ratio,
                      q,
                      family_choice,
                      intercept);

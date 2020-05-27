@@ -15,7 +15,7 @@ void regularizationPath(vec& alpha,
                         const rowvec& y_scale,
                         const std::string lambda_type,
                         const std::string alpha_type,
-                        const double lambda_min_ratio,
+                        const double alpha_min_ratio,
                         const double q,
                         const std::string family,
                         const bool intercept)
@@ -61,7 +61,7 @@ void regularizationPath(vec& alpha,
 
   if (alpha_type == "auto") {
     alpha = exp(linspace(log(alpha_max),
-                         log(alpha_max*lambda_min_ratio),
+                         log(alpha_max*alpha_min_ratio),
                          path_length));
   } else if (alpha_type == "user") {
     alpha *= n;
