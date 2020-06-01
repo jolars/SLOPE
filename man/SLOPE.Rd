@@ -142,7 +142,7 @@ information from the solver.}
 
 \item{n_sigma}{deprecated. please use \code{path_length} instead}
 
-\item{lambda_min_ratio}{deprecated. Pelase use \code{alpha_min_ratio}}
+\item{lambda_min_ratio}{deprecated. Please use \code{alpha_min_ratio}}
 }
 \value{
 An object of class \code{"SLOPE"} with the following slots:

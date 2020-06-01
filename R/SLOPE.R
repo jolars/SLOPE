@@ -210,7 +210,7 @@
 #' @param tol_rel relative tolerance criterion for ADMM solver
 #' @param sigma deprecated. please use `alpha` instead
 #' @param n_sigma deprecated. please use `path_length` instead
-#' @param lambda_min_ratio deprecated. Pelase use `alpha_min_ratio`
+#' @param lambda_min_ratio deprecated. Please use `alpha_min_ratio`
 #' @param solver type of solver use, either `"fista"` or `"admm"`;
 #'   all families currently support
 #'   FISTA but only `family = "gaussian"` supports ADMM.
