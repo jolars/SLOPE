@@ -55,7 +55,7 @@ predictors to have L1-norm of one, \code{"l2"} scales predictors to have
 L2-norm one, \code{"sd"} scales predictors to have standard deviation one.}
 
 \item{alpha}{scale for regularization path: either a decreasing numeric
-vector (possible of length 1) or a character vector; in the latter case,
+vector (possibly of length 1) or a character vector; in the latter case,
 the choices are:
 \itemize{
 \item \code{alpha = "path"}, which computes a regularization sequence
@@ -63,6 +63,12 @@ where the first value corresponds to the intercept-only (null) model and
 the last to the almost-saturated model, and
 \item \code{alpha = "estimate"}, which estimates a \emph{single} \code{alpha}
 using Algorithm 5 in Bogdan et al. (2015), Algorithm 5.
+When a value is manually entered for \code{alpha}, it will be scaled based
+on the type of standardization that is applied to \code{x}. For \code{scale = "l2"},
+\code{alpha} will be scaled by \eqn{\sqrt{n}}. For \code{scale = "sd"} or \code{"none"},
+alpha will be scaled by \eqn{n}, and for \code{scale = "l1"} no scaling is
+applied. Note, however, that the \code{alpha} that is returned in the
+resulting value is the \strong{unstandardized} alpha.
 }}
 
 \item{lambda}{either a character vector indicating the method used
@@ -156,7 +162,9 @@ the lambda vector that when multiplied by a value in \code{alpha}
 gives the penalty vector at that point along the regularization
 path
 }
-\item{alpha}{vector giving the scaling of the lambda sequence}
+\item{alpha}{
+vector giving the (unstandardized) scaling of the lambda sequence
+}
 \item{class_names}{
 a character vector giving the names of the classes for binomial and
 multinomial families
@@ -197,14 +205,13 @@ coefficient vector (\eqn{\beta}) after having sorted it
 in decreasing order according  to its absolute values.
 }
 \details{
-\code{SLOPE()} solves a convex minimization problem with the
-following composite objective:
+\code{SLOPE()} solves the convex minimization problem
 \deqn{
   f(\beta) + \alpha \sum_{i=j}^p \lambda_j |\beta|_{(j)},
 }{
   f(\beta) + \alpha \sum \lambda_j |\beta|_(j),
 }
-where \eqn{f(\beta)} is a smooth and convex function of \eqn{\beta} and
+where \eqn{f(\beta)} is a smooth and convex function and
 the second part is the sorted L1-norm.
 In ordinary least-squares regression,
 \eqn{f(\beta)} is simply the squared norm of the least-squares residuals.
@@ -230,18 +237,18 @@ guaranteed to be of length \code{path_length}.
 The Gaussian model (Ordinary Least Squares) minimizes the following
 objective:
 \deqn{
-  \frac{1}{2n} \Vert y - X\beta\Vert_2^2
+  \frac{1}{2} \Vert y - X\beta\Vert_2^2
 }{
-  (1/(2n))||y - X \beta||_2^2
+  (1/(2))||y - X \beta||_2^2
 }
 
 \strong{Binomial}
 
 The binomial model (logistic regression) has the following objective:
 \deqn{
-  \frac 1n \sum_{i=1}^n \log\left(1+ \exp\left(- y_i \left(x_i^T\beta + \beta_0 \right) \right) \right)
+  \sum_{i=1}^n \log\left(1+ \exp\left(- y_i \left(x_i^T\beta + \beta_0 \right) \right) \right)
 }{
-  (1/n) \sum log(1+ exp(- y_i x_i^T \beta))
+  \sum log(1+ exp(- y_i x_i^T \beta))
 }
 with \eqn{y \in \{-1, 1\}}{y in {-1, 1}}.
 
@@ -250,19 +257,19 @@ with \eqn{y \in \{-1, 1\}}{y in {-1, 1}}.
 In poisson regression, we use the following objective:
 
 \deqn{
-  - \frac 1n \sum_{i=1}^n \left(y_i\left(x_i^T\beta + \beta_0\right) - \exp\left(x_i^T\beta + \beta_0\right)\right)
+  -\sum_{i=1}^n \left(y_i\left(x_i^T\beta + \beta_0\right) - \exp\left(x_i^T\beta + \beta_0\right)\right)
 }{
-  -(1/n)\sum (y_i(x_i^T\beta + \beta_0) - exp(x_i^T\beta + \beta_0))
+  -\sum (y_i(x_i^T\beta + \beta_0) - exp(x_i^T\beta + \beta_0))
 }
 
 \strong{Multinomial}
 
 In multinomial regression, we minimize the full-rank objective
 \deqn{
-  -\frac 1n \sum_{i=1}^n\left( \sum_{k=1}^{m-1} y_{ik}(x_i^T\beta_k + \beta_{0,k})
+  -\sum_{i=1}^n\left( \sum_{k=1}^{m-1} y_{ik}(x_i^T\beta_k + \beta_{0,k})
                      - \log\sum_{k=1}^{m-1} \exp\big(x_i^T\beta_k + \beta_{0,k}\big) \right)
 }{
-  -(1/n)\sum(y_ik(x_i^T\beta_k + \beta_{0,k}) - log(\sum exp(x_i^T\beta_k + \alpha_{0,k})))
+  -\sum(y_ik(x_i^T\beta_k + \beta_{0,k}) - log(\sum exp(x_i^T\beta_k + \alpha_{0,k})))
 }
 with \eqn{y_{ik}} being the element in a \eqn{n} by \eqn{(m-1)} matrix, where
 \eqn{m} is the number of classes in the response.

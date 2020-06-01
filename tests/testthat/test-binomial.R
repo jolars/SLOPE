@@ -38,7 +38,7 @@ test_that("regularized slope logistic regression picks out correct features", {
 
   y <- rbinom(n, 1, prob)
 
-  SLOPE_fit <- SLOPE(x, y, family = "binomial", alpha = 1/n)
+  SLOPE_fit <- SLOPE(x, y, family = "binomial", alpha = 1/sqrt(n))
 
   expect_setequal(nz, which(SLOPE_fit$nonzeros))
 })

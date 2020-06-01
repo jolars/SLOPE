@@ -6,14 +6,13 @@
 #' coefficient vector (\eqn{\beta}) after having sorted it
 #' in decreasing order according  to its absolute values.
 #'
-#' `SLOPE()` solves a convex minimization problem with the
-#' following composite objective:
+#' `SLOPE()` solves the convex minimization problem
 #' \deqn{
 #'   f(\beta) + \alpha \sum_{i=j}^p \lambda_j |\beta|_{(j)},
 #' }{
 #'   f(\beta) + \alpha \sum \lambda_j |\beta|_(j),
 #' }
-#' where \eqn{f(\beta)} is a smooth and convex function of \eqn{\beta} and
+#' where \eqn{f(\beta)} is a smooth and convex function and
 #' the second part is the sorted L1-norm.
 #' In ordinary least-squares regression,
 #' \eqn{f(\beta)} is simply the squared norm of the least-squares residuals.
@@ -38,18 +37,18 @@
 #' The Gaussian model (Ordinary Least Squares) minimizes the following
 #' objective:
 #' \deqn{
-#'   \frac{1}{2n} \Vert y - X\beta\Vert_2^2
+#'   \frac{1}{2} \Vert y - X\beta\Vert_2^2
 #' }{
-#'   (1/(2n))||y - X \beta||_2^2
+#'   (1/(2))||y - X \beta||_2^2
 #' }
 #'
 #' **Binomial**
 #'
 #' The binomial model (logistic regression) has the following objective:
 #' \deqn{
-#'   \frac 1n \sum_{i=1}^n \log\left(1+ \exp\left(- y_i \left(x_i^T\beta + \beta_0 \right) \right) \right)
+#'   \sum_{i=1}^n \log\left(1+ \exp\left(- y_i \left(x_i^T\beta + \beta_0 \right) \right) \right)
 #' }{
-#'   (1/n) \sum log(1+ exp(- y_i x_i^T \beta))
+#'   \sum log(1+ exp(- y_i x_i^T \beta))
 #' }
 #' with \eqn{y \in \{-1, 1\}}{y in {-1, 1}}.
 #'
@@ -58,19 +57,19 @@
 #' In poisson regression, we use the following objective:
 #'
 #' \deqn{
-#'   - \frac 1n \sum_{i=1}^n \left(y_i\left(x_i^T\beta + \beta_0\right) - \exp\left(x_i^T\beta + \beta_0\right)\right)
+#'   -\sum_{i=1}^n \left(y_i\left(x_i^T\beta + \beta_0\right) - \exp\left(x_i^T\beta + \beta_0\right)\right)
 #' }{
-#'   -(1/n)\sum (y_i(x_i^T\beta + \beta_0) - exp(x_i^T\beta + \beta_0))
+#'   -\sum (y_i(x_i^T\beta + \beta_0) - exp(x_i^T\beta + \beta_0))
 #' }
 #'
 #' **Multinomial**
 #'
 #' In multinomial regression, we minimize the full-rank objective
 #' \deqn{
-#'   -\frac 1n \sum_{i=1}^n\left( \sum_{k=1}^{m-1} y_{ik}(x_i^T\beta_k + \beta_{0,k})
+#'   -\sum_{i=1}^n\left( \sum_{k=1}^{m-1} y_{ik}(x_i^T\beta_k + \beta_{0,k})
 #'                      - \log\sum_{k=1}^{m-1} \exp\big(x_i^T\beta_k + \beta_{0,k}\big) \right)
 #' }{
-#'   -(1/n)\sum(y_ik(x_i^T\beta_k + \beta_{0,k}) - log(\sum exp(x_i^T\beta_k + \alpha_{0,k})))
+#'   -\sum(y_ik(x_i^T\beta_k + \beta_{0,k}) - log(\sum exp(x_i^T\beta_k + \alpha_{0,k})))
 #' }
 #' with \eqn{y_{ik}} being the element in a \eqn{n} by \eqn{(m-1)} matrix, where
 #' \eqn{m} is the number of classes in the response.
@@ -151,13 +150,19 @@
 #'   predictors to have L1-norm of one, `"l2"` scales predictors to have
 #'   L2-norm one, `"sd"` scales predictors to have standard deviation one.
 #' @param alpha scale for regularization path: either a decreasing numeric
-#'   vector (possible of length 1) or a character vector; in the latter case,
+#'   vector (possibly of length 1) or a character vector; in the latter case,
 #'   the choices are:
 #'   - `alpha = "path"`, which computes a regularization sequence
 #'     where the first value corresponds to the intercept-only (null) model and
 #'     the last to the almost-saturated model, and
 #'   - `alpha = "estimate"`, which estimates a *single* `alpha`
 #'     using Algorithm 5 in Bogdan et al. (2015), Algorithm 5.
+#'   When a value is manually entered for `alpha`, it will be scaled based
+#'   on the type of standardization that is applied to `x`. For `scale = "l2"`,
+#'   `alpha` will be scaled by \eqn{\sqrt{n}}. For `scale = "sd"` or `"none"`,
+#'   alpha will be scaled by \eqn{n}, and for `scale = "l1"` no scaling is
+#'   applied. Note, however, that the `alpha` that is returned in the
+#'   resulting value is the **unstandardized** alpha.
 #' @param path_length length of regularization path
 #' @param lambda either a character vector indicating the method used
 #'   to construct the lambda path or a numeric non-decreasing
@@ -177,9 +182,9 @@
 #'   greately when the number of predictors is larger than the number
 #'   of observations.
 #' @param screen_alg what type of screening algorithm to use.
-#'   * `"strong"` uses the set from the strong screening rule and check
+#'   - `"strong"` uses the set from the strong screening rule and check
 #'     against the full set
-#'   * `"previous"` first fits with the previous active set, then checks
+#'   - `"previous"` first fits with the previous active set, then checks
 #'     against the strong set, and finally against the full set if there are
 #'     no violations in the strong set
 #' @param verbosity level of verbosity for displaying output from the
@@ -227,7 +232,9 @@
 #'   gives the penalty vector at that point along the regularization
 #'   path
 #' }
-#' \item{alpha}{vector giving the scaling of the lambda sequence}
+#' \item{alpha}{
+#'   vector giving the (unstandardized) scaling of the lambda sequence
+#' }
 #' \item{class_names}{
 #'   a character vector giving the names of the classes for binomial and
 #'   multinomial families
@@ -338,12 +345,18 @@ SLOPE <- function(x,
 ) {
 
   if (!missing(sigma)) {
-    warning("'sigma' argument is deprecated; please use 'alpha' instead")
+    warning("`sigma` argument is deprecated; please use `alpha` instead")
     alpha <- sigma
   }
 
   if (!missing(n_sigma)) {
-    warning("'n_sigma' argument is deprecated; please use 'path_length' instead")
+    warning("`n_sigma` argument is deprecated; please use `path_length` instead")
+    path_length <- n_sigma
+  }
+
+  if (!missing(lambda_min_ratio)) {
+    warning("`lambda_min_ratio` is deprecated; please use `alpha_min_ratio` instead")
+    alpha_min_ratio <- lambda_min_ratio
   }
 
   ocall <- match.call()

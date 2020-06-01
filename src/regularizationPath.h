@@ -12,9 +12,11 @@ void regularizationPath(vec& alpha,
                         double& alpha_max,
                         const T& x,
                         const mat& y,
+                        const rowvec& x_scale,
                         const rowvec& y_scale,
                         const std::string lambda_type,
                         const std::string alpha_type,
+                        const std::string scale,
                         const double alpha_min_ratio,
                         const double q,
                         const std::string family,
@@ -64,6 +66,11 @@ void regularizationPath(vec& alpha,
                          log(alpha_max*alpha_min_ratio),
                          path_length));
   } else if (alpha_type == "user") {
-    alpha *= n;
+    // scale alpha to make penalty invariant to number of observations
+    if (scale == "l2") {
+      alpha *= std::sqrt(n);
+    } else if (scale == "sd" || scale == "none") {
+      alpha *= n;
+    }
   }
 }

@@ -69,9 +69,11 @@ List cppSLOPE(T& x, mat& y, const List control)
                      alpha_max,
                      x,
                      y,
+                     x_scale,
                      y_scale,
                      lambda_type,
                      alpha_type,
+                     scale,
                      alpha_min_ratio,
                      q,
                      family_choice,
@@ -411,8 +413,12 @@ List cppSLOPE(T& x, mat& y, const List control)
           y_scale,
           intercept);
 
-  // rescale alpha
-  alpha /= n;
+  // rescale alpha depending on standardization settings
+  if (scale == "l2") {
+    alpha /= sqrt(n);
+  } else if (scale == "sd" || scale == "none") {
+    alpha /= n;
+  }
 
   return List::create(
     Named("betas")               = wrap(betas),
