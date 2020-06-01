@@ -157,8 +157,7 @@
 <a href="#major-changes" class="anchor"></a>Major changes</h2>
 <ul>
 <li>Scaling of <code>alpha</code> (previously <code>sigma</code>) is now invariant to the number of observations, which is achieved by scaling the penalty part of the objective by the square root of the number of observations if <code>scale = "l2"</code> and the number of observations if <code>scale = "sd"</code> or <code>"none"</code>. No scaling is applied when <code>scale = "l1"</code>.</li>
-<li>The <code>sigma</code> argument is deprecated in favor of <code>alpha</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>, <code><a href="../reference/coef.SLOPE.html">coef.SLOPE()</a></code>, and <code><a href="../reference/predict.SLOPE.html">predict.SLOPE()</a></code>
-</li>
+<li>The <code>sigma</code> argument is deprecated in favor of <code>alpha</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>, <code><a href="../reference/coef.SLOPE.html">coef.SLOPE()</a></code>, and <code><a href="../reference/predict.SLOPE.html">predict.SLOPE()</a></code>.</li>
 <li>The <code>n_sigma</code> argument is deprecated in favor of <code>path_length</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>
 </li>
 <li>The <code>lambda_min_ratio</code> argument is deprecated in favor of <code>alpha_min_ratio</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>

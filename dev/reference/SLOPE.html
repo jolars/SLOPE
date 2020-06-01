@@ -222,27 +222,31 @@ to <code>TRUE</code> if <code>x</code> is dense and <code>FALSE</code> otherwise
     </tr>
     <tr>
       <th>scale</th>
-      <td><p>type of scaling to apply to predictors; <code>"l1"</code> scales
-predictors to have L1-norm of one, <code>"l2"</code> scales predictors to have
-L2-norm one, <code>"sd"</code> scales predictors to have standard deviation one.</p></td>
+      <td><p>type of scaling to apply to predictors.</p><ul>
+<li><p><code>"l1"</code> scales predictors to have L1 norms of one.</p></li>
+<li><p><code>"l2"</code> scales predictors to have L2 norms of one.#'</p></li>
+<li><p><code>"sd"</code> scales predictors to have a population standard deviation one.</p></li>
+<li><p><code>"none"</code> applies no scaling.</p></li>
+</ul></td>
     </tr>
     <tr>
       <th>alpha</th>
       <td><p>scale for regularization path: either a decreasing numeric
 vector (possibly of length 1) or a character vector; in the latter case,
 the choices are:</p><ul>
-<li><p><code>alpha = "path"</code>, which computes a regularization sequence
+<li><p><code>"path"</code>, which computes a regularization sequence
 where the first value corresponds to the intercept-only (null) model and
 the last to the almost-saturated model, and</p></li>
-<li><p><code>alpha = "estimate"</code>, which estimates a <em>single</em> <code>alpha</code>
-using Algorithm 5 in Bogdan et al. (2015), Algorithm 5.
-When a value is manually entered for <code>alpha</code>, it will be scaled based
+<li><p><code>"estimate"</code>, which estimates a <em>single</em> <code>alpha</code>
+using Algorithm 5 in Bogdan et al. (2015).</p></li>
+</ul>
+
+<p>When a value is manually entered for <code>alpha</code>, it will be scaled based
 on the type of standardization that is applied to <code>x</code>. For <code>scale = "l2"</code>,
-<code>alpha</code> will be scaled by \(\sqrt{n}\). For <code>scale = "sd"</code> or <code>"none"</code>,
+<code>alpha</code> will be scaled by \(\sqrt n\). For <code>scale = "sd"</code> or <code>"none"</code>,
 alpha will be scaled by \(n\), and for <code>scale = "l1"</code> no scaling is
 applied. Note, however, that the <code>alpha</code> that is returned in the
-resulting value is the <strong>unstandardized</strong> alpha.</p></li>
-</ul></td>
+resulting value is the <strong>unstandardized</strong> alpha.</p></td>
     </tr>
     <tr>
       <th>lambda</th>
@@ -259,7 +263,9 @@ for details.</p></td>
     </tr>
     <tr>
       <th>path_length</th>
-      <td><p>length of regularization path</p></td>
+      <td><p>length of regularization path; note that the path
+returned may still be shorter due to the early termination criteria
+given by <code>tol_dev_change</code>, <code>tol_dev_ratio</code>, and <code>max_variables</code>.</p></td>
     </tr>
     <tr>
       <th>q</th>
@@ -271,7 +277,7 @@ is a custom <code>lambda</code> sequence is used.</p></td>
       <th>screen</th>
       <td><p>whether to use predictor screening rules (rules that allow
 some predictors to be discarded prior to fitting), which improve speed
-greately when the number of predictors is larger than the number
+greatly when the number of predictors is larger than the number
 of observations.</p></td>
     </tr>
     <tr>
@@ -307,8 +313,8 @@ the number of levels of the response minus one.</p></td>
     <tr>
       <th>solver</th>
       <td><p>type of solver use, either <code>"fista"</code> or <code>"admm"</code>;
-all families currently support
-FISTA but only <code>family = "gaussian"</code> supports ADMM.</p></td>
+all families currently support FISTA but only <code>family = "gaussian"</code>
+supports ADMM.</p></td>
     </tr>
     <tr>
       <th>max_passes</th>
@@ -346,15 +352,15 @@ information from the solver.</p></td>
     </tr>
     <tr>
       <th>sigma</th>
-      <td><p>deprecated. please use <code>alpha</code> instead</p></td>
+      <td><p>deprecated; please use <code>alpha</code> instead</p></td>
     </tr>
     <tr>
       <th>n_sigma</th>
-      <td><p>deprecated. please use <code>path_length</code> instead</p></td>
+      <td><p>deprecated; please use <code>path_length</code> instead</p></td>
     </tr>
     <tr>
       <th>lambda_min_ratio</th>
-      <td><p>deprecated. Please use <code>alpha_min_ratio</code></p></td>
+      <td><p>deprecated; please use <code>alpha_min_ratio</code> instead</p></td>
     </tr>
     </table>
 

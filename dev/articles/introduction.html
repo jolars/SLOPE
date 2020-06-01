@@ -212,7 +212,7 @@ Model tuning results from Gaussian SLOPE on the bodyfat dataset.
                <span class="kw">lambda</span> <span class="kw">=</span> <span class="st">"gaussian"</span>,
                <span class="kw">solver</span> <span class="kw">=</span> <span class="st">"admm"</span>,
                <span class="kw">q</span> <span class="kw">=</span> <span class="fl">0.1</span>,
-               <span class="kw">alpha</span> <span class="kw">=</span> <span class="no">alpha</span>)
+               <span class="kw">alpha</span> <span class="kw">=</span> <span class="no">alpha</span>/<span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span>(<span class="no">n</span>))
 
   <span class="no">selected_slope</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span>(<span class="no">fit</span>$<span class="no">nonzeros</span>)
   <span class="no">V</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/sets.html">setdiff</a></span>(<span class="no">selected_slope</span>, <span class="no">signals</span>))
