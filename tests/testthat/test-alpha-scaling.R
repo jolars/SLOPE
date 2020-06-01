@@ -1,4 +1,5 @@
 test_that("penalty strength is invariant to number of observations", {
+  set.seed(2026)
 
   xy <- SLOPE:::randomProblem(100, 3, q = 1)
 
