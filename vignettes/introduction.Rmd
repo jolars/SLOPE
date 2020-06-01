@@ -158,7 +158,7 @@ for (i in seq_along(q)) {
                lambda = "gaussian",
                solver = "admm",
                q = 0.1,
-               alpha = alpha)
+               alpha = alpha/sqrt(n))
   
   selected_slope <- which(fit$nonzeros)
   V <- length(setdiff(selected_slope, signals))
