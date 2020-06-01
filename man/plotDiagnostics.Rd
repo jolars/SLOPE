@@ -38,3 +38,6 @@ the model fitting resulting from a call to \code{\link[=SLOPE]{SLOPE()}} \emph{p
 x <- SLOPE(abalone$x, abalone$y, alpha = 2, diagnostics = TRUE)
 plotDiagnostics(x)
 }
+\seealso{
+\code{\link[=SLOPE]{SLOPE()}}
+}

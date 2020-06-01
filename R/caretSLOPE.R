@@ -10,6 +10,7 @@
 #' in [caret::train()].
 #'
 #' @seealso [caret::train()], [trainSLOPE()], [SLOPE()]
+#' @family model-tuning
 #'
 #' @export
 caretSLOPE <- function() {

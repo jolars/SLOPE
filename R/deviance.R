@@ -7,6 +7,9 @@
 #'   all other models, two times the negative loglikelihood is returned.
 #' @export
 #'
+#' @seealso [SLOPE()]
+#' @family SLOPE-methods
+#'
 #' @examples
 #' fit <- SLOPE(abalone$x, abalone$y, family = "poisson")
 #' deviance(fit)

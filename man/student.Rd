@@ -67,4 +67,12 @@ were kept as dependent variables, whilst the
 first and second period grades were dropped.
 }
 
+\seealso{
+Other datasets: 
+\code{\link{abalone}},
+\code{\link{bodyfat}},
+\code{\link{heart}},
+\code{\link{wine}}
+}
+\concept{datasets}
 \keyword{datasets}

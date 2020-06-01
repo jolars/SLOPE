@@ -20,7 +20,8 @@
 #'   penalty path.
 #' @param sigma deprecated. Please use `alpha` instead.
 #'
-#' @seealso [stats::predict()], [stats::predict.glm()]
+#' @seealso [stats::predict()], [stats::predict.glm()], [coef.SLOPE()]
+#' @family SLOPE-methods
 #'
 #' @return Predictions from the model with scale determined by `type`.
 #'

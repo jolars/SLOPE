@@ -44,3 +44,14 @@ please use \code{\link[=SLOPE]{SLOPE()}} to refit the model.
 fit <- SLOPE(mtcars$mpg, mtcars$vs, path_length = 1)
 coef(fit)
 }
+\seealso{
+\code{\link[=predict.SLOPE]{predict.SLOPE()}}, \code{\link[=SLOPE]{SLOPE()}}
+
+Other SLOPE-methods: 
+\code{\link{deviance.SLOPE}()},
+\code{\link{plot.SLOPE}()},
+\code{\link{predict.SLOPE}()},
+\code{\link{print.SLOPE}()},
+\code{\link{score}()}
+}
+\concept{SLOPE-methods}

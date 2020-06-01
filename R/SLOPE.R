@@ -274,7 +274,8 @@
 #' @export
 #'
 #' @seealso [plot.SLOPE()], [plotDiagnostics()], [score()], [predict.SLOPE()],
-#'   [trainSLOPE()], [coef.SLOPE()], [print.SLOPE()]
+#'   [trainSLOPE()], [coef.SLOPE()], [print.SLOPE()], [print.SLOPE()],
+#'   [deviance.SLOPE()]
 #'
 #' @references
 #' Bogdan, M., van den Berg, E., Sabatti, C., Su, W., & Candès, E. J. (2015).

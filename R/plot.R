@@ -12,6 +12,7 @@
 #'   the fraction of deviance explained, and `"step"` plots step number.
 #'
 #' @seealso [lattice::xyplot()], [SLOPE()], [plotDiagnostics()]
+#' @family SLOPE-methods
 #'
 #' @return An object of class `"trellis"`, which will be plotted on the
 #'   current device unless stored in a variable.
@@ -142,6 +143,7 @@ plot.SLOPE = function(x,
 #'   confidence limits
 #'
 #' @seealso [trainSLOPE()], [lattice::xyplot()], [lattice::panel.xyplot()]
+#' @family model-tuning
 #'
 #' @return An object of class `"trellis"` is returned and, if used
 #'   interactively, will most likely have its print function

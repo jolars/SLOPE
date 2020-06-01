@@ -42,4 +42,12 @@ wine
 A data set of results from chemical analysis of wines grown in Italy
 from three different cultivars.
 }
+\seealso{
+Other datasets: 
+\code{\link{abalone}},
+\code{\link{bodyfat}},
+\code{\link{heart}},
+\code{\link{student}}
+}
+\concept{datasets}
 \keyword{datasets}

@@ -395,5 +395,6 @@ Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
 }
 \seealso{
 \code{\link[=plot.SLOPE]{plot.SLOPE()}}, \code{\link[=plotDiagnostics]{plotDiagnostics()}}, \code{\link[=score]{score()}}, \code{\link[=predict.SLOPE]{predict.SLOPE()}},
-\code{\link[=trainSLOPE]{trainSLOPE()}}, \code{\link[=coef.SLOPE]{coef.SLOPE()}}, \code{\link[=print.SLOPE]{print.SLOPE()}}
+\code{\link[=trainSLOPE]{trainSLOPE()}}, \code{\link[=coef.SLOPE]{coef.SLOPE()}}, \code{\link[=print.SLOPE]{print.SLOPE()}}, \code{\link[=print.SLOPE]{print.SLOPE()}},
+\code{\link[=deviance.SLOPE]{deviance.SLOPE()}}
 }

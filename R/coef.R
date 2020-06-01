@@ -14,6 +14,9 @@
 #'   is not in `object`
 #' @inheritParams predict.SLOPE
 #'
+#' @seealso [predict.SLOPE()], [SLOPE()]
+#' @family SLOPE-methods
+#'
 #' @return Coefficients from the model.
 #'
 #' @export

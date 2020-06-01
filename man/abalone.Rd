@@ -36,4 +36,12 @@ sex, weight, and height.
 \details{
 Only a stratified sample of 211 rows of the original data set are used here.
 }
+\seealso{
+Other datasets: 
+\code{\link{bodyfat}},
+\code{\link{heart}},
+\code{\link{student}},
+\code{\link{wine}}
+}
+\concept{datasets}
 \keyword{datasets}

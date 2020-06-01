@@ -86,5 +86,13 @@ predict(fit, with(mtcars, cbind(mpg, hp)), type = "class")
 
 }
 \seealso{
-\code{\link[stats:predict]{stats::predict()}}, \code{\link[stats:predict.glm]{stats::predict.glm()}}
+\code{\link[stats:predict]{stats::predict()}}, \code{\link[stats:predict.glm]{stats::predict.glm()}}, \code{\link[=coef.SLOPE]{coef.SLOPE()}}
+
+Other SLOPE-methods: 
+\code{\link{coef.SLOPE}()},
+\code{\link{deviance.SLOPE}()},
+\code{\link{plot.SLOPE}()},
+\code{\link{print.SLOPE}()},
+\code{\link{score}()}
 }
+\concept{SLOPE-methods}

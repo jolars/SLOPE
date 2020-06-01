@@ -22,3 +22,14 @@ Model deviance
 fit <- SLOPE(abalone$x, abalone$y, family = "poisson")
 deviance(fit)
 }
+\seealso{
+\code{\link[=SLOPE]{SLOPE()}}
+
+Other SLOPE-methods: 
+\code{\link{coef.SLOPE}()},
+\code{\link{plot.SLOPE}()},
+\code{\link{predict.SLOPE}()},
+\code{\link{print.SLOPE}()},
+\code{\link{score}()}
+}
+\concept{SLOPE-methods}

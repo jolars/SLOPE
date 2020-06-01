@@ -37,4 +37,12 @@ plot(fit)
 }
 \seealso{
 \code{\link[lattice:xyplot]{lattice::xyplot()}}, \code{\link[=SLOPE]{SLOPE()}}, \code{\link[=plotDiagnostics]{plotDiagnostics()}}
+
+Other SLOPE-methods: 
+\code{\link{coef.SLOPE}()},
+\code{\link{deviance.SLOPE}()},
+\code{\link{predict.SLOPE}()},
+\code{\link{print.SLOPE}()},
+\code{\link{score}()}
 }
+\concept{SLOPE-methods}

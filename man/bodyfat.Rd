@@ -38,4 +38,12 @@ Siri's 1956 equation to measurements of underwater weighing, as well as
 age, weight, height, and a variety of
 body circumference measurements.
 }
+\seealso{
+Other datasets: 
+\code{\link{abalone}},
+\code{\link{heart}},
+\code{\link{student}},
+\code{\link{wine}}
+}
+\concept{datasets}
 \keyword{datasets}

@@ -14,6 +14,9 @@
 #'
 #' @return An object of class `"trellis"`, which, unless stored in a variable,
 #'   will be plotted when its default `print()` method is called.
+#'
+#' @seealso [SLOPE()]
+#'
 #' @export
 #'
 #' @examples

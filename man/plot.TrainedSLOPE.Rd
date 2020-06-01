@@ -55,4 +55,9 @@ plot(tune, ci_col = "salmon", col = "black")
 }
 \seealso{
 \code{\link[=trainSLOPE]{trainSLOPE()}}, \code{\link[lattice:xyplot]{lattice::xyplot()}}, \code{\link[lattice:panel.xyplot]{lattice::panel.xyplot()}}
+
+Other model-tuning: 
+\code{\link{caretSLOPE}()},
+\code{\link{trainSLOPE}()}
 }
+\concept{model-tuning}

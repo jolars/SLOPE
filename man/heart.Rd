@@ -57,4 +57,12 @@ variables \code{chest_pain}, \code{thal} and \code{ecg} could be found, which ex
 their obscure definitions here.
 }
 
+\seealso{
+Other datasets: 
+\code{\link{abalone}},
+\code{\link{bodyfat}},
+\code{\link{student}},
+\code{\link{wine}}
+}
+\concept{datasets}
 \keyword{datasets}

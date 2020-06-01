@@ -11,9 +11,12 @@
 #'   misclassification rate, and `"auc"` returns area under the ROC curve.
 #'
 #' @return The measure along the regularization path depending on the
-#'   value in `measure`.
+#'   value in `measure`.#'
 #'
 #' @export
+#'
+#' @family SLOPE-methods
+#' @seealso [SLOPE()], [predict.SLOPE()]
 #'
 #' @examples
 #' x <- subset(infert, select = c("induced", "age", "pooled.stratum"))

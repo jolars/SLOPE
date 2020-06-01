@@ -37,6 +37,7 @@
 #' @export
 #'
 #' @seealso [foreach::foreach()], [plot.TrainedSLOPE()]
+#' @family model-tuning
 #'
 #' @examples
 #' # 8-fold cross-validation repeated 5 times
