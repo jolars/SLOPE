@@ -50,26 +50,31 @@ be converted to matrices internally.}
 \item{center}{whether to center predictors or not by their mean. Defaults
 to \code{TRUE} if \code{x} is dense and \code{FALSE} otherwise.}
 
-\item{scale}{type of scaling to apply to predictors; \code{"l1"} scales
-predictors to have L1-norm of one, \code{"l2"} scales predictors to have
-L2-norm one, \code{"sd"} scales predictors to have standard deviation one.}
+\item{scale}{type of scaling to apply to predictors.
+\itemize{
+\item \code{"l1"} scales predictors to have L1 norms of one.
+\item \code{"l2"} scales predictors to have L2 norms of one.#'
+\item \code{"sd"} scales predictors to have a population standard deviation one.
+\item \code{"none"} applies no scaling.
+}}
 
 \item{alpha}{scale for regularization path: either a decreasing numeric
 vector (possibly of length 1) or a character vector; in the latter case,
 the choices are:
 \itemize{
-\item \code{alpha = "path"}, which computes a regularization sequence
+\item \code{"path"}, which computes a regularization sequence
 where the first value corresponds to the intercept-only (null) model and
 the last to the almost-saturated model, and
-\item \code{alpha = "estimate"}, which estimates a \emph{single} \code{alpha}
-using Algorithm 5 in Bogdan et al. (2015), Algorithm 5.
+\item \code{"estimate"}, which estimates a \emph{single} \code{alpha}
+using Algorithm 5 in Bogdan et al. (2015).
+}
+
 When a value is manually entered for \code{alpha}, it will be scaled based
 on the type of standardization that is applied to \code{x}. For \code{scale = "l2"},
-\code{alpha} will be scaled by \eqn{\sqrt{n}}. For \code{scale = "sd"} or \code{"none"},
+\code{alpha} will be scaled by \eqn{\sqrt n}. For \code{scale = "sd"} or \code{"none"},
 alpha will be scaled by \eqn{n}, and for \code{scale = "l1"} no scaling is
 applied. Note, however, that the \code{alpha} that is returned in the
-resulting value is the \strong{unstandardized} alpha.
-}}
+resulting value is the \strong{unstandardized} alpha.}
 
 \item{lambda}{either a character vector indicating the method used
 to construct the lambda path or a numeric non-decreasing
@@ -80,7 +85,9 @@ for details.}
 \item{alpha_min_ratio}{smallest value for \code{lambda} as a fraction of
 \code{lambda_max}; used in the selection of \code{alpha} when \code{alpha = "path"}.}
 
-\item{path_length}{length of regularization path}
+\item{path_length}{length of regularization path; note that the path
+returned may still be shorter due to the early termination criteria
+given by \code{tol_dev_change}, \code{tol_dev_ratio}, and \code{max_variables}.}
 
 \item{q}{parameter controlling the shape of the lambda sequence, with
 usage varying depending on the type of path used and has no effect
@@ -88,7 +95,7 @@ is a custom \code{lambda} sequence is used.}
 
 \item{screen}{whether to use predictor screening rules (rules that allow
 some predictors to be discarded prior to fitting), which improve speed
-greately when the number of predictors is larger than the number
+greatly when the number of predictors is larger than the number
 of observations.}
 
 \item{screen_alg}{what type of screening algorithm to use.
@@ -115,8 +122,8 @@ For the multinomial family, this value will be multiplied internally with
 the number of levels of the response minus one.}
 
 \item{solver}{type of solver use, either \code{"fista"} or \code{"admm"};
-all families currently support
-FISTA but only \code{family = "gaussian"} supports ADMM.}
+all families currently support FISTA but only \code{family = "gaussian"}
+supports ADMM.}
 
 \item{max_passes}{maximum number of passes (outer iterations) for solver}
 
@@ -138,11 +145,11 @@ program. Setting this to 1 displays basic information on the path level,
 2 a little bit more information on the path level, and 3 displays
 information from the solver.}
 
-\item{sigma}{deprecated. please use \code{alpha} instead}
+\item{sigma}{deprecated; please use \code{alpha} instead}
 
-\item{n_sigma}{deprecated. please use \code{path_length} instead}
+\item{n_sigma}{deprecated; please use \code{path_length} instead}
 
-\item{lambda_min_ratio}{deprecated. Please use \code{alpha_min_ratio}}
+\item{lambda_min_ratio}{deprecated; please use \code{alpha_min_ratio} instead}
 }
 \value{
 An object of class \code{"SLOPE"} with the following slots:

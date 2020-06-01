@@ -146,24 +146,29 @@
 #' @param intercept whether to fit an intercept
 #' @param center whether to center predictors or not by their mean. Defaults
 #'   to `TRUE` if `x` is dense and `FALSE` otherwise.
-#' @param scale type of scaling to apply to predictors; `"l1"` scales
-#'   predictors to have L1-norm of one, `"l2"` scales predictors to have
-#'   L2-norm one, `"sd"` scales predictors to have standard deviation one.
+#' @param scale type of scaling to apply to predictors.
+#'   - `"l1"` scales predictors to have L1 norms of one.
+#'   - `"l2"` scales predictors to have L2 norms of one.#'
+#'   - `"sd"` scales predictors to have a population standard deviation one.
+#'   - `"none"` applies no scaling.
 #' @param alpha scale for regularization path: either a decreasing numeric
 #'   vector (possibly of length 1) or a character vector; in the latter case,
 #'   the choices are:
-#'   - `alpha = "path"`, which computes a regularization sequence
+#'   - `"path"`, which computes a regularization sequence
 #'     where the first value corresponds to the intercept-only (null) model and
 #'     the last to the almost-saturated model, and
-#'   - `alpha = "estimate"`, which estimates a *single* `alpha`
-#'     using Algorithm 5 in Bogdan et al. (2015), Algorithm 5.
+#'   - `"estimate"`, which estimates a *single* `alpha`
+#'     using Algorithm 5 in Bogdan et al. (2015).
+#'
 #'   When a value is manually entered for `alpha`, it will be scaled based
 #'   on the type of standardization that is applied to `x`. For `scale = "l2"`,
-#'   `alpha` will be scaled by \eqn{\sqrt{n}}. For `scale = "sd"` or `"none"`,
+#'   `alpha` will be scaled by \eqn{\sqrt n}. For `scale = "sd"` or `"none"`,
 #'   alpha will be scaled by \eqn{n}, and for `scale = "l1"` no scaling is
 #'   applied. Note, however, that the `alpha` that is returned in the
 #'   resulting value is the **unstandardized** alpha.
-#' @param path_length length of regularization path
+#' @param path_length length of regularization path; note that the path
+#'   returned may still be shorter due to the early termination criteria
+#'   given by `tol_dev_change`, `tol_dev_ratio`, and `max_variables`.
 #' @param lambda either a character vector indicating the method used
 #'   to construct the lambda path or a numeric non-decreasing
 #'   vector with length equal to the number
@@ -179,7 +184,7 @@
 #'   (timings and other values depending on type of solver)
 #' @param screen whether to use predictor screening rules (rules that allow
 #'   some predictors to be discarded prior to fitting), which improve speed
-#'   greately when the number of predictors is larger than the number
+#'   greatly when the number of predictors is larger than the number
 #'   of observations.
 #' @param screen_alg what type of screening algorithm to use.
 #'   - `"strong"` uses the set from the strong screening rule and check
@@ -208,12 +213,12 @@
 #'   with FISTA solver and KKT checks in screening algorithm.
 #' @param tol_abs absolute tolerance criterion for ADMM solver
 #' @param tol_rel relative tolerance criterion for ADMM solver
-#' @param sigma deprecated. please use `alpha` instead
-#' @param n_sigma deprecated. please use `path_length` instead
-#' @param lambda_min_ratio deprecated. Please use `alpha_min_ratio`
+#' @param sigma deprecated; please use `alpha` instead
+#' @param n_sigma deprecated; please use `path_length` instead
+#' @param lambda_min_ratio deprecated; please use `alpha_min_ratio` instead
 #' @param solver type of solver use, either `"fista"` or `"admm"`;
-#'   all families currently support
-#'   FISTA but only `family = "gaussian"` supports ADMM.
+#'   all families currently support FISTA but only `family = "gaussian"`
+#'   supports ADMM.
 #'
 #' @return An object of class `"SLOPE"` with the following slots:
 #' \item{coefficients}{

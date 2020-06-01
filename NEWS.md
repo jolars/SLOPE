@@ -8,7 +8,7 @@
   observations if `scale = "l2"` and the number of observations if 
   `scale = "sd"` or `"none"`. No scaling is applied when `scale = "l1"`.
 * The `sigma` argument is deprecated in favor of `alpha` in `SLOPE()`, 
-  `coef.SLOPE()`, and `predict.SLOPE()`
+  `coef.SLOPE()`, and `predict.SLOPE()`.
 * The `n_sigma` argument is deprecated in favor of `path_length` in `SLOPE()`
 * The `lambda_min_ratio` argument is deprecated in favor of `alpha_min_ratio` in
   `SLOPE()`
