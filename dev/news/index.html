@@ -156,37 +156,35 @@
 <h2 class="hasAnchor">
 <a href="#major-changes" class="anchor"></a>Major changes</h2>
 <ul>
+<li>Scaling of <code>alpha</code> (previously <code>sigma</code>) is now invariant to the number of observations, which is achieved by scaling the penalty part of the objective by the square root of the number of observations if <code>scale = "l2"</code> and the number of observations if <code>scale = "sd"</code> or <code>"none"</code>. No scaling is applied when <code>scale = "l1"</code>.</li>
+<li>The <code>sigma</code> argument is deprecated in favor of <code>alpha</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>, <code><a href="../reference/coef.SLOPE.html">coef.SLOPE()</a></code>, and <code><a href="../reference/predict.SLOPE.html">predict.SLOPE()</a></code>
+</li>
+<li>The <code>n_sigma</code> argument is deprecated in favor of <code>path_length</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>
+</li>
+<li>The <code>lambda_min_ratio</code> argument is deprecated in favor of <code>alpha_min_ratio</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>
+</li>
+<li>The default for argument <code>lambda</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> has changed from <code>"gaussian"</code> to <code>"bh"</code>.</li>
+<li>Functions and arguments deprecated in 0.2.0 are now defunct and have been removed from the package.</li>
 <li>
-<code>sigma</code> argument is deprecated in favor of <code>alpha</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>, <code><a href="../reference/coef.SLOPE.html">coef.SLOPE()</a></code>, and <code><a href="../reference/predict.SLOPE.html">predict.SLOPE()</a></code>
-</li>
-<li>
-<code>n_sigma</code> argument is deprecated in favor of <code>path_length</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>
-</li>
-<li>
-<code>lambda_min_ratio</code> argument is deprecated in favor of <code>alpha_min_ratio</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>
-</li>
-<li>the default for <code>lambda</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> has changed from <code>"gaussian"</code> to <code>"bh"</code>
-</li>
-<li>functions and arguments deprecated in 0.2.0 are now defunct and have been removed from the package</li>
+<code>scale = "sd"</code> now scales with the population standard deviation rather than the sample standard deviation, i.e. the scaling factor now used is the number of observations (and not the number of observations minus one as before).</li>
 </ul>
 </div>
 <div id="minor-changes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#minor-changes" class="anchor"></a>Minor changes</h2>
 <ul>
-<li>default <code>path_length</code> changed from 100 to 20</li>
+<li>Default <code>path_length</code> has changed from 100 to 20.</li>
 <li>
-<code><a href="../reference/plot.SLOPE.html">plot.SLOPE()</a></code> gains an argument <code>x_variable</code> that controls what is plotted on the x axis</li>
+<code><a href="../reference/plot.SLOPE.html">plot.SLOPE()</a></code> has gained an argument <code>x_variable</code> that controls what is plotted on the x axis.</li>
 </ul>
 </div>
 <div id="bug-fixes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#bug-fixes" class="anchor"></a>Bug fixes</h2>
 <ul>
-<li>specification of <code>alpha</code> is no longer sensitive to the number of observations when using standard deviation to scale, which it (incorrectly) was before</li>
-<li>plotting models that are completely sparse no longer throws an error</li>
+<li>Plotting models that are completely sparse no longer throws an error.</li>
 <li>
-<code>rho</code> instead of <code>1</code> is now used in the factorization part for the ADMM solver</li>
+<code>rho</code> instead of <code>1</code> is now used in the factorization part for the ADMM solver.</li>
 </ul>
 </div>
 </div>

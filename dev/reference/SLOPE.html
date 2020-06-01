@@ -229,13 +229,19 @@ L2-norm one, <code>"sd"</code> scales predictors to have standard deviation one.
     <tr>
       <th>alpha</th>
       <td><p>scale for regularization path: either a decreasing numeric
-vector (possible of length 1) or a character vector; in the latter case,
+vector (possibly of length 1) or a character vector; in the latter case,
 the choices are:</p><ul>
 <li><p><code>alpha = "path"</code>, which computes a regularization sequence
 where the first value corresponds to the intercept-only (null) model and
 the last to the almost-saturated model, and</p></li>
 <li><p><code>alpha = "estimate"</code>, which estimates a <em>single</em> <code>alpha</code>
-using Algorithm 5 in Bogdan et al. (2015), Algorithm 5.</p></li>
+using Algorithm 5 in Bogdan et al. (2015), Algorithm 5.
+When a value is manually entered for <code>alpha</code>, it will be scaled based
+on the type of standardization that is applied to <code>x</code>. For <code>scale = "l2"</code>,
+<code>alpha</code> will be scaled by \(\sqrt{n}\). For <code>scale = "sd"</code> or <code>"none"</code>,
+alpha will be scaled by \(n\), and for <code>scale = "l1"</code> no scaling is
+applied. Note, however, that the <code>alpha</code> that is returned in the
+resulting value is the <strong>unstandardized</strong> alpha.</p></li>
 </ul></td>
     </tr>
     <tr>
@@ -348,7 +354,7 @@ information from the solver.</p></td>
     </tr>
     <tr>
       <th>lambda_min_ratio</th>
-      <td><p>deprecated. Pelase use <code>alpha_min_ratio</code></p></td>
+      <td><p>deprecated. Please use <code>alpha_min_ratio</code></p></td>
     </tr>
     </table>
 
@@ -365,7 +371,7 @@ coefficient was zero or not</p></dd>
 <dt>lambda</dt><dd><p>the lambda vector that when multiplied by a value in <code>alpha</code>
 gives the penalty vector at that point along the regularization
 path</p></dd>
-<dt>alpha</dt><dd><p>vector giving the scaling of the lambda sequence</p></dd>
+<dt>alpha</dt><dd><p>vector giving the (unstandardized) scaling of the lambda sequence</p></dd>
 <dt>class_names</dt><dd><p>a character vector giving the names of the classes for binomial and
 multinomial families</p></dd>
 <dt>passes</dt><dd><p>the number of passes the solver took at each step on the path</p></dd>
@@ -384,12 +390,11 @@ available if <code>diagnostics = TRUE</code> in the call to <code>SLOPE()</code>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><code>SLOPE()</code> solves a convex minimization problem with the
-following composite objective:
+    <p><code>SLOPE()</code> solves the convex minimization problem
 $$
   f(\beta) + \alpha \sum_{i=j}^p \lambda_j |\beta|_{(j)},
 $$
-where \(f(\beta)\) is a smooth and convex function of \(\beta\) and
+where \(f(\beta)\) is a smooth and convex function and
 the second part is the sorted L1-norm.
 In ordinary least-squares regression,
 \(f(\beta)\) is simply the squared norm of the least-squares residuals.
@@ -414,23 +419,23 @@ guaranteed to be of length <code>path_length</code>.</p>
 <p>The Gaussian model (Ordinary Least Squares) minimizes the following
 objective:
 $$
-  \frac{1}{2n} \Vert y - X\beta\Vert_2^2
+  \frac{1}{2} \Vert y - X\beta\Vert_2^2
 $$</p>
 <p><strong>Binomial</strong></p>
 <p>The binomial model (logistic regression) has the following objective:
 $$
-  \frac 1n \sum_{i=1}^n \log\left(1+ \exp\left(- y_i \left(x_i^T\beta + \beta_0 \right) \right) \right)
+  \sum_{i=1}^n \log\left(1+ \exp\left(- y_i \left(x_i^T\beta + \beta_0 \right) \right) \right)
 $$
 with \(y \in \{-1, 1\}\).</p>
 <p><strong>Poisson</strong></p>
 <p>In poisson regression, we use the following objective:</p>
 <p>$$
-  - \frac 1n \sum_{i=1}^n \left(y_i\left(x_i^T\beta + \beta_0\right) - \exp\left(x_i^T\beta + \beta_0\right)\right)
+  -\sum_{i=1}^n \left(y_i\left(x_i^T\beta + \beta_0\right) - \exp\left(x_i^T\beta + \beta_0\right)\right)
 $$</p>
 <p><strong>Multinomial</strong></p>
 <p>In multinomial regression, we minimize the full-rank objective
 $$
-  -\frac 1n \sum_{i=1}^n\left( \sum_{k=1}^{m-1} y_{ik}(x_i^T\beta_k + \beta_{0,k})
+  -\sum_{i=1}^n\left( \sum_{k=1}^{m-1} y_{ik}(x_i^T\beta_k + \beta_{0,k})
                      - \log\sum_{k=1}^{m-1} \exp\big(x_i^T\beta_k + \beta_{0,k}\big) \right)
 $$
 with \(y_{ik}\) being the element in a \(n\) by \((m-1)\) matrix, where
