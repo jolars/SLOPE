@@ -62,6 +62,16 @@
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-85513662-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-85513662-2');
+</script>
+
 
   </head>
 
@@ -115,6 +125,9 @@
   <ul class="dropdown-menu" role="menu">
     <li class="dropdown-header">Releases</li>
     <li>
+      <a href="https://larssonjohan.com/post/slope-0-3-0/">Version 0.3.0</a>
+    </li>
+    <li>
       <a href="https://larssonjohan.com/post/slope-0-2-0/">Version 0.2.0</a>
     </li>
     <li class="divider"></li>
@@ -158,8 +171,8 @@
     <tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
+          <h2 id="section-main-functionality" class="hasAnchor"><a href="#section-main-functionality" class="anchor"></a>Main Functionality</h2>
+          <p class="section-desc"><p>Fit the model with <code><a href="../reference/SLOPE.html">SLOPE()</a></code>, visualize the results with <code><a href="../reference/plot.SLOPE.html">plot.SLOPE()</a></code>, and produce predictions for new data with <code><a href="../reference/predict.SLOPE.html">predict.SLOPE()</a></code>.</p></p>
         </th>
       </tr>
       
@@ -176,21 +189,21 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="abalone.html">abalone</a></code> </p>
+          <p><code><a href="plot.SLOPE.html">plot(<i>&lt;SLOPE&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Abalone</p></td>
+        <td><p>Plot coefficients</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="bodyfat.html">bodyfat</a></code> </p>
+          <p><code><a href="print.SLOPE.html">print(<i>&lt;SLOPE&gt;</i>)</a></code> <code><a href="print.SLOPE.html">print(<i>&lt;TrainedSLOPE&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Bodyfat</p></td>
+        <td><p>Print results from SLOPE fit</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="caretSLOPE.html">caretSLOPE()</a></code> </p>
+          <p><code><a href="predict.SLOPE.html">predict(<i>&lt;SLOPE&gt;</i>)</a></code> <code><a href="predict.SLOPE.html">predict(<i>&lt;GaussianSLOPE&gt;</i>)</a></code> <code><a href="predict.SLOPE.html">predict(<i>&lt;BinomialSLOPE&gt;</i>)</a></code> <code><a href="predict.SLOPE.html">predict(<i>&lt;PoissonSLOPE&gt;</i>)</a></code> <code><a href="predict.SLOPE.html">predict(<i>&lt;MultinomialSLOPE&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Model objects for model tuning with caret</p></td>
+        <td><p>Generate predictions from SLOPE models</p></td>
       </tr><tr>
         
         <td>
@@ -206,15 +219,34 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="heart.html">heart</a></code> </p>
+          <p><code><a href="score.html">score()</a></code> </p>
         </td>
-        <td><p>Heart disease</p></td>
+        <td><p>Compute one of several loss metrics on a new data set</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-model-tuning" class="hasAnchor"><a href="#section-model-tuning" class="anchor"></a>Model Tuning</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="trainSLOPE.html">trainSLOPE()</a></code> </p>
+        </td>
+        <td><p>Train a SLOPE model</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="plot.SLOPE.html">plot(<i>&lt;SLOPE&gt;</i>)</a></code> </p>
+          <p><code><a href="caretSLOPE.html">caretSLOPE()</a></code> </p>
         </td>
-        <td><p>Plot coefficients</p></td>
+        <td><p>Model objects for model tuning with caret</p></td>
       </tr><tr>
         
         <td>
@@ -224,45 +256,65 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="plotDiagnostics.html">plotDiagnostics()</a></code> </p>
-        </td>
-        <td><p>Plot results from diagnostics collected during model fitting</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="predict.SLOPE.html">predict(<i>&lt;SLOPE&gt;</i>)</a></code> <code><a href="predict.SLOPE.html">predict(<i>&lt;GaussianSLOPE&gt;</i>)</a></code> <code><a href="predict.SLOPE.html">predict(<i>&lt;BinomialSLOPE&gt;</i>)</a></code> <code><a href="predict.SLOPE.html">predict(<i>&lt;PoissonSLOPE&gt;</i>)</a></code> <code><a href="predict.SLOPE.html">predict(<i>&lt;MultinomialSLOPE&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Generate predictions from SLOPE models</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="print.SLOPE.html">print(<i>&lt;SLOPE&gt;</i>)</a></code> <code><a href="print.SLOPE.html">print(<i>&lt;TrainedSLOPE&gt;</i>)</a></code> </p>
         </td>
         <td><p>Print results from SLOPE fit</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-utilities" class="hasAnchor"><a href="#section-utilities" class="anchor"></a>Utilities</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="plotDiagnostics.html">plotDiagnostics()</a></code> </p>
+        </td>
+        <td><p>Plot results from diagnostics collected during model fitting</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-datasets" class="hasAnchor"><a href="#section-datasets" class="anchor"></a>Datasets</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="abalone.html">abalone</a></code> </p>
+        </td>
+        <td><p>Abalone</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="score.html">score()</a></code> </p>
+          <p><code><a href="bodyfat.html">bodyfat</a></code> </p>
         </td>
-        <td><p>Compute one of several loss metrics on a new data set</p></td>
+        <td><p>Bodyfat</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="heart.html">heart</a></code> </p>
+        </td>
+        <td><p>Heart disease</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="student.html">student</a></code> </p>
         </td>
         <td><p>Student performance</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="trainSLOPE.html">trainSLOPE()</a></code> </p>
-        </td>
-        <td><p>Train a SLOPE model</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="wine.html">wine</a></code> </p>
-        </td>
-        <td><p>Wine cultivars</p></td>
       </tr>
     </tbody>
     </table>

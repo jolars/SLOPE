@@ -64,6 +64,16 @@ through cross-validation." />
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-85513662-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-85513662-2');
+</script>
+
 
   </head>
 
@@ -116,6 +126,9 @@ through cross-validation." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li class="dropdown-header">Releases</li>
+    <li>
+      <a href="https://larssonjohan.com/post/slope-0-3-0/">Version 0.3.0</a>
+    </li>
     <li>
       <a href="https://larssonjohan.com/post/slope-0-2-0/">Version 0.2.0</a>
     </li>
@@ -237,7 +250,10 @@ using, for instance, <code>doParallel::registerDoParallel()</code> from the
 <strong>doParallel</strong> package before running this function.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/foreach/man/foreach.html'>foreach::foreach()</a></code>, <code><a href='plot.TrainedSLOPE.html'>plot.TrainedSLOPE()</a></code></p></div>
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/foreach/man/foreach.html'>foreach::foreach()</a></code>, <code><a href='plot.TrainedSLOPE.html'>plot.TrainedSLOPE()</a></code></p>
+<p>Other model-tuning: 
+<code><a href='caretSLOPE.html'>caretSLOPE</a>()</code>,
+<code><a href='plot.TrainedSLOPE.html'>plot.TrainedSLOPE</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># 8-fold cross-validation repeated 5 times</span>
