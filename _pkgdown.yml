@@ -1,10 +1,18 @@
 destination: docs
+
 development:
   mode: auto
+
 url: https://jolars.github.io/SLOPE/
+
+template:
+  params:
+    ganalytics: UA-85513662-2
 
 news:
   releases:
+  - text: "Version 0.3.0"
+    href: https://larssonjohan.com/post/slope-0-3-0/
   - text: "Version 0.2.0"
     href: https://larssonjohan.com/post/slope-0-2-0/
 
