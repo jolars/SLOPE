@@ -390,12 +390,14 @@ List cppSLOPE(T& x, mat& y, const List control)
       }
     }
 
-    if (n_unique(k) > max_variables)
+    if (n_unique(k) > max_variables) {
+      k++;
       break;
-
-    k++;
+    }
 
     checkUserInterrupt();
+
+    k++;
   }
 
   betas.resize(p, m, k);

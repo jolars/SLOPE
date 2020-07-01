@@ -28,6 +28,9 @@
   plotted on the x axis.
 * A warning is now thrown if the maximum number of passes was reached
   anywhere along the path (and prints where as well).
+* If the `max_variables` criterion is hit, the solution path returned
+  will now include also the last solution (which was not the case
+  before). Thanks, @straw-boy.
   
 ## Bug fixes
 
