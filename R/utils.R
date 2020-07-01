@@ -31,8 +31,9 @@ randomProblem <-
     x <- Matrix::rsparsematrix(n, p, density)
   }
 
-  if (rho > 0)
-    x <- x + sqrt(rho/(1 - rho)) * matrix(stats::rnorm(n), n, p)
+  if (rho > 0) {
+    x <- sqrt(1 - rho)*x + sqrt(rho)*stats::rnorm(n)
+  }
 
   if (!is.null(n_groups)) {
     groups <- rep(seq_len(n_groups), each = ceiling(m*p/n_groups),
