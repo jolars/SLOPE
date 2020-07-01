@@ -168,10 +168,10 @@
     </div>
 
     <pre class="usage"><span class='co'># S3 method for SLOPE</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for TrainedSLOPE</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>x</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -191,17 +191,17 @@
     <p>Prints output on the screen</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='SLOPE.html'>SLOPE()</a></code>, <code>print.SLOPE()</code></p>
+    <div class='dont-index'><p><code>SLOPE()</code>, <code>print.SLOPE()</code></p>
 <p>Other SLOPE-methods: 
-<code><a href='coef.SLOPE.html'>coef.SLOPE</a>()</code>,
-<code><a href='deviance.SLOPE.html'>deviance.SLOPE</a>()</code>,
-<code><a href='plot.SLOPE.html'>plot.SLOPE</a>()</code>,
-<code><a href='predict.SLOPE.html'>predict.SLOPE</a>()</code>,
-<code><a href='score.html'>score</a>()</code></p></div>
+<code>coef.SLOPE()</code>,
+<code>deviance.SLOPE()</code>,
+<code>plot.SLOPE()</code>,
+<code>predict.SLOPE()</code>,
+<code>score()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='SLOPE.html'>SLOPE</a></span>(<span class='no'>wine</span>$<span class='no'>x</span>, <span class='no'>wine</span>$<span class='no'>y</span>, <span class='kw'>family</span> <span class='kw'>=</span> <span class='st'>"multinomial"</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>fit</span>, <span class='kw'>digits</span> <span class='kw'>=</span> <span class='fl'>1</span>)</div><div class='output co'>#&gt; 
+    <pre class="examples"><div class='input'><span class='kw'>fit</span> <span class='op'>&lt;-</span> <span class='fu'>SLOPE</span>(<span class='kw'>wine</span><span class='op'>$</span><span class='kw'>x</span>, <span class='kw'>wine</span><span class='op'>$</span><span class='kw'>y</span>, family = <span class='st'>"multinomial"</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>fit</span>, digits = <span class='fl'>1</span>)</div><div class='output co'>#&gt; 
 #&gt; Call:
 #&gt; SLOPE(x = wine$x, y = wine$y, family = "multinomial")
 #&gt; 
@@ -221,8 +221,7 @@
 #&gt; 12 7e-04            1.0        18
 #&gt; 13 4e-04            1.0        18
 #&gt; 14 2e-04            1.0        19
-#&gt; 15 2e-04            1.0        19</div><div class='input'>
-</div></pre>
+#&gt; 15 2e-04            1.0        19</div><div class='input'></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

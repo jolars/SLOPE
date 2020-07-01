@@ -176,33 +176,33 @@ in decreasing order according  to its absolute values.</p>
     </div>
 
     <pre class="usage"><span class='fu'>SLOPE</span>(
-  <span class='no'>x</span>,
-  <span class='no'>y</span>,
-  <span class='kw'>family</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"gaussian"</span>, <span class='st'>"binomial"</span>, <span class='st'>"multinomial"</span>, <span class='st'>"poisson"</span>),
-  <span class='kw'>intercept</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>center</span> <span class='kw'>=</span> !<span class='fu'><a href='https://rdrr.io/r/base/class.html'>inherits</a></span>(<span class='no'>x</span>, <span class='st'>"sparseMatrix"</span>),
-  <span class='kw'>scale</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"l2"</span>, <span class='st'>"l1"</span>, <span class='st'>"sd"</span>, <span class='st'>"none"</span>),
-  <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"path"</span>, <span class='st'>"estimate"</span>),
-  <span class='kw'>lambda</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"bh"</span>, <span class='st'>"gaussian"</span>, <span class='st'>"oscar"</span>),
-  <span class='kw'>alpha_min_ratio</span> <span class='kw'>=</span> <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span>(<span class='no'>x</span>) <span class='kw'>&lt;</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NCOL</a></span>(<span class='no'>x</span>)) <span class='fl'>0.01</span> <span class='kw'>else</span> <span class='fl'>1e-04</span>,
-  <span class='kw'>path_length</span> <span class='kw'>=</span> <span class='kw'>if</span> (<span class='no'>alpha</span>[<span class='fl'>1</span>] <span class='kw'>==</span> <span class='st'>"estimate"</span>) <span class='fl'>1</span> <span class='kw'>else</span> <span class='fl'>20</span>,
-  <span class='kw'>q</span> <span class='kw'>=</span> <span class='fl'>0.1</span> * <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span>(<span class='no'>x</span>)/<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NCOL</a></span>(<span class='no'>x</span>)),
-  <span class='kw'>screen</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>screen_alg</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"strong"</span>, <span class='st'>"previous"</span>),
-  <span class='kw'>tol_dev_change</span> <span class='kw'>=</span> <span class='fl'>1e-05</span>,
-  <span class='kw'>tol_dev_ratio</span> <span class='kw'>=</span> <span class='fl'>0.995</span>,
-  <span class='kw'>max_variables</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span>(<span class='no'>x</span>),
-  <span class='kw'>solver</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"fista"</span>, <span class='st'>"admm"</span>),
-  <span class='kw'>max_passes</span> <span class='kw'>=</span> <span class='fl'>1e+06</span>,
-  <span class='kw'>tol_abs</span> <span class='kw'>=</span> <span class='fl'>1e-05</span>,
-  <span class='kw'>tol_rel</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>,
-  <span class='kw'>tol_rel_gap</span> <span class='kw'>=</span> <span class='fl'>1e-05</span>,
-  <span class='kw'>tol_infeas</span> <span class='kw'>=</span> <span class='fl'>0.001</span>,
-  <span class='kw'>diagnostics</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>verbosity</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='no'>sigma</span>,
-  <span class='no'>n_sigma</span>,
-  <span class='no'>lambda_min_ratio</span>
+  <span class='kw'>x</span>,
+  <span class='kw'>y</span>,
+  family = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"gaussian"</span>, <span class='st'>"binomial"</span>, <span class='st'>"multinomial"</span>, <span class='st'>"poisson"</span>),
+  intercept = <span class='fl'>TRUE</span>,
+  center = <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/class.html'>inherits</a></span>(<span class='kw'>x</span>, <span class='st'>"sparseMatrix"</span>),
+  scale = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"l2"</span>, <span class='st'>"l1"</span>, <span class='st'>"sd"</span>, <span class='st'>"none"</span>),
+  alpha = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"path"</span>, <span class='st'>"estimate"</span>),
+  lambda = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"bh"</span>, <span class='st'>"gaussian"</span>, <span class='st'>"oscar"</span>),
+  alpha_min_ratio = <span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span>(<span class='kw'>x</span>) <span class='op'>&lt;</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NCOL</a></span>(<span class='kw'>x</span>)) <span class='fl'>0.01</span> <span class='co'>else</span> <span class='fl'>1e-04</span>,
+  path_length = <span class='co'>if</span> (<span class='kw'>alpha</span>[<span class='fl'>1</span>] <span class='op'>==</span> <span class='st'>"estimate"</span>) <span class='fl'>1</span> <span class='co'>else</span> <span class='fl'>20</span>,
+  q = <span class='fl'>0.1</span> <span class='op'>*</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span>(<span class='kw'>x</span>)<span class='op'>/</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NCOL</a></span>(<span class='kw'>x</span>)),
+  screen = <span class='fl'>TRUE</span>,
+  screen_alg = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"strong"</span>, <span class='st'>"previous"</span>),
+  tol_dev_change = <span class='fl'>1e-05</span>,
+  tol_dev_ratio = <span class='fl'>0.995</span>,
+  max_variables = <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span>(<span class='kw'>x</span>),
+  solver = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"fista"</span>, <span class='st'>"admm"</span>),
+  max_passes = <span class='fl'>1e+06</span>,
+  tol_abs = <span class='fl'>1e-05</span>,
+  tol_rel = <span class='fl'>1e-04</span>,
+  tol_rel_gap = <span class='fl'>1e-05</span>,
+  tol_infeas = <span class='fl'>0.001</span>,
+  diagnostics = <span class='fl'>FALSE</span>,
+  verbosity = <span class='fl'>0</span>,
+  <span class='kw'>sigma</span>,
+  <span class='kw'>n_sigma</span>,
+  <span class='kw'>lambda_min_ratio</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -532,34 +532,35 @@ Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
 2(1), 183–202. <a href='https://doi.org/10.1137/080716542'>https://doi.org/10.1137/080716542</a></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='plot.SLOPE.html'>plot.SLOPE()</a></code>, <code><a href='plotDiagnostics.html'>plotDiagnostics()</a></code>, <code><a href='score.html'>score()</a></code>, <code><a href='predict.SLOPE.html'>predict.SLOPE()</a></code>,
-<code><a href='trainSLOPE.html'>trainSLOPE()</a></code>, <code><a href='coef.SLOPE.html'>coef.SLOPE()</a></code>, <code><a href='print.SLOPE.html'>print.SLOPE()</a></code>, <code><a href='print.SLOPE.html'>print.SLOPE()</a></code>,
-<code><a href='deviance.SLOPE.html'>deviance.SLOPE()</a></code></p></div>
+    <div class='dont-index'><p><code>plot.SLOPE()</code>, <code>plotDiagnostics()</code>, <code>score()</code>, <code>predict.SLOPE()</code>,
+<code>trainSLOPE()</code>, <code>coef.SLOPE()</code>, <code>print.SLOPE()</code>, <code>print.SLOPE()</code>,
+<code>deviance.SLOPE()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'># Gaussian response, default lambda sequence</span>
-<span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'>SLOPE</span>(<span class='no'>bodyfat</span>$<span class='no'>x</span>, <span class='no'>bodyfat</span>$<span class='no'>y</span>)
+<span class='kw'>fit</span> <span class='op'>&lt;-</span> <span class='fu'>SLOPE</span>(<span class='kw'>bodyfat</span><span class='op'>$</span><span class='kw'>x</span>, <span class='kw'>bodyfat</span><span class='op'>$</span><span class='kw'>y</span>)
 
 <span class='co'># Poisson response, OSCAR-type lambda sequence</span>
-<span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'>SLOPE</span>(<span class='no'>abalone</span>$<span class='no'>x</span>,
-             <span class='no'>abalone</span>$<span class='no'>y</span>,
-             <span class='kw'>family</span> <span class='kw'>=</span> <span class='st'>"poisson"</span>,
-             <span class='kw'>lambda</span> <span class='kw'>=</span> <span class='st'>"oscar"</span>,
-             <span class='kw'>q</span> <span class='kw'>=</span> <span class='fl'>0.4</span>)
+<span class='kw'>fit</span> <span class='op'>&lt;-</span> <span class='fu'>SLOPE</span>(<span class='kw'>abalone</span><span class='op'>$</span><span class='kw'>x</span>,
+             <span class='kw'>abalone</span><span class='op'>$</span><span class='kw'>y</span>,
+             family = <span class='st'>"poisson"</span>,
+             lambda = <span class='st'>"oscar"</span>,
+             q = <span class='fl'>0.4</span>)
 
 <span class='co'># Multinomial response, custom alpha and lambda</span>
-<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span>(<span class='no'>wine</span>$<span class='no'>y</span>)) - <span class='fl'>1</span>
-<span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span>(<span class='no'>wine</span>$<span class='no'>x</span>)
+<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span>(<span class='kw'>wine</span><span class='op'>$</span><span class='kw'>y</span>)) <span class='op'>-</span> <span class='fl'>1</span>
+<span class='kw'>p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span>(<span class='kw'>wine</span><span class='op'>$</span><span class='kw'>x</span>)
 
-<span class='no'>alpha</span> <span class='kw'>&lt;-</span> <span class='fl'>0.005</span>
-<span class='no'>lambda</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>exp</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span>(<span class='fl'>2</span>), <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span>(<span class='fl'>1.8</span>), <span class='kw'>length.out</span> <span class='kw'>=</span> <span class='no'>p</span>*<span class='no'>m</span>))
+<span class='kw'>alpha</span> <span class='op'>&lt;-</span> <span class='fl'>0.005</span>
+<span class='kw'>lambda</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>exp</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span>(<span class='fl'>2</span>), <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span>(<span class='fl'>1.8</span>), length.out = <span class='kw'>p</span><span class='op'>*</span><span class='kw'>m</span>))
 
-<span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'>SLOPE</span>(<span class='no'>wine</span>$<span class='no'>x</span>,
-             <span class='no'>wine</span>$<span class='no'>y</span>,
-             <span class='kw'>family</span> <span class='kw'>=</span> <span class='st'>"multinomial"</span>,
-             <span class='kw'>lambda</span> <span class='kw'>=</span> <span class='no'>lambda</span>,
-             <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='no'>alpha</span>)</div></pre>
+<span class='kw'>fit</span> <span class='op'>&lt;-</span> <span class='fu'>SLOPE</span>(<span class='kw'>wine</span><span class='op'>$</span><span class='kw'>x</span>,
+             <span class='kw'>wine</span><span class='op'>$</span><span class='kw'>y</span>,
+             family = <span class='st'>"multinomial"</span>,
+             lambda = <span class='kw'>lambda</span>,
+             alpha = <span class='kw'>alpha</span>)
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
