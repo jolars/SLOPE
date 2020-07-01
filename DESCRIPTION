@@ -1,6 +1,6 @@
 Package: SLOPE
 Title: Sorted L1 Penalized Estimation
-Version: 0.2.1.9000
+Version: 0.3.0
 Authors@R: 
     c(person("Johan", "Larsson", role = c("aut", "cre"),
              email = "johan.larsson@stat.lu.se",
