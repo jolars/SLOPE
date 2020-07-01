@@ -26,6 +26,8 @@
 * Default `path_length` has changed from 100 to 20.
 * `plot.SLOPE()` has gained an argument `x_variable` that controls what is
   plotted on the x axis.
+* A warning is now thrown if the maximum number of passes was reached
+  anywhere along the path (and prints where as well).
   
 ## Bug fixes
 

@@ -609,6 +609,16 @@ SLOPE <- function(x,
                                    paste0("p", seq_len(path_length)))
   }
 
+  # check if maximum number of passes where reached anywhere
+  passes <- fit$passes
+  reached_max_passes <- passes >= max_passes
+
+  if (any(reached_max_passes)) {
+    reached_max_passes_where <- which(reached_max_passes)
+    warning("maximum number of passes reached at steps ",
+            paste(reached_max_passes_where, collapse = ", "), "!")
+  }
+
   diagnostics <- if (diagnostics) setupDiagnostics(fit) else NULL
 
   slope_class <- switch(family,
@@ -622,7 +632,7 @@ SLOPE <- function(x,
                  lambda = lambda,
                  alpha = alpha,
                  class_names = class_names,
-                 passes = fit$passes,
+                 passes = passes,
                  violations = fit$violations,
                  active_sets = active_sets,
                  unique = drop(fit$n_unique),
