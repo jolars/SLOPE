@@ -64,6 +64,16 @@ coefficients along the regularization path." />
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-85513662-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-85513662-2');
+</script>
+
 
   </head>
 
@@ -81,7 +91,7 @@ coefficients along the regularization path." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SLOPE</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -108,8 +118,25 @@ coefficients along the regularization path." />
     </li>
   </ul>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    News
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Releases</li>
+    <li>
+      <a href="https://larssonjohan.com/post/slope-0-3-0/">Version 0.3.0</a>
+    </li>
+    <li>
+      <a href="https://larssonjohan.com/post/slope-0-2-0/">Version 0.2.0</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="../news/index.html">Changelog</a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -143,7 +170,12 @@ coefficients along the regularization path.</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for SLOPE</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>x</span>, <span class='kw'>intercept</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(
+  <span class='kw'>x</span>,
+  intercept = <span class='fl'>FALSE</span>,
+  x_variable = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"alpha"</span>, <span class='st'>"deviance_ratio"</span>, <span class='st'>"step"</span>),
+  <span class='kw'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -155,6 +187,12 @@ coefficients along the regularization path.</p>
     <tr>
       <th>intercept</th>
       <td><p>whether to plot the intercept</p></td>
+    </tr>
+    <tr>
+      <th>x_variable</th>
+      <td><p>what to plot on the x axis. <code>"alpha"</code> plots
+the scaling parameter for the sequence, <code>"deviance_ratio"</code> plots
+the fraction of deviance explained, and <code>"step"</code> plots step number.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -169,11 +207,17 @@ coefficients along the regularization path.</p>
 current device unless stored in a variable.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/lattice/man/xyplot.html'>lattice::xyplot()</a></code>, <code><a href='SLOPE.html'>SLOPE()</a></code>, <code><a href='plotDiagnostics.html'>plotDiagnostics()</a></code></p></div>
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/lattice/man/xyplot.html'>lattice::xyplot()</a></code>, <code>SLOPE()</code>, <code>plotDiagnostics()</code></p>
+<p>Other SLOPE-methods: 
+<code>coef.SLOPE()</code>,
+<code>deviance.SLOPE()</code>,
+<code>predict.SLOPE()</code>,
+<code>print.SLOPE()</code>,
+<code>score()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='SLOPE.html'>SLOPE</a></span>(<span class='no'>heart</span>$<span class='no'>x</span>, <span class='no'>heart</span>$<span class='no'>y</span>)
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>fit</span>)</div><div class='img'><img src='plot.SLOPE-1.png' alt='' width='700' height='433' /></div></pre>
+    <pre class="examples"><div class='input'><span class='kw'>fit</span> <span class='op'>&lt;-</span> <span class='fu'>SLOPE</span>(<span class='kw'>heart</span><span class='op'>$</span><span class='kw'>x</span>, <span class='kw'>heart</span><span class='op'>$</span><span class='kw'>y</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>fit</span>)</div><div class='img'><img src='plot.SLOPE-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -189,7 +233,7 @@ current device unless stored in a variable.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

@@ -62,6 +62,16 @@
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-85513662-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-85513662-2');
+</script>
+
 
   </head>
 
@@ -79,7 +89,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SLOPE</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -106,8 +116,25 @@
     </li>
   </ul>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    News
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Releases</li>
+    <li>
+      <a href="https://larssonjohan.com/post/slope-0-3-0/">Version 0.3.0</a>
+    </li>
+    <li>
+      <a href="https://larssonjohan.com/post/slope-0-2-0/">Version 0.2.0</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="../news/index.html">Changelog</a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -134,15 +161,56 @@
       <small>Source: <a href='https://github.com/jolars/SLOPE/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="slope-021" class="section level1">
-<h1 class="page-header" data-toc-text="0.2.1">
-<a href="#slope-021" class="anchor"></a>SLOPE 0.2.1<small> Unreleased </small>
+    <div id="slope-030" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.0">
+<a href="#slope-030" class="anchor"></a>SLOPE 0.3.0<small> 2020-07-02 </small>
 </h1>
+<div id="major-changes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#major-changes" class="anchor"></a>Major changes</h2>
+<ul>
+<li>Scaling of <code>alpha</code> (previously <code>sigma</code>) is now invariant to the number of observations, which is achieved by scaling the penalty part of the objective by the square root of the number of observations if <code>scale = "l2"</code> and the number of observations if <code>scale = "sd"</code> or <code>"none"</code>. No scaling is applied when <code>scale = "l1"</code>.</li>
+<li>The <code>sigma</code> argument is deprecated in favor of <code>alpha</code> in <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code>, <code><a href="https://jolars.github.io/SLOPE//reference/coef.SLOPE.html">coef.SLOPE()</a></code>, and <code><a href="https://jolars.github.io/SLOPE//reference/predict.SLOPE.html">predict.SLOPE()</a></code>.</li>
+<li>The <code>n_sigma</code> argument is deprecated in favor of <code>path_length</code> in <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code>
+</li>
+<li>The <code>lambda_min_ratio</code> argument is deprecated in favor of <code>alpha_min_ratio</code> in <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code>
+</li>
+<li>The default for argument <code>lambda</code> in <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code> has changed from <code>"gaussian"</code> to <code>"bh"</code>.</li>
+<li>Functions and arguments deprecated in 0.2.0 are now defunct and have been removed from the package.</li>
+<li>
+<code>scale = "sd"</code> now scales with the population standard deviation rather than the sample standard deviation, i.e. the scaling factor now used is the number of observations (and not the number of observations minus one as before).</li>
+</ul>
+</div>
 <div id="minor-changes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#minor-changes" class="anchor"></a>Minor changes</h2>
 <ul>
-<li>A few examples in <code><a href="https://rdrr.io/r/stats/deviance.html">deviance()</a></code> and <code><a href="../reference/SLOPE.html">SLOPE()</a></code> that were taking too long to execute have been removed or modified.</li>
+<li>Default <code>path_length</code> has changed from 100 to 20.</li>
+<li>
+<code><a href="https://jolars.github.io/SLOPE//reference/plot.SLOPE.html">plot.SLOPE()</a></code> has gained an argument <code>x_variable</code> that controls what is plotted on the x axis.</li>
+<li>A warning is now thrown if the maximum number of passes was reached anywhere along the path (and prints where as well).</li>
+<li>If the <code>max_variables</code> criterion is hit, the solution path returned will now include also the last solution (which was not the case before). Thanks, <a href='https://github.com/straw-boy'>@straw-boy</a>.</li>
+</ul>
+</div>
+<div id="bug-fixes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bug-fixes" class="anchor"></a>Bug fixes</h2>
+<ul>
+<li>Plotting models that are completely sparse no longer throws an error.</li>
+<li>
+<code>rho</code> instead of <code>1</code> is now used in the factorization part for the ADMM solver.</li>
+</ul>
+</div>
+</div>
+    <div id="slope-021" class="section level1">
+<h1 class="page-header" data-toc-text="0.2.1">
+<a href="#slope-021" class="anchor"></a>SLOPE 0.2.1<small> 2020-04-16 </small>
+</h1>
+<div id="minor-changes-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#minor-changes-1" class="anchor"></a>Minor changes</h2>
+<ul>
+<li>A few examples in <code><a href="https://rdrr.io/r/stats/deviance.html">deviance()</a></code> and <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code> that were taking too long to execute have been removed or modified.</li>
 </ul>
 </div>
 </div>
@@ -151,45 +219,45 @@
 <a href="#slope-020" class="anchor"></a>SLOPE 0.2.0<small> Unreleased </small>
 </h1>
 <p>This version of SLOPE represents a major change to the package. We have merged functionality from the owl package into this package, which means there are several changes to the API, including deprecated functions.</p>
-<div id="major-changes" class="section level2">
+<div id="major-changes-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#major-changes" class="anchor"></a>Major changes</h2>
+<a href="#major-changes-1" class="anchor"></a>Major changes</h2>
 <ul>
 <li>
-<code><a href="../reference/SLOPE_solver.html">SLOPE_solver()</a></code>, <code>SLOPE_solver_matlab()</code>, <code><a href="../reference/prox_sorted_L1.html">prox_sorted_L1()</a></code>, and <code><a href="../reference/lambda.html">create_lambda()</a></code> have been deprecated (and will be defunct in the next version of SLOPE)</li>
-<li>arguments <code>X</code>, <code>fdr</code>, and <code>normalize</code> have been deprecated in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> and replaced by <code>x</code>, <code>q</code>, <code>scale</code> and <code>center</code>, respectively</li>
-<li>options <code>"default"</code> and <code>"matlab"</code> to argument <code>solver</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> have been deprecated and replaced with <code>"fista"</code> and <code>"admm"</code>, which uses the accelerated proximal gradient method FISTA and alternating direction of multipliers method (ADMM) respectively</li>
+<code>SLOPE_solver()</code>, <code>SLOPE_solver_matlab()</code>, <code>prox_sorted_L1()</code>, and <code>create_lambda()</code> have been deprecated (and will be defunct in the next version of SLOPE)</li>
+<li>arguments <code>X</code>, <code>fdr</code>, and <code>normalize</code> have been deprecated in <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code> and replaced by <code>x</code>, <code>q</code>, <code>scale</code> and <code>center</code>, respectively</li>
+<li>options <code>"default"</code> and <code>"matlab"</code> to argument <code>solver</code> in <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code> have been deprecated and replaced with <code>"fista"</code> and <code>"admm"</code>, which uses the accelerated proximal gradient method FISTA and alternating direction of multipliers method (ADMM) respectively</li>
 <li>ADMM has been implemented as a solver for <code>family = "gaussian"</code>
 </li>
-<li>binomial, poisson, and multinomial families are now supported (using <code>family</code> argument in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>)</li>
+<li>binomial, poisson, and multinomial families are now supported (using <code>family</code> argument in <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code>)</li>
 <li>input to <code>lambda</code> is now scaled (divided by) the number of observations (rows) in <code>x</code>
 </li>
-<li>predictor screening rules have been implemented and are activated by calling <code>screen = TRUE</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>. The type of algorithm can also be set via <code>screen_alg</code>.</li>
+<li>predictor screening rules have been implemented and are activated by calling <code>screen = TRUE</code> in <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code>. The type of algorithm can also be set via <code>screen_alg</code>.</li>
 <li>
-<code><a href="../reference/SLOPE.html">SLOPE()</a></code> now returns an object of class <code>"SLOPE"</code> (and an additional class depending on input to <code>family</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>
+<code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code> now returns an object of class <code>"SLOPE"</code> (and an additional class depending on input to <code>family</code> in <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code>
 </li>
 <li>
-<code>SLOPE</code> objects gain <code><a href="https://rdrr.io/r/stats/coef.html">coef()</a></code> and <code><a href="https://rdrr.io/r/graphics/plot.html">plot()</a></code> methods.</li>
+<code>SLOPE</code> objects gain <code><a href="https://rdrr.io/r/stats/coef.html">coef()</a></code> and <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code> methods.</li>
 <li>
 <code>SLOPE</code> now uses screening rules to speed up model fitting in the high-dimensional regime</li>
 <li>most of the code is now written in C++ using the <strong>Rcpp</strong> and <strong>RcppArmadillo</strong> packages</li>
-<li>a new function <code><a href="../reference/trainSLOPE.html">trainSLOPE()</a></code> trains SLOPE with repeated k-folds cross-validation</li>
-<li>a new function <code><a href="../reference/caretSLOPE.html">caretSLOPE()</a></code> enables model-tuning using the <strong>caret</strong> package</li>
+<li>a new function <code><a href="https://jolars.github.io/SLOPE//reference/trainSLOPE.html">trainSLOPE()</a></code> trains SLOPE with repeated k-folds cross-validation</li>
+<li>a new function <code><a href="https://jolars.github.io/SLOPE//reference/caretSLOPE.html">caretSLOPE()</a></code> enables model-tuning using the <strong>caret</strong> package</li>
 <li>
-<code><a href="../reference/SLOPE.html">SLOPE()</a></code> now fits an entire path of regularization sequences by default</li>
-<li>the <code>normalize</code> option to <code><a href="../reference/SLOPE.html">SLOPE()</a></code> has been replaced by <code>scale</code> and <code>center</code>, which allows granular options for standardization</li>
+<code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code> now fits an entire path of regularization sequences by default</li>
+<li>the <code>normalize</code> option to <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code> has been replaced by <code>scale</code> and <code>center</code>, which allows granular options for standardization</li>
 <li>sparse matrices (from the <strong>Matrix</strong> package) can now be used as input</li>
 <li>there are now five datasets included in the package</li>
 <li>the introductory vignette has been replaced</li>
 </ul>
 </div>
-<div id="minor-changes-1" class="section level2">
+<div id="minor-changes-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-changes-1" class="anchor"></a>Minor changes</h2>
+<a href="#minor-changes-2" class="anchor"></a>Minor changes</h2>
 <ul>
 <li>a new function <code><a href="https://rdrr.io/r/stats/deviance.html">deviance()</a></code> returns the deviance from the fit</li>
-<li>a new function <code><a href="../reference/score.html">score()</a></code> can be used to assess model performance against new data</li>
-<li>a new function <code><a href="../reference/plotDiagnostics.html">plotDiagnostics()</a></code> has been included to visualize data from the solver (if <code>diagnostics = TRUE</code> in the call to <code><a href="../reference/SLOPE.html">SLOPE()</a></code>)</li>
+<li>a new function <code><a href="https://jolars.github.io/SLOPE//reference/score.html">score()</a></code> can be used to assess model performance against new data</li>
+<li>a new function <code><a href="https://jolars.github.io/SLOPE//reference/plotDiagnostics.html">plotDiagnostics()</a></code> has been included to visualize data from the solver (if <code>diagnostics = TRUE</code> in the call to <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code>)</li>
 <li>OSCAR-type penalty sequences can be used by setting <code>lambda = "oscar" in the call to</code>SLOPE()`</li>
 <li>the test suite for the package has been greatly extended</li>
 </ul>
@@ -212,7 +280,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

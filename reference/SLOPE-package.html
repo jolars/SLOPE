@@ -69,6 +69,16 @@
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-85513662-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-85513662-2');
+</script>
+
 
   </head>
 
@@ -86,7 +96,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SLOPE</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -113,8 +123,25 @@
     </li>
   </ul>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    News
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Releases</li>
+    <li>
+      <a href="https://larssonjohan.com/post/slope-0-3-0/">Version 0.3.0</a>
+    </li>
+    <li>
+      <a href="https://larssonjohan.com/post/slope-0-2-0/">Version 0.2.0</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="../news/index.html">Changelog</a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -163,6 +190,29 @@
 </ul>
 
 </div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p><strong>Maintainer</strong>: Johan Larsson <a href='mailto:johan.larsson@stat.lu.se'>johan.larsson@stat.lu.se</a> (<a href='https://orcid.org/0000-0002-4029-5945'>ORCID</a>)</p>
+<p>Authors:</p><ul>
+<li><p>Jonas Wallin <a href='mailto:jonas.wallin@stat.lu.se'>jonas.wallin@stat.lu.se</a> (<a href='https://orcid.org/0000-0003-0381-6593'>ORCID</a>)</p></li>
+<li><p>Malgorzata Bogdan</p></li>
+<li><p>Ewout van den Berg</p></li>
+<li><p>Chiara Sabatti</p></li>
+<li><p>Emmanuel Candes</p></li>
+<li><p>Evan Patterson</p></li>
+<li><p>Weijie Su</p></li>
+</ul>
+
+<p>Other contributors:</p><ul>
+<li><p>Jerome Friedman (code adapted from 'glmnet') [contributor]</p></li>
+<li><p>Trevor Hastie (code adapted from 'glmnet') [contributor]</p></li>
+<li><p>Rob Tibshirani (code adapted from 'glmnet') [contributor]</p></li>
+<li><p>Balasubramanian Narasimhan (code adapted from 'glmnet') [contributor]</p></li>
+<li><p>Noah Simon (code adapted from 'glmnet') [contributor]</p></li>
+<li><p>Junyang Qian (code adapted from 'glmnet') [contributor]</p></li>
+</ul>
+
+
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -179,7 +229,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

@@ -63,6 +63,16 @@
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-85513662-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-85513662-2');
+</script>
+
 
   </head>
 
@@ -80,7 +90,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SLOPE</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -107,8 +117,25 @@
     </li>
   </ul>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    News
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Releases</li>
+    <li>
+      <a href="https://larssonjohan.com/post/slope-0-3-0/">Version 0.3.0</a>
+    </li>
+    <li>
+      <a href="https://larssonjohan.com/post/slope-0-2-0/">Version 0.2.0</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="../news/index.html">Changelog</a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -141,7 +168,7 @@
     </div>
 
     <pre class="usage"><span class='co'># S3 method for SLOPE</span>
-<span class='fu'><a href='https://rdrr.io/r/stats/deviance.html'>deviance</a></span>(<span class='no'>object</span>, <span class='no'>...</span>)</pre>
+<span class='fu'><a href='https://rdrr.io/r/stats/deviance.html'>deviance</a></span>(<span class='kw'>object</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -160,19 +187,21 @@
 
     <p>For Gaussian models this is twice the residual sums of squares. For
 all other models, two times the negative loglikelihood is returned.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code>SLOPE()</code></p>
+<p>Other SLOPE-methods: 
+<code>coef.SLOPE()</code>,
+<code>plot.SLOPE()</code>,
+<code>predict.SLOPE()</code>,
+<code>print.SLOPE()</code>,
+<code>score()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='SLOPE.html'>SLOPE</a></span>(<span class='no'>abalone</span>$<span class='no'>x</span>, <span class='no'>abalone</span>$<span class='no'>y</span>, <span class='kw'>family</span> <span class='kw'>=</span> <span class='st'>"poisson"</span>)
-<span class='fu'><a href='https://rdrr.io/r/stats/deviance.html'>deviance</a></span>(<span class='no'>fit</span>)</div><div class='output co'>#&gt;  [1] 6822.7872 1026.6163 1018.0849 1010.0639 1003.8413  998.6156  993.9010
-#&gt;  [8]  989.1671  985.8107  982.9873  980.2945  977.8246  975.9313  974.3124
-#&gt; [15]  972.9612  971.8876  970.9016  970.0228  969.2916  968.6316  968.0704
-#&gt; [22]  966.8109  963.6936  961.0821  958.9515  957.2989  955.2906  953.6264
-#&gt; [29]  952.3298  951.1846  950.1994  949.3810  948.7004  948.1341  947.6637
-#&gt; [36]  947.2721  946.8823  946.5156  946.2148  945.7857  945.3086  944.7726
-#&gt; [43]  944.3939  943.8796  943.5149  943.1791  942.8186  942.5244  942.3303
-#&gt; [50]  942.1444  941.9637  941.8125  941.6787  941.5672  941.4741  941.3968
-#&gt; [57]  941.3324  941.2788  941.2341  941.1974  941.1671  941.1413  941.1198
-#&gt; [64]  941.1019  941.0871  941.0747  941.0645  941.0571</div></pre>
+    <pre class="examples"><div class='input'><span class='kw'>fit</span> <span class='op'>&lt;-</span> <span class='fu'>SLOPE</span>(<span class='kw'>abalone</span><span class='op'>$</span><span class='kw'>x</span>, <span class='kw'>abalone</span><span class='op'>$</span><span class='kw'>y</span>, family = <span class='st'>"poisson"</span>)
+<span class='fu'><a href='https://rdrr.io/r/stats/deviance.html'>deviance</a></span>(<span class='kw'>fit</span>)</div><div class='output co'>#&gt;  [1] 6822.7872  997.8056  979.7316  971.3339  967.2119  955.4364  949.2969
+#&gt;  [8]  946.7080  944.4784  942.5502  941.6779  941.2731  941.1136  941.0527
+#&gt; [15]  941.0286  941.0196</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -188,7 +217,7 @@ all other models, two times the negative loglikelihood is returned.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

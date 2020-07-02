@@ -10,9 +10,6 @@
     <loc>https://jolars.github.io/SLOPE//reference/SLOPE.html</loc>
   </url>
   <url>
-    <loc>https://jolars.github.io/SLOPE//reference/SLOPE_solver.html</loc>
-  </url>
-  <url>
     <loc>https://jolars.github.io/SLOPE//reference/abalone.html</loc>
   </url>
   <url>
@@ -37,9 +34,6 @@
     <loc>https://jolars.github.io/SLOPE//reference/interpolatePenalty.html</loc>
   </url>
   <url>
-    <loc>https://jolars.github.io/SLOPE//reference/lambda.html</loc>
-  </url>
-  <url>
     <loc>https://jolars.github.io/SLOPE//reference/plot.SLOPE.html</loc>
   </url>
   <url>
@@ -53,9 +47,6 @@
   </url>
   <url>
     <loc>https://jolars.github.io/SLOPE//reference/print.SLOPE.html</loc>
-  </url>
-  <url>
-    <loc>https://jolars.github.io/SLOPE//reference/prox_sorted_L1.html</loc>
   </url>
   <url>
     <loc>https://jolars.github.io/SLOPE//reference/score.html</loc>

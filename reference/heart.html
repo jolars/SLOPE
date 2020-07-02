@@ -63,6 +63,16 @@
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-85513662-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-85513662-2');
+</script>
+
 
   </head>
 
@@ -80,7 +90,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SLOPE</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -107,8 +117,25 @@
     </li>
   </ul>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    News
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Releases</li>
+    <li>
+      <a href="https://larssonjohan.com/post/slope-0-3-0/">Version 0.3.0</a>
+    </li>
+    <li>
+      <a href="https://larssonjohan.com/post/slope-0-2-0/">Version 0.2.0</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="../news/index.html">Changelog</a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -140,7 +167,7 @@
     <p>Diagnostic attributes of patients classified as having heart disease or not.</p>
     </div>
 
-    <pre class="usage"><span class='no'>heart</span></pre>
+    <pre class="usage"><span class='kw'>heart</span></pre>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
@@ -149,7 +176,7 @@
 of a binary factor response vector <code>y</code>,
 with levels 'absence' and 'presence' indicating the absence or presence of
 heart disease and <code>x</code>: a sparse feature matrix of class 'dgCMatrix' with the
-following variables:</p><dl'>
+following variables:</p><dl>
 <dt>age</dt><dd><p>age</p></dd>
 <dt>bp</dt><dd><p>diastolic blood pressure</p></dd>
 <dt>chol</dt><dd><p>serum cholesterol in mg/dl</p></dd>
@@ -190,6 +217,13 @@ School of Information and Computer Science.</p>
 dummycoded, removing the first category. No precise information regarding
 variables <code>chest_pain</code>, <code>thal</code> and <code>ecg</code> could be found, which explains
 their obscure definitions here.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>Other datasets: 
+<code>abalone</code>,
+<code>bodyfat</code>,
+<code>student</code>,
+<code>wine</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -206,7 +240,7 @@ their obscure definitions here.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>
