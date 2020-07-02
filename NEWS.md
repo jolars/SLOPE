@@ -1,5 +1,10 @@
 # SLOPE (development version)
 
+## Bug fixes
+
+* Fixed package build breaking on solaris because of missing STL namespace
+  specifier for `std::sqrt()` in `src/SLOPE.cpp`.
+
 # SLOPE 0.3.0
 
 ## Major changes

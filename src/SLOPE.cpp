@@ -417,7 +417,7 @@ List cppSLOPE(T& x, mat& y, const List control)
 
   // rescale alpha depending on standardization settings
   if (scale == "l2") {
-    alpha /= sqrt(n);
+    alpha /= std::sqrt(n);
   } else if (scale == "sd" || scale == "none") {
     alpha /= n;
   }
