@@ -26,7 +26,7 @@ test_that("output from unregularized poisson model matches glm", {
 
 })
 
-test_that("SLOPE reproduces lasoso fit when all lambda are equal", {
+test_that("SLOPE reproduces lasso fit when all lambda are equal", {
 
   set.seed(0978213)
 
