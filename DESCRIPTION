@@ -50,7 +50,6 @@ LinkingTo:
 Suggests:
     caret,
     covr,
-    glmnet,
     knitr,
     rmarkdown,
     spelling,

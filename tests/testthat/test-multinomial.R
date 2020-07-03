@@ -1,5 +1,4 @@
 test_that("glmnet and SLOPE return same unpenalized model", {
-  library(glmnet)
 
   set.seed(-329)
 
@@ -20,12 +19,27 @@ test_that("glmnet and SLOPE return same unpenalized model", {
   x <- scale(cbind(x1, x2), scale = c(norm(x1, "2"), norm(x2, "2")))
   y <- factor(y)
 
-  fit <- glmnet(x, y, family = "multinomial", lambda = 0, thresh = 1e-10,
-                standardize = FALSE)
-  g_coef <- as.matrix(do.call(cbind, coef(fit)))
+  # library(glmnet)
+  # fit <- glmnet(x, y, family = "multinomial", lambda = 0, thresh = 1e-10,
+  #               standardize = FALSE)
+  # g_coef <- as.matrix(do.call(cbind, coef(fit)))
+  #
+  # g_coef[,] <- g_coef[,] - g_coef[, 3]
+  # g_coef <- g_coef[, 1:2]
 
-  g_coef[,] <- g_coef[,] - g_coef[, 3]
-  g_coef <- g_coef[, 1:2]
+  g_coef <-
+    structure(
+      c(
+        -0.509777972343191,
+        -16.0477935835379,
+        32.8519778798588,
+        3.43309777879601,
+        9.76240992477788,
+        34.8727456398178
+      ),
+      .Dim = 3:2,
+      .Dimnames = list(c("", "x1", "x2"), c("s0", "s0"))
+    )
 
   ofit <- SLOPE(x, y, family = "multinomial", alpha = 1e-9)
 
