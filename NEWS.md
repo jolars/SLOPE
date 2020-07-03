@@ -6,6 +6,7 @@
   specifier for `std::sqrt()` in `src/SLOPE.cpp`.
 * Fixed erroneous scaling of absolute tolerance in stopping criteria for
   the ADMM solvers. Thanks, @straw-boy.
+* Fixed sanitizer warning from CRAN checks.
 
 # SLOPE 0.3.0
 

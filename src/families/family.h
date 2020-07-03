@@ -74,7 +74,6 @@ public:
       return FISTA(x, y, beta, lambda);
   }
 
-
   // FISTA implementation
   template <typename T>
   Results FISTAImpl(const T& x,
@@ -121,8 +120,9 @@ public:
       lin_pred = x*beta;
 
       double g = primal(y, lin_pred);
-      double h = dot(sort(abs(vectorise(beta.tail_rows(p_rows))),
-                          "descending"), lambda);
+      mat beta_subset = beta.tail_rows(p_rows);
+      vec beta_vectorized = vectorise(beta_subset);
+      double h = dot(sort(abs(beta_vectorized), "descending"), lambda);
       double f = g + h;
       double G = dual(y, lin_pred);
 
