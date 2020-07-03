@@ -133,8 +133,9 @@ public:
       double s_norm = norm(rho*(z - z_old));
 
       double eps_primal =
-        std::sqrt(n)*tol_abs + tol_rel*std::max(norm(beta), norm(z));
-      double eps_dual = std::sqrt(n)*tol_abs + tol_rel*norm(rho*u);
+        std::sqrt(p)*tol_abs + tol_rel*std::max(norm(beta), norm(z));
+      double eps_dual =
+        std::sqrt(p)*tol_abs + tol_rel*norm(rho*u);
 
       if (diagnostics) {
         primals.push_back(r_norm);

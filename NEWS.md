@@ -4,6 +4,8 @@
 
 * Fixed package build breaking on solaris because of missing STL namespace
   specifier for `std::sqrt()` in `src/SLOPE.cpp`.
+* Fixed erroneous scaling of absolute tolerance in stopping criteria for
+  the ADMM solvers. Thanks, @straw-boy.
 
 # SLOPE 0.3.0
 
