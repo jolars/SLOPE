@@ -45,6 +45,7 @@ Other contributors:
   \item Balasubramanian Narasimhan (code adapted from 'glmnet') [contributor]
   \item Noah Simon (code adapted from 'glmnet') [contributor]
   \item Junyang Qian (code adapted from 'glmnet') [contributor]
+  \item Akarsh Goyal [contributor]
 }
 
 }
