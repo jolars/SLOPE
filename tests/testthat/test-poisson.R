@@ -41,14 +41,11 @@ test_that("SLOPE reproduces lasso fit when all lambda are equal", {
 
   alpha <- 1
 
-  # gnt_fit <- glmnet::glmnet(x, y,
-  #                           family = "poisson",
-  #                           lambda = alpha,
-  #                           standardize = FALSE)
-  # gnt_coef <- as.vector(coef(gnt_fit))
-
-  gnt_coef <- c(0.490011156929726, 0, 0.628210239817099,
-                0, 0, 0, -0.562598777060689, 0, 0, 0, 0)
+  gnt_fit <- glmnet::glmnet(x, y,
+                            family = "poisson",
+                            lambda = alpha,
+                            standardize = FALSE)
+  gnt_coef <- as.vector(coef(gnt_fit))
 
   SLOPE_fit <- SLOPE(x, y,
                      family = "poisson",

@@ -7,13 +7,10 @@ test_that("lasso and slope fits are equivalent if all lambda are equal", {
 
   lambda <- 0.6
 
-  # library(glmnet)
-  # glmnet.control(fdev = 0)
-  # lasso <- glmnet(x, y, lambda = 0.6, standardize = FALSE)
-  # lasso_coef <- as.vector(coef(lasso))
-
-  lasso_coef <- c(-0.0560909669856045, 0, 2.25670882779904, -2.41538332234389,
-                  0, 0, 0, 0, 0, 0, 0)
+  library(glmnet)
+  glmnet.control(fdev = 0)
+  lasso <- glmnet(x, y, lambda = 0.6, standardize = FALSE)
+  lasso_coef <- as.vector(coef(lasso))
 
   slope <- SLOPE(x, y,
                  center = FALSE,
