@@ -16,8 +16,8 @@
 >     Status: 403
 >     Message: Forbidden
 
-I believe the status message above is a false positive; the URL works as it should
+I believe the status message above is a false positive; the URL works as it should.
 
 > Days since last update: 4
 
-This is a patch to fix the broken install on solaris as well as rectify ASAN/UBSAN errors (<https://cran.r-project.org/web/checks/check_results_SLOPE.html>)
+This is a patch to fix the broken install on solaris as well as rectify ASAN/UBSAN errors (<https://cran.r-project.org/web/checks/check_results_SLOPE.html>).
