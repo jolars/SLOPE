@@ -124,15 +124,28 @@ public:
       lin_pred = x*beta;
 
       double g = primal(y, lin_pred);
-      mat beta_subset = beta.tail_rows(p_rows);
-      vec beta_vectorized = vectorise(beta_subset);
-      double h = dot(sort(abs(beta_vectorized), "descending"), lambda);
+
+      mat tmp = beta;
+
+      if (intercept)
+        tmp.shed_row(0);
+
+      vec tmp_vectorized = sort(abs(vectorise(tmp)), "descending");
+
+      double h = dot(tmp_vectorized, lambda);
       double f = g + h;
       double G = dual(y, lin_pred);
 
       grad = gradient(x, y, lin_pred);
+      tmp = grad;
+
+      if (intercept)
+        tmp.shed_row(0);
+
+      tmp_vectorized = vectorise(tmp);
+
       double infeas =
-        lambda.n_elem > 0 ? infeasibility(grad.tail_rows(p_rows), lambda) : 0.0;
+        lambda.n_elem > 0.0 ? infeasibility(tmp_vectorized, lambda) : 0.0;
 
       if (verbosity >= 3) {
         Rcout << "pass: "            << passes
@@ -147,8 +160,8 @@ public:
         (std::abs(f - G)/std::max(small, std::abs(f)) < tol_rel_gap);
 
       bool feasible =
-        lambda.n_elem > 0 ? infeas <= std::max(small, tol_infeas*lambda(0))
-                          : true;
+        lambda.n_elem > 0.0 ? infeas <= std::max(small, tol_infeas*lambda(0))
+                            : true;
 
       // check change in coefficients
       double max_change = abs(vectorise(beta - beta_prev)).max();
@@ -180,8 +193,13 @@ public:
         // Update coefficients
         beta_tilde = beta - learning_rate*grad;
 
-        beta_tilde.tail_rows(p_rows) =
-          prox(beta_tilde.tail_rows(p_rows), lambda*learning_rate);
+        if (intercept) {
+          mat tmp = beta_tilde;
+          tmp.shed_row(0);
+          beta_tilde.tail_rows(p_rows) = prox(tmp, lambda*learning_rate);
+        } else {
+          beta_tilde = prox(beta_tilde, lambda*learning_rate);
+        }
 
         vec d = vectorise(beta_tilde - beta);
 
