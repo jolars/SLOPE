@@ -1,5 +1,16 @@
 # SLOPE (development version)
 
+## Minor changes
+
+* Added `tol_rel_coef_change` argument to `SLOPE()` as a convergence
+  criterion for the FISTA solver that sets a tolerance for the relative
+  change in coefficients across iterations.
+
+## Bug fixes
+
+* Fixed premature stopping of the solver for the first step of the
+  regularization path (the null model).
+
 # SLOPE 0.3.1
 
 ## Bug fixes

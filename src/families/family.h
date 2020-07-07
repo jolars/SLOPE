@@ -18,6 +18,7 @@ protected:
   const double tol_infeas;
   const double tol_abs;
   const double tol_rel;
+  const double tol_rel_coef_change;
   const uword verbosity;
 
 public:
@@ -28,6 +29,7 @@ public:
          const double tol_infeas,
          const double tol_abs,
          const double tol_rel,
+         const double tol_rel_coef_change,
          const uword verbosity)
     : intercept(intercept),
       diagnostics(diagnostics),
@@ -36,6 +38,7 @@ public:
       tol_infeas(tol_infeas),
       tol_abs(tol_abs),
       tol_rel(tol_rel),
+      tol_rel_coef_change(tol_rel_coef_change),
       verbosity(verbosity) {}
 
   virtual double primal(const mat& y, const mat& lin_pred) = 0;
@@ -89,6 +92,7 @@ public:
 
     mat beta_tilde(beta);
     mat beta_tilde_old(beta);
+    mat beta_prev(beta);
 
     mat lin_pred(n, m);
     mat grad(p, m, fill::zeros);
@@ -146,13 +150,24 @@ public:
         lambda.n_elem > 0 ? infeas <= std::max(small, tol_infeas*lambda(0))
                           : true;
 
+      // check change in coefficients
+      double max_change = abs(vectorise(beta - beta_prev)).max();
+      double max_size = abs(vectorise(beta)).max();
+
+      bool all_zero  =
+        (max_size == 0.0) && (max_change == 0.0);
+      bool small_change =
+        (max_size != 0.0) && (max_change/max_size <= tol_rel_coef_change);
+
+      bool small_coef_change = all_zero || small_change;
+
       if (diagnostics) {
         time.push_back(timer.toc());
         primals.push_back(f);
         duals.push_back(G);
       }
 
-      if (optimal && feasible)
+      if (optimal && feasible && passes > 0 && small_coef_change)
         break;
 
       beta_tilde_old = beta_tilde;
@@ -190,6 +205,8 @@ public:
       // FISTA step
       t = 0.5*(1.0 + std::sqrt(1.0 + 4.0*t_old*t_old));
       beta = beta_tilde + (t_old - 1.0)/t * (beta_tilde - beta_tilde_old);
+
+      beta_prev = beta;
 
       if (passes % 100 == 0)
         checkUserInterrupt();

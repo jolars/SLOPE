@@ -213,6 +213,10 @@
 #'   with FISTA solver and KKT checks in screening algorithm.
 #' @param tol_abs absolute tolerance criterion for ADMM solver
 #' @param tol_rel relative tolerance criterion for ADMM solver
+#' @param tol_rel_coef_change relative tolerance criterion for change
+#'   in coefficients between iterations, which is reached when
+#'   the maximum absolute change in any coefficient divided by the maximum
+#'   absolute coefficient size is less than this value.
 #' @param sigma deprecated; please use `alpha` instead
 #' @param n_sigma deprecated; please use `path_length` instead
 #' @param lambda_min_ratio deprecated; please use `alpha_min_ratio` instead
@@ -343,6 +347,7 @@ SLOPE <- function(x,
                   tol_rel = 1e-4,
                   tol_rel_gap = 1e-5,
                   tol_infeas = 1e-3,
+                  tol_rel_coef_change = 1e-3,
                   diagnostics = FALSE,
                   verbosity = 0,
                   sigma,
@@ -401,7 +406,9 @@ SLOPE <- function(x,
     tol_infeas >= 0,
     tol_abs >= 0,
     tol_rel >= 0,
-    is.logical(center)
+    is.logical(center),
+    tol_rel_coef_change >= 0,
+    is.numeric(tol_rel_coef_change)
   )
 
   fit_intercept <- intercept
@@ -542,7 +549,8 @@ SLOPE <- function(x,
                   tol_rel_gap = tol_rel_gap,
                   tol_infeas = tol_infeas,
                   tol_abs = tol_abs,
-                  tol_rel = tol_rel)
+                  tol_rel = tol_rel,
+                  tol_rel_coef_change = tol_rel_coef_change)
 
   fitSLOPE <- if (is_sparse) sparseSLOPE else denseSLOPE
 

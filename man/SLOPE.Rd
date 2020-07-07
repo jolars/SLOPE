@@ -27,6 +27,7 @@ SLOPE(
   tol_rel = 1e-04,
   tol_rel_gap = 1e-05,
   tol_infeas = 0.001,
+  tol_rel_coef_change = 0.001,
   diagnostics = FALSE,
   verbosity = 0,
   sigma,
@@ -136,6 +137,11 @@ FISTA solver.}
 
 \item{tol_infeas}{stopping criterion for the level of infeasibility; used
 with FISTA solver and KKT checks in screening algorithm.}
+
+\item{tol_rel_coef_change}{relative tolerance criterion for change
+in coefficients between iterations, which is reached when
+the maximum absolute change in any coefficient divided by the maximum
+absolute coefficient size is less than this value.}
 
 \item{diagnostics}{whether to save diagnostics from the solver
 (timings and other values depending on type of solver)}

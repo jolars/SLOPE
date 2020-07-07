@@ -29,12 +29,13 @@ List cppSLOPE(T& x, mat& y, const List control)
   auto verbosity = as<uword>(control["verbosity"]);
 
   // solver arguments
-  auto solver      = as<std::string>(control["solver"]);
-  auto max_passes  = as<uword>(control["max_passes"]);
-  auto tol_rel_gap = as<double>(control["tol_rel_gap"]);
-  auto tol_infeas  = as<double>(control["tol_infeas"]);
-  auto tol_abs     = as<double>(control["tol_abs"]);
-  auto tol_rel     = as<double>(control["tol_rel"]);
+  auto solver              = as<std::string>(control["solver"]);
+  auto max_passes          = as<uword>(control["max_passes"]);
+  auto tol_rel_gap         = as<double>(control["tol_rel_gap"]);
+  auto tol_infeas          = as<double>(control["tol_infeas"]);
+  auto tol_abs             = as<double>(control["tol_abs"]);
+  auto tol_rel             = as<double>(control["tol_rel"]);
+  auto tol_rel_coef_change = as<double>(control["tol_rel_coef_change"]);
 
   auto family_choice = as<std::string>(control["family"]);
   auto intercept     = as<bool>(control["fit_intercept"]);
@@ -87,6 +88,7 @@ List cppSLOPE(T& x, mat& y, const List control)
                             tol_infeas,
                             tol_abs,
                             tol_rel,
+                            tol_rel_coef_change,
                             verbosity);
 
   cube betas(p, m, path_length, fill::zeros);
