@@ -89,7 +89,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SLOPE</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
       </span>
     </div>
 
@@ -161,6 +161,20 @@
       <small>Source: <a href='https://github.com/jolars/SLOPE/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="slope-031" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.1">
+<a href="#slope-031" class="anchor"></a>SLOPE 0.3.1<small> Unreleased </small>
+</h1>
+<div id="bug-fixes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bug-fixes" class="anchor"></a>Bug fixes</h2>
+<ul>
+<li>Fixed package build breaking on solaris because of missing STL namespace specifier for <code>std::sqrt()</code> in <code>src/SLOPE.cpp</code>.</li>
+<li>Fixed erroneous scaling of absolute tolerance in stopping criteria for the ADMM solvers. Thanks, <a href='https://github.com/straw-boy'>@straw-boy</a>.</li>
+<li>Fixed sanitizer warning from CRAN checks.</li>
+</ul>
+</div>
+</div>
     <div id="slope-030" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.0">
 <a href="#slope-030" class="anchor"></a>SLOPE 0.3.0<small> 2020-07-02 </small>
@@ -192,9 +206,9 @@
 <li>If the <code>max_variables</code> criterion is hit, the solution path returned will now include also the last solution (which was not the case before). Thanks, <a href='https://github.com/straw-boy'>@straw-boy</a>.</li>
 </ul>
 </div>
-<div id="bug-fixes" class="section level2">
+<div id="bug-fixes-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#bug-fixes" class="anchor"></a>Bug fixes</h2>
+<a href="#bug-fixes-1" class="anchor"></a>Bug fixes</h2>
 <ul>
 <li>Plotting models that are completely sparse no longer throws an error.</li>
 <li>
