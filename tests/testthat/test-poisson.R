@@ -11,7 +11,7 @@ test_that("output from unregularized poisson model matches glm", {
 
     SLOPE_fit <- SLOPE(x, y,
                        family = "poisson",
-                       sigma = 1e-8,
+                       alpha = 1e-8,
                        intercept = intercept,
                        center = FALSE,
                        scale = "none")
@@ -41,12 +41,12 @@ test_that("SLOPE reproduces lasoso fit when all lambda are equal", {
 
   library(glmnet)
 
-  sigma <- 1
+  alpha <- 1
 
-  gnt_fit <- glmnet(x, y, family = "poisson", lambda = sigma, standardize = FALSE)
+  gnt_fit <- glmnet(x, y, family = "poisson", lambda = alpha, standardize = FALSE)
   SLOPE_fit <- SLOPE(x, y,
                      family = "poisson",
-                     sigma = sigma,
+                     alpha = alpha,
                      lambda = rep(1, p),
                      scale = "none",
                      center = FALSE)

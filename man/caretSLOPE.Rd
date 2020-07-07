@@ -19,4 +19,9 @@ check out \code{\link[=trainSLOPE]{trainSLOPE()}} instead.
 }
 \seealso{
 \code{\link[caret:train]{caret::train()}}, \code{\link[=trainSLOPE]{trainSLOPE()}}, \code{\link[=SLOPE]{SLOPE()}}
+
+Other model-tuning: 
+\code{\link{plot.TrainedSLOPE}()},
+\code{\link{trainSLOPE}()}
 }
+\concept{model-tuning}

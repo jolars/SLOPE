@@ -31,7 +31,7 @@ misclassification rate, and \code{"auc"} returns area under the ROC curve.}
 }
 \value{
 The measure along the regularization path depending on the
-value in \code{measure}.
+value in \code{measure}.#'
 }
 \description{
 This function is a unified interface to return various types of loss for a
@@ -44,3 +44,14 @@ y <- infert$case
 fit <- SLOPE(x, y, family = "binomial")
 score(fit, x, y, measure = "auc")
 }
+\seealso{
+\code{\link[=SLOPE]{SLOPE()}}, \code{\link[=predict.SLOPE]{predict.SLOPE()}}
+
+Other SLOPE-methods: 
+\code{\link{coef.SLOPE}()},
+\code{\link{deviance.SLOPE}()},
+\code{\link{plot.SLOPE}()},
+\code{\link{predict.SLOPE}()},
+\code{\link{print.SLOPE}()}
+}
+\concept{SLOPE-methods}

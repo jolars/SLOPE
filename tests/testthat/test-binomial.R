@@ -14,7 +14,7 @@ test_that("unregularized logistic regression matches output from glm()", {
   g_model <- SLOPE(cbind(x1, x2, x3), y,
                    family = "binomial",
                    diagnostics = TRUE,
-                   sigma = 1e-5)
+                   alpha = 1e-7)
 
   expect_equivalent(coef(glm_fit),
                     coef(g_model),
@@ -38,7 +38,7 @@ test_that("regularized slope logistic regression picks out correct features", {
 
   y <- rbinom(n, 1, prob)
 
-  SLOPE_fit <- SLOPE(x, y, family = "binomial", sigma = 1)
+  SLOPE_fit <- SLOPE(x, y, family = "binomial", alpha = 1/sqrt(n))
 
   expect_setequal(nz, which(SLOPE_fit$nonzeros))
 })

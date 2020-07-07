@@ -27,7 +27,7 @@ test_that("glmnet and SLOPE return same unpenalized model", {
   g_coef[,] <- g_coef[,] - g_coef[, 3]
   g_coef <- g_coef[, 1:2]
 
-  ofit <- SLOPE(x, y, family = "multinomial", sigma = 1e-6)
+  ofit <- SLOPE(x, y, family = "multinomial", alpha = 1e-9)
 
   expect_equivalent(g_coef, coef(ofit), tol = 1e-4)
 })

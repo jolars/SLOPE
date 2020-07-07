@@ -2,7 +2,7 @@
 #'
 #' This function returns coefficients from a model fit by [SLOPE()].
 #'
-#' If `exact == FALSE` and `sigma` is not in `object`,
+#' If `exact = FALSE` and `alpha` is not in `object`,
 #' then the returned coefficients will be approximated by linear interpolation.
 #' If coefficients from another type of penalty sequence
 #' (with a different `lambda`) are required, however,
@@ -14,23 +14,33 @@
 #'   is not in `object`
 #' @inheritParams predict.SLOPE
 #'
+#' @seealso [predict.SLOPE()], [SLOPE()]
+#' @family SLOPE-methods
+#'
 #' @return Coefficients from the model.
 #'
 #' @export
 #' @examples
-#' fit <- SLOPE(mtcars$mpg, mtcars$vs, n_sigma = 1)
+#' fit <- SLOPE(mtcars$mpg, mtcars$vs, path_length = 1)
 #' coef(fit)
 coef.SLOPE <- function(object,
-                       sigma = NULL,
+                       alpha = NULL,
                        exact = FALSE,
                        simplify = TRUE,
+                       sigma,
                        ...) {
+
+  if (!missing(sigma)) {
+    warning("`sigma` is deprecated. Please use `alpha` instead.")
+    alpha <- sigma
+  }
+
   beta <- object$coefficients
 
   n_penalties <- dim(beta)[3]
 
-  penalty <- object$sigma
-  value <- sigma
+  penalty <- object$alpha
+  value <- alpha
 
   if (is.null(value)) {
     n_penalties <- length(penalty)
@@ -38,7 +48,7 @@ coef.SLOPE <- function(object,
     n_penalties <- length(value)
     beta <- beta[, , penalty %in% value, drop = FALSE]
   } else if (exact) {
-    object <- stats::update(object, sigma = sigma, ...)
+    object <- stats::update(object, alpha = alpha, ...)
     beta <- object$coefficients
   } else {
     stopifnot(value >= 0)

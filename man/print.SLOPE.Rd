@@ -25,3 +25,14 @@ fit <- SLOPE(wine$x, wine$y, family = "multinomial")
 print(fit, digits = 1)
 
 }
+\seealso{
+\code{\link[=SLOPE]{SLOPE()}}, \code{\link[=print.SLOPE]{print.SLOPE()}}
+
+Other SLOPE-methods: 
+\code{\link{coef.SLOPE}()},
+\code{\link{deviance.SLOPE}()},
+\code{\link{plot.SLOPE}()},
+\code{\link{predict.SLOPE}()},
+\code{\link{score}()}
+}
+\concept{SLOPE-methods}

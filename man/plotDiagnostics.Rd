@@ -35,6 +35,9 @@ the model fitting resulting from a call to \code{\link[=SLOPE]{SLOPE()}} \emph{p
 \code{diagnostics = TRUE}}.
 }
 \examples{
-x <- SLOPE(abalone$x, abalone$y, sigma = 2, diagnostics = TRUE)
+x <- SLOPE(abalone$x, abalone$y, alpha = 2, diagnostics = TRUE)
 plotDiagnostics(x)
+}
+\seealso{
+\code{\link[=SLOPE]{SLOPE()}}
 }

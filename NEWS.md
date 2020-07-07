@@ -1,5 +1,61 @@
 # SLOPE (development version)
 
+## Bug fixes
+
+* Fixed package build breaking on solaris because of missing STL namespace
+  specifier for `std::sqrt()` in `src/SLOPE.cpp`.
+* Fixed erroneous scaling of absolute tolerance in stopping criteria for
+  the ADMM solvers. Thanks, @straw-boy.
+
+# SLOPE 0.3.0
+
+## Major changes
+
+* Scaling of `alpha` (previously `sigma`) is now invariant to the 
+  number of observations, which is achieved by scaling
+  the penalty part of the objective by the square root of the number of
+  observations if `scale = "l2"` and the number of observations if 
+  `scale = "sd"` or `"none"`. No scaling is applied when `scale = "l1"`.
+* The `sigma` argument is deprecated in favor of `alpha` in `SLOPE()`, 
+  `coef.SLOPE()`, and `predict.SLOPE()`.
+* The `n_sigma` argument is deprecated in favor of `path_length` in `SLOPE()`
+* The `lambda_min_ratio` argument is deprecated in favor of `alpha_min_ratio` in
+  `SLOPE()`
+* The default for argument `lambda` in `SLOPE()` has changed from `"gaussian"` 
+  to `"bh"`.
+* Functions and arguments deprecated in 0.2.0 are now defunct and have
+  been removed from the package.
+* `scale = "sd"` now scales with the population standard deviation rather
+  than the sample standard deviation, i.e. the scaling factor now used
+  is the number of observations (and not the number of observations minus one
+  as before).
+
+## Minor changes
+
+* Default `path_length` has changed from 100 to 20.
+* `plot.SLOPE()` has gained an argument `x_variable` that controls what is
+  plotted on the x axis.
+* A warning is now thrown if the maximum number of passes was reached
+  anywhere along the path (and prints where as well).
+* If the `max_variables` criterion is hit, the solution path returned
+  will now include also the last solution (which was not the case
+  before). Thanks, @straw-boy.
+  
+## Bug fixes
+
+* Plotting models that are completely sparse no longer throws an error.
+* `rho` instead of `1` is now used in the factorization part for
+  the ADMM solver.
+
+# SLOPE 0.2.1
+
+## Minor changes
+
+* A few examples in `deviance()` and `SLOPE()` that were taking
+  too long to execute have been removed or modified.
+
+# SLOPE 0.2.0
+
 This version of SLOPE represents a major change to the package. We have
 merged functionality from the owl package into this package, which
 means there are several changes to the API, including deprecated functions.
@@ -12,7 +68,12 @@ means there are several changes to the API, including deprecated functions.
   next version of SLOPE)
 * arguments `X`, `fdr`, and `normalize` have been deprecated
   in `SLOPE()` and replaced by `x`, `q`, `scale` and `center`, respectively
-* argument `sovler` in `SLOPE()` has been deprecated
+* options `"default"` and `"matlab"` to argument
+  `solver` in `SLOPE()` have been deprecated and replaced with `"fista"`
+  and `"admm"`, which uses the accelerated proximal gradient method
+  FISTA and alternating direction of multipliers method (ADMM)
+  respectively
+* ADMM has been implemented as a solver for `family = "gaussian"`
 * binomial, poisson, and multinomial families are now supported (using
   `family` argument in `SLOPE()`)
 * input to `lambda` is now scaled (divided by) the number of observations (rows)
@@ -25,7 +86,7 @@ means there are several changes to the API, including deprecated functions.
 * `SLOPE` objects gain `coef()` and `plot()` methods.
 * `SLOPE` now uses screening rules to speed up model fitting in the
   high-dimensional regime
-* the solver is now written in C++ using the **Rcpp** and **RcppArmadillo**
+* most of the code is now written in C++ using the **Rcpp** and **RcppArmadillo**
   packages
 * a new function `trainSLOPE()` trains SLOPE with repeated k-folds 
   cross-validation

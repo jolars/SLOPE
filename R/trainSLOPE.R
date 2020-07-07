@@ -10,12 +10,16 @@
 #' as it is and then choose which argument to focus on in the call
 #' to [plot.TrainedSLOPE()].
 #'
+#' @section Parallel operation:
+#' This function uses the **foreach** package to enable parallel
+#' operation. To enable this, simply register a parallel backend
+#' using, for instance, `doParallel::registerDoParallel()` from the
+#' **doParallel** package before running this function.
+#'
 #' @inheritParams SLOPE
 #' @param number number of folds (cross-validation)
-#' @param repeats number of repeats for each fold (for repeated *k*-fold
-#'   cross validation)
-#' @param cl cluster if parallel fitting is desired. Can be any
-#'   cluster accepted by [parallel::parLapply()].
+#' @param repeats number of repeats for each fold (for repeated *k*-fold cross
+#'   validation)
 #' @param measure measure to try to optimize; note that you may
 #'   supply *multiple* values here and that, by default,
 #'   all the possible measures for the given model will be used.
@@ -32,7 +36,8 @@
 #'
 #' @export
 #'
-#' @seealso [parallel::parallel], [plot.TrainedSLOPE()]
+#' @seealso [foreach::foreach()], [plot.TrainedSLOPE()]
+#' @family model-tuning
 #'
 #' @examples
 #' # 8-fold cross-validation repeated 5 times
@@ -42,17 +47,16 @@
 #'                    number = 8,
 #'                    repeats = 5)
 trainSLOPE <- function(x,
-                     y,
-                     q = 0.2,
-                     number = 10,
-                     repeats = 1,
-                     measure = c("mse",
-                                 "mae",
-                                 "deviance",
-                                 "missclass",
-                                 "auc"),
-                     cl = NULL,
-                     ...) {
+                       y,
+                       q = 0.2,
+                       number = 10,
+                       repeats = 1,
+                       measure = c("mse",
+                                   "mae",
+                                   "deviance",
+                                   "missclass",
+                                   "auc"),
+                       ...) {
   ocall <- match.call()
 
   n <- NROW(x)
@@ -81,9 +85,9 @@ trainSLOPE <- function(x,
   if (length(measure) == 0)
     stop("measure needs to be one of ", ok)
 
-  sigma <- fit$sigma
+  alpha <- fit$alpha
 
-  n_sigma <- length(sigma)
+  path_length <- length(alpha)
   n_q <- length(q)
   n_measure <- length(measure)
 
@@ -97,24 +101,28 @@ trainSLOPE <- function(x,
                       fold = seq_len(number),
                       repetition = seq_len(repeats))
 
-  grid_list <- split(grid, seq_len(nrow(grid)))
+  # prevent warnings if no backend registered
+  if (!foreach::getDoParRegistered())
+    foreach::registerDoSEQ()
 
-  f <- function(g, xmat, y, sigma, measure, fold_id, dots) {
-    id <- g$fold
-    repetition <- g$repetition
-    q <- g$q
+  i <- 1 # fixes R CMD check NOTE
+
+  r <- foreach(i = seq_len(nrow(grid)), .packages = c("SLOPE")) %dopar% {
+    id <- grid$fold[i]
+    repetition <- grid$repetition[i]
+    q <- grid$q[i]
 
     test_ind <- fold_id[, id, repetition]
 
-    x_train <- xmat[-test_ind, , drop = FALSE]
+    x_train <- x[-test_ind, , drop = FALSE]
     y_train <- y[-test_ind, , drop = FALSE]
-    x_test  <- xmat[test_ind, , drop = FALSE]
+    x_test  <- x[test_ind, , drop = FALSE]
     y_test  <- y[test_ind, , drop = FALSE]
 
     args <- utils::modifyList(list(x = x_train,
                                    y = y_train,
                                    q = q,
-                                   sigma = sigma), dots)
+                                   alpha = alpha), list(...))
     s <- lapply(measure, function(m) {
       SLOPE::score(do.call(SLOPE::SLOPE, args), x_test, y_test, m)
     })
@@ -122,29 +130,8 @@ trainSLOPE <- function(x,
     unlist(s)
   }
 
-  if (is.null(cl)) {
-    r <- lapply(grid_list,
-                f,
-                fold_id = fold_id,
-                sigma = sigma,
-                xmat = x,
-                y = y,
-                measure = measure,
-                dots = list(...))
-  } else {
-    r <- parallel::parLapply(cl,
-                             grid_list,
-                             f,
-                             fold_id = fold_id,
-                             sigma = sigma,
-                             xmat = x,
-                             y = y,
-                             measure = measure,
-                             dots = list(...))
-  }
-
-  tmp <- array(unlist(r), c(n_sigma*n_q, n_measure, number*repeats))
-  d <- matrix(tmp, c(n_sigma*n_q*n_measure, number*repeats))
+  tmp <- array(unlist(r), c(path_length*n_q, n_measure, number*repeats))
+  d <- matrix(tmp, c(path_length*n_q*n_measure, number*repeats))
 
   means <- rowMeans(d)
   se <- apply(d, 1, stats::sd)/sqrt(repeats*number)
@@ -152,9 +139,9 @@ trainSLOPE <- function(x,
   lo <- means - ci
   hi <- means + ci
 
-  summary <- data.frame(q = rep(q, each = n_sigma*n_measure),
-                        sigma = rep(sigma, n_measure*n_q),
-                        measure = rep(measure, each = n_sigma, times = n_q),
+  summary <- data.frame(q = rep(q, each = path_length*n_measure),
+                        alpha = rep(alpha, n_measure*n_q),
+                        measure = rep(measure, each = path_length, times = n_q),
                         mean = means,
                         se = se,
                         lo = lo,

@@ -7,15 +7,17 @@ using namespace arma;
 using namespace Rcpp;
 
 template <typename T>
-void regularizationPath(vec& sigma,
+void regularizationPath(vec& alpha,
                         vec& lambda,
-                        double& sigma_max,
+                        double& alpha_max,
                         const T& x,
                         const mat& y,
+                        const rowvec& x_scale,
                         const rowvec& y_scale,
                         const std::string lambda_type,
-                        const std::string sigma_type,
-                        const double lambda_min_ratio,
+                        const std::string alpha_type,
+                        const std::string scale,
+                        const double alpha_min_ratio,
                         const double q,
                         const std::string family,
                         const bool intercept)
@@ -23,7 +25,7 @@ void regularizationPath(vec& sigma,
   const sword n = x.n_rows;
   const uword m = y.n_cols;
   const sword n_lambda = lambda.n_elem;
-  const uword n_sigma = sigma.n_elem;
+  const uword path_length = alpha.n_elem;
 
   if (lambda_type == "gaussian" || lambda_type == "bh") {
     lambda = regspace(1, n_lambda)*q/(2*n_lambda);
@@ -46,12 +48,7 @@ void regularizationPath(vec& sigma,
     }
 
   } else if (lambda_type == "oscar") {
-
     lambda = q*(regspace(n_lambda, 1) - 1) + 1;
-
-  } else if (lambda_type == "user") {
-    // standardize lambda with number of observations
-    lambda *= static_cast<double>(n);
   }
 
   vec lambda_max = lambdaMax(x,
@@ -61,12 +58,19 @@ void regularizationPath(vec& sigma,
                              family,
                              intercept);
 
-  sigma_max =
+  alpha_max =
     (cumsum(sort(abs(lambda_max), "descending"))/cumsum(lambda)).max();
 
-  if (sigma_type == "auto") {
-    sigma = exp(linspace(log(sigma_max),
-                         log(sigma_max*lambda_min_ratio),
-                         n_sigma));
+  if (alpha_type == "auto") {
+    alpha = exp(linspace(log(alpha_max),
+                         log(alpha_max*alpha_min_ratio),
+                         path_length));
+  } else if (alpha_type == "user") {
+    // scale alpha to make penalty invariant to number of observations
+    if (scale == "l2") {
+      alpha *= std::sqrt(n);
+    } else if (scale == "sd" || scale == "none") {
+      alpha *= n;
+    }
   }
 }

@@ -20,7 +20,7 @@ randomProblem <-
            n_targets = if (match.arg(response) == "multinomial") 3 else 1,
            density = 1,
            amplitude = if (match.arg(response) == "poisson") 1 else 3,
-           sigma = 1,
+           alpha = 1,
            response = c("gaussian", "binomial", "poisson", "multinomial"),
            rho = 0) {
   m <- n_targets
@@ -31,8 +31,9 @@ randomProblem <-
     x <- Matrix::rsparsematrix(n, p, density)
   }
 
-  if (rho > 0)
-    x <- x + sqrt(rho/(1 - rho)) * matrix(stats::rnorm(n), n, p)
+  if (rho > 0) {
+    x <- sqrt(1 - rho)*x + sqrt(rho)*stats::rnorm(n)
+  }
 
   if (!is.null(n_groups)) {
     groups <- rep(seq_len(n_groups), each = ceiling(m*p/n_groups),
@@ -48,9 +49,9 @@ randomProblem <-
   beta <- signs * amplitude * (1:(p*m) %in% nonzero)
 
   y <- switch(match.arg(response),
-              gaussian = x %*% beta + stats::rnorm(n, sd = sigma),
+              gaussian = x %*% beta + stats::rnorm(n, sd = alpha),
               binomial = {
-                y <- x %*% beta + stats::rnorm(n, sd = sigma)
+                y <- x %*% beta + stats::rnorm(n, sd = alpha)
                 (sign(y) + 1)/2
               },
               multinomial = {

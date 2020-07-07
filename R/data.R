@@ -25,6 +25,7 @@
 #' }
 #' @source http://lib.stat.cmu.edu/datasets/bodyfat
 #' @source https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/regression.html
+#' @family datasets
 "bodyfat"
 
 #' Abalone
@@ -52,6 +53,7 @@
 #' }
 #' @source Pace, R. Kelley and Ronald Barry, Sparse Spatial Autoregressions,
 #'   Statistics and Probability Letters, 33 (1997) 291-297.
+#' @family datasets
 "abalone"
 
 #' Heart disease
@@ -98,6 +100,7 @@
 #'   <http://archive.ics.uci.edu/ml>. Irvine, CA: University of California,
 #'   School of Information and Computer Science.
 #' @source <https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary.html#heart>
+#' @family datasets
 "heart"
 
 #' Wine cultivars
@@ -131,6 +134,7 @@
 #'   School of Information and Computer Science.
 #' @source <https://raw.githubusercontent.com/hadley/rminds/master/1-data/wine.csv>
 #' @source <https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass.html#wine>
+#' @family datasets
 "wine"
 
 #' Student performance
@@ -188,5 +192,6 @@
 #' @source Dua, D. and Karra Taniskidou, E. (2017). UCI Machine Learning Repository
 #'  <http://archive.ics.uci.edu/ml>. Irvine, CA: University of California,
 #'  School of Information and Computer Science.
+#' @family datasets
 "student"
 

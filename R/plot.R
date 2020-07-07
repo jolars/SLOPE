@@ -1,13 +1,18 @@
 #' Plot coefficients
 #'
-#' Plot the model's coefficient along the regularization path.
+#' Plot the fitted model's regression
+#' coefficients along the regularization path.
 #'
 #' @param x an object of class `"SLOPE"`
 #' @param ... parameters that will be used to modify the call to
 #'   [lattice::xyplot()]
 #' @param intercept whether to plot the intercept
+#' @param x_variable what to plot on the x axis. `"alpha"` plots
+#'   the scaling parameter for the sequence, `"deviance_ratio"` plots
+#'   the fraction of deviance explained, and `"step"` plots step number.
 #'
 #' @seealso [lattice::xyplot()], [SLOPE()], [plotDiagnostics()]
+#' @family SLOPE-methods
 #'
 #' @return An object of class `"trellis"`, which will be plotted on the
 #'   current device unless stored in a variable.
@@ -16,34 +21,38 @@
 #' @examples
 #' fit <- SLOPE(heart$x, heart$y)
 #' plot(fit)
-plot.SLOPE = function(x, intercept = FALSE, ...) {
+plot.SLOPE = function(x,
+                      intercept = FALSE,
+                      x_variable = c("alpha", "deviance_ratio", "step"),
+                      ...) {
   object <- x
+  x_variable <- match.arg(x_variable)
 
   coefs <- object$coefficients
 
   intercept_in_model <- "(Intercept)" %in% rownames(coefs)
   include_intercept <- intercept && intercept_in_model
 
-  nz <- which(apply(object$nonzeros, 1, any))
-
   if (include_intercept) {
-    ind <- c(1, nz + 1)
+    coefs <- coefs[, , , drop = FALSE]
   } else {
-    ind <- nz + intercept_in_model
+    coefs <- coefs[-1, , , drop = FALSE]
   }
-
-  coefs <- coefs[ind, , , drop = FALSE]
-
-  if (is.null(coefs))
-    stop("nothing to plot since model is yet to be fit")
 
   p <- NROW(coefs) # number of features
   m <- NCOL(coefs) # number of responses
 
   args <- list()
 
-  x <- object$sigma
-  xlab <- expression(sigma)
+  x <- switch(x_variable,
+              alpha = object$alpha,
+              deviance_ratio = object$deviance_ratio,
+              step = seq_along(object$alpha))
+
+  xlab <- switch(x_variable,
+                 alpha = expression(alpha),
+                 deviance_ratio = "Fraction Deviance Explained",
+                 step = "Step")
 
   n_x <- length(x)
   d <- as.data.frame(as.table(coefs))
@@ -52,6 +61,17 @@ plot.SLOPE = function(x, intercept = FALSE, ...) {
   n_col <- length(lattice::trellis.par.get("superpose.line")$col)
   lty <- rep(1:4, each = n_col)
   superpose.line <- list(lty = lty)
+
+  # setup key
+  if (p <= 20) {
+    if (n_x == 1) {
+      key <- list(space = "right")
+    } else {
+      key <- list(space = "right", lines = TRUE, points = FALSE)
+    }
+  } else {
+    key <- FALSE
+  }
 
   args <- list(
     x = if (m > 1)
@@ -70,9 +90,7 @@ plot.SLOPE = function(x, intercept = FALSE, ...) {
     #   x$bottom$labels$labels <- parse(text = x$bottom$labels$labels)
     #   x
     # },
-    auto.key = if (p <= 20)
-      list(space = "right", lines = TRUE, points = FALSE)
-    else FALSE,
+    auto.key = key,
     abline = within(lattice::trellis.par.get("reference.line"), {h = 0})
   )
 
@@ -125,10 +143,11 @@ plot.SLOPE = function(x, intercept = FALSE, ...) {
 #'   confidence limits
 #'
 #' @seealso [trainSLOPE()], [lattice::xyplot()], [lattice::panel.xyplot()]
+#' @family model-tuning
 #'
-#' @return An object of class `'trellis'` is returned and, if used
+#' @return An object of class `"trellis"` is returned and, if used
 #'   interactively, will most likely have its print function
-#'   [lattice::print.trellis()]) invoked, which draws the plot on the
+#'   [lattice::print.trellis()] invoked, which draws the plot on the
 #'   current display device.
 #'
 #' @export
@@ -137,9 +156,9 @@ plot.SLOPE = function(x, intercept = FALSE, ...) {
 #' # Cross-validation for a SLOPE binomial model
 #' set.seed(123)
 #' tune <- trainSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
-#'                  mtcars$hp,
-#'                  q = c(0.1, 0.2),
-#'                  number = 10)
+#'                    mtcars$hp,
+#'                    q = c(0.1, 0.2),
+#'                    number = 10)
 #' plot(tune, ci_col = "salmon", col = "black")
 plot.TrainedSLOPE <-
   function(x,
@@ -185,16 +204,16 @@ plot.TrainedSLOPE <-
   optimum <- object$optima[ind, , drop = FALSE]
   model <- object$model
 
-  sigma <- unique(summary$sigma)
+  alpha <- unique(summary$alpha)
   q <- unique(summary$q)
 
   summary$q <- as.factor(summary$q)
 
   # get indices of best fit
-  best_ind <- match(optimum$sigma, summary$sigma)
+  best_ind <- match(optimum$alpha, summary$alpha)
 
   if (length(q) > 1) {
-    x <- quote(mean ~ sigma | q)
+    x <- quote(mean ~ alpha | q)
 
     strip <- lattice::strip.custom(
       var.name = "q",
@@ -203,12 +222,12 @@ plot.TrainedSLOPE <-
     )
     best_outer_ind <- match(optimum$q, unique(summary$q))
   } else {
-    x <- quote(mean ~ sigma)
+    x <- quote(mean ~ alpha)
     strip <- lattice::strip.default
     best_outer_ind <- 1
   }
 
-  xlab <- expression(log[e](sigma))
+  xlab <- expression(log[e](alpha))
 
   args <- list(
     x = x,

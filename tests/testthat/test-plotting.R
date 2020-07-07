@@ -3,10 +3,10 @@ test_that("plotting works", {
   xy <- SLOPE:::randomProblem(100, 2)
 
   # one parameter
-  fit <- SLOPE(xy$x, xy$y, sigma = 0.2)
+  fit <- SLOPE(xy$x, xy$y, alpha = 0.2)
   expect_silent(dont_plot(fit))
 
   # more parameters
-  fit <- SLOPE(xy$x, xy$y, n_sigma = 10)
+  fit <- SLOPE(xy$x, xy$y, path_length = 10)
   expect_silent(dont_plot(fit))
 })

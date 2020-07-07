@@ -8,7 +8,7 @@
 \alias{predict.MultinomialSLOPE}
 \title{Generate predictions from SLOPE models}
 \usage{
-\method{predict}{SLOPE}(object, x, sigma = NULL, type = "link", simplify = TRUE, ...)
+\method{predict}{SLOPE}(object, x, alpha = NULL, type = "link", simplify = TRUE, sigma, ...)
 
 \method{predict}{GaussianSLOPE}(
   object,
@@ -54,7 +54,7 @@ a call to \code{\link[=SLOPE]{SLOPE()}}}
 
 \item{x}{new data}
 
-\item{sigma}{penalty parameter for SLOPE models; if \code{NULL}, the
+\item{alpha}{penalty parameter for SLOPE models; if \code{NULL}, the
 values used in the original fit will be used}
 
 \item{type}{type of prediction; \code{"link"} returns the linear predictors,
@@ -63,6 +63,8 @@ and \code{"class"} returns class predictions.}
 
 \item{simplify}{if \code{TRUE}, \code{\link[base:drop]{base::drop()}} will be called before returning
 the coefficients to drop extraneous dimensions}
+
+\item{sigma}{deprecated. Please use \code{alpha} instead.}
 
 \item{...}{ignored and only here for method consistency}
 
@@ -84,5 +86,13 @@ predict(fit, with(mtcars, cbind(mpg, hp)), type = "class")
 
 }
 \seealso{
-\code{\link[stats:predict]{stats::predict()}}, \code{\link[stats:predict.glm]{stats::predict.glm()}}
+\code{\link[stats:predict]{stats::predict()}}, \code{\link[stats:predict.glm]{stats::predict.glm()}}, \code{\link[=coef.SLOPE]{coef.SLOPE()}}
+
+Other SLOPE-methods: 
+\code{\link{coef.SLOPE}()},
+\code{\link{deviance.SLOPE}()},
+\code{\link{plot.SLOPE}()},
+\code{\link{print.SLOPE}()},
+\code{\link{score}()}
 }
+\concept{SLOPE-methods}

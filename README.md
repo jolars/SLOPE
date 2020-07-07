@@ -1,20 +1,18 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# SLOPE <a href='https:/jolars.github.io/SLOPE'><img src='man/figures/logo.svg' align="right" height="139" /></a>
+# SLOPE <a href="https://jolars.github.io/SLOPE/"><img src='man/figures/logo.svg' align="right" height="139" /></a>
 
 <!-- badges: start -->
 
-[![Travis build
-status](https://travis-ci.org/jolars/SLOPE.svg?branch=master)](https://travis-ci.org/jolars/SLOPE)
-[![AppVeyor build
-status](https://ci.appveyor.com/api/projects/status/github/jolars/SLOPE?branch=master&svg=true)](https://ci.appveyor.com/project/jolars/SLOPE)
+[![R build
+status](https://github.com/jolars/SLOPE/workflows/R-CMD-check/badge.svg)](https://github.com/jolars/SLOPE/actions)
 [![Coverage
 status](https://codecov.io/gh/jolars/SLOPE/branch/master/graph/badge.svg)](https://codecov.io/github/jolars/SLOPE?branch=master)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/SLOPE)](https://CRAN.R-project.org/package=SLOPE)
 [![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 <!-- badges: end -->
 
 Efficient implementations for Sorted L-One Penalized Estimation (SLOPE):

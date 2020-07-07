@@ -11,32 +11,30 @@ trainSLOPE(
   number = 10,
   repeats = 1,
   measure = c("mse", "mae", "deviance", "missclass", "auc"),
-  cl = NULL,
   ...
 )
 }
 \arguments{
-\item{x}{the feature matrix, which can be either a dense
+\item{x}{the design matrix, which can be either a dense
 matrix of the standard \emph{matrix} class, or a sparse matrix
-inheriting from \link[Matrix:sparseMatrix]{Matrix::sparseMatrix} Data frames will
+inheriting from \link[Matrix:sparseMatrix]{Matrix::sparseMatrix}. Data frames will
 be converted to matrices internally.}
 
-\item{y}{the response. For Gaussian models this must be numeric; for
-binomial models, it can be a factor.}
+\item{y}{the response, which for \code{family = "gaussian"} must be numeric; for
+\code{family = "binomial"} or \code{family = "multinomial"}, it can be a factor.}
 
-\item{q}{shape of lambda sequence}
+\item{q}{parameter controlling the shape of the lambda sequence, with
+usage varying depending on the type of path used and has no effect
+is a custom \code{lambda} sequence is used.}
 
 \item{number}{number of folds (cross-validation)}
 
-\item{repeats}{number of repeats for each fold (for repeated \emph{k}-fold
-cross validation)}
+\item{repeats}{number of repeats for each fold (for repeated \emph{k}-fold cross
+validation)}
 
 \item{measure}{measure to try to optimize; note that you may
 supply \emph{multiple} values here and that, by default,
 all the possible measures for the given model will be used.}
-
-\item{cl}{cluster if parallel fitting is desired. Can be any
-cluster accepted by \code{\link[parallel:parLapply]{parallel::parLapply()}}.}
 
 \item{...}{other arguments to pass on to \code{\link[=SLOPE]{SLOPE()}}}
 }
@@ -62,6 +60,14 @@ computationally so it is almost always best to leave this argument
 as it is and then choose which argument to focus on in the call
 to \code{\link[=plot.TrainedSLOPE]{plot.TrainedSLOPE()}}.
 }
+\section{Parallel operation}{
+
+This function uses the \strong{foreach} package to enable parallel
+operation. To enable this, simply register a parallel backend
+using, for instance, \code{doParallel::registerDoParallel()} from the
+\strong{doParallel} package before running this function.
+}
+
 \examples{
 # 8-fold cross-validation repeated 5 times
 tune <- trainSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
@@ -71,5 +77,10 @@ tune <- trainSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
                    repeats = 5)
 }
 \seealso{
-\link[parallel:parallel]{parallel::parallel}, \code{\link[=plot.TrainedSLOPE]{plot.TrainedSLOPE()}}
+\code{\link[foreach:foreach]{foreach::foreach()}}, \code{\link[=plot.TrainedSLOPE]{plot.TrainedSLOPE()}}
+
+Other model-tuning: 
+\code{\link{caretSLOPE}()},
+\code{\link{plot.TrainedSLOPE}()}
 }
+\concept{model-tuning}

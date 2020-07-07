@@ -14,10 +14,13 @@
 #'
 #' @return An object of class `"trellis"`, which, unless stored in a variable,
 #'   will be plotted when its default `print()` method is called.
+#'
+#' @seealso [SLOPE()]
+#'
 #' @export
 #'
 #' @examples
-#' x <- SLOPE(abalone$x, abalone$y, sigma = 2, diagnostics = TRUE)
+#' x <- SLOPE(abalone$x, abalone$y, alpha = 2, diagnostics = TRUE)
 #' plotDiagnostics(x)
 plotDiagnostics <- function(object,
                             ind = max(object$diagnostics$penalty),

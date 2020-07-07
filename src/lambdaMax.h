@@ -17,7 +17,7 @@ vec lambdaMax(const T& x,
   mat lambda_max(p, n_targets);
 
   if (family == "binomial") {
-    vec y_new = (y + 1)/2;
+    vec y_new = (y + 1.0)/2.0;
 
     // standardize
     double y_center = mean(y_new);
@@ -45,7 +45,7 @@ vec lambdaMax(const T& x,
 
   } else if (family == "poisson") {
 
-    lambda_max = x.t() * (1 - y);
+    lambda_max = x.t() * (1.0 - y);
 
   } else {
 

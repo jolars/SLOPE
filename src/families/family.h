@@ -55,46 +55,32 @@ public:
 
   virtual std::string name() = 0;
 
-  virtual Results fit(const mat& x,
-                      const mat& y,
-                      mat beta,
-                      vec& z,
-                      vec& u,
-                      const mat& L,
-                      const mat& U,
-                      const vec& xTy,
-                      vec lambda,
-                      double rho)
+  template <typename T>
+  Results fit(const T& x,
+              const mat& y,
+              mat beta,
+              vec& z,
+              vec& u,
+              const mat& L,
+              const mat& U,
+              const vec& xTy,
+              vec lambda,
+              double rho,
+              const std::string solver)
   {
-    return fitImpl(x, y, beta, z, u, L, U, xTy, lambda, rho);
+    if (solver == "admm")
+      return ADMM(x, y, beta, z, u, L, U, xTy, lambda, rho);
+    else
+      return FISTA(x, y, beta, lambda);
   }
 
-  virtual Results fit(const sp_mat& x,
-                      const mat& y,
-                      mat beta,
-                      vec& z,
-                      vec& u,
-                      const mat& L,
-                      const mat& U,
-                      const vec& xTy,
-                      vec lambda,
-                      double rho)
-  {
-    return fitImpl(x, y, beta, z, u, L, U, xTy, lambda, rho);
-  }
 
   // FISTA implementation
   template <typename T>
-  Results fitImpl(const T& x,
-                  const mat& y,
-                  mat beta,
-                  vec& z,
-                  vec& u,
-                  const mat& L,
-                  const mat& U,
-                  const vec& xTy,
-                  vec lambda,
-                  double rho)
+  Results FISTAImpl(const T& x,
+                    const mat& y,
+                    mat beta,
+                    vec lambda)
   {
     uword n = y.n_rows;
     uword p = x.n_cols;
@@ -141,8 +127,9 @@ public:
       double G = dual(y, lin_pred);
 
       grad = gradient(x, y, lin_pred);
-      double infeas = lambda.n_elem > 0 ? infeasibility(grad.tail_rows(p_rows), lambda)
-                                        : 0.0;
+      double infeas =
+        lambda.n_elem > 0 ? infeasibility(grad.tail_rows(p_rows), lambda) : 0.0;
+
       if (verbosity >= 3) {
         Rcout << "pass: "            << passes
               << ", duality-gap: "   << std::abs(f - G)/std::abs(f)
@@ -218,6 +205,65 @@ public:
                 duals,
                 time,
                 deviance};
+
+    return res;
+  }
+
+  virtual Results FISTA(const sp_mat& x, const mat& y, mat beta, vec lambda)
+  {
+    return FISTAImpl(x, y, beta, lambda);
+  }
+
+  virtual Results FISTA(const mat& x, const mat& y, mat beta, vec lambda)
+  {
+    return FISTAImpl(x, y, beta, lambda);
+  }
+
+  virtual Results ADMM(const sp_mat& x,
+                       const mat& y,
+                       mat beta,
+                       vec& z,
+                       vec& u,
+                       const mat& L,
+                       const mat& U,
+                       const vec& xTy,
+                       vec lambda,
+                       double rho)
+  {
+    return ADMMImpl(x, y, beta, z, u, L, U, xTy, lambda, rho);
+  }
+
+  virtual Results ADMM(const mat& x,
+                       const mat& y,
+                       mat beta,
+                       vec& z,
+                       vec& u,
+                       const mat& L,
+                       const mat& U,
+                       const vec& xTy,
+                       vec lambda,
+                       double rho)
+  {
+    return ADMMImpl(x, y, beta, z, u, L, U, xTy, lambda, rho);
+  }
+
+
+  // ADMM implementation
+  template <typename T>
+  Results ADMMImpl(const T& x,
+                   const mat& y,
+                   mat beta,
+                   vec& z,
+                   vec& u,
+                   const mat& L,
+                   const mat& U,
+                   const vec& xTy,
+                   vec lambda,
+                   double rho)
+  {
+    stop("ADMM solver is not implemented for this family");
+
+    Results res{};
 
     return res;
   }

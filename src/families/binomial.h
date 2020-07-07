@@ -20,7 +20,7 @@ public:
   double dual(const mat& y, const mat& lin_pred)
   {
     const vec r = 1.0/(1.0 + trunc_exp(y % lin_pred));
-    return as_scalar((r - 1.0).t()*trunc_log(1.0 - r) - r.t()*trunc_log(r));
+    return dot(r - 1.0, trunc_log(1.0 - r)) - dot(r, trunc_log(r));
   }
 
   mat pseudoGradient(const mat& y, const mat& lin_pred)
@@ -35,7 +35,7 @@ public:
 
     vec mu = clamp(mean(0.5*y + 0.5), pmin, pmax);
 
-    return trunc_log(mu/(1 - mu));
+    return trunc_log(mu/(1.0 - mu));
   }
 
   std::string name()

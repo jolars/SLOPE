@@ -29,6 +29,7 @@ List cppSLOPE(T& x, mat& y, const List control)
   auto verbosity = as<uword>(control["verbosity"]);
 
   // solver arguments
+  auto solver      = as<std::string>(control["solver"]);
   auto max_passes  = as<uword>(control["max_passes"]);
   auto tol_rel_gap = as<double>(control["tol_rel_gap"]);
   auto tol_infeas  = as<double>(control["tol_infeas"]);
@@ -55,23 +56,25 @@ List cppSLOPE(T& x, mat& y, const List control)
   standardize(x, x_center, x_scale, intercept, center, scale);
 
   auto lambda = as<vec>(control["lambda"]);
-  auto sigma  = as<vec>(control["sigma"]);
+  auto alpha  = as<vec>(control["alpha"]);
   auto lambda_type = as<std::string>(control["lambda_type"]);
-  auto sigma_type = as<std::string>(control["sigma_type"]);
-  auto lambda_min_ratio = as<double>(control["lambda_min_ratio"]);
+  auto alpha_type = as<std::string>(control["alpha_type"]);
+  auto alpha_min_ratio = as<double>(control["alpha_min_ratio"]);
   auto q = as<double>(control["q"]);
-  uword n_sigma = sigma.n_elem;
-  double sigma_max = 0;
+  const uword path_length = alpha.n_elem;
+  double alpha_max = 0;
 
-  regularizationPath(sigma,
+  regularizationPath(alpha,
                      lambda,
-                     sigma_max,
+                     alpha_max,
                      x,
                      y,
+                     x_scale,
                      y_scale,
                      lambda_type,
-                     sigma_type,
-                     lambda_min_ratio,
+                     alpha_type,
+                     scale,
+                     alpha_min_ratio,
                      q,
                      family_choice,
                      intercept);
@@ -86,22 +89,22 @@ List cppSLOPE(T& x, mat& y, const List control)
                             tol_rel,
                             verbosity);
 
-  cube betas(p, m, n_sigma, fill::zeros);
+  cube betas(p, m, path_length, fill::zeros);
   mat beta(p, m, fill::zeros);
 
   uword n_variables = 0;
-  uvec n_unique(n_sigma);
+  uvec n_unique(path_length);
 
   mat linear_predictor = x*beta;
 
   double null_deviance = 2*family->primal(y, linear_predictor);
-  std::vector<double> deviances;
-  std::vector<double> deviance_ratios;
+  vec deviance_ratios(path_length);
+  vec deviances(path_length);
   double deviance_change{0};
 
   mat beta_prev(p, m, fill::zeros);
 
-  uvec passes(n_sigma);
+  uvec passes(path_length);
   std::vector<std::vector<double>> primals;
   std::vector<std::vector<double>> duals;
   std::vector<std::vector<double>> timings;
@@ -113,12 +116,12 @@ List cppSLOPE(T& x, mat& y, const List control)
   mat pseudo_gradient_prev(n, m);
 
   // sets of active predictors
-  field<uvec> active_sets(n_sigma);
+  field<uvec> active_sets(path_length);
   uvec active_set = regspace<uvec>(0, p-1);
   uvec strong_set;
-  uvec ever_active_set;
+  uvec previous_set;
   if (intercept)
-    ever_active_set.insert_rows(0, 1);
+    previous_set.insert_rows(0, 1);
 
   // object for use in ADMM
   double rho = 0.0;
@@ -131,7 +134,7 @@ List cppSLOPE(T& x, mat& y, const List control)
   vec xTy;
   T x_subset;
 
-  if (family->name() == "gaussian") {
+  if (family->name() == "gaussian" && solver == "admm") {
     // initialize auxiliary variables
     z.zeros();
     u.zeros();
@@ -143,7 +146,7 @@ List cppSLOPE(T& x, mat& y, const List control)
 
   uword k = 0;
 
-  while (k < n_sigma) {
+  while (k < path_length) {
 
     violations.clear();
 
@@ -153,19 +156,22 @@ List cppSLOPE(T& x, mat& y, const List control)
 
       gradient_prev = family->gradient(x, y, x*beta_prev);
 
-      double sigma_prev = k == 0 ? sigma_max : sigma(k-1);
+      double alpha_prev = (k == 0) ? alpha_max : alpha(k-1);
 
-      strong_set = activeSet(gradient_prev,
-                             lambda*sigma(k),
-                             lambda*sigma_prev,
+      strong_set = strongSet(gradient_prev,
+                             lambda*alpha(k),
+                             lambda*alpha_prev,
                              intercept);
 
-      uvec prev_active = find(any(beta_prev != 0, 1));
-      ever_active_set = setUnion(ever_active_set, prev_active);
-      strong_set = setUnion(strong_set, ever_active_set);
+      previous_set = find(any(beta_prev != 0, 1));
 
-      if (screen_alg == "working") {
-        active_set = ever_active_set;
+      if (intercept)
+        previous_set = setUnion(previous_set, {0});
+
+      strong_set = setUnion(strong_set, previous_set);
+
+      if (screen_alg == "previous") {
+        active_set = previous_set;
       } else {
         active_set = strong_set;
       }
@@ -178,7 +184,7 @@ List cppSLOPE(T& x, mat& y, const List control)
 
       // all features active
       // factorize once if fitting all
-      if (!factorized && family->name() == "gaussian") {
+      if (!factorized && family->name() == "gaussian" && solver == "admm") {
         // precompute x^Ty
         xTy = x.t() * y;
 
@@ -189,23 +195,30 @@ List cppSLOPE(T& x, mat& y, const List control)
           xx = x*x.t();
         }
 
-        // TODO(jolars): should rho be updated for each new run?
         vec eigval = eig_sym(xx);
-        rho =
-          std::pow(eigval.max(), 1/3)*std::pow(lambda.max()*sigma(k), 2/3);
 
-        if (n < p)
+        if (lambda.max()*alpha(k) == 0) {
+          rho = eigval.max();
+        } else {
+          rho =
+            std::pow(eigval.max(), 1/3)*std::pow(lambda.max()*alpha(k), 2/3);
+        }
+
+        if (n >= p) {
+          xx.diag() += rho;
+        } else {
           xx /= rho;
+          xx.diag() += 1;
+        }
 
-        xx.diag() += rho;
-
-        L = chol(xx, "lower");
-        U = L.t();
+        U = chol(xx);
+        L = U.t();
 
         factorized = true;
       }
 
-      res = family->fit(x, y, beta, z, u, L, U, xTy, lambda*sigma(k), rho);
+      res =
+        family->fit(x, y, beta, z, u, L, U, xTy, lambda*alpha(k), rho, solver);
       passes(k) = res.passes;
       beta = res.beta;
 
@@ -233,7 +246,7 @@ List cppSLOPE(T& x, mat& y, const List control)
 
         } else {
 
-          if (family->name() == "gaussian") {
+          if (family->name() == "gaussian" && solver == "admm") {
             if (x_subset.n_rows >= x_subset.n_cols) {
               xx = x_subset.t()*x_subset;
             } else {
@@ -241,16 +254,21 @@ List cppSLOPE(T& x, mat& y, const List control)
             }
 
             vec eigval = eig_sym(xx);
-            rho =
-              std::pow(eigval.max(), 1/3)*std::pow(lambda.max()*sigma(k), 2/3);
+
+            if (lambda.max()*alpha(k) == 0) {
+              rho = eigval.max();
+            } else {
+              rho = std::pow(eigval.max(), 2/3)*
+                std::pow(lambda.max()*alpha(k), 1/3);
+            }
 
             if (x_subset.n_rows < x_subset.n_cols)
               xx /= rho;
 
             xx.diag() += rho;
 
-            L = chol(xx, "lower");
-            U = L.t();
+            U = chol(xx);
+            L = U.t();
 
             xTy = x_subset.t() * y;
 
@@ -269,10 +287,11 @@ List cppSLOPE(T& x, mat& y, const List control)
                             L,
                             U,
                             xTy,
-                            lambda.head(n_active)*sigma(k),
-                            rho);
+                            lambda.head(n_active)*alpha(k),
+                            rho,
+                            solver);
 
-          if (family->name() == "gaussian") {
+          if (family->name() == "gaussian" && solver == "admm") {
             z(active_set) = z_subset;
             u(active_set) = u_subset;
           }
@@ -285,7 +304,7 @@ List cppSLOPE(T& x, mat& y, const List control)
         uword n_strong =
           (strong_set.n_elem - static_cast<uword>(intercept))*m;
 
-        if (screen_alg == "working" && n_strong > 0) {
+        if (screen_alg == "previous" && n_strong > 0) {
           // check against strong set
           x_subset = matrixSubset(x, strong_set);
           gradient_prev = family->gradient(x_subset,
@@ -293,7 +312,7 @@ List cppSLOPE(T& x, mat& y, const List control)
                                            x_subset*beta.rows(strong_set));
           uvec tmp = kktCheck(gradient_prev,
                               beta.rows(strong_set),
-                              lambda.head(n_strong)*sigma(k),
+                              lambda.head(n_strong)*alpha(k),
                               tol_infeas,
                               intercept);
           uvec strong_failures = strong_set(tmp);
@@ -310,7 +329,7 @@ List cppSLOPE(T& x, mat& y, const List control)
           gradient_prev = family->gradient(x, y, x*beta);
           uvec tmp = kktCheck(gradient_prev,
                               beta,
-                              lambda*sigma(k),
+                              lambda*alpha(k),
                               tol_infeas,
                               intercept);
 
@@ -339,13 +358,11 @@ List cppSLOPE(T& x, mat& y, const List control)
     // store coefficients and intercept
     double deviance = res.deviance;
     double deviance_ratio = 1.0 - deviance/null_deviance;
-    deviances.push_back(deviance);
-    deviance_ratios.push_back(deviance_ratio);
+    deviances(k) = deviance;
+    deviance_ratios(k) = deviance_ratio;
 
-    if (k > 0) {
-      deviance_change =
-        std::abs((deviances[k-1] - deviance)/deviances[k-1]);
-    }
+    deviance_change =
+      k == 0 ? 0.0 : std::abs((deviances(k-1) - deviance)/deviances(k-1));
 
     betas.slice(k) = beta;
     beta_prev = beta;
@@ -373,18 +390,22 @@ List cppSLOPE(T& x, mat& y, const List control)
       }
     }
 
-    if (n_unique(k) > max_variables)
+    if (n_unique(k) > max_variables) {
+      k++;
       break;
-
-    k++;
+    }
 
     checkUserInterrupt();
+
+    k++;
   }
 
   betas.resize(p, m, k);
   passes.resize(k);
-  sigma.resize(k);
+  alpha.resize(k);
   n_unique.resize(k);
+  deviances.resize(k);
+  deviance_ratios.resize(k);
   active_sets = active_sets.rows(0, std::max(static_cast<int>(k-1), 0));
 
   rescale(betas,
@@ -394,8 +415,12 @@ List cppSLOPE(T& x, mat& y, const List control)
           y_scale,
           intercept);
 
-  // standardize lambda
-  lambda /= n;
+  // rescale alpha depending on standardization settings
+  if (scale == "l2") {
+    alpha /= std::sqrt(n);
+  } else if (scale == "sd" || scale == "none") {
+    alpha /= n;
+  }
 
   return List::create(
     Named("betas")               = wrap(betas),
@@ -408,7 +433,7 @@ List cppSLOPE(T& x, mat& y, const List control)
     Named("violations")          = wrap(violation_list),
     Named("deviance_ratio")      = wrap(deviance_ratios),
     Named("null_deviance")       = wrap(null_deviance),
-    Named("sigma")               = wrap(sigma),
+    Named("alpha")               = wrap(alpha),
     Named("lambda")              = wrap(lambda)
   );
 }

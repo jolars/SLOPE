@@ -1,13 +1,25 @@
 ## Test environments
 
-* local ubuntu 19.10, R 3.6.1
-* ubuntu 16.04 (on travis-ci), R 3.6.1
-* win-builder (devel and release)
-* Debian Linux, R-devel, GCC ASAN/UBSAN (on rhub)
-* Ubuntu Linux 16.04 LTS, R-release, GCC (on rhub)
-* Windows Server 2008 R2 SP1, R-devel, 32/64 bit
+* ubuntu 20.04, r-release (local)
+* windows R-devel (on win-builder)
+* ubuntu linux 16.04 LTS, r-release, GCC (on rhub)
+* Fedora Linux, R-devel, clang, gfortran (on rhub)
+* OSX r-devel (on github)
+
 
 ## R CMD check results
 
-0 errors | 0 warnings | 1 note
+0 errors | 0 warnings | 1 notes
 
+winbuilder is giving me the following note but
+I think that it is a false positive. The URL works fine.
+
+> Found the following (possibly) invalid URLs:
+>   URL: http://www.jstor.org/stable/2346178
+>     From: inst/doc/introduction.html
+>     Status: 403
+>     Message: Forbidden
+
+## Reverse dependencies
+
+SLOPE has no reverse dependencies.

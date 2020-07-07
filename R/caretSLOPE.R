@@ -10,6 +10,7 @@
 #' in [caret::train()].
 #'
 #' @seealso [caret::train()], [trainSLOPE()], [SLOPE()]
+#' @family model-tuning
 #'
 #' @export
 caretSLOPE <- function() {
@@ -18,9 +19,9 @@ caretSLOPE <- function() {
     library = c("SLOPE", "Matrix"),
     type = c("Regression", "Classification"),
 
-    parameters = data.frame(parameter = c("sigma", "q"),
+    parameters = data.frame(parameter = c("alpha", "q"),
                             class = rep("numeric", 2),
-                            label = c("sigma", "False discovery rate")),
+                            label = c("alpha", "False discovery rate")),
 
     grid = function(x, y, len = NULL, search = "grid") {
 
@@ -37,25 +38,25 @@ caretSLOPE <- function() {
       fit <- SLOPE::SLOPE(x,
                           y,
                           family = fam,
-                          n_sigma = len + 2,
+                          path_length = len + 2,
                           scale = FALSE,
                           center = FALSE)
 
-      sigma <- fit$sigma
-      sigma <- sigma[-c(1, length(sigma))]
-      sigma <- sigma[1:min(length(sigma), len)]
+      alpha <- fit$alpha
+      alpha <- alpha[-c(1, length(alpha))]
+      alpha <- alpha[1:min(length(alpha), len)]
 
       if (search == "grid") {
-        out <- expand.grid(sigma = sigma,
+        out <- expand.grid(alpha = alpha,
                            q = q)
       } else {
         q <- stats::runif(0.01, 0.4, len)
 
-        sigma <- exp(stats::runif(log(min(sigma)),
-                                  log(max(sigma)),
+        alpha <- exp(stats::runif(log(min(alpha)),
+                                  log(max(alpha)),
                                   len))
 
-        out <- data.frame(sigma = sigma,
+        out <- data.frame(alpha = alpha,
                           q = q)
       }
 
@@ -66,14 +67,14 @@ caretSLOPE <- function() {
 
       q <- unique(grid$q)
       loop <- data.frame(q = q)
-      loop$sigma <- NA
+      loop$alpha <- NA
 
       submodels <- vector("list", length = length(q))
 
       for (i in seq_along(q)) {
-        np <- grid[grid$q == q[i], "sigma"]
-        loop$sigma[loop$q == q[i]] <- np[which.max(np)]
-        submodels[[i]] <- data.frame(sigma = np[-which.max(np)])
+        np <- grid[grid$q == q[i], "alpha"]
+        loop$alpha[loop$q == q[i]] <- np[which.max(np)]
+        submodels[[i]] <- data.frame(alpha = np[-which.max(np)])
       }
 
       list(loop = loop, submodels = submodels)
@@ -108,8 +109,8 @@ caretSLOPE <- function() {
 
       out <- do.call(SLOPE::SLOPE, dots)
 
-      if (!is.na(param$sigma[1]))
-        out$sigmaOpt <- param$sigma[1]
+      if (!is.na(param$alpha[1]))
+        out$alphaOpt <- param$alpha[1]
 
       out
     },
@@ -123,11 +124,11 @@ caretSLOPE <- function() {
       if (length(modelFit$obsLevels) < 2) {
         out <- stats::predict(modelFit,
                               newdata,
-                              sigma = modelFit$sigmaOpt)
+                              alpha = modelFit$alphaOpt)
       } else {
         out <- stats::predict(modelFit,
                               newdata,
-                              sigma = modelFit$sigmaOpt,
+                              alpha = modelFit$alphaOpt,
                               type = "class")
       }
 
@@ -138,12 +139,12 @@ caretSLOPE <- function() {
         if (length(modelFit$obsLevels) < 2) {
           tmp <- stats::predict(modelFit,
                                 newdata,
-                                sigma = submodels$sigma)
+                                alpha = submodels$alpha)
           tmp <- as.list(as.data.frame(tmp))
         } else {
           tmp <- stats::predict(modelFit,
                                 newdata,
-                                sigma = submodels$sigma,
+                                alpha = submodels$alpha,
                                 type = "class")
           tmp <- if (is.matrix(tmp))
             as.data.frame(tmp, stringsAsFactors = FALSE)
@@ -165,7 +166,7 @@ caretSLOPE <- function() {
 
       probs <- stats::predict(modelFit,
                               Matrix::as.matrix(newdata),
-                              sigma = modelFit$sigma,
+                              alpha = modelFit$alpha,
                               type = "response")
 
       if (length(obsLevels) == 2) {
@@ -180,7 +181,7 @@ caretSLOPE <- function() {
       if (!is.null(submodels)) {
         tmp <- stats::predict(modelFit,
                               Matrix::as.matrix(newdata),
-                              sigma = submodels$sigma,
+                              alpha = submodels$alpha,
                               type = "response")
 
         if(length(obsLevels) == 2) {
@@ -200,15 +201,15 @@ caretSLOPE <- function() {
 
     },
 
-    predictors = function(x, sigma = NULL, ...) {
-      if (is.null(sigma)) {
-        if (length(sigma) > 1)
-          stop("Only one value of sigma is allowed right now")
+    predictors = function(x, alpha = NULL, ...) {
+      if (is.null(alpha)) {
+        if (length(alpha) > 1)
+          stop("Only one value of alpha is allowed right now")
 
-        if (!is.null(x$sigmaOpt)) {
-          sigma <- x$sigmaOpt
+        if (!is.null(x$alphaOpt)) {
+          alpha <- x$alphaOpt
         } else  {
-          stop("must supply a value of sigma")
+          stop("must supply a value of alpha")
         }
       }
 
@@ -225,19 +226,19 @@ caretSLOPE <- function() {
       out
     },
 
-    varImp = function(object, sigma = NULL, ...) {
-      if (is.null(sigma)) {
-        if (length(sigma) > 1)
-          stop("Only one value of sigma is allowed right now")
+    varImp = function(object, alpha = NULL, ...) {
+      if (is.null(alpha)) {
+        if (length(alpha) > 1)
+          stop("Only one value of alpha is allowed right now")
 
-        if (!is.null(object$sigmaOpt)) {
-          sigma <- object$sigmaOpt
+        if (!is.null(object$alphaOpt)) {
+          alpha <- object$alphaOpt
         } else {
-          stop("must supply a value of sigma")
+          stop("must supply a value of alpha")
         }
       }
 
-      beta <- stats::coef(object, sigma = sigma, simplify = TRUE)
+      beta <- stats::coef(object, alpha = alpha, simplify = TRUE)
       beta <- as.data.frame(beta)
       out <- as.data.frame(Overall = beta[, 1])
       out <- abs(out[rownames(out) != "(Intercept)", , drop = FALSE])
@@ -252,7 +253,7 @@ caretSLOPE <- function() {
     },
 
     sort = function(x) {
-      x[order(-x$sigma, x$q),]
+      x[order(-x$alpha, x$q),]
     },
 
     trim = function(x) {

@@ -14,3 +14,7 @@
 ^cran-comments\.md$
 ^CRAN-RELEASE$
 ^revdep$
+^\.ccache$
+^\.github$
+^clang-.*
+^gfortran.*

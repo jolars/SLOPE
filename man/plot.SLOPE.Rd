@@ -4,12 +4,21 @@
 \alias{plot.SLOPE}
 \title{Plot coefficients}
 \usage{
-\method{plot}{SLOPE}(x, intercept = FALSE, ...)
+\method{plot}{SLOPE}(
+  x,
+  intercept = FALSE,
+  x_variable = c("alpha", "deviance_ratio", "step"),
+  ...
+)
 }
 \arguments{
 \item{x}{an object of class \code{"SLOPE"}}
 
 \item{intercept}{whether to plot the intercept}
+
+\item{x_variable}{what to plot on the x axis. \code{"alpha"} plots
+the scaling parameter for the sequence, \code{"deviance_ratio"} plots
+the fraction of deviance explained, and \code{"step"} plots step number.}
 
 \item{...}{parameters that will be used to modify the call to
 \code{\link[lattice:xyplot]{lattice::xyplot()}}}
@@ -19,7 +28,8 @@ An object of class \code{"trellis"}, which will be plotted on the
 current device unless stored in a variable.
 }
 \description{
-Plot the model's coefficient along the regularization path.
+Plot the fitted model's regression
+coefficients along the regularization path.
 }
 \examples{
 fit <- SLOPE(heart$x, heart$y)
@@ -27,4 +37,12 @@ plot(fit)
 }
 \seealso{
 \code{\link[lattice:xyplot]{lattice::xyplot()}}, \code{\link[=SLOPE]{SLOPE()}}, \code{\link[=plotDiagnostics]{plotDiagnostics()}}
+
+Other SLOPE-methods: 
+\code{\link{coef.SLOPE}()},
+\code{\link{deviance.SLOPE}()},
+\code{\link{predict.SLOPE}()},
+\code{\link{print.SLOPE}()},
+\code{\link{score}()}
 }
+\concept{SLOPE-methods}

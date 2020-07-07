@@ -25,7 +25,7 @@ void standardize(mat& x,
     } else if (scale == "l2") {
       x_scale(j) = norm(x.col(j), 2);
     } else if (scale == "sd") {
-      x_scale(j) = stddev(x.col(j));
+      x_scale(j) = stddev(x.col(j), 1);
     } else if (scale == "max") {
       x_scale(j) = x.col(j).max();
     }
@@ -56,7 +56,7 @@ void standardize(sp_mat& x,
       x_scale(j) = norm(x.col(j), 2);
     } else if (scale == "sd") {
       double xbar = accu(x.col(j))/n;
-      x_scale(j) = norm(x.col(j) - xbar)/std::sqrt(n - 1);
+      x_scale(j) = norm(x.col(j) - xbar)/std::sqrt(n);
     } else if (scale == "max") {
       x_scale(j) = x.col(j).max();
     }
