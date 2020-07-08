@@ -10,6 +10,8 @@
 
 * Fixed premature stopping of the solver for the first step of the
   regularization path (the null model).
+* Actually fix UBSAN/ASAN sanitizer warnings by modifying code for
+  FISTA solver.
 
 # SLOPE 0.3.1
 
