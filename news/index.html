@@ -89,7 +89,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SLOPE</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -161,13 +161,33 @@
       <small>Source: <a href='https://github.com/jolars/SLOPE/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="slope-032" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.2">
+<a href="#slope-032" class="anchor"></a>SLOPE 0.3.2<small> Unreleased </small>
+</h1>
+<div id="minor-changes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#minor-changes" class="anchor"></a>Minor changes</h2>
+<ul>
+<li>Added <code>tol_rel_coef_change</code> argument to <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code> as a convergence criterion for the FISTA solver that sets a tolerance for the relative change in coefficients across iterations.</li>
+</ul>
+</div>
+<div id="bug-fixes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bug-fixes" class="anchor"></a>Bug fixes</h2>
+<ul>
+<li>Fixed premature stopping of the solver for the first step of the regularization path (the null model).</li>
+<li>Actually fix UBSAN/ASAN sanitizer warnings by modifying code for FISTA solver.</li>
+</ul>
+</div>
+</div>
     <div id="slope-031" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.1">
 <a href="#slope-031" class="anchor"></a>SLOPE 0.3.1<small> Unreleased </small>
 </h1>
-<div id="bug-fixes" class="section level2">
+<div id="bug-fixes-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#bug-fixes" class="anchor"></a>Bug fixes</h2>
+<a href="#bug-fixes-1" class="anchor"></a>Bug fixes</h2>
 <ul>
 <li>Fixed package build breaking on solaris because of missing STL namespace specifier for <code>std::sqrt()</code> in <code>src/SLOPE.cpp</code>.</li>
 <li>Fixed erroneous scaling of absolute tolerance in stopping criteria for the ADMM solvers. Thanks, <a href='https://github.com/straw-boy'>@straw-boy</a>.</li>
@@ -195,9 +215,9 @@
 <code>scale = "sd"</code> now scales with the population standard deviation rather than the sample standard deviation, i.e. the scaling factor now used is the number of observations (and not the number of observations minus one as before).</li>
 </ul>
 </div>
-<div id="minor-changes" class="section level2">
+<div id="minor-changes-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-changes" class="anchor"></a>Minor changes</h2>
+<a href="#minor-changes-1" class="anchor"></a>Minor changes</h2>
 <ul>
 <li>Default <code>path_length</code> has changed from 100 to 20.</li>
 <li>
@@ -206,9 +226,9 @@
 <li>If the <code>max_variables</code> criterion is hit, the solution path returned will now include also the last solution (which was not the case before). Thanks, <a href='https://github.com/straw-boy'>@straw-boy</a>.</li>
 </ul>
 </div>
-<div id="bug-fixes-1" class="section level2">
+<div id="bug-fixes-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#bug-fixes-1" class="anchor"></a>Bug fixes</h2>
+<a href="#bug-fixes-2" class="anchor"></a>Bug fixes</h2>
 <ul>
 <li>Plotting models that are completely sparse no longer throws an error.</li>
 <li>
@@ -220,9 +240,9 @@
 <h1 class="page-header" data-toc-text="0.2.1">
 <a href="#slope-021" class="anchor"></a>SLOPE 0.2.1<small> 2020-04-16 </small>
 </h1>
-<div id="minor-changes-1" class="section level2">
+<div id="minor-changes-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-changes-1" class="anchor"></a>Minor changes</h2>
+<a href="#minor-changes-2" class="anchor"></a>Minor changes</h2>
 <ul>
 <li>A few examples in <code><a href="https://rdrr.io/r/stats/deviance.html">deviance()</a></code> and <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code> that were taking too long to execute have been removed or modified.</li>
 </ul>
@@ -265,9 +285,9 @@
 <li>the introductory vignette has been replaced</li>
 </ul>
 </div>
-<div id="minor-changes-2" class="section level2">
+<div id="minor-changes-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-changes-2" class="anchor"></a>Minor changes</h2>
+<a href="#minor-changes-3" class="anchor"></a>Minor changes</h2>
 <ul>
 <li>a new function <code><a href="https://rdrr.io/r/stats/deviance.html">deviance()</a></code> returns the deviance from the fit</li>
 <li>a new function <code><a href="https://jolars.github.io/SLOPE//reference/score.html">score()</a></code> can be used to assess model performance against new data</li>

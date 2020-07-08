@@ -94,7 +94,7 @@ in decreasing order according  to its absolute values." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SLOPE</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -198,6 +198,7 @@ in decreasing order according  to its absolute values.</p>
   tol_rel = <span class='fl'>1e-04</span>,
   tol_rel_gap = <span class='fl'>1e-05</span>,
   tol_infeas = <span class='fl'>0.001</span>,
+  tol_rel_coef_change = <span class='fl'>0.001</span>,
   diagnostics = <span class='fl'>FALSE</span>,
   verbosity = <span class='fl'>0</span>,
   <span class='kw'>sigma</span>,
@@ -350,6 +351,13 @@ FISTA solver.</p></td>
       <th>tol_infeas</th>
       <td><p>stopping criterion for the level of infeasibility; used
 with FISTA solver and KKT checks in screening algorithm.</p></td>
+    </tr>
+    <tr>
+      <th>tol_rel_coef_change</th>
+      <td><p>relative tolerance criterion for change
+in coefficients between iterations, which is reached when
+the maximum absolute change in any coefficient divided by the maximum
+absolute coefficient size is less than this value.</p></td>
     </tr>
     <tr>
       <th>diagnostics</th>
