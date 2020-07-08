@@ -4,6 +4,7 @@
 * Windows, R-devel (win-builder)
 * Ubuntu Linux 16.04 LTS, R-release, GCC (rhub)
 * Fedora Linux, R-devel, clang, gfortran (rhub)
+* Debian Linux, R-devel, GCC ASAN/UBSAN (rhub) 
 * OSX R-devel (github)
 
 ## R CMD check results
@@ -18,6 +19,10 @@
 
 I believe the status message above is a false positive; the URL works as it should.
 
-> Days since last update: 4
+> Days since last update: 5
 
-This is a patch to fix the broken install on solaris as well as rectify ASAN/UBSAN errors (<https://cran.r-project.org/web/checks/check_results_SLOPE.html>).
+This a second patch (see below).
+
+## Resubmission
+
+This is a resubmission. In this version I believe I have actually fixed the UBSAN errors (<https://cran.r-project.org/web/checks/check_results_SLOPE.html>). I can no longer reproduce them using the ASAN/UBSAN docker from rhub/rocker (<https://builder.r-hub.io/status/original/SLOPE_0.3.1.9000.tar.gz-15e2ec2c51bd4992bcd4060f5727bb6f>).
