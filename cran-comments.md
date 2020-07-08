@@ -25,4 +25,6 @@ This a second patch (see below).
 
 ## Resubmission
 
-This is a resubmission. In this version I believe I have actually fixed the UBSAN errors (<https://cran.r-project.org/web/checks/check_results_SLOPE.html>). I can no longer reproduce them using the ASAN/UBSAN docker from rhub/rocker (<https://builder.r-hub.io/status/original/SLOPE_0.3.1.9000.tar.gz-15e2ec2c51bd4992bcd4060f5727bb6f>).
+This is a resubmission. In this version I have actually fixed the UBSAN errors (<https://cran.r-project.org/web/checks/check_results_SLOPE.html>). I can no longer reproduce them using the ASAN/UBSAN docker from rhub/rocker (<https://builder.r-hub.io/status/original/SLOPE_0.3.1.9000.tar.gz-15e2ec2c51bd4992bcd4060f5727bb6f>).
+
+I have also fixed the test that failed for the windows build test check.
