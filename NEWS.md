@@ -1,5 +1,10 @@
 # SLOPE (development version)
 
+## Bug fixes
+
+* Fixed first coefficient missing from plot if no intercept was used in
+  the call to `SLOPE()`.
+
 # SLOPE 0.3.2
 
 ## Minor changes

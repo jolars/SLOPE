@@ -35,7 +35,7 @@ plot.SLOPE = function(x,
 
   if (include_intercept) {
     coefs <- coefs[, , , drop = FALSE]
-  } else {
+  } else if (intercept_in_model) {
     coefs <- coefs[-1, , , drop = FALSE]
   }
 
