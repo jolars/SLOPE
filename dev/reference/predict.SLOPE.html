@@ -90,7 +90,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SLOPE</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.3.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.3.2.9000</span>
       </span>
     </div>
 
@@ -164,7 +164,7 @@
     </div>
 
     <div class="ref-description">
-    <p>Return predictions from models fit by <code>SLOPE()</code>.</p>
+    <p>Return predictions from models fit by <code><a href='SLOPE.html'>SLOPE()</a></code>.</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for SLOPE</span>
@@ -218,7 +218,7 @@
     <tr>
       <th>object</th>
       <td><p>an object of class <code>"SLOPE"</code>, typically the result of
-a call to <code>SLOPE()</code></p></td>
+a call to <code><a href='SLOPE.html'>SLOPE()</a></code></p></td>
     </tr>
     <tr>
       <th>x</th>
@@ -263,16 +263,16 @@ penalty path.</p></td>
     <p>Predictions from the model with scale determined by <code>type</code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/r/stats/predict.html'>stats::predict()</a></code>, <code><a href='https://rdrr.io/r/stats/predict.glm.html'>stats::predict.glm()</a></code>, <code>coef.SLOPE()</code></p>
+    <div class='dont-index'><p><code><a href='https://rdrr.io/r/stats/predict.html'>stats::predict()</a></code>, <code><a href='https://rdrr.io/r/stats/predict.glm.html'>stats::predict.glm()</a></code>, <code><a href='coef.SLOPE.html'>coef.SLOPE()</a></code></p>
 <p>Other SLOPE-methods: 
-<code>coef.SLOPE()</code>,
-<code>deviance.SLOPE()</code>,
-<code>plot.SLOPE()</code>,
-<code>print.SLOPE()</code>,
-<code>score()</code></p></div>
+<code><a href='coef.SLOPE.html'>coef.SLOPE</a>()</code>,
+<code><a href='deviance.SLOPE.html'>deviance.SLOPE</a>()</code>,
+<code><a href='plot.SLOPE.html'>plot.SLOPE</a>()</code>,
+<code><a href='print.SLOPE.html'>print.SLOPE</a>()</code>,
+<code><a href='score.html'>score</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span>(<span class='kw'>mtcars</span>, <span class='fu'>SLOPE</span>(<span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>(<span class='kw'>mpg</span>, <span class='kw'>hp</span>), <span class='kw'>vs</span>, family = <span class='st'>"binomial"</span>))
+    <pre class="examples"><div class='input'><span class='kw'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span>(<span class='kw'>mtcars</span>, <span class='fu'><a href='SLOPE.html'>SLOPE</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>(<span class='kw'>mpg</span>, <span class='kw'>hp</span>), <span class='kw'>vs</span>, family = <span class='st'>"binomial"</span>))
 <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>fit</span>, <span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span>(<span class='kw'>mtcars</span>, <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>(<span class='kw'>mpg</span>, <span class='kw'>hp</span>)), type = <span class='st'>"class"</span>)</div><div class='output co'>#&gt;   [1] "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0"
 #&gt;  [19] "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "1" "0"
 #&gt;  [37] "0" "0" "0" "1" "1" "0" "0" "0" "0" "0" "0" "0" "0" "1" "1" "1" "1" "0"

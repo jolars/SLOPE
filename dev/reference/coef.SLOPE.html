@@ -90,7 +90,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SLOPE</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.3.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.3.2.9000</span>
       </span>
     </div>
 
@@ -164,7 +164,7 @@
     </div>
 
     <div class="ref-description">
-    <p>This function returns coefficients from a model fit by <code>SLOPE()</code>.</p>
+    <p>This function returns coefficients from a model fit by <code><a href='SLOPE.html'>SLOPE()</a></code>.</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for SLOPE</span>
@@ -202,7 +202,7 @@ the coefficients to drop extraneous dimensions</p></td>
     <tr>
       <th>...</th>
       <td><p>arguments that are passed on to <code><a href='https://rdrr.io/r/stats/update.html'>stats::update()</a></code> (and therefore
-also to <code>SLOPE()</code>) if <code>exact = TRUE</code> and the given penalty
+also to <code><a href='SLOPE.html'>SLOPE()</a></code>) if <code>exact = TRUE</code> and the given penalty
 is not in <code>object</code></p></td>
     </tr>
     </table>
@@ -216,19 +216,19 @@ is not in <code>object</code></p></td>
 then the returned coefficients will be approximated by linear interpolation.
 If coefficients from another type of penalty sequence
 (with a different <code>lambda</code>) are required, however,
-please use <code>SLOPE()</code> to refit the model.</p>
+please use <code><a href='SLOPE.html'>SLOPE()</a></code> to refit the model.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code>predict.SLOPE()</code>, <code>SLOPE()</code></p>
+    <div class='dont-index'><p><code><a href='predict.SLOPE.html'>predict.SLOPE()</a></code>, <code><a href='SLOPE.html'>SLOPE()</a></code></p>
 <p>Other SLOPE-methods: 
-<code>deviance.SLOPE()</code>,
-<code>plot.SLOPE()</code>,
-<code>predict.SLOPE()</code>,
-<code>print.SLOPE()</code>,
-<code>score()</code></p></div>
+<code><a href='deviance.SLOPE.html'>deviance.SLOPE</a>()</code>,
+<code><a href='plot.SLOPE.html'>plot.SLOPE</a>()</code>,
+<code><a href='predict.SLOPE.html'>predict.SLOPE</a>()</code>,
+<code><a href='print.SLOPE.html'>print.SLOPE</a>()</code>,
+<code><a href='score.html'>score</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>fit</span> <span class='op'>&lt;-</span> <span class='fu'>SLOPE</span>(<span class='kw'>mtcars</span><span class='op'>$</span><span class='kw'>mpg</span>, <span class='kw'>mtcars</span><span class='op'>$</span><span class='kw'>vs</span>, path_length = <span class='fl'>1</span>)
+    <pre class="examples"><div class='input'><span class='kw'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='SLOPE.html'>SLOPE</a></span>(<span class='kw'>mtcars</span><span class='op'>$</span><span class='kw'>mpg</span>, <span class='kw'>mtcars</span><span class='op'>$</span><span class='kw'>vs</span>, path_length = <span class='fl'>1</span>)
 <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='kw'>fit</span>)</div><div class='output co'>#&gt; (Intercept)          V1 
 #&gt; -0.67805384  0.05552609 </div></pre>
   </div>
