@@ -342,8 +342,6 @@ cppSLOPE(T& x, mat& y, const List control)
 
         checkUserInterrupt();
       }
-      while (kkt_violation)
-        ;
 
       if (diagnostics) {
         primals.push_back(res.primals);
