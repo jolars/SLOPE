@@ -383,21 +383,21 @@ fit <- SLOPE(wine$x,
 \references{
 Bogdan, M., van den Berg, E., Sabatti, C., Su, W., & Candès, E. J. (2015).
 SLOPE -- adaptive variable selection via convex optimization. The Annals of
-Applied Statistics, 9(3), 1103–1140. \url{https://doi.org/10/gfgwzt}
+Applied Statistics, 9(3), 1103–1140. \doi{10/gfgwzt}
 
 Bondell, H. D., & Reich, B. J. (2008). Simultaneous Regression Shrinkage,
 Variable Selection, and Supervised Clustering of Predictors with OSCAR.
 Biometrics, 64(1), 115–123. JSTOR.
-\url{https://doi.org/10.1111/j.1541-0420.2007.00843.x}
+\doi{10.1111/j.1541-0420.2007.00843.x}
 
 Boyd, S., Parikh, N., Chu, E., Peleato, B., & Eckstein, J. (2010).
 Distributed Optimization and Statistical Learning via the Alternating
 Direction Method of Multipliers. Foundations and Trends® in Machine Learning,
-3(1), 1–122. \url{https://doi.org/10.1561/2200000016}
+3(1), 1–122. \doi{10.1561/2200000016}
 
 Beck, A., & Teboulle, M. (2009). A Fast Iterative Shrinkage-Thresholding
 Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
-2(1), 183–202. \url{https://doi.org/10.1137/080716542}
+2(1), 183–202. \doi{10.1137/080716542}
 }
 \seealso{
 \code{\link[=plot.SLOPE]{plot.SLOPE()}}, \code{\link[=plotDiagnostics]{plotDiagnostics()}}, \code{\link[=score]{score()}}, \code{\link[=predict.SLOPE]{predict.SLOPE()}},
