@@ -45,7 +45,7 @@ Portugal, April, 2008, EUROSIS, ISBN 978-9077381-39-7.
 \url{http://www3.dsi.uminho.pt/pcortez/student.pdf}
 
 Dua, D. and Karra Taniskidou, E. (2017). UCI Machine Learning Repository
-\url{http://archive.ics.uci.edu/ml}. Irvine, CA: University of California,
+\url{http://archive.ics.uci.edu/ml/}. Irvine, CA: University of California,
 School of Information and Computer Science.
 }
 \usage{
