@@ -4,16 +4,17 @@
 
 using namespace arma;
 
-uvec strongSet(const mat& gradient_prev,
-               const vec& lambda,
-               const vec& lambda_prev,
-               const bool intercept)
+uvec
+strongSet(const mat& gradient_prev,
+          const vec& lambda,
+          const vec& lambda_prev,
+          const bool intercept)
 {
   const uword m = gradient_prev.n_cols;
   const uword p = lambda.n_elem;
-  const vec abs_grad = abs(vectorise(gradient_prev.tail_rows(p/m)));
+  const vec abs_grad = abs(vectorise(gradient_prev.tail_rows(p / m)));
   const uvec ord = sort_index(abs_grad, "descend");
-  const vec tmp = abs_grad(ord) + lambda_prev - 2*lambda;
+  const vec tmp = abs_grad(ord) + lambda_prev - 2 * lambda;
 
   uword i = 0;
   uword k = 0;
@@ -21,7 +22,7 @@ uvec strongSet(const mat& gradient_prev,
   double s = 0;
 
   while (i + k < p) {
-    s += tmp(k+i);
+    s += tmp(k + i);
 
     if (s >= 0) {
       k = k + i + 1;
@@ -38,14 +39,14 @@ uvec strongSet(const mat& gradient_prev,
   // reset order
   active_set(ord) = active_set;
 
-  umat active_set_mat = reshape(active_set, p/m, m);
+  umat active_set_mat = reshape(active_set, p / m, m);
 
   uvec out = find(any(active_set_mat, 1));
 
   if (intercept) {
     // shuffle all orders by one and add an index for the intercept
     out += 1;
-    urowvec top = {0};
+    urowvec top = { 0 };
     out.insert_rows(0, top);
   }
 

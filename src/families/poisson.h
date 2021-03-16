@@ -7,10 +7,13 @@
 using namespace Rcpp;
 using namespace arma;
 
-class Poisson : public Family {
+class Poisson : public Family
+{
 public:
-  template <typename... Ts>
-  Poisson(Ts... args) : Family(std::forward<Ts>(args)...) {}
+  template<typename... Ts>
+  Poisson(Ts... args)
+    : Family(std::forward<Ts>(args)...)
+  {}
 
   double primal(const mat& y, const mat& lin_pred)
   {
@@ -32,8 +35,5 @@ public:
     return trunc_log(mean(y));
   }
 
-  std::string name()
-  {
-    return "poisson";
-  }
+  std::string name() { return "poisson"; }
 };

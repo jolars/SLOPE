@@ -5,12 +5,13 @@
 using namespace Rcpp;
 using namespace arma;
 
-void rescale(cube& betas,
-             const rowvec& x_center,
-             const rowvec& x_scale,
-             const rowvec& y_center,
-             const rowvec& y_scale,
-             const bool intercept)
+void
+rescale(cube& betas,
+        const rowvec& x_center,
+        const rowvec& x_scale,
+        const rowvec& y_center,
+        const rowvec& y_scale,
+        const bool intercept)
 {
   const uword p = betas.n_rows;
   const uword m = betas.n_cols;
@@ -20,12 +21,12 @@ void rescale(cube& betas,
 
   for (uword k = 0; k < m; ++k) {
     for (uword j = static_cast<uword>(intercept); j < p; ++j) {
-      betas.tube(j, k) *= y_scale(k)/x_scale(j);
-      x_bar_beta_sum.tube(0, k) += x_center(j)*betas.tube(j, k);
+      betas.tube(j, k) *= y_scale(k) / x_scale(j);
+      x_bar_beta_sum.tube(0, k) += x_center(j) * betas.tube(j, k);
     }
 
     if (intercept)
       betas.tube(0, k) =
-        betas.tube(0, k)*y_scale(k) + y_center(k) - x_bar_beta_sum.tube(0, k);
+        betas.tube(0, k) * y_scale(k) + y_center(k) - x_bar_beta_sum.tube(0, k);
   }
 }

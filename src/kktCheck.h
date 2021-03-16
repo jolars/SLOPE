@@ -5,11 +5,12 @@
 using namespace arma;
 using namespace Rcpp;
 
-uvec kktCheck(mat          gradient,
-              mat          beta,
-              const vec&   lambda,
-              const double tol,
-              const bool   intercept)
+uvec
+kktCheck(mat gradient,
+         mat beta,
+         const vec& lambda,
+         const double tol,
+         const bool intercept)
 {
   if (intercept) {
     gradient.shed_row(0);
@@ -25,7 +26,7 @@ uvec kktCheck(mat          gradient,
   uvec ord = sort_index(abs(gradient), "descend");
   vec abs_gradient_sorted = abs(gradient(ord));
 
-  double rh = std::max(std::sqrt(datum::eps), tol*lambda(0));
+  double rh = std::max(std::sqrt(datum::eps), tol * lambda(0));
 
   uvec tmp = cumsum(abs_gradient_sorted - lambda) > rh;
   tmp(ord) = tmp;

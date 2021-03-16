@@ -9,7 +9,8 @@
 using namespace Rcpp;
 using namespace arma;
 
-class Family {
+class Family
+{
 protected:
   const bool intercept;
   const bool diagnostics;
@@ -31,15 +32,16 @@ public:
          const double tol_rel,
          const double tol_rel_coef_change,
          const uword verbosity)
-    : intercept(intercept),
-      diagnostics(diagnostics),
-      max_passes(max_passes),
-      tol_rel_gap(tol_rel_gap),
-      tol_infeas(tol_infeas),
-      tol_abs(tol_abs),
-      tol_rel(tol_rel),
-      tol_rel_coef_change(tol_rel_coef_change),
-      verbosity(verbosity) {}
+    : intercept(intercept)
+    , diagnostics(diagnostics)
+    , max_passes(max_passes)
+    , tol_rel_gap(tol_rel_gap)
+    , tol_infeas(tol_infeas)
+    , tol_abs(tol_abs)
+    , tol_rel(tol_rel)
+    , tol_rel_coef_change(tol_rel_coef_change)
+    , verbosity(verbosity)
+  {}
 
   virtual double primal(const mat& y, const mat& lin_pred) = 0;
 
@@ -48,8 +50,8 @@ public:
   // this is not really the true gradient; it needs to multiplied by X^T
   virtual mat pseudoGradient(const mat& y, const mat& lin_pred) = 0;
 
-  template <typename T>
-  mat gradient(const T& x, const mat&y, const mat& lin_pred)
+  template<typename T>
+  mat gradient(const T& x, const mat& y, const mat& lin_pred)
   {
     return x.t() * pseudoGradient(y, lin_pred);
   }
@@ -58,7 +60,7 @@ public:
 
   virtual std::string name() = 0;
 
-  template <typename T>
+  template<typename T>
   Results fit(const T& x,
               const mat& y,
               mat beta,
@@ -78,17 +80,14 @@ public:
   }
 
   // FISTA implementation
-  template <typename T>
-  Results FISTAImpl(const T& x,
-                    const mat& y,
-                    mat beta,
-                    vec lambda)
+  template<typename T>
+  Results FISTAImpl(const T& x, const mat& y, mat beta, vec lambda)
   {
     uword n = y.n_rows;
     uword p = x.n_cols;
     uword m = beta.n_cols;
     uword pmi = lambda.n_elem;
-    uword p_rows = pmi/m;
+    uword p_rows = pmi / m;
 
     mat beta_tilde(beta);
     mat beta_tilde_old(beta);
@@ -121,7 +120,7 @@ public:
     // main loop
     uword passes = 0;
     while (passes < max_passes) {
-      lin_pred = x*beta;
+      lin_pred = x * beta;
 
       double g = primal(y, lin_pred);
 
@@ -148,29 +147,27 @@ public:
         lambda.n_elem > 0.0 ? infeasibility(tmp_vectorized, lambda) : 0.0;
 
       if (verbosity >= 3) {
-        Rcout << "pass: "            << passes
-              << ", duality-gap: "   << std::abs(f - G)/std::abs(f)
-              << ", infeasibility: " << infeas
-              << std::endl;
+        Rcout << "pass: " << passes
+              << ", duality-gap: " << std::abs(f - G) / std::abs(f)
+              << ", infeasibility: " << infeas << std::endl;
       }
 
       double small = std::sqrt(datum::eps);
 
       bool optimal =
-        (std::abs(f - G)/std::max(small, std::abs(f)) < tol_rel_gap);
+        (std::abs(f - G) / std::max(small, std::abs(f)) < tol_rel_gap);
 
-      bool feasible =
-        lambda.n_elem > 0.0 ? infeas <= std::max(small, tol_infeas*lambda(0))
-                            : true;
+      bool feasible = lambda.n_elem > 0.0
+                        ? infeas <= std::max(small, tol_infeas * lambda(0))
+                        : true;
 
       // check change in coefficients
       double max_change = abs(vectorise(beta - beta_prev)).max();
       double max_size = abs(vectorise(beta)).max();
 
-      bool all_zero  =
-        (max_size == 0.0) && (max_change == 0.0);
+      bool all_zero = (max_size == 0.0) && (max_change == 0.0);
       bool small_change =
-        (max_size != 0.0) && (max_change/max_size <= tol_rel_coef_change);
+        (max_size != 0.0) && (max_change / max_size <= tol_rel_coef_change);
 
       bool small_coef_change = all_zero || small_change;
 
@@ -191,38 +188,37 @@ public:
       // Backtracking line search
       while (true) {
         // Update coefficients
-        beta_tilde = beta - learning_rate*grad;
+        beta_tilde = beta - learning_rate * grad;
 
         if (intercept) {
           mat tmp = beta_tilde;
           tmp.shed_row(0);
-          beta_tilde.tail_rows(p_rows) = prox(tmp, lambda*learning_rate);
+          beta_tilde.tail_rows(p_rows) = prox(tmp, lambda * learning_rate);
         } else {
-          beta_tilde = prox(beta_tilde, lambda*learning_rate);
+          beta_tilde = prox(beta_tilde, lambda * learning_rate);
         }
 
         vec d = vectorise(beta_tilde - beta);
 
-        lin_pred = x*beta_tilde;
+        lin_pred = x * beta_tilde;
 
         g = primal(y, lin_pred);
 
-        double q = g_old
-          + dot(d, vectorise(grad))
-          + (1.0/(2*learning_rate))*accu(square(d));
+        double q = g_old + dot(d, vectorise(grad)) +
+                   (1.0 / (2 * learning_rate)) * accu(square(d));
 
-          if (q >= g*(1 - 1e-12)) {
-            break;
-          } else {
-            learning_rate *= eta;
-          }
+        if (q >= g * (1 - 1e-12)) {
+          break;
+        } else {
+          learning_rate *= eta;
+        }
 
-          checkUserInterrupt();
+        checkUserInterrupt();
       }
 
       // FISTA step
-      t = 0.5*(1.0 + std::sqrt(1.0 + 4.0*t_old*t_old));
-      beta = beta_tilde + (t_old - 1.0)/t * (beta_tilde - beta_tilde_old);
+      t = 0.5 * (1.0 + std::sqrt(1.0 + 4.0 * t_old * t_old));
+      beta = beta_tilde + (t_old - 1.0) / t * (beta_tilde - beta_tilde_old);
 
       beta_prev = beta;
 
@@ -232,14 +228,9 @@ public:
       ++passes;
     }
 
-    double deviance = 2*primal(y, lin_pred);
+    double deviance = 2 * primal(y, lin_pred);
 
-    Results res{beta,
-                passes,
-                primals,
-                duals,
-                time,
-                deviance};
+    Results res{ beta, passes, primals, duals, time, deviance };
 
     return res;
   }
@@ -282,9 +273,8 @@ public:
     return ADMMImpl(x, y, beta, z, u, L, U, xTy, lambda, rho);
   }
 
-
   // ADMM implementation
-  template <typename T>
+  template<typename T>
   Results ADMMImpl(const T& x,
                    const mat& y,
                    mat beta,

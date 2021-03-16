@@ -5,19 +5,20 @@
 using namespace arma;
 using namespace Rcpp;
 
-template <typename T>
-vec lambdaMax(const T& x,
-              const mat& y,
-              const rowvec& y_scale,
-              const uword n_targets,
-              const std::string& family,
-              const bool intercept)
+template<typename T>
+vec
+lambdaMax(const T& x,
+          const mat& y,
+          const rowvec& y_scale,
+          const uword n_targets,
+          const std::string& family,
+          const bool intercept)
 {
   const uword p = x.n_cols;
   mat lambda_max(p, n_targets);
 
   if (family == "binomial") {
-    vec y_new = (y + 1.0)/2.0;
+    vec y_new = (y + 1.0) / 2.0;
 
     // standardize
     double y_center = mean(y_new);
@@ -50,7 +51,6 @@ vec lambdaMax(const T& x,
   } else {
 
     lambda_max = x.t() * y;
-
   }
 
   if (intercept)

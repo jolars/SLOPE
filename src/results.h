@@ -5,7 +5,8 @@
 using namespace Rcpp;
 using namespace arma;
 
-struct Results {
+struct Results
+{
   mat beta;
   uword passes;
   std::vector<double> primals;
@@ -21,10 +22,11 @@ struct Results {
           std::vector<double> duals,
           std::vector<double> time,
           double deviance)
-    : beta(beta),
-      passes(passes),
-      primals(primals),
-      duals(duals),
-      time(time),
-      deviance(deviance) {}
+    : beta(beta)
+    , passes(passes)
+    , primals(primals)
+    , duals(duals)
+    , time(time)
+    , deviance(deviance)
+  {}
 };

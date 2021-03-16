@@ -10,39 +10,33 @@
 using namespace Rcpp;
 using namespace arma;
 
-class Gaussian : public Family {
+class Gaussian : public Family
+{
 private:
   double alpha = 1.5;
 
 public:
-  template <typename... Ts>
-  Gaussian(Ts... args) : Family(std::forward<Ts>(args)...) {}
+  template<typename... Ts>
+  Gaussian(Ts... args)
+    : Family(std::forward<Ts>(args)...)
+  {}
 
   double primal(const mat& y, const mat& lin_pred)
   {
-    return 0.5*pow(norm(y - lin_pred), 2);
+    return 0.5 * pow(norm(y - lin_pred), 2);
   }
 
   double dual(const mat& y, const mat& lin_pred)
   {
     using namespace std;
-    return 0.5*pow(norm(y, 2), 2) - 0.5*pow(norm(lin_pred, 2), 2);
+    return 0.5 * pow(norm(y, 2), 2) - 0.5 * pow(norm(lin_pred, 2), 2);
   }
 
-  mat pseudoGradient(const mat& y, const mat& lin_pred)
-  {
-    return lin_pred - y;
-  }
+  mat pseudoGradient(const mat& y, const mat& lin_pred) { return lin_pred - y; }
 
-  rowvec fitNullModel(const mat& y, const uword n_classes)
-  {
-    return mean(y);
-  }
+  rowvec fitNullModel(const mat& y, const uword n_classes) { return mean(y); }
 
-  std::string name()
-  {
-    return "gaussian";
-  }
+  std::string name() { return "gaussian"; }
 
   Results ADMM(const mat& x,
                const mat& y,
@@ -73,7 +67,7 @@ public:
   }
 
   // ADMM
-  template <typename T>
+  template<typename T>
   Results ADMMImpl(const T& x,
                    const mat& y,
                    mat beta,
@@ -112,30 +106,29 @@ public:
     while (passes < max_passes) {
       ++passes;
 
-      q = xTy + rho*(z - u);
+      q = xTy + rho * (z - u);
 
       if (n >= p) {
         beta = solve(trimatu(U), solve(trimatl(L), q));
       } else {
-        beta = q/rho -
-          (x.t() * solve(trimatu(U), solve(trimatl(L), x*q)))/(rho*rho);
+        beta = q / rho - (x.t() * solve(trimatu(U), solve(trimatl(L), x * q))) /
+                           (rho * rho);
       }
 
       z_old = z;
-      beta_hat = alpha*beta + (1 - alpha)*z_old;
+      beta_hat = alpha * beta + (1 - alpha) * z_old;
 
       z = beta_hat + u;
-      z.tail(lambda.n_elem) = prox(z.tail(lambda.n_elem), lambda/rho);
+      z.tail(lambda.n_elem) = prox(z.tail(lambda.n_elem), lambda / rho);
 
       u += (beta_hat - z);
 
       double r_norm = norm(beta - z);
-      double s_norm = norm(rho*(z - z_old));
+      double s_norm = norm(rho * (z - z_old));
 
       double eps_primal =
-        std::sqrt(p)*tol_abs + tol_rel*std::max(norm(beta), norm(z));
-      double eps_dual =
-        std::sqrt(p)*tol_abs + tol_rel*norm(rho*u);
+        std::sqrt(p) * tol_abs + tol_rel * std::max(norm(beta), norm(z));
+      double eps_dual = std::sqrt(p) * tol_abs + tol_rel * norm(rho * u);
 
       if (diagnostics) {
         primals.push_back(r_norm);
@@ -144,10 +137,8 @@ public:
       }
 
       if (verbosity >= 3) {
-        Rcout << "pass: "              << passes
-              << ", primal residual: " << r_norm
-              << ", dual residual: "   << s_norm
-              << std::endl;
+        Rcout << "pass: " << passes << ", primal residual: " << r_norm
+              << ", dual residual: " << s_norm << std::endl;
       }
 
       if (r_norm < eps_primal && s_norm < eps_dual)
@@ -156,17 +147,10 @@ public:
       checkUserInterrupt();
     }
 
-    double deviance = 2*primal(y, x*z);
+    double deviance = 2 * primal(y, x * z);
 
-    Results res{z,
-                passes,
-                primals,
-                duals,
-                time,
-                deviance};
+    Results res{ z, passes, primals, duals, time, deviance };
 
     return res;
   }
 };
-
-

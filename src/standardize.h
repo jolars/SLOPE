@@ -5,12 +5,13 @@
 using namespace Rcpp;
 using namespace arma;
 
-void standardize(mat& x,
-                 rowvec& x_center,
-                 rowvec& x_scale,
-                 bool intercept,
-                 bool center,
-                 std::string scale)
+void
+standardize(mat& x,
+            rowvec& x_center,
+            rowvec& x_scale,
+            bool intercept,
+            bool center,
+            std::string scale)
 {
   const uword p = x.n_cols;
 
@@ -39,12 +40,13 @@ void standardize(mat& x,
   }
 }
 
-void standardize(sp_mat& x,
-                 rowvec& x_center,
-                 rowvec& x_scale,
-                 bool intercept,
-                 bool center,
-                 std::string scale)
+void
+standardize(sp_mat& x,
+            rowvec& x_center,
+            rowvec& x_scale,
+            bool intercept,
+            bool center,
+            std::string scale)
 {
   const uword p = x.n_cols;
   const uword n = x.n_rows;
@@ -55,8 +57,8 @@ void standardize(sp_mat& x,
     } else if (scale == "l2") {
       x_scale(j) = norm(x.col(j), 2);
     } else if (scale == "sd") {
-      double xbar = accu(x.col(j))/n;
-      x_scale(j) = norm(x.col(j) - xbar)/std::sqrt(n);
+      double xbar = accu(x.col(j)) / n;
+      x_scale(j) = norm(x.col(j) - xbar) / std::sqrt(n);
     } else if (scale == "max") {
       x_scale(j) = x.col(j).max();
     }
