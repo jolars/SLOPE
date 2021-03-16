@@ -53,6 +53,8 @@
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -74,9 +76,15 @@
 </script>
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -90,19 +98,13 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SLOPE</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -141,7 +143,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/jolars/SLOPE/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -164,11 +166,11 @@
     </div>
 
     <div class="ref-description">
-    <p>This function returns coefficients from a model fit by <code>SLOPE()</code>.</p>
+    <p>This function returns coefficients from a model fit by <code><a href='SLOPE.html'>SLOPE()</a></code>.</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for SLOPE</span>
-<span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='kw'>object</span>, alpha = <span class='kw'>NULL</span>, exact = <span class='fl'>FALSE</span>, simplify = <span class='fl'>TRUE</span>, <span class='kw'>sigma</span>, <span class='kw'>...</span>)</pre>
+<span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span><span class='op'>(</span><span class='va'>object</span>, alpha <span class='op'>=</span> <span class='cn'>NULL</span>, exact <span class='op'>=</span> <span class='cn'>FALSE</span>, simplify <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>sigma</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -202,7 +204,7 @@ the coefficients to drop extraneous dimensions</p></td>
     <tr>
       <th>...</th>
       <td><p>arguments that are passed on to <code><a href='https://rdrr.io/r/stats/update.html'>stats::update()</a></code> (and therefore
-also to <code>SLOPE()</code>) if <code>exact = TRUE</code> and the given penalty
+also to <code><a href='SLOPE.html'>SLOPE()</a></code>) if <code>exact = TRUE</code> and the given penalty
 is not in <code>object</code></p></td>
     </tr>
     </table>
@@ -216,20 +218,21 @@ is not in <code>object</code></p></td>
 then the returned coefficients will be approximated by linear interpolation.
 If coefficients from another type of penalty sequence
 (with a different <code>lambda</code>) are required, however,
-please use <code>SLOPE()</code> to refit the model.</p>
+please use <code><a href='SLOPE.html'>SLOPE()</a></code> to refit the model.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code>predict.SLOPE()</code>, <code>SLOPE()</code></p>
+    <div class='dont-index'><p><code><a href='predict.SLOPE.html'>predict.SLOPE()</a></code>, <code><a href='SLOPE.html'>SLOPE()</a></code></p>
 <p>Other SLOPE-methods: 
-<code>deviance.SLOPE()</code>,
-<code>plot.SLOPE()</code>,
-<code>predict.SLOPE()</code>,
-<code>print.SLOPE()</code>,
-<code>score()</code></p></div>
+<code><a href='deviance.SLOPE.html'>deviance.SLOPE</a>()</code>,
+<code><a href='plot.SLOPE.html'>plot.SLOPE</a>()</code>,
+<code><a href='predict.SLOPE.html'>predict.SLOPE</a>()</code>,
+<code><a href='print.SLOPE.html'>print.SLOPE</a>()</code>,
+<code><a href='score.html'>score</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>fit</span> <span class='op'>&lt;-</span> <span class='fu'>SLOPE</span>(<span class='kw'>mtcars</span><span class='op'>$</span><span class='kw'>mpg</span>, <span class='kw'>mtcars</span><span class='op'>$</span><span class='kw'>vs</span>, path_length = <span class='fl'>1</span>)
-<span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='kw'>fit</span>)</div><div class='output co'>#&gt; (Intercept)          V1 
+    <pre class="examples"><div class='input'><span class='va'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='SLOPE.html'>SLOPE</a></span><span class='op'>(</span><span class='va'>mtcars</span><span class='op'>$</span><span class='va'>mpg</span>, <span class='va'>mtcars</span><span class='op'>$</span><span class='va'>vs</span>, path_length <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span><span class='op'>(</span><span class='va'>fit</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; (Intercept)          V1 
 #&gt; -0.67805384  0.05552609 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -242,11 +245,11 @@ please use <code>SLOPE()</code> to refit the model.</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Johan Larsson, Jonas Wallin, Malgorzata Bogdan, Ewout van den Berg, Chiara Sabatti, Emmanuel Candes, Evan Patterson, Weijie Su.</p>
+  <p><p>Developed by Johan Larsson, Jonas Wallin, Malgorzata Bogdan, Ewout van den Berg, Chiara Sabatti, Emmanuel Candes, Evan Patterson, Weijie Su.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p></p>
 </div>
 
       </footer>
@@ -254,6 +257,8 @@ please use <code>SLOPE()</code> to refit the model.</p>
 
   
 
+
+  
 
   </body>
 </html>

@@ -52,6 +52,8 @@
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -73,9 +75,15 @@
 </script>
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-news">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -89,19 +97,13 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SLOPE</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -140,7 +142,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/jolars/SLOPE/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -161,6 +163,19 @@
       <small>Source: <a href='https://github.com/jolars/SLOPE/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="slope-033" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.3">
+<a href="#slope-033" class="anchor"></a>SLOPE 0.3.3<small> Unreleased </small>
+</h1>
+<div id="bug-fixes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bug-fixes" class="anchor"></a>Bug fixes</h2>
+<ul>
+<li>Fixed first coefficient missing from plot if no intercept was used in the call to <code><a href="../reference/SLOPE.html">SLOPE()</a></code>.</li>
+<li>Fixed incorrect results when <code>intercept = FALSE</code> and <code>family = "gaussian"</code> (<a href='https://github.com/jolars/SLOPE/issues/13'>#13</a>, thanks, Patrick Tardivel).</li>
+</ul>
+</div>
+</div>
     <div id="slope-032" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.2">
 <a href="#slope-032" class="anchor"></a>SLOPE 0.3.2<small> 2020-07-10 </small>
@@ -169,12 +184,12 @@
 <h2 class="hasAnchor">
 <a href="#minor-changes" class="anchor"></a>Minor changes</h2>
 <ul>
-<li>Added <code>tol_rel_coef_change</code> argument to <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code> as a convergence criterion for the FISTA solver that sets a tolerance for the relative change in coefficients across iterations.</li>
+<li>Added <code>tol_rel_coef_change</code> argument to <code><a href="../reference/SLOPE.html">SLOPE()</a></code> as a convergence criterion for the FISTA solver that sets a tolerance for the relative change in coefficients across iterations.</li>
 </ul>
 </div>
-<div id="bug-fixes" class="section level2">
+<div id="bug-fixes-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#bug-fixes" class="anchor"></a>Bug fixes</h2>
+<a href="#bug-fixes-1" class="anchor"></a>Bug fixes</h2>
 <ul>
 <li>Fixed premature stopping of the solver for the first step of the regularization path (the null model).</li>
 <li>Actually fix UBSAN/ASAN sanitizer warnings by modifying code for FISTA solver.</li>
@@ -185,9 +200,9 @@
 <h1 class="page-header" data-toc-text="0.3.1">
 <a href="#slope-031" class="anchor"></a>SLOPE 0.3.1<small> Unreleased </small>
 </h1>
-<div id="bug-fixes-1" class="section level2">
+<div id="bug-fixes-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#bug-fixes-1" class="anchor"></a>Bug fixes</h2>
+<a href="#bug-fixes-2" class="anchor"></a>Bug fixes</h2>
 <ul>
 <li>Fixed package build breaking on solaris because of missing STL namespace specifier for <code>std::sqrt()</code> in <code>src/SLOPE.cpp</code>.</li>
 <li>Fixed erroneous scaling of absolute tolerance in stopping criteria for the ADMM solvers. Thanks, <a href='https://github.com/straw-boy'>@straw-boy</a>.</li>
@@ -204,12 +219,12 @@
 <a href="#major-changes" class="anchor"></a>Major changes</h2>
 <ul>
 <li>Scaling of <code>alpha</code> (previously <code>sigma</code>) is now invariant to the number of observations, which is achieved by scaling the penalty part of the objective by the square root of the number of observations if <code>scale = "l2"</code> and the number of observations if <code>scale = "sd"</code> or <code>"none"</code>. No scaling is applied when <code>scale = "l1"</code>.</li>
-<li>The <code>sigma</code> argument is deprecated in favor of <code>alpha</code> in <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code>, <code><a href="https://jolars.github.io/SLOPE//reference/coef.SLOPE.html">coef.SLOPE()</a></code>, and <code><a href="https://jolars.github.io/SLOPE//reference/predict.SLOPE.html">predict.SLOPE()</a></code>.</li>
-<li>The <code>n_sigma</code> argument is deprecated in favor of <code>path_length</code> in <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code>
+<li>The <code>sigma</code> argument is deprecated in favor of <code>alpha</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>, <code><a href="../reference/coef.SLOPE.html">coef.SLOPE()</a></code>, and <code><a href="../reference/predict.SLOPE.html">predict.SLOPE()</a></code>.</li>
+<li>The <code>n_sigma</code> argument is deprecated in favor of <code>path_length</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>
 </li>
-<li>The <code>lambda_min_ratio</code> argument is deprecated in favor of <code>alpha_min_ratio</code> in <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code>
+<li>The <code>lambda_min_ratio</code> argument is deprecated in favor of <code>alpha_min_ratio</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>
 </li>
-<li>The default for argument <code>lambda</code> in <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code> has changed from <code>"gaussian"</code> to <code>"bh"</code>.</li>
+<li>The default for argument <code>lambda</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> has changed from <code>"gaussian"</code> to <code>"bh"</code>.</li>
 <li>Functions and arguments deprecated in 0.2.0 are now defunct and have been removed from the package.</li>
 <li>
 <code>scale = "sd"</code> now scales with the population standard deviation rather than the sample standard deviation, i.e. the scaling factor now used is the number of observations (and not the number of observations minus one as before).</li>
@@ -221,14 +236,14 @@
 <ul>
 <li>Default <code>path_length</code> has changed from 100 to 20.</li>
 <li>
-<code><a href="https://jolars.github.io/SLOPE//reference/plot.SLOPE.html">plot.SLOPE()</a></code> has gained an argument <code>x_variable</code> that controls what is plotted on the x axis.</li>
+<code><a href="../reference/plot.SLOPE.html">plot.SLOPE()</a></code> has gained an argument <code>x_variable</code> that controls what is plotted on the x axis.</li>
 <li>A warning is now thrown if the maximum number of passes was reached anywhere along the path (and prints where as well).</li>
 <li>If the <code>max_variables</code> criterion is hit, the solution path returned will now include also the last solution (which was not the case before). Thanks, <a href='https://github.com/straw-boy'>@straw-boy</a>.</li>
 </ul>
 </div>
-<div id="bug-fixes-2" class="section level2">
+<div id="bug-fixes-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#bug-fixes-2" class="anchor"></a>Bug fixes</h2>
+<a href="#bug-fixes-3" class="anchor"></a>Bug fixes</h2>
 <ul>
 <li>Plotting models that are completely sparse no longer throws an error.</li>
 <li>
@@ -244,7 +259,7 @@
 <h2 class="hasAnchor">
 <a href="#minor-changes-2" class="anchor"></a>Minor changes</h2>
 <ul>
-<li>A few examples in <code><a href="https://rdrr.io/r/stats/deviance.html">deviance()</a></code> and <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code> that were taking too long to execute have been removed or modified.</li>
+<li>A few examples in <code><a href="https://rdrr.io/r/stats/deviance.html" class="external-link">deviance()</a></code> and <code><a href="../reference/SLOPE.html">SLOPE()</a></code> that were taking too long to execute have been removed or modified.</li>
 </ul>
 </div>
 </div>
@@ -259,27 +274,27 @@
 <ul>
 <li>
 <code>SLOPE_solver()</code>, <code>SLOPE_solver_matlab()</code>, <code>prox_sorted_L1()</code>, and <code>create_lambda()</code> have been deprecated (and will be defunct in the next version of SLOPE)</li>
-<li>arguments <code>X</code>, <code>fdr</code>, and <code>normalize</code> have been deprecated in <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code> and replaced by <code>x</code>, <code>q</code>, <code>scale</code> and <code>center</code>, respectively</li>
-<li>options <code>"default"</code> and <code>"matlab"</code> to argument <code>solver</code> in <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code> have been deprecated and replaced with <code>"fista"</code> and <code>"admm"</code>, which uses the accelerated proximal gradient method FISTA and alternating direction of multipliers method (ADMM) respectively</li>
+<li>arguments <code>X</code>, <code>fdr</code>, and <code>normalize</code> have been deprecated in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> and replaced by <code>x</code>, <code>q</code>, <code>scale</code> and <code>center</code>, respectively</li>
+<li>options <code>"default"</code> and <code>"matlab"</code> to argument <code>solver</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> have been deprecated and replaced with <code>"fista"</code> and <code>"admm"</code>, which uses the accelerated proximal gradient method FISTA and alternating direction of multipliers method (ADMM) respectively</li>
 <li>ADMM has been implemented as a solver for <code>family = "gaussian"</code>
 </li>
-<li>binomial, poisson, and multinomial families are now supported (using <code>family</code> argument in <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code>)</li>
+<li>binomial, poisson, and multinomial families are now supported (using <code>family</code> argument in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>)</li>
 <li>input to <code>lambda</code> is now scaled (divided by) the number of observations (rows) in <code>x</code>
 </li>
-<li>predictor screening rules have been implemented and are activated by calling <code>screen = TRUE</code> in <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code>. The type of algorithm can also be set via <code>screen_alg</code>.</li>
+<li>predictor screening rules have been implemented and are activated by calling <code>screen = TRUE</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>. The type of algorithm can also be set via <code>screen_alg</code>.</li>
 <li>
-<code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code> now returns an object of class <code>"SLOPE"</code> (and an additional class depending on input to <code>family</code> in <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code>
+<code><a href="../reference/SLOPE.html">SLOPE()</a></code> now returns an object of class <code>"SLOPE"</code> (and an additional class depending on input to <code>family</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>
 </li>
 <li>
-<code>SLOPE</code> objects gain <code><a href="https://rdrr.io/r/stats/coef.html">coef()</a></code> and <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code> methods.</li>
+<code>SLOPE</code> objects gain <code><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef()</a></code> and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> methods.</li>
 <li>
 <code>SLOPE</code> now uses screening rules to speed up model fitting in the high-dimensional regime</li>
 <li>most of the code is now written in C++ using the <strong>Rcpp</strong> and <strong>RcppArmadillo</strong> packages</li>
-<li>a new function <code><a href="https://jolars.github.io/SLOPE//reference/trainSLOPE.html">trainSLOPE()</a></code> trains SLOPE with repeated k-folds cross-validation</li>
-<li>a new function <code><a href="https://jolars.github.io/SLOPE//reference/caretSLOPE.html">caretSLOPE()</a></code> enables model-tuning using the <strong>caret</strong> package</li>
+<li>a new function <code><a href="../reference/trainSLOPE.html">trainSLOPE()</a></code> trains SLOPE with repeated k-folds cross-validation</li>
+<li>a new function <code><a href="../reference/caretSLOPE.html">caretSLOPE()</a></code> enables model-tuning using the <strong>caret</strong> package</li>
 <li>
-<code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code> now fits an entire path of regularization sequences by default</li>
-<li>the <code>normalize</code> option to <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code> has been replaced by <code>scale</code> and <code>center</code>, which allows granular options for standardization</li>
+<code><a href="../reference/SLOPE.html">SLOPE()</a></code> now fits an entire path of regularization sequences by default</li>
+<li>the <code>normalize</code> option to <code><a href="../reference/SLOPE.html">SLOPE()</a></code> has been replaced by <code>scale</code> and <code>center</code>, which allows granular options for standardization</li>
 <li>sparse matrices (from the <strong>Matrix</strong> package) can now be used as input</li>
 <li>there are now five datasets included in the package</li>
 <li>the introductory vignette has been replaced</li>
@@ -289,9 +304,9 @@
 <h2 class="hasAnchor">
 <a href="#minor-changes-3" class="anchor"></a>Minor changes</h2>
 <ul>
-<li>a new function <code><a href="https://rdrr.io/r/stats/deviance.html">deviance()</a></code> returns the deviance from the fit</li>
-<li>a new function <code><a href="https://jolars.github.io/SLOPE//reference/score.html">score()</a></code> can be used to assess model performance against new data</li>
-<li>a new function <code><a href="https://jolars.github.io/SLOPE//reference/plotDiagnostics.html">plotDiagnostics()</a></code> has been included to visualize data from the solver (if <code>diagnostics = TRUE</code> in the call to <code><a href="https://jolars.github.io/SLOPE//reference/SLOPE.html">SLOPE()</a></code>)</li>
+<li>a new function <code><a href="https://rdrr.io/r/stats/deviance.html" class="external-link">deviance()</a></code> returns the deviance from the fit</li>
+<li>a new function <code><a href="../reference/score.html">score()</a></code> can be used to assess model performance against new data</li>
+<li>a new function <code><a href="../reference/plotDiagnostics.html">plotDiagnostics()</a></code> has been included to visualize data from the solver (if <code>diagnostics = TRUE</code> in the call to <code><a href="../reference/SLOPE.html">SLOPE()</a></code>)</li>
 <li>OSCAR-type penalty sequences can be used by setting <code>lambda = "oscar" in the call to</code>SLOPE()`</li>
 <li>the test suite for the package has been greatly extended</li>
 </ul>
@@ -310,11 +325,11 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Johan Larsson, Jonas Wallin, Malgorzata Bogdan, Ewout van den Berg, Chiara Sabatti, Emmanuel Candes, Evan Patterson, Weijie Su.</p>
+  <p><p>Developed by Johan Larsson, Jonas Wallin, Malgorzata Bogdan, Ewout van den Berg, Chiara Sabatti, Emmanuel Candes, Evan Patterson, Weijie Su.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p></p>
 </div>
 
       </footer>
@@ -322,6 +337,8 @@
 
   
 
+
+  
 
   </body>
 </html>

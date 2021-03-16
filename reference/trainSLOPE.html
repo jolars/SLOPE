@@ -54,6 +54,8 @@ through cross-validation." />
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -75,9 +77,15 @@ through cross-validation." />
 </script>
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -91,19 +99,13 @@ through cross-validation." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SLOPE</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -142,7 +144,7 @@ through cross-validation." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/jolars/SLOPE/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -165,19 +167,19 @@ through cross-validation." />
     </div>
 
     <div class="ref-description">
-    <p>This function trains a model fit by <code>SLOPE()</code> by tuning its parameters
+    <p>This function trains a model fit by <code><a href='SLOPE.html'>SLOPE()</a></code> by tuning its parameters
 through cross-validation.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>trainSLOPE</span>(
-  <span class='kw'>x</span>,
-  <span class='kw'>y</span>,
-  q = <span class='fl'>0.2</span>,
-  number = <span class='fl'>10</span>,
-  repeats = <span class='fl'>1</span>,
-  measure = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"mse"</span>, <span class='st'>"mae"</span>, <span class='st'>"deviance"</span>, <span class='st'>"missclass"</span>, <span class='st'>"auc"</span>),
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>trainSLOPE</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  <span class='va'>y</span>,
+  q <span class='op'>=</span> <span class='fl'>0.2</span>,
+  number <span class='op'>=</span> <span class='fl'>10</span>,
+  repeats <span class='op'>=</span> <span class='fl'>1</span>,
+  measure <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"mse"</span>, <span class='st'>"mae"</span>, <span class='st'>"deviance"</span>, <span class='st'>"missclass"</span>, <span class='st'>"auc"</span><span class='op'>)</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -217,7 +219,7 @@ all the possible measures for the given model will be used.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>other arguments to pass on to <code>SLOPE()</code></p></td>
+      <td><p>other arguments to pass on to <code><a href='SLOPE.html'>SLOPE()</a></code></p></td>
     </tr>
     </table>
 
@@ -239,7 +241,7 @@ for the given model family against those provided in the argument
 <code>measure</code>. Collecting these measures is not particularly demanding
 computationally so it is almost always best to leave this argument
 as it is and then choose which argument to focus on in the call
-to <code>plot.TrainedSLOPE()</code>.</p>
+to <code><a href='plot.TrainedSLOPE.html'>plot.TrainedSLOPE()</a></code>.</p>
     <h2 class="hasAnchor" id="parallel-operation"><a class="anchor" href="#parallel-operation"></a>Parallel operation</h2>
 
     
@@ -250,18 +252,19 @@ using, for instance, <code>doParallel::registerDoParallel()</code> from the
 <strong>doParallel</strong> package before running this function.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/foreach/man/foreach.html'>foreach::foreach()</a></code>, <code>plot.TrainedSLOPE()</code></p>
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/foreach/man/foreach.html'>foreach::foreach()</a></code>, <code><a href='plot.TrainedSLOPE.html'>plot.TrainedSLOPE()</a></code></p>
 <p>Other model-tuning: 
-<code>caretSLOPE()</code>,
-<code>plot.TrainedSLOPE()</code></p></div>
+<code><a href='caretSLOPE.html'>caretSLOPE</a>()</code>,
+<code><a href='plot.TrainedSLOPE.html'>plot.TrainedSLOPE</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># 8-fold cross-validation repeated 5 times</span>
-<span class='kw'>tune</span> <span class='op'>&lt;-</span> <span class='fu'>trainSLOPE</span>(<span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span>(<span class='kw'>mtcars</span>, select = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"mpg"</span>, <span class='st'>"drat"</span>, <span class='st'>"wt"</span>)),
-                   <span class='kw'>mtcars</span><span class='op'>$</span><span class='kw'>hp</span>,
-                   q = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.1</span>, <span class='fl'>0.2</span>),
-                   number = <span class='fl'>8</span>,
-                   repeats = <span class='fl'>5</span>)</div></pre>
+<span class='va'>tune</span> <span class='op'>&lt;-</span> <span class='fu'>trainSLOPE</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>mtcars</span>, select <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"mpg"</span>, <span class='st'>"drat"</span>, <span class='st'>"wt"</span><span class='op'>)</span><span class='op'>)</span>,
+                   <span class='va'>mtcars</span><span class='op'>$</span><span class='va'>hp</span>,
+                   q <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.1</span>, <span class='fl'>0.2</span><span class='op'>)</span>,
+                   number <span class='op'>=</span> <span class='fl'>8</span>,
+                   repeats <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -273,11 +276,11 @@ using, for instance, <code>doParallel::registerDoParallel()</code> from the
 
       <footer>
       <div class="copyright">
-  <p>Developed by Johan Larsson, Jonas Wallin, Malgorzata Bogdan, Ewout van den Berg, Chiara Sabatti, Emmanuel Candes, Evan Patterson, Weijie Su.</p>
+  <p><p>Developed by Johan Larsson, Jonas Wallin, Malgorzata Bogdan, Ewout van den Berg, Chiara Sabatti, Emmanuel Candes, Evan Patterson, Weijie Su.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p></p>
 </div>
 
       </footer>
@@ -285,6 +288,8 @@ using, for instance, <code>doParallel::registerDoParallel()</code> from the
 
   
 
+
+  
 
   </body>
 </html>
