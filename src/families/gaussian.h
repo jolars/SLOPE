@@ -23,13 +23,13 @@ public:
 
   double primal(const mat& y, const mat& lin_pred)
   {
-    return 0.5 * pow(norm(y - lin_pred), 2);
+    return 0.5 * std::pow(norm(y - lin_pred), 2);
   }
 
   double dual(const mat& y, const mat& lin_pred)
   {
     using namespace std;
-    return 0.5 * pow(norm(y, 2), 2) - 0.5 * pow(norm(lin_pred, 2), 2);
+    return 0.5 * std::pow(norm(y, 2), 2) - 0.5 * std::pow(norm(lin_pred, 2), 2);
   }
 
   mat pseudoGradient(const mat& y, const mat& lin_pred) { return lin_pred - y; }
