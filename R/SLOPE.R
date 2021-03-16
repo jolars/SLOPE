@@ -437,7 +437,7 @@ SLOPE <- function(x,
   if (is_sparse && center)
     stop("centering would destroy sparsity in `x` (predictor matrix)")
 
-  res <- preprocessResponse(family, y)
+  res <- preprocessResponse(family, y, fit_intercept)
   y <- as.matrix(res$y)
   y_center <- res$y_center
   y_scale <- res$y_scale

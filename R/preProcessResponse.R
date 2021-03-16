@@ -1,4 +1,4 @@
-preprocessResponse <- function(family, y) {
+preprocessResponse <- function(family, y, fit_intercept) {
   switch(
     family,
     gaussian = {
@@ -7,10 +7,14 @@ preprocessResponse <- function(family, y) {
       if (NCOL(y) > 1)
         stop("response for Gaussian regression must be one-dimensional.")
 
-      y_center <- mean(y)
-      y_scale  <- 1
+      if (fit_intercept) {
+        y_center <- mean(y)
+        y <- as.matrix(y - y_center)
+      } else {
+        y_center <- 0
+      }
 
-      y <- as.matrix(y - y_center)
+      y_scale  <- 1
 
       list(y = y,
            y_center = y_center,
