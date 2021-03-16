@@ -52,7 +52,7 @@ test_that("diagonal X, known solution", {
     scale = "none",
     lambda = lambda / n,
     alpha = 1,
-    verbosity = 3
+    verbosity = 0
   )
 
   beta <- coef(res)
