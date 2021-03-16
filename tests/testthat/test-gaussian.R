@@ -34,3 +34,28 @@ test_that("wide and tall inputs work correctly", {
     expect_silent(SLOPE(xy$x, xy$y, path_length = 5))
   }
 })
+
+
+test_that("diagonal X, known solution", {
+  n <- p <- 4
+
+  x <- diag(n)
+  y <- c(8, 6, 4, 2)
+  lambda <- c(4, 3, 2, 1)
+
+  res <- SLOPE(
+    x,
+    y,
+    family = "gaussian",
+    intercept = FALSE,
+    center = FALSE,
+    scale = "none",
+    lambda = lambda / n,
+    alpha = 1,
+    verbosity = 3
+  )
+
+  beta <- coef(res)
+
+  expect_equal(beta, c(4, 3, 2, 1), check.attributes = FALSE)
+})
