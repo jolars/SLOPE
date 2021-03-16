@@ -4,6 +4,8 @@
 
 * Fixed first coefficient missing from plot if no intercept was used in
   the call to `SLOPE()`.
+* Fixed incorrect results when `intercept = FALSE` and `family = "gaussian"`
+  (#13, thanks, Patrick Tardivel).
 
 # SLOPE 0.3.2
 
@@ -34,17 +36,17 @@
 
 ## Major changes
 
-* Scaling of `alpha` (previously `sigma`) is now invariant to the 
+* Scaling of `alpha` (previously `sigma`) is now invariant to the
   number of observations, which is achieved by scaling
   the penalty part of the objective by the square root of the number of
-  observations if `scale = "l2"` and the number of observations if 
+  observations if `scale = "l2"` and the number of observations if
   `scale = "sd"` or `"none"`. No scaling is applied when `scale = "l1"`.
-* The `sigma` argument is deprecated in favor of `alpha` in `SLOPE()`, 
+* The `sigma` argument is deprecated in favor of `alpha` in `SLOPE()`,
   `coef.SLOPE()`, and `predict.SLOPE()`.
 * The `n_sigma` argument is deprecated in favor of `path_length` in `SLOPE()`
 * The `lambda_min_ratio` argument is deprecated in favor of `alpha_min_ratio` in
   `SLOPE()`
-* The default for argument `lambda` in `SLOPE()` has changed from `"gaussian"` 
+* The default for argument `lambda` in `SLOPE()` has changed from `"gaussian"`
   to `"bh"`.
 * Functions and arguments deprecated in 0.2.0 are now defunct and have
   been removed from the package.
@@ -63,7 +65,7 @@
 * If the `max_variables` criterion is hit, the solution path returned
   will now include also the last solution (which was not the case
   before). Thanks, @straw-boy.
-  
+
 ## Bug fixes
 
 * Plotting models that are completely sparse no longer throws an error.
@@ -111,7 +113,7 @@ means there are several changes to the API, including deprecated functions.
   high-dimensional regime
 * most of the code is now written in C++ using the **Rcpp** and **RcppArmadillo**
   packages
-* a new function `trainSLOPE()` trains SLOPE with repeated k-folds 
+* a new function `trainSLOPE()` trains SLOPE with repeated k-folds
   cross-validation
 * a new function `caretSLOPE()` enables model-tuning using the
   **caret** package
