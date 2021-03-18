@@ -28,6 +28,7 @@ coef.SLOPE <- function(object,
                        exact = FALSE,
                        simplify = TRUE,
                        sigma,
+                       only_nonzeros = TRUE,
                        ...) {
 
   if (!missing(sigma)) {
@@ -59,6 +60,9 @@ coef.SLOPE <- function(object,
 
   if (simplify)
     beta <- drop(beta)
+
+  if(only_nonzeros)
+    beta = apply(beta, 1, function(vec) vec[which(vec != 0, arr.ind = TRUE)])
 
   beta
 }
