@@ -1,4 +1,4 @@
-#' Obtain coefficients
+  #' Obtain coefficients
 #'
 #' This function returns coefficients from a model fit by [SLOPE()].
 #'
@@ -28,6 +28,7 @@ coef.SLOPE <- function(object,
                        exact = FALSE,
                        simplify = TRUE,
                        sigma,
+                       only_nonzeros = FALSE,
                        ...) {
 
   if (!missing(sigma)) {
@@ -59,6 +60,10 @@ coef.SLOPE <- function(object,
 
   if (simplify)
     beta <- drop(beta)
+  
+  if(only_nonzeros)
+    beta = beta[which(beta != 0, arr.ind = TRUE)]
 
   beta
+  
 }
