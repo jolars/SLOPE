@@ -4,7 +4,15 @@
 \alias{coef.SLOPE}
 \title{Obtain coefficients}
 \usage{
-\method{coef}{SLOPE}(object, alpha = NULL, exact = FALSE, simplify = TRUE, sigma, ...)
+\method{coef}{SLOPE}(
+  object,
+  alpha = NULL,
+  exact = FALSE,
+  simplify = TRUE,
+  sigma,
+  only_nonzeros = FALSE,
+  ...
+)
 }
 \arguments{
 \item{object}{an object of class \code{'SLOPE'}.}

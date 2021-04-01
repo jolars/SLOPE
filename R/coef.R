@@ -61,9 +61,12 @@ coef.SLOPE <- function(object,
   if (simplify)
     beta <- drop(beta)
   
-  if(only_nonzeros)
-    beta = beta[which(beta != 0, arr.ind = TRUE)]
-
-  beta
-  
+  if(only_nonzeros != FALSE){
+    if(!is.null(dim(beta)))
+      beta = apply(beta, 2, function(input) input[which(input != 0, arr.ind = TRUE)])
+    else
+      beta = beta[which(beta!=0,arr.ind = TRUE)]
+  }
+    beta
 }
+
