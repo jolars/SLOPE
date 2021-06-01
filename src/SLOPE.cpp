@@ -63,6 +63,8 @@ cppSLOPE(T& x, mat& y, const List control)
   auto alpha_type = as<std::string>(control["alpha_type"]);
   auto alpha_min_ratio = as<double>(control["alpha_min_ratio"]);
   auto q = as<double>(control["q"]);
+  auto theta1 = as<double>(control["theta1"]);
+  auto theta2 = as<double>(control["theta2"]);
   const uword path_length = alpha.n_elem;
   double alpha_max = 0;
 
@@ -78,6 +80,8 @@ cppSLOPE(T& x, mat& y, const List control)
                      scale,
                      alpha_min_ratio,
                      q,
+                     theta1,
+                     theta2,
                      family_choice,
                      intercept);
 

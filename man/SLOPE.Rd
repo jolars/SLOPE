@@ -16,6 +16,8 @@ SLOPE(
   alpha_min_ratio = if (NROW(x) < NCOL(x)) 0.01 else 1e-04,
   path_length = if (alpha[1] == "estimate") 1 else 20,
   q = 0.1 * min(1, NROW(x)/NCOL(x)),
+  theta1 = 1,
+  theta2 = 0.5,
   screen = TRUE,
   screen_alg = c("strong", "previous"),
   tol_dev_change = 1e-05,
@@ -93,6 +95,16 @@ given by \code{tol_dev_change}, \code{tol_dev_ratio}, and \code{max_variables}.}
 \item{q}{parameter controlling the shape of the lambda sequence, with
 usage varying depending on the type of path used and has no effect
 is a custom \code{lambda} sequence is used.}
+
+\item{theta1}{parameter controlling the shape of the lambda sequence
+when \code{lambda == "OSCAR"}. This parameter basically sets the intercept
+for the lambda sequence and is equivalent to \eqn{\lambda_1} in the
+original OSCAR formulation.}
+
+\item{theta2}{parameter controlling the shape of the lambda sequence
+when \code{lambda == "OSCAR"}. This parameter basically sets the slope
+for the lambda sequence and is equivalent to \eqn{\lambda_2} in the
+original OSCAR formulation.}
 
 \item{screen}{whether to use predictor screening rules (rules that allow
 some predictors to be discarded prior to fitting), which improve speed
@@ -338,12 +350,14 @@ usually not what you would want.
 
 \strong{OSCAR}
 
-This sequence comes from Bondell and Reich and is a linearly non-increasing
-sequence such that
+This sequence comes from Bondell and Reich and is a linear non-increasing
+sequence, such that
 \deqn{
-  \lambda_i = q(p - i) + 1.
+  \lambda_i = \theta_1 + (p - i)\theta_2.
 }
-for \eqn{i = 1,\dots,p}.
+for \eqn{i = 1,\dots,p}. We use the parametrization from Zhong and Kwok
+(2021) but use \eqn{\theta_1} and \eqn{\theta_2} instead of \eqn{\lambda_1}
+and \eqn{\lambda_2} to avoid confusion and abuse of notation.
 }
 
 \section{Solvers}{
@@ -360,25 +374,29 @@ families but ADMM is currently only available for \code{family = "gaussian"}.
 fit <- SLOPE(bodyfat$x, bodyfat$y)
 
 # Poisson response, OSCAR-type lambda sequence
-fit <- SLOPE(abalone$x,
-             abalone$y,
-             family = "poisson",
-             lambda = "oscar",
-             q = 0.4)
+fit <- SLOPE(
+  abalone$x,
+  abalone$y,
+  family = "poisson",
+  lambda = "oscar",
+  theta1 = 1,
+  theta2 = 0.9
+)
 
 # Multinomial response, custom alpha and lambda
 m <- length(unique(wine$y)) - 1
 p <- ncol(wine$x)
 
 alpha <- 0.005
-lambda <- exp(seq(log(2), log(1.8), length.out = p*m))
+lambda <- exp(seq(log(2), log(1.8), length.out = p * m))
 
-fit <- SLOPE(wine$x,
-             wine$y,
-             family = "multinomial",
-             lambda = lambda,
-             alpha = alpha)
-
+fit <- SLOPE(
+  wine$x,
+  wine$y,
+  family = "multinomial",
+  lambda = lambda,
+  alpha = alpha
+)
 }
 \references{
 Bogdan, M., van den Berg, E., Sabatti, C., Su, W., & Candès, E. J. (2015).

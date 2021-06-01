@@ -20,6 +20,8 @@ regularizationPath(vec& alpha,
                    const std::string scale,
                    const double alpha_min_ratio,
                    const double q,
+                   const double theta1,
+                   const double theta2,
                    const std::string family,
                    const bool intercept)
 {
@@ -48,7 +50,7 @@ regularizationPath(vec& alpha,
     }
 
   } else if (lambda_type == "oscar") {
-    lambda = q * (regspace(n_lambda, 1) - 1) + 1;
+    lambda = theta1 + theta2 * (n_lambda - regspace(1, n_lambda));
   }
 
   vec lambda_max = lambdaMax(x, y, y_scale, m, family, intercept);
