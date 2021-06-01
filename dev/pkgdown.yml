@@ -3,7 +3,7 @@ pkgdown: 1.6.1.9001
 pkgdown_sha: b7b462438bc6252d40e9e5f223b0c56bf938f6d7
 articles:
   introduction: introduction.html
-last_built: 2021-06-01T18:25Z
+last_built: 2021-06-01T19:26Z
 urls:
   reference: https://jolars.github.io/SLOPE/reference
   article: https://jolars.github.io/SLOPE/articles
