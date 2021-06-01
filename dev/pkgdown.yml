@@ -1,9 +1,9 @@
 pandoc: 2.7.3
-pkgdown: 1.6.1.9000
-pkgdown_sha: ae4332d48aedc46be2b532b26661a9bc6b7244fc
+pkgdown: 1.6.1.9001
+pkgdown_sha: b7b462438bc6252d40e9e5f223b0c56bf938f6d7
 articles:
   introduction: introduction.html
-last_built: 2021-03-16T13:55Z
+last_built: 2021-06-01T18:25Z
 urls:
   reference: https://jolars.github.io/SLOPE/reference
   article: https://jolars.github.io/SLOPE/articles

@@ -76,6 +76,7 @@
 </script>
 
 
+
   
 
   
@@ -98,7 +99,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SLOPE</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.3.2.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.3.3.9000</span>
       </span>
     </div>
 
@@ -169,11 +170,11 @@
     <p>Print results from SLOPE fit</p>
     </div>
 
-    <pre class="usage"><span class='co'># S3 method for SLOPE</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='co'># S3 method for SLOPE</span>
 <span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for TrainedSLOPE</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -202,30 +203,31 @@
 <code><a href='score.html'>score</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='SLOPE.html'>SLOPE</a></span><span class='op'>(</span><span class='va'>wine</span><span class='op'>$</span><span class='va'>x</span>, <span class='va'>wine</span><span class='op'>$</span><span class='va'>y</span>, family <span class='op'>=</span> <span class='st'>"multinomial"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>fit</span>, digits <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; 
-#&gt; Call:
-#&gt; SLOPE(x = wine$x, y = wine$y, family = "multinomial")
-#&gt; 
-#&gt; Path summary:
-#&gt;    alpha deviance_ratio n_nonzero
-#&gt; 1  1e-01           0.01         1
-#&gt; 2  8e-02           0.35         4
-#&gt; 3  5e-02           0.56        11
-#&gt; 4  3e-02           0.72        14
-#&gt; 5  2e-02           0.81        15
-#&gt; 6  1e-02           0.87        16
-#&gt; 7  7e-03           0.91        16
-#&gt; 8  5e-03           0.94        17
-#&gt; 9  3e-03           0.96        19
-#&gt; 10 2e-03           0.97        18
-#&gt; 11 1e-03           0.98        18
-#&gt; 12 7e-04           0.99        18
-#&gt; 13 4e-04           0.99        18
-#&gt; 14 2e-04           0.99        19
-#&gt; 15 2e-04           1.00        19</div><div class='input'>
-</div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='va'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='SLOPE.html'>SLOPE</a></span><span class='op'>(</span><span class='va'>wine</span><span class='op'>$</span><span class='va'>x</span>, <span class='va'>wine</span><span class='op'>$</span><span class='va'>y</span>, family <span class='op'>=</span> <span class='st'>"multinomial"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>fit</span>, digits <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Call:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> SLOPE(x = wine$x, y = wine$y, family = "multinomial")</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Path summary:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    alpha deviance_ratio n_nonzero</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1  1e-01           0.01         1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2  8e-02           0.35         4</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3  5e-02           0.56        11</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 4  3e-02           0.72        14</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 5  2e-02           0.81        15</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 6  1e-02           0.87        16</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 7  7e-03           0.91        16</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 8  5e-03           0.94        17</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 9  3e-03           0.96        19</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 10 2e-03           0.97        18</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 11 1e-03           0.98        18</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 12 7e-04           0.99        18</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 13 4e-04           0.99        18</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 14 2e-04           0.99        19</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 15 2e-04           1.00        19</span>
+<span class='r-in'></span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -241,7 +243,7 @@
 </div>
 
 <div class="pkgdown">
-  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p></p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
 </div>
 
       </footer>

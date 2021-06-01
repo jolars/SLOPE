@@ -47,7 +47,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SLOPE</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.3.2.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.3.3.9000</span>
       </span>
     </div>
 
@@ -112,7 +112,7 @@
       <h1 data-toc-skip>An introduction to SLOPE</h1>
                         <h4 data-toc-skip class="author">Johan Larsson</h4>
             
-            <h4 data-toc-skip class="date">2021-03-16</h4>
+            <h4 data-toc-skip class="date">2021-06-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jolars/SLOPE/blob/master/vignettes/introduction.Rmd" class="external-link"><code>vignettes/introduction.Rmd</code></a></small>
       <div class="hidden name"><code>introduction.Rmd</code></div>
@@ -123,7 +123,7 @@
     
 <div id="background" class="section level2">
 <h2 class="hasAnchor">
-<a href="#background" class="anchor"></a>Background</h2>
+<a href="#background" class="anchor" aria-hidden="true"></a>Background</h2>
 <p>The functions in this package solves problems of the type <span class="math display">\[
 \mathrm{minimize}\left\{f(\beta) + J(\beta; \alpha,\lambda) \right\},
 \]</span> where the second part of the objective is the sorted L1-norm <span class="math display">\[
@@ -142,7 +142,7 @@ J(\beta; \alpha,\lambda) = \alpha \sum_{j=1}^p \lambda_j \lvert \beta \rvert_{(j
 </div>
 <div id="an-example" class="section level2">
 <h2 class="hasAnchor">
-<a href="#an-example" class="anchor"></a>An example</h2>
+<a href="#an-example" class="anchor" aria-hidden="true"></a>An example</h2>
 <p>In the following example, we will use the heart data set, for which the response is a cardiac event. (The package contains several data sets to exemplify modeling. Please see the examples in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>.) The main function of the package is <code><a href="../reference/SLOPE.html">SLOPE()</a></code>, which, more or less, serves as an interface for code written in C++. There are many arguments in the function and most of them relate to either the construction of the regularization path or the penalty (<span class="math inline">\(\lambda\)</span>) sequence used. Here we will use the option <code>lambda = "bh"</code>, which used the BH method detailed in <span class="citation">Bogdan et al. (2015)</span> to select the sequence. (Note that it is also possible to manually insert a sequence.)</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://jolars.github.io/SLOPE/">SLOPE</a></span><span class="op">)</span>
@@ -162,7 +162,7 @@ Regularization path for a binomial regression model fit to the heart data set.
 </div>
 <div id="cross-validation" class="section level2">
 <h2 class="hasAnchor">
-<a href="#cross-validation" class="anchor"></a>Cross-validation</h2>
+<a href="#cross-validation" class="anchor" aria-hidden="true"></a>Cross-validation</h2>
 <p>To determine the strength of regularization, it is almost always necessary to tune the <span class="math inline">\(\lambda\)</span> sequence using resampling. This package features two methods for this: a specification for use with the <strong>caret</strong> package via the function <code><a href="../reference/caretSLOPE.html">caretSLOPE()</a></code> or <code><a href="../reference/trainSLOPE.html">trainSLOPE()</a></code>. While former facilitate easier comparison of SLOPE against other methods as well as a multitude of options for resampling and measuring performance, it does not allow for sparse predictor matrices. We will give an example of <code><a href="../reference/trainSLOPE.html">trainSLOPE()</a></code> here.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">924</span><span class="op">)</span>
@@ -199,7 +199,7 @@ Model tuning results from Gaussian SLOPE on the bodyfat dataset.
 </div>
 <div id="false-discovery-rate" class="section level2">
 <h2 class="hasAnchor">
-<a href="#false-discovery-rate" class="anchor"></a>False discovery rate</h2>
+<a href="#false-discovery-rate" class="anchor" aria-hidden="true"></a>False discovery rate</h2>
 <p>Under assumptions of orthonormality, SLOPE has been shown to control false discovery rate (FDR) of non-zero coefficients (feature weights) in the model <span class="citation">(Bogdan et al. 2015)</span>. It is in many ways analogous to the Benjamini–Hochberg procedure for multiple comparisons.</p>
 <p>Let’s set up a simple experiment to see how SLOPE controls the FDR. We randomly generate data sets with various proportions of true signals. Under this gaussian design with independently and identically distributed columns in <span class="math inline">\(X\)</span>, SLOPE should asymptotically control FDR at the level given by the shape parameter <span class="math inline">\(q\)</span>, which we set to 0.1 in this example.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -246,7 +246,7 @@ Control of false discovery rate using SLOPE.
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2 class="hasAnchor">
-<a href="#references" class="anchor"></a>References</h2>
+<a href="#references" class="anchor" aria-hidden="true"></a>References</h2>
 <div id="refs" class="references">
 <div id="ref-bogdan2015">
 <p>Bogdan, Małgorzata, Ewout van den Berg, Chiara Sabatti, Weijie Su, and Emmanuel J. Candès. 2015. “SLOPE - Adaptive Variable Selection via Convex Optimization.” <em>The Annals of Applied Statistics</em> 9 (3): 1103–40. <a href="https://doi.org/10.1214/15-AOAS842" class="external-link">https://doi.org/10.1214/15-AOAS842</a>.</p>
@@ -278,7 +278,7 @@ Control of false discovery rate using SLOPE.
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.6.1.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.6.1.9001.</p>
 </div>
 
       </footer>

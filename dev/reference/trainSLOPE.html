@@ -77,6 +77,7 @@ through cross-validation." />
 </script>
 
 
+
   
 
   
@@ -99,7 +100,7 @@ through cross-validation." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SLOPE</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.3.2.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.3.3.9000</span>
       </span>
     </div>
 
@@ -171,7 +172,7 @@ through cross-validation." />
 through cross-validation.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>trainSLOPE</span><span class='op'>(</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>trainSLOPE</span><span class='op'>(</span>
   <span class='va'>x</span>,
   <span class='va'>y</span>,
   q <span class='op'>=</span> <span class='fl'>0.2</span>,
@@ -179,7 +180,7 @@ through cross-validation.</p>
   repeats <span class='op'>=</span> <span class='fl'>1</span>,
   measure <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"mse"</span>, <span class='st'>"mae"</span>, <span class='st'>"deviance"</span>, <span class='st'>"missclass"</span>, <span class='st'>"auc"</span><span class='op'>)</span>,
   <span class='va'>...</span>
-<span class='op'>)</span></pre>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -258,13 +259,13 @@ using, for instance, <code>doParallel::registerDoParallel()</code> from the
 <code><a href='plot.TrainedSLOPE.html'>plot.TrainedSLOPE</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># 8-fold cross-validation repeated 5 times</span>
-<span class='va'>tune</span> <span class='op'>&lt;-</span> <span class='fu'>trainSLOPE</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>mtcars</span>, select <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"mpg"</span>, <span class='st'>"drat"</span>, <span class='st'>"wt"</span><span class='op'>)</span><span class='op'>)</span>,
-                   <span class='va'>mtcars</span><span class='op'>$</span><span class='va'>hp</span>,
-                   q <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.1</span>, <span class='fl'>0.2</span><span class='op'>)</span>,
-                   number <span class='op'>=</span> <span class='fl'>8</span>,
-                   repeats <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span>
-</div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='co'># 8-fold cross-validation repeated 5 times</span></span>
+<span class='r-in'><span class='va'>tune</span> <span class='op'>&lt;-</span> <span class='fu'>trainSLOPE</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>mtcars</span>, select <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"mpg"</span>, <span class='st'>"drat"</span>, <span class='st'>"wt"</span><span class='op'>)</span><span class='op'>)</span>,</span>
+<span class='r-in'>                   <span class='va'>mtcars</span><span class='op'>$</span><span class='va'>hp</span>,</span>
+<span class='r-in'>                   q <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.1</span>, <span class='fl'>0.2</span><span class='op'>)</span>,</span>
+<span class='r-in'>                   number <span class='op'>=</span> <span class='fl'>8</span>,</span>
+<span class='r-in'>                   repeats <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span></span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -280,7 +281,7 @@ using, for instance, <code>doParallel::registerDoParallel()</code> from the
 </div>
 
 <div class="pkgdown">
-  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p></p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
 </div>
 
       </footer>

@@ -80,6 +80,7 @@ in decreasing order according  to its absolute values." />
 </script>
 
 
+
   
 
   
@@ -102,7 +103,7 @@ in decreasing order according  to its absolute values." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SLOPE</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.3.2.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.3.3.9000</span>
       </span>
     </div>
 
@@ -177,7 +178,7 @@ coefficient vector (\(\beta\)) after having sorted it
 in decreasing order according  to its absolute values.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>SLOPE</span><span class='op'>(</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>SLOPE</span><span class='op'>(</span>
   <span class='va'>x</span>,
   <span class='va'>y</span>,
   family <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"gaussian"</span>, <span class='st'>"binomial"</span>, <span class='st'>"multinomial"</span>, <span class='st'>"poisson"</span><span class='op'>)</span>,
@@ -189,6 +190,8 @@ in decreasing order according  to its absolute values.</p>
   alpha_min_ratio <span class='op'>=</span> <span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>&lt;</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NCOL</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span> <span class='fl'>0.01</span> <span class='kw'>else</span> <span class='fl'>1e-04</span>,
   path_length <span class='op'>=</span> <span class='kw'>if</span> <span class='op'>(</span><span class='va'>alpha</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span> <span class='op'>==</span> <span class='st'>"estimate"</span><span class='op'>)</span> <span class='fl'>1</span> <span class='kw'>else</span> <span class='fl'>20</span>,
   q <span class='op'>=</span> <span class='fl'>0.1</span> <span class='op'>*</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>/</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NCOL</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span>,
+  theta1 <span class='op'>=</span> <span class='fl'>1</span>,
+  theta2 <span class='op'>=</span> <span class='fl'>0.5</span>,
   screen <span class='op'>=</span> <span class='cn'>TRUE</span>,
   screen_alg <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"strong"</span>, <span class='st'>"previous"</span><span class='op'>)</span>,
   tol_dev_change <span class='op'>=</span> <span class='fl'>1e-05</span>,
@@ -206,7 +209,7 @@ in decreasing order according  to its absolute values.</p>
   <span class='va'>sigma</span>,
   <span class='va'>n_sigma</span>,
   <span class='va'>lambda_min_ratio</span>
-<span class='op'>)</span></pre>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -288,6 +291,20 @@ given by <code>tol_dev_change</code>, <code>tol_dev_ratio</code>, and <code>max_
       <td><p>parameter controlling the shape of the lambda sequence, with
 usage varying depending on the type of path used and has no effect
 is a custom <code>lambda</code> sequence is used.</p></td>
+    </tr>
+    <tr>
+      <th>theta1</th>
+      <td><p>parameter controlling the shape of the lambda sequence
+when <code>lambda == "OSCAR"</code>. This parameter basically sets the intercept
+for the lambda sequence and is equivalent to \(\lambda_1\) in the
+original OSCAR formulation.</p></td>
+    </tr>
+    <tr>
+      <th>theta2</th>
+      <td><p>parameter controlling the shape of the lambda sequence
+when <code>lambda == "OSCAR"</code>. This parameter basically sets the slope
+for the lambda sequence and is equivalent to \(\lambda_2\) in the
+original OSCAR formulation.</p></td>
     </tr>
     <tr>
       <th>screen</th>
@@ -510,12 +527,14 @@ Note that if \(p\) is large relative
 to \(n\), this option will result in a constant sequence, which is
 usually not what you would want.</p>
 <p><strong>OSCAR</strong></p>
-<p>This sequence comes from Bondell and Reich and is a linearly non-increasing
-sequence such that
+<p>This sequence comes from Bondell and Reich and is a linear non-increasing
+sequence, such that
 $$
-  \lambda_i = q(p - i) + 1.
+  \lambda_i = \theta_1 + (p - i)\theta_2.
 $$
-for \(i = 1,\dots,p\).</p>
+for \(i = 1,\dots,p\). We use the parametrization from Zhong and Kwok
+(2021) but use \(\theta_1\) and \(\theta_2\) instead of \(\lambda_1\)
+and \(\lambda_2\) to avoid confusion and abuse of notation.</p>
     <h2 class="hasAnchor" id="solvers"><a class="anchor" href="#solvers"></a>Solvers</h2>
 
     
@@ -528,18 +547,18 @@ families but ADMM is currently only available for <code>family = "gaussian"</cod
 
     <p>Bogdan, M., van den Berg, E., Sabatti, C., Su, W., &amp; Candès, E. J. (2015).
 SLOPE -- adaptive variable selection via convex optimization. The Annals of
-Applied Statistics, 9(3), 1103–1140. <a href='https://doi.org/10/gfgwzt'>https://doi.org/10/gfgwzt</a></p>
+Applied Statistics, 9(3), 1103–1140. doi: <a href='https://doi.org/10/gfgwzt'>10/gfgwzt</a></p>
 <p>Bondell, H. D., &amp; Reich, B. J. (2008). Simultaneous Regression Shrinkage,
 Variable Selection, and Supervised Clustering of Predictors with OSCAR.
 Biometrics, 64(1), 115–123. JSTOR.
-<a href='https://doi.org/10.1111/j.1541-0420.2007.00843.x'>https://doi.org/10.1111/j.1541-0420.2007.00843.x</a></p>
+doi: <a href='https://doi.org/10.1111/j.1541-0420.2007.00843.x'>10.1111/j.1541-0420.2007.00843.x</a></p>
 <p>Boyd, S., Parikh, N., Chu, E., Peleato, B., &amp; Eckstein, J. (2010).
 Distributed Optimization and Statistical Learning via the Alternating
 Direction Method of Multipliers. Foundations and Trends® in Machine Learning,
-3(1), 1–122. <a href='https://doi.org/10.1561/2200000016'>https://doi.org/10.1561/2200000016</a></p>
+3(1), 1–122. doi: <a href='https://doi.org/10.1561/2200000016'>10.1561/2200000016</a></p>
 <p>Beck, A., &amp; Teboulle, M. (2009). A Fast Iterative Shrinkage-Thresholding
 Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
-2(1), 183–202. <a href='https://doi.org/10.1137/080716542'>https://doi.org/10.1137/080716542</a></p>
+2(1), 183–202. doi: <a href='https://doi.org/10.1137/080716542'>10.1137/080716542</a></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='plot.SLOPE.html'>plot.SLOPE()</a></code>, <code><a href='plotDiagnostics.html'>plotDiagnostics()</a></code>, <code><a href='score.html'>score()</a></code>, <code><a href='predict.SLOPE.html'>predict.SLOPE()</a></code>,
@@ -547,31 +566,35 @@ Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
 <code><a href='deviance.SLOPE.html'>deviance.SLOPE()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='co'># Gaussian response, default lambda sequence</span>
-<span class='va'>fit</span> <span class='op'>&lt;-</span> <span class='fu'>SLOPE</span><span class='op'>(</span><span class='va'>bodyfat</span><span class='op'>$</span><span class='va'>x</span>, <span class='va'>bodyfat</span><span class='op'>$</span><span class='va'>y</span><span class='op'>)</span>
-
-<span class='co'># Poisson response, OSCAR-type lambda sequence</span>
-<span class='va'>fit</span> <span class='op'>&lt;-</span> <span class='fu'>SLOPE</span><span class='op'>(</span><span class='va'>abalone</span><span class='op'>$</span><span class='va'>x</span>,
-             <span class='va'>abalone</span><span class='op'>$</span><span class='va'>y</span>,
-             family <span class='op'>=</span> <span class='st'>"poisson"</span>,
-             lambda <span class='op'>=</span> <span class='st'>"oscar"</span>,
-             q <span class='op'>=</span> <span class='fl'>0.4</span><span class='op'>)</span>
-
-<span class='co'># Multinomial response, custom alpha and lambda</span>
-<span class='va'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span><span class='op'>(</span><span class='va'>wine</span><span class='op'>$</span><span class='va'>y</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>-</span> <span class='fl'>1</span>
-<span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span><span class='op'>(</span><span class='va'>wine</span><span class='op'>$</span><span class='va'>x</span><span class='op'>)</span>
-
-<span class='va'>alpha</span> <span class='op'>&lt;-</span> <span class='fl'>0.005</span>
-<span class='va'>lambda</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>exp</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span><span class='op'>(</span><span class='fl'>2</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span><span class='op'>(</span><span class='fl'>1.8</span><span class='op'>)</span>, length.out <span class='op'>=</span> <span class='va'>p</span><span class='op'>*</span><span class='va'>m</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='va'>fit</span> <span class='op'>&lt;-</span> <span class='fu'>SLOPE</span><span class='op'>(</span><span class='va'>wine</span><span class='op'>$</span><span class='va'>x</span>,
-             <span class='va'>wine</span><span class='op'>$</span><span class='va'>y</span>,
-             family <span class='op'>=</span> <span class='st'>"multinomial"</span>,
-             lambda <span class='op'>=</span> <span class='va'>lambda</span>,
-             alpha <span class='op'>=</span> <span class='va'>alpha</span><span class='op'>)</span>
-
-</div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'></span>
+<span class='r-in'><span class='co'># Gaussian response, default lambda sequence</span></span>
+<span class='r-in'><span class='va'>fit</span> <span class='op'>&lt;-</span> <span class='fu'>SLOPE</span><span class='op'>(</span><span class='va'>bodyfat</span><span class='op'>$</span><span class='va'>x</span>, <span class='va'>bodyfat</span><span class='op'>$</span><span class='va'>y</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Poisson response, OSCAR-type lambda sequence</span></span>
+<span class='r-in'><span class='va'>fit</span> <span class='op'>&lt;-</span> <span class='fu'>SLOPE</span><span class='op'>(</span></span>
+<span class='r-in'>  <span class='va'>abalone</span><span class='op'>$</span><span class='va'>x</span>,</span>
+<span class='r-in'>  <span class='va'>abalone</span><span class='op'>$</span><span class='va'>y</span>,</span>
+<span class='r-in'>  family <span class='op'>=</span> <span class='st'>"poisson"</span>,</span>
+<span class='r-in'>  lambda <span class='op'>=</span> <span class='st'>"oscar"</span>,</span>
+<span class='r-in'>  theta1 <span class='op'>=</span> <span class='fl'>1</span>,</span>
+<span class='r-in'>  theta2 <span class='op'>=</span> <span class='fl'>0.9</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Multinomial response, custom alpha and lambda</span></span>
+<span class='r-in'><span class='va'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span><span class='op'>(</span><span class='va'>wine</span><span class='op'>$</span><span class='va'>y</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>-</span> <span class='fl'>1</span></span>
+<span class='r-in'><span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span><span class='op'>(</span><span class='va'>wine</span><span class='op'>$</span><span class='va'>x</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>alpha</span> <span class='op'>&lt;-</span> <span class='fl'>0.005</span></span>
+<span class='r-in'><span class='va'>lambda</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>exp</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span><span class='op'>(</span><span class='fl'>2</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span><span class='op'>(</span><span class='fl'>1.8</span><span class='op'>)</span>, length.out <span class='op'>=</span> <span class='va'>p</span> <span class='op'>*</span> <span class='va'>m</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>fit</span> <span class='op'>&lt;-</span> <span class='fu'>SLOPE</span><span class='op'>(</span></span>
+<span class='r-in'>  <span class='va'>wine</span><span class='op'>$</span><span class='va'>x</span>,</span>
+<span class='r-in'>  <span class='va'>wine</span><span class='op'>$</span><span class='va'>y</span>,</span>
+<span class='r-in'>  family <span class='op'>=</span> <span class='st'>"multinomial"</span>,</span>
+<span class='r-in'>  lambda <span class='op'>=</span> <span class='va'>lambda</span>,</span>
+<span class='r-in'>  alpha <span class='op'>=</span> <span class='va'>alpha</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -587,7 +610,7 @@ Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
 </div>
 
 <div class="pkgdown">
-  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p></p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
 </div>
 
       </footer>

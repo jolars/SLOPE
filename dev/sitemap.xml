@@ -1,7 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://jolars.github.io/SLOPE/CODE_OF_CONDUCT.html</loc>
+  </url>
+  <url>
+    <loc>https://jolars.github.io/SLOPE/LICENSE.html</loc>
+  </url>
+  <url>
+    <loc>https://jolars.github.io/SLOPE/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://jolars.github.io/SLOPE/articles/introduction.html</loc>
+  </url>
+  <url>
+    <loc>https://jolars.github.io/SLOPE/authors.html</loc>
+  </url>
+  <url>
     <loc>https://jolars.github.io/SLOPE/index.html</loc>
+  </url>
+  <url>
+    <loc>https://jolars.github.io/SLOPE/news/index.html</loc>
   </url>
   <url>
     <loc>https://jolars.github.io/SLOPE/reference/SLOPE-package.html</loc>
@@ -26,6 +44,9 @@
   </url>
   <url>
     <loc>https://jolars.github.io/SLOPE/reference/heart.html</loc>
+  </url>
+  <url>
+    <loc>https://jolars.github.io/SLOPE/reference/index.html</loc>
   </url>
   <url>
     <loc>https://jolars.github.io/SLOPE/reference/interpolateCoefficients.html</loc>
@@ -62,8 +83,5 @@
   </url>
   <url>
     <loc>https://jolars.github.io/SLOPE/reference/wine.html</loc>
-  </url>
-  <url>
-    <loc>https://jolars.github.io/SLOPE/articles/introduction.html</loc>
   </url>
 </urlset>
