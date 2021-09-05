@@ -32,3 +32,16 @@ test_that("plot.trainSLOPE works as expected", {
   p <- plot(fit)
   expect_s3_class(p, "trellis")
 })
+
+test_that("Misclassification Rate works properly", {
+  set.seed(42)
+  xy <- SLOPE:::randomProblem(200, p=100, q=0.5, response="binomial")
+  x <- xy$x
+  y <- xy$y
+
+  fit <- trainSLOPE(x, y, q = c(0.1, 0.2), number = 2, measure = "misclass", family = "binomial")
+
+  expect_equal(fit$measure$measure, "misclass")
+  expect_equal(fit$measure$label, "Misclassification Rate")
+  expect_equal(fit$optima$mean, 0.235)
+})
