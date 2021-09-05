@@ -10,7 +10,7 @@ trainSLOPE(
   q = 0.2,
   number = 10,
   repeats = 1,
-  measure = c("mse", "mae", "deviance", "missclass", "auc"),
+  measure = c("mse", "mae", "deviance", "misclass", "auc"),
   ...
 )
 }

@@ -54,7 +54,7 @@ trainSLOPE <- function(x,
                        measure = c("mse",
                                    "mae",
                                    "deviance",
-                                   "missclass",
+                                   "misclass",
                                    "auc"),
                        ...) {
   ocall <- match.call()
@@ -168,7 +168,8 @@ trainSLOPE <- function(x,
       mse = "Mean Squared Error",
       mae = "Mean Absolute Error",
       accuracy = "Accuracy",
-      auc = "AUC"
+      auc = "AUC",
+      misclass = "Misclassification Rate"
     )
   }, FUN.VALUE = character(1))
 
