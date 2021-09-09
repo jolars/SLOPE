@@ -94,6 +94,7 @@ score.MultinomialSLOPE <- function(object,
   prob_min <- 1e-05
   prob_max <- 1 - prob_min
 
+  y_observed <- y
   y_hat <- stats::predict(object, x, type = "response", simplify = FALSE)
   y_hat_class <- stats::predict(object, x, type = "class", simplify = FALSE)
 
@@ -116,7 +117,13 @@ score.MultinomialSLOPE <- function(object,
       ly[y == 0] <- 0
       apply(2 * (ly - lp), c(1, 3), sum)
     },
-    misclass = apply(y[, 1] * (y_hat > 0.5) + y[, 2] * (y_hat <= 0.5), 3, mean)
+    misclass = {
+      misclass <- sapply(1:ncol(y_hat_class), function(alpha) {
+        tab <- table(y_observed, y_hat_class[, alpha])
+        1-sum(diag(tab))/sum(tab)
+      })
+      matrix(misclass, dim(y_hat_class)[1], dim(y_hat_class)[2], byrow = TRUE)
+    }
   )
 }
 

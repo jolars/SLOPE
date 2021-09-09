@@ -79,7 +79,7 @@ trainSLOPE <- function(x,
                gaussian = c("mse", "mae"),
                binomial = c("mse", "mae", "deviance", "misclass", "auc"),
                poisson = c("mse", "mae"),
-               multinomial = c("mse", "mae", "deviance"))
+               multinomial = c("mse", "mae", "deviance", "misclass"))
   measure <- measure[measure %in% ok]
 
   if (length(measure) == 0)
@@ -129,7 +129,6 @@ trainSLOPE <- function(x,
 
     unlist(s)
   }
-
   tmp <- array(unlist(r), c(path_length*n_q, n_measure, number*repeats))
   d <- matrix(tmp, c(path_length*n_q*n_measure, number*repeats))
 
