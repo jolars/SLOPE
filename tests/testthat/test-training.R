@@ -45,3 +45,26 @@ test_that("Misclassification Rate works properly", {
   expect_equal(fit$measure$label, "Misclassification Rate")
   expect_equal(fit$optima$mean, 0.235)
 })
+
+
+testthat("trainSLOPE  returns error in the case of invalid measures", {
+
+  set.seed(42)
+  xy <- SLOPE:::randomProblem(200, p=100, q=0.5, response="gaussian")
+  x <- xy$x
+  y <- xy$y
+
+  expect_error(trainSLOPE(x, y, q = c(0.1, 0.2), measure = "misclass", family = "gaussian"),
+               "For the given family: gaussian, measure needs to be one of: mse, mae")
+
+})
+
+
+
+
+
+
+
+
+
+

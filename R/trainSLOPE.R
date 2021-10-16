@@ -17,7 +17,7 @@
 #' **doParallel** package before running this function.
 #'
 #' @inheritParams SLOPE
-#' @param number number of folds (cross-validation)
+#' @param n_folds number of folds (cross-validation)
 #' @param repeats number of repeats for each fold (for repeated *k*-fold cross
 #'   validation)
 #' @param measure measure to try to optimize; note that you may
@@ -44,12 +44,20 @@
 #' tune <- trainSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
 #'                    mtcars$hp,
 #'                    q = c(0.1, 0.2),
-#'                    number = 8,
+#'                    n_folds = 8,
 #'                    repeats = 5)
+#'
+#' set.seed(42)
+#' xy <- SLOPE:::randomProblem(200, p=100, q=0.5, response="binomial")
+#' x <- xy$x
+#' y <- xy$y
+#' fit <- trainSLOPE(x, y, q = c(0.1, 0.2), number = 2, measure = "misclass", family = "gaussian")
+#'
+
 trainSLOPE <- function(x,
                        y,
                        q = 0.2,
-                       number = 10,
+                       n_folds = 10,
                        repeats = 1,
                        measure = c("mse",
                                    "mae",
@@ -65,8 +73,8 @@ trainSLOPE <- function(x,
 
   y <- as.matrix(y)
 
-  stopifnot(NROW(x) > number,
-            number > 1,
+  stopifnot(NROW(x) > n_folds,
+            n_folds > 1,
             repeats >= 1)
 
   # get initial penalty sequence
@@ -80,25 +88,28 @@ trainSLOPE <- function(x,
                binomial = c("mse", "mae", "deviance", "misclass", "auc"),
                poisson = c("mse", "mae"),
                multinomial = c("mse", "mae", "deviance", "misclass"))
+
   measure <- measure[measure %in% ok]
 
-  if (length(measure) == 0)
-    stop("measure needs to be one of ", ok)
+  if (length(measure) == 0) {
+    stop(paste0("For the given family: ", family,
+                ", measure needs to be one of: ",
+                paste0(ok, collapse = ", ")))
+  }
 
   alpha <- fit$alpha
-
   path_length <- length(alpha)
   n_q <- length(q)
   n_measure <- length(measure)
 
-  fold_size <- ceiling(n/number)
+  fold_size <- ceiling(n/n_folds)
 
-  fold_id <- replicate(repeats, {
-    matrix(c(sample(n), rep(0, number*fold_size - n)), fold_size, byrow = TRUE)
-  })
+
+  #list of repeated folds
+  fold_id <- rep(list(matrix(c(sample(n), rep(0, n_folds*fold_size - n)), fold_size, byrow = TRUE)), repeats)
 
   grid <- expand.grid(q = q,
-                      fold = seq_len(number),
+                      fold = seq_len(n_folds),
                       repetition = seq_len(repeats))
 
   # prevent warnings if no backend registered
@@ -108,33 +119,38 @@ trainSLOPE <- function(x,
   i <- 1 # fixes R CMD check NOTE
 
   r <- foreach(i = seq_len(nrow(grid)), .packages = c("SLOPE")) %dopar% {
-    id <- grid$fold[i]
-    repetition <- grid$repetition[i]
-    q <- grid$q[i]
+    id <- grid[["fold"]][i]
+    repetition <- grid[["repetition"]][i]
+    q <- grid[["q"]][i]
 
-    test_ind <- fold_id[, id, repetition]
+    test_ind <- fold_id[[repetition]][, id]
 
     x_train <- x[-test_ind, , drop = FALSE]
     y_train <- y[-test_ind, , drop = FALSE]
     x_test  <- x[test_ind, , drop = FALSE]
     y_test  <- y[test_ind, , drop = FALSE]
 
+    #arguments for SLOPE
     args <- utils::modifyList(list(x = x_train,
                                    y = y_train,
                                    q = q,
-                                   alpha = alpha), list(...))
+                                   alpha = alpha), list())
+
+    #fitting model
+    fit_id <- do.call(SLOPE::SLOPE, args)
+
     s <- lapply(measure, function(m) {
-      SLOPE::score(do.call(SLOPE::SLOPE, args), x_test, y_test, m)
+      SLOPE::score(fit_id, x_test, y_test, measure = m)
     })
 
     unlist(s)
   }
-  tmp <- array(unlist(r), c(path_length*n_q, n_measure, number*repeats))
-  d <- matrix(tmp, c(path_length*n_q*n_measure, number*repeats))
+  tmp <- array(unlist(r), c(path_length*n_q, n_measure, n_folds*repeats))
+  d <- matrix(tmp, c(path_length*n_q*n_measure, n_folds*repeats))
 
   means <- rowMeans(d)
-  se <- apply(d, 1, stats::sd)/sqrt(repeats*number)
-  ci <- stats::qt(0.975, number*repeats - 1)*se
+  se <- apply(d, 1, stats::sd)/sqrt(repeats*n_folds)
+  ci <- stats::qt(0.975, n_folds*repeats - 1)*se
   lo <- means - ci
   hi <- means + ci
 
