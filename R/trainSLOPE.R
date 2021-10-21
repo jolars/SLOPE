@@ -45,13 +45,15 @@
 #'                    mtcars$hp,
 #'                    q = c(0.1, 0.2),
 #'                    n_folds = 8,
-#'                    repeats = 5)
+#'                    repeats = 5,
+#'                    measure = "mse")
 #'
 #' set.seed(42)
 #' xy <- SLOPE:::randomProblem(200, p=100, q=0.5, response="binomial")
 #' x <- xy$x
 #' y <- xy$y
-#' fit <- trainSLOPE(x, y, q = c(0.1, 0.2), number = 2, measure = "misclass", family = "gaussian")
+#' fit <- trainSLOPE(x, y, q = c(0.1, 0.2),
+#'                   n_folds = 2, measure = "mse", family = "gaussian")
 #'
 
 trainSLOPE <- function(x,

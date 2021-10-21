@@ -8,7 +8,7 @@ trainSLOPE(
   x,
   y,
   q = 0.2,
-  number = 10,
+  n_folds = 10,
   repeats = 1,
   measure = c("mse", "mae", "deviance", "misclass", "auc"),
   ...
@@ -27,7 +27,7 @@ be converted to matrices internally.}
 usage varying depending on the type of path used and has no effect
 is a custom \code{lambda} sequence is used.}
 
-\item{number}{number of folds (cross-validation)}
+\item{n_folds}{number of folds (cross-validation)}
 
 \item{repeats}{number of repeats for each fold (for repeated \emph{k}-fold cross
 validation)}
@@ -73,8 +73,17 @@ using, for instance, \code{doParallel::registerDoParallel()} from the
 tune <- trainSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
                    mtcars$hp,
                    q = c(0.1, 0.2),
-                   number = 8,
-                   repeats = 5)
+                   n_folds = 8,
+                   repeats = 5,
+                   measure = "mse")
+
+set.seed(42)
+xy <- SLOPE:::randomProblem(200, p=100, q=0.5, response="binomial")
+x <- xy$x
+y <- xy$y
+fit <- trainSLOPE(x, y, q = c(0.1, 0.2),
+                  n_folds = 2, measure = "mse", family = "gaussian")
+
 }
 \seealso{
 \code{\link[foreach:foreach]{foreach::foreach()}}, \code{\link[=plot.TrainedSLOPE]{plot.TrainedSLOPE()}}
