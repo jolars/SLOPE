@@ -55,7 +55,18 @@
 #' fit <- trainSLOPE(x, y, q = c(0.1, 0.2),
 #'                   n_folds = 2, measure = "mse", family = "gaussian")
 #'
-
+#' xy <- SLOPE:::randomProblem(200, p=100, q=0.5, response="binomial")
+#' x <- xy$x
+#' y <- xy$y
+#' fit <- trainSLOPE(x, y, q = c(0.1, 0.2),
+#'                   n_folds = 2, measure = "auc", family = "binomial")
+#'
+#' xy <- SLOPE:::randomProblem(200, p=100, q=0.5, response="multinomial")
+#' x <- xy$x
+#' y <- xy$y
+#' fit <- trainSLOPE(x, y, q = c(0.1, 0.2),
+#'                   n_folds = 2, measure = "mse", family = "multinomial")
+#'
 trainSLOPE <- function(x,
                        y,
                        q = 0.2,
@@ -136,7 +147,7 @@ trainSLOPE <- function(x,
     args <- utils::modifyList(list(x = x_train,
                                    y = y_train,
                                    q = q,
-                                   alpha = alpha), list())
+                                   alpha = alpha), list(...))
 
     #fitting model
     fit_id <- do.call(SLOPE::SLOPE, args)

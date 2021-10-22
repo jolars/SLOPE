@@ -87,10 +87,9 @@ score.MultinomialSLOPE <- function(object,
                                    y,
                                    measure = c("mse",
                                                "mae",
-                                               "deviance",
+                                               #"deviance",
                                                "misclass")) {
   measure <- match.arg(measure)
-
   prob_min <- 1e-05
   prob_max <- 1 - prob_min
 
@@ -102,28 +101,27 @@ score.MultinomialSLOPE <- function(object,
   n_levels <- length(unique(y))
 
   y <- diag(n_levels)[as.numeric(y), ]
-  y <- array(y, dim(y_hat))
 
   switch(
     measure,
-    mse = apply((y - y_hat)^2, c(1, 3), mean),
-    mae = apply(abs(y - y_hat), c(1, 3), mean),
-    deviance = {
-      y_hat <- pmin(pmax(y_hat, prob_min), prob_max)
-      pp <- pmin(pmax(y_hat, prob_min), prob_max)
+    mse = apply(y_hat, 3,function(x) mean((x-y)^2)),
+    mae = apply(y_hat, 3,function(x) mean(abs(x-y))),
+    # deviance = {
+    #   y_hat <- pmin(pmax(y_hat, prob_min), prob_max)
+    #   pp <- pmin(pmax(y_hat, prob_min), prob_max)
+    #
+    #   lp <- y * log(y_hat)
+    #   ly <- y * log(y)
+    #   ly[y == 0] <- 0
+    #   apply(2 * (ly - lp), c(1, 3), sum)
+    # },
+    misclass = apply(y_hat, 3, function(x) {
+      n_obs <- dim(x)[1]
+      x_class <- array(0, dim = dim(x))
+      x_class[cbind(1:n_obs, apply(x, 1, which.max))] <- 1
 
-      lp <- y * log(y_hat)
-      ly <- y * log(y)
-      ly[y == 0] <- 0
-      apply(2 * (ly - lp), c(1, 3), sum)
-    },
-    misclass = {
-      misclass <- sapply(1:ncol(y_hat_class), function(alpha) {
-        tab <- table(y_observed, y_hat_class[, alpha])
-        1-sum(diag(tab))/sum(tab)
-      })
-      matrix(misclass, dim(y_hat_class)[1], dim(y_hat_class)[2], byrow = TRUE)
-    }
+      1 - sum(apply(x_class == y, 1, all)) / n_obs
+    })
   )
 }
 
