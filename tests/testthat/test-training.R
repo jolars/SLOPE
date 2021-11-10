@@ -53,7 +53,9 @@ test_that("trainSLOPE works properly for binomial family", {
                                           se = c(0.0427697302697303, 0.0895079147155515, 0.011858410680709, 0.055, 0.0303254835186373),
                                           lo = c(0.11711724249003, -0.157063504055364, 0.354557346282327, -0.463841260489608, -0.0621752239560481),
                                           hi = c(1.20399914112635, 2.11754827571236, 0.655908134191785, 0.933841260489608, 0.708468380666544)),
-                                     row.names = c(NA, -5L), class = "data.frame"))
+                                     row.names = c(NA, -5L),
+                                     class = "data.frame"),
+               tolerance = 0.0001)
 })
 
 
@@ -75,7 +77,8 @@ test_that("trainSLOPE works properly for gaussian family", {
                                           se = c(0.172286938561511, 2.15038344415019),
                                           lo = c(0.67424188010548, -14.1901060817242),
                                           hi = c(5.05246810956809, 40.4563185235815)),
-                                     row.names = c(NA, -2L), class = "data.frame"))
+                                     row.names = c(NA, -2L), class = "data.frame"),
+               tolerance = 0.0001)
 })
 
 test_that("trainSLOPE works properly for poisson family", {
@@ -97,7 +100,8 @@ test_that("trainSLOPE works properly for poisson family", {
                                           lo = c(-5153266.58113311, -871449519796954624),
                                           hi = c(184170585.862818, 2478204135921564672)),
                                      row.names = c(NA, -2L),
-                                     class = "data.frame"))
+                                     class = "data.frame"),
+               tolerance = 0.0001)
 })
 
 
@@ -120,7 +124,8 @@ test_that("trainSLOPE works properly for multinomial family", {
                                           se = c(13.5614867355816, 0.0312753402429364, 0.05, 0.0207765280569875),
                                           lo = c(40.2053462219011, -0.0736314578945576, -0.155310236808735, -0.0479116073944179),
                                           hi = c(384.835400200335, 0.72115029474599, 1.11531023680873, 0.480070031003504)),
-                                     row.names = c(NA, -4L), class = "data.frame"))
+                                     row.names = c(NA, -4L), class = "data.frame"),
+               tolerance = 0.0001)
 })
 
 
