@@ -1,5 +1,10 @@
 # SLOPE (development version)
 
+## Minor Changes
+
+- `sortedL1Prox()` is a new function that computes the proximal operator
+  for the sorted L1 norm (the penalty term in SLOPE).
+
 # SLOPE 0.4.0
 
 ## Major changes
