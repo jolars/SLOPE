@@ -1,13 +1,11 @@
-#include <RcppArmadillo.h>
 #include "prox.h"
+#include <RcppArmadillo.h>
 
 using namespace Rcpp;
-using namespace arma;
 
 // [[Rcpp::export]]
-arma::mat sorted_l1_prox(const arma::mat& x, const arma::vec& lambda)
+arma::mat
+sorted_l1_prox(const arma::mat& x, const arma::vec& lambda)
 {
   return prox(x, lambda);
 }
-
-
