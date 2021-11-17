@@ -56,7 +56,7 @@ Suggests:
     spelling,
     testthat (>= 2.1.0)
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Language: en-US
 Encoding: UTF-8
 URL: https://jolars.github.io/SLOPE/, https://github.com/jolars/SLOPE
