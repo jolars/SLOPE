@@ -18,7 +18,7 @@ compile-attributes:
 
 build: document compile-attributes
 	cd ..;\
-	R CMD build --no-manual $(PKGSRC)
+	R CMD build --no-manual $(PKGSRC) --no-build-vignettes
 
 build-cran: compile-attributes
 	cd ..;\
