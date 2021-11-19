@@ -31,7 +31,11 @@ lambdaSequence(const arma::sword n_lambda,
       }
 
       // ensure non-increasing lambda
-      lambda.tail(n_lambda - lambda.index_min()).fill(min(lambda));
+      for (uword i = 1; i < n_lambda; ++i) {
+        if (lambda(i - 1) < lambda(i)) {
+          lambda(i) = lambda(i - 1);
+        }
+      }
     }
   } else if (lambda_type == "oscar") {
     lambda = theta1 + theta2 * (n_lambda - regspace(1, n_lambda));

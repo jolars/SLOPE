@@ -30,6 +30,13 @@
 - A new vignette has been added to compare algorithms for the proximal
   operator.
 
+## Bug Fixes
+
+- For very small numbers of observations (10 or so), the regularization weights
+  for `lambda = "gaussian"` were incorrectly computed, increasing and then
+  decreasing. This is now fixed and regularization weights in this case are now
+  always non-increasing.
+
 # SLOPE 0.3.3
 
 ## Bug fixes
