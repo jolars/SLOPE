@@ -81,32 +81,6 @@ prox_pava(arma::vec& y, const arma::vec& lambda)
   y = clamp(y, 0.0, datum::inf);
 }
 
-void
-prox_cesaro(arma::vec& y, const arma::vec& lambda)
-{
-  using namespace arma;
-
-  uword n = y.n_elem;
-
-  vec c = cumsum(y - lambda);
-
-  for (uword i = 0; i < n; ++i) {
-    c(i) /= (i + 1);
-  }
-
-  uword k      = 0;
-  double c_max = 0;
-
-  do {
-    for (uword i = k; i < n; ++i) {
-      if (c(i) >= c_max) {
-        c_max = c(i);
-        k = i;
-      }
-    }
-  } while (k < n);
-}
-
 arma::mat
 prox(const arma::mat& beta,
      const arma::vec& lambda,

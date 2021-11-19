@@ -9,6 +9,10 @@ denseSLOPE <- function(x, y, control) {
     .Call(`_SLOPE_denseSLOPE`, x, y, control)
 }
 
+lambdaSequence <- function(n_lambda, q, theta1, theta2, lambda_type, n) {
+    .Call(`_SLOPE_lambdaSequence`, n_lambda, q, theta1, theta2, lambda_type, n)
+}
+
 sortedL1ProxCpp <- function(x, lambda, method) {
     .Call(`_SLOPE_sortedL1ProxCpp`, x, lambda, method)
 }

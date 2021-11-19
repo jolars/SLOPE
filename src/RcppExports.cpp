@@ -37,6 +37,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// lambdaSequence
+arma::vec lambdaSequence(const arma::sword n_lambda, const double q, const double theta1, const double theta2, const std::string lambda_type, const arma::uword n);
+RcppExport SEXP _SLOPE_lambdaSequence(SEXP n_lambdaSEXP, SEXP qSEXP, SEXP theta1SEXP, SEXP theta2SEXP, SEXP lambda_typeSEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::sword >::type n_lambda(n_lambdaSEXP);
+    Rcpp::traits::input_parameter< const double >::type q(qSEXP);
+    Rcpp::traits::input_parameter< const double >::type theta1(theta1SEXP);
+    Rcpp::traits::input_parameter< const double >::type theta2(theta2SEXP);
+    Rcpp::traits::input_parameter< const std::string >::type lambda_type(lambda_typeSEXP);
+    Rcpp::traits::input_parameter< const arma::uword >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(lambdaSequence(n_lambda, q, theta1, theta2, lambda_type, n));
+    return rcpp_result_gen;
+END_RCPP
+}
 // sortedL1ProxCpp
 arma::mat sortedL1ProxCpp(const arma::mat& x, const arma::vec& lambda, const int method);
 RcppExport SEXP _SLOPE_sortedL1ProxCpp(SEXP xSEXP, SEXP lambdaSEXP, SEXP methodSEXP) {
@@ -54,6 +70,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_SLOPE_sparseSLOPE", (DL_FUNC) &_SLOPE_sparseSLOPE, 3},
     {"_SLOPE_denseSLOPE", (DL_FUNC) &_SLOPE_denseSLOPE, 3},
+    {"_SLOPE_lambdaSequence", (DL_FUNC) &_SLOPE_lambdaSequence, 6},
     {"_SLOPE_sortedL1ProxCpp", (DL_FUNC) &_SLOPE_sortedL1ProxCpp, 3},
     {NULL, NULL, 0}
 };
