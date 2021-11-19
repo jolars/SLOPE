@@ -9,7 +9,7 @@ denseSLOPE <- function(x, y, control) {
     .Call(`_SLOPE_denseSLOPE`, x, y, control)
 }
 
-sorted_l1_prox <- function(x, lambda) {
-    .Call(`_SLOPE_sorted_l1_prox`, x, lambda)
+sortedL1ProxCpp <- function(x, lambda, method) {
+    .Call(`_SLOPE_sortedL1ProxCpp`, x, lambda, method)
 }
 

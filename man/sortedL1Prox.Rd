@@ -9,7 +9,7 @@ Candès, “SLOPE – adaptive variable selection via convex optimization,” An
 Appl Stat, vol. 9, no. 3, pp. 1103–1140, 2015, doi: 10.1214/15-AOAS842.
 }
 \usage{
-sortedL1Prox(x, lambda)
+sortedL1Prox(x, lambda, method = c("stack", "pava"))
 }
 \arguments{
 \item{x}{A vector. In SLOPE, this is the vector of coefficients.}
@@ -18,11 +18,12 @@ sortedL1Prox(x, lambda)
 of weights for the Sorted L1 Norm. Needs to be the same length as
 \code{x}.}
 
-\item{method}{Method used in the prox. \code{stack} is a stack-based algorithm
-(Algorithm 4 in Bogdan et al.).}
+\item{method}{Method used in the prox. \code{"stack"} is a stack-based algorithm
+(Algorithm 4 in Bogdan et al.). \code{"pava"} is the PAVA algorithm used
+in isotonic regression (also Algorithm 3 in Bogdan et al.).}
 }
 \value{
-The
+An evaluation of the proximal operator at \code{x} and \code{lambda}.
 }
 \description{
 The proximal operator for the Sorted L1 Norm, which is the penalty function

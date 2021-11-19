@@ -14,19 +14,23 @@ prox_sorted_L1_isotone <- function(x, lambda) {
 }
 
 test_that("Prox and isotonic regression agree", {
+
+  library(SLOPE)
   n <- 15
 
-  set.seed(1542)
+  set.seed(2254)
 
   x <- rnorm(n)
   lambda <- sort(runif(n), decreasing = TRUE)
 
-  out_isotone <- prox_sorted_L1_isotone(x, lambda)
-  out_slope <- as.vector(sortedL1Prox(x, lambda))
+  out_isotone_ref <- prox_sorted_L1_isotone(x, lambda)
+  out_stack <- sortedL1Prox(x, lambda, "stack")
+  out_pava <- sortedL1Prox(x, lambda, "pava")
 
   tol <- .Machine$double.eps^0.95
 
-  expect_equal(out_isotone, out_slope)
+  expect_equal(out_isotone_ref, out_stack)
+  expect_equal(out_isotone_ref, out_pava)
 })
 
 test_that("Prox works for simple examples", {

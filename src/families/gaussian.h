@@ -119,7 +119,8 @@ public:
       beta_hat = alpha * beta + (1 - alpha) * z_old;
 
       z = beta_hat + u;
-      z.tail(lambda.n_elem) = prox(z.tail(lambda.n_elem), lambda / rho);
+      z.tail(lambda.n_elem) =
+        prox(z.tail(lambda.n_elem), lambda / rho, prox_method);
 
       u += (beta_hat - z);
 

@@ -13,6 +13,7 @@ class Family
 {
 protected:
   const bool intercept;
+  const ProxMethod prox_method;
   const bool diagnostics;
   const uword max_passes;
   const double tol_rel_gap;
@@ -24,6 +25,7 @@ protected:
 
 public:
   Family(const bool intercept,
+         const ProxMethod prox_method,
          const bool diagnostics,
          const uword max_passes,
          const double tol_rel_gap,
@@ -33,6 +35,7 @@ public:
          const double tol_rel_coef_change,
          const uword verbosity)
     : intercept(intercept)
+    , prox_method(prox_method)
     , diagnostics(diagnostics)
     , max_passes(max_passes)
     , tol_rel_gap(tol_rel_gap)
@@ -193,9 +196,13 @@ public:
         if (intercept) {
           mat tmp = beta_tilde;
           tmp.shed_row(0);
-          beta_tilde.tail_rows(p_rows) = prox(tmp, lambda * learning_rate);
+          beta_tilde.tail_rows(p_rows) = prox(
+            tmp,
+            lambda * learning_rate,
+            prox_method
+          );
         } else {
-          beta_tilde = prox(beta_tilde, lambda * learning_rate);
+          beta_tilde = prox(beta_tilde, lambda * learning_rate, prox_method);
         }
 
         vec d = vectorise(beta_tilde - beta);

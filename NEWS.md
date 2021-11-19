@@ -4,6 +4,13 @@
 
 - `sortedL1Prox()` is a new function that computes the proximal operator
   for the sorted L1 norm (the penalty term in SLOPE).
+- `SLOPE()` has gained a new argument, `prox_method`, which allows the user to
+  select prox algorithm to use. There is no an additional algorithm in the
+  package, based on the PAVA algorithm used in isotonic regression, that 
+  can be used. Note that this addition is mostly of academic interest and 
+  does not need to be changed by the user.
+- A new vignette has been added to compare algorithms for the proximal
+  operator.
 
 # SLOPE 0.4.0
 

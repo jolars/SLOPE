@@ -18,6 +18,7 @@ SLOPE(
   q = 0.1 * min(1, NROW(x)/NCOL(x)),
   theta1 = 1,
   theta2 = 0.5,
+  prox_method = c("stack", "pava"),
   screen = TRUE,
   screen_alg = c("strong", "previous"),
   tol_dev_change = 1e-05,
@@ -106,6 +107,10 @@ when \code{lambda == "OSCAR"}. This parameter basically sets the slope
 for the lambda sequence and is equivalent to \eqn{\lambda_2} in the
 original OSCAR formulation.}
 
+\item{prox_method}{method for calculating the proximal operator for
+the Sorted L1 Norm (the SLOPE penalty). Please see \code{\link[=sortedL1Prox]{sortedL1Prox()}} for
+more information.}
+
 \item{screen}{whether to use predictor screening rules (rules that allow
 some predictors to be discarded prior to fitting), which improve speed
 greatly when the number of predictors is larger than the number
@@ -125,9 +130,8 @@ fractional change in deviance falls below this value; note that this is
 automatically set to 0 if a alpha is manually entered}
 
 \item{tol_dev_ratio}{the regularization path is stopped if the
-deviance ratio
-\eqn{1 - \mathrm{deviance}/\mathrm{(null-deviance)}}{1 - deviance/(null deviance)}
-is above this threshold}
+deviance ratio \eqn{1 - \mathrm{deviance}/\mathrm{(null-deviance)}
+  }{1 - deviance/(null deviance)} is above this threshold}
 
 \item{max_variables}{criterion for stopping the path in terms of the
 maximum number of unique, nonzero coefficients in absolute value in model.
@@ -420,5 +424,5 @@ Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
 \seealso{
 \code{\link[=plot.SLOPE]{plot.SLOPE()}}, \code{\link[=plotDiagnostics]{plotDiagnostics()}}, \code{\link[=score]{score()}}, \code{\link[=predict.SLOPE]{predict.SLOPE()}},
 \code{\link[=trainSLOPE]{trainSLOPE()}}, \code{\link[=coef.SLOPE]{coef.SLOPE()}}, \code{\link[=print.SLOPE]{print.SLOPE()}}, \code{\link[=print.SLOPE]{print.SLOPE()}},
-\code{\link[=deviance.SLOPE]{deviance.SLOPE()}}
+\code{\link[=deviance.SLOPE]{deviance.SLOPE()}}, \code{\link[=sortedL1Prox]{sortedL1Prox()}}
 }

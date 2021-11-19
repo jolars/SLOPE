@@ -5,7 +5,9 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 arma::mat
-sorted_l1_prox(const arma::mat& x, const arma::vec& lambda)
+sortedL1ProxCpp(const arma::mat& x, const arma::vec& lambda, const int method)
 {
-  return prox(x, lambda);
+  auto prox_method = ProxMethod(method);
+
+  return prox(x, lambda, prox_method);
 }
