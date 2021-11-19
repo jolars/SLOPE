@@ -90,6 +90,8 @@ Suggests:
     covr,
     glmnet,
     ggplot2,
+    stringr,
+    scales,
     tidyr,
     dplyr,
     bench,
