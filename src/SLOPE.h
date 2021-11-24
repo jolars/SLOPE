@@ -416,7 +416,7 @@ SLOPE(T& x,
     alpha /= n;
   }
 
-  return Results{ betas,          active_sets,    passes,   primals,
+  return Results{ betas,         active_sets,    passes,   primals,
                   duals,         timings,        n_unique, deviance_ratios,
                   null_deviance, violation_list, alpha,    lambda };
 }
