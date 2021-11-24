@@ -1,12 +1,9 @@
 #include "prox.h"
 
-#include <RcppArmadillo.h>
-
 // Stack-based algorithm (Algorithm 4 in Bogdan et al. 2015)
 void
 prox_stack(arma::vec& x, const arma::vec& lambda)
 {
-  using namespace Rcpp;
   using namespace arma;
 
   uword p = x.n_elem;

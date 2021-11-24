@@ -3,7 +3,7 @@
 
 // [[Rcpp::export]]
 arma::vec
-lambdaSequence(const arma::sword n_lambda,
+lambdaSequence(const arma::uword n_lambda,
                const double q,
                const double theta1,
                const double theta2,
@@ -11,7 +11,6 @@ lambdaSequence(const arma::sword n_lambda,
                const arma::uword n)
 {
   using namespace arma;
-  using namespace Rcpp;
 
   vec lambda(n_lambda);
 
@@ -24,14 +23,14 @@ lambdaSequence(const arma::sword n_lambda,
     if (lambda_type == "gaussian" && n_lambda > 1) {
       double sum_sq = 0.0;
 
-      for (sword i = 1; i < n_lambda; ++i) {
+      for (uword i = 1; i < n_lambda; ++i) {
         sum_sq += std::pow(lambda(i - 1), 2);
         double w = std::max(1.0, static_cast<double>(n - i - 1));
         lambda(i) *= std::sqrt(1.0 + sum_sq / w);
       }
 
       // ensure non-increasing lambda
-      for (uword i = 1; i < n_lambda; ++i) {
+      for (arma::uword i = 1; i < n_lambda; ++i) {
         if (lambda(i - 1) < lambda(i)) {
           lambda(i) = lambda(i - 1);
         }

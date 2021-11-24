@@ -3,7 +3,7 @@
 #include <RcppArmadillo.h>
 
 arma::vec
-lambdaSequence(const arma::sword n_lambda,
+lambdaSequence(const arma::uword n_lambda,
                const double q,
                const double theta1,
                const double theta2,

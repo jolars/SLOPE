@@ -2,18 +2,15 @@
 
 #include <RcppArmadillo.h>
 
-using namespace Rcpp;
-using namespace arma;
-
-#include "family.h"
-#include "gaussian.h"
-#include "binomial.h"
-#include "poisson.h"
-#include "multinomial.h"
+#include "binomial.hpp"
+#include "family.hpp"
+#include "gaussian.hpp"
+#include "multinomial.hpp"
+#include "poisson.hpp"
 
 // helper to choose family
 template<typename... Ts>
-inline std::unique_ptr<Family>
+std::unique_ptr<Family>
 setupFamily(const std::string& family_choice, Ts... args)
 {
   if (family_choice == "binomial")

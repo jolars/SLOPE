@@ -1,21 +1,18 @@
 #pragma once
 
-#include "lambdaMax.h"
+#include "lambdaMax.hpp"
 #include "lambdaSequence.h"
 #include <RcppArmadillo.h>
 
-using namespace arma;
-using namespace Rcpp;
-
 template<typename T>
 void
-regularizationPath(vec& alpha,
-                   vec& lambda,
+regularizationPath(arma::vec& alpha,
+                   arma::vec& lambda,
                    double& alpha_max,
                    const T& x,
-                   const mat& y,
-                   const rowvec& x_scale,
-                   const rowvec& y_scale,
+                   const arma::mat& y,
+                   const arma::rowvec& x_scale,
+                   const arma::rowvec& y_scale,
                    const std::string lambda_type,
                    const std::string alpha_type,
                    const std::string scale,
@@ -26,6 +23,9 @@ regularizationPath(vec& alpha,
                    const std::string family,
                    const bool intercept)
 {
+  using namespace arma;
+  using namespace Rcpp;
+
   const sword n = x.n_rows;
   const uword m = y.n_cols;
 

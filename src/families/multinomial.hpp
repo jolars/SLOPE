@@ -1,7 +1,7 @@
 #pragma once
 
 #include <RcppArmadillo.h>
-#include "family.h"
+#include "family.hpp"
 #include "../results.h"
 
 using namespace Rcpp;

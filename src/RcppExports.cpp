@@ -38,12 +38,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // lambdaSequence
-arma::vec lambdaSequence(const arma::sword n_lambda, const double q, const double theta1, const double theta2, const std::string lambda_type, const arma::uword n);
+arma::vec lambdaSequence(const arma::uword n_lambda, const double q, const double theta1, const double theta2, const std::string lambda_type, const arma::uword n);
 RcppExport SEXP _SLOPE_lambdaSequence(SEXP n_lambdaSEXP, SEXP qSEXP, SEXP theta1SEXP, SEXP theta2SEXP, SEXP lambda_typeSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::sword >::type n_lambda(n_lambdaSEXP);
+    Rcpp::traits::input_parameter< const arma::uword >::type n_lambda(n_lambdaSEXP);
     Rcpp::traits::input_parameter< const double >::type q(qSEXP);
     Rcpp::traits::input_parameter< const double >::type theta1(theta1SEXP);
     Rcpp::traits::input_parameter< const double >::type theta2(theta2SEXP);

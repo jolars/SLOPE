@@ -1,6 +1,6 @@
-#include "families/families.h"
+#include "families/families.hpp"
 #include "kktCheck.h"
-#include "regularizationPath.h"
+#include "regularizationPath.hpp"
 #include "rescale.h"
 #include "results.h"
 #include "screening.h"
@@ -8,13 +8,13 @@
 #include <RcppArmadillo.h>
 #include <memory>
 
-using namespace Rcpp;
-using namespace arma;
-
 template<typename T>
-List
-cppSLOPE(T& x, mat& y, const List control)
+Rcpp::List
+SLOPE(T& x, arma::mat& y, const Rcpp::List control)
 {
+  using namespace Rcpp;
+  using namespace arma;
+
   using std::endl;
   using std::setw;
   using std::showpoint;
@@ -433,18 +433,4 @@ cppSLOPE(T& x, mat& y, const List control)
                       Named("null_deviance")  = wrap(null_deviance),
                       Named("alpha")          = wrap(alpha),
                       Named("lambda")         = wrap(lambda));
-}
-
-// [[Rcpp::export]]
-Rcpp::List
-sparseSLOPE(arma::sp_mat x, arma::mat y, const Rcpp::List control)
-{
-  return cppSLOPE(x, y, control);
-}
-
-// [[Rcpp::export]]
-Rcpp::List
-denseSLOPE(arma::mat x, arma::mat y, const Rcpp::List control)
-{
-  return cppSLOPE(x, y, control);
 }
