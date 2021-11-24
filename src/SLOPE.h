@@ -10,7 +10,37 @@
 
 template<typename T>
 Rcpp::List
-SLOPE(T& x, arma::mat& y, const Rcpp::List control)
+SLOPE(T& x,
+      arma::mat& y,
+      const std::string family_choice,
+      const bool intercept,
+      arma::vec lambda,
+      arma::vec alpha,
+      const std::string lambda_type,
+      const std::string alpha_type,
+      const double alpha_min_ratio,
+      const double q,
+      const double theta1,
+      const double theta2,
+      const bool center,
+      const std::string scale,
+      const arma::rowvec y_center,
+      const arma::rowvec y_scale,
+      const double tol_dev_ratio,
+      const double tol_dev_change,
+      const arma::uword max_variables,
+      bool screen,
+      const std::string screen_alg,
+      const std::string solver,
+      const arma::uword max_passes,
+      const double tol_rel_gap,
+      const double tol_infeas,
+      const double tol_abs,
+      const double tol_rel,
+      const double tol_rel_coef_change,
+      const int prox_method_choice,
+      const bool diagnostics,
+      const arma::uword verbosity)
 {
   using namespace Rcpp;
   using namespace arma;
@@ -22,53 +52,17 @@ SLOPE(T& x, arma::mat& y, const Rcpp::List control)
   // significant digits
   Rcout.precision(4);
 
-  auto tol_dev_ratio  = as<double>(control["tol_dev_ratio"]);
-  auto tol_dev_change = as<double>(control["tol_dev_change"]);
-  auto max_variables  = as<uword>(control["max_variables"]);
-
-  auto diagnostics = as<bool>(control["diagnostics"]);
-  auto verbosity   = as<uword>(control["verbosity"]);
-
-  auto prox_method_choice = as<int>(control["prox_method_choice"]);
-
-  // solver arguments
-  auto solver              = as<std::string>(control["solver"]);
-  auto max_passes          = as<uword>(control["max_passes"]);
-  auto tol_rel_gap         = as<double>(control["tol_rel_gap"]);
-  auto tol_infeas          = as<double>(control["tol_infeas"]);
-  auto tol_abs             = as<double>(control["tol_abs"]);
-  auto tol_rel             = as<double>(control["tol_rel"]);
-  auto tol_rel_coef_change = as<double>(control["tol_rel_coef_change"]);
-
-  auto family_choice = as<std::string>(control["family"]);
-  auto intercept     = as<bool>(control["fit_intercept"]);
-  auto screen        = as<bool>(control["screen"]);
-  auto screen_alg    = as<std::string>(control["screen_alg"]);
-
   auto n = x.n_rows;
   auto p = x.n_cols;
   auto m = y.n_cols;
 
-  auto center = as<bool>(control["center"]);
-  auto scale  = as<std::string>(control["scale"]);
-
   auto prox_method = ProxMethod(prox_method_choice);
 
-  auto y_center = as<rowvec>(control["y_center"]);
-  auto y_scale  = as<rowvec>(control["y_scale"]);
   rowvec x_center(p, fill::zeros);
   rowvec x_scale(p, fill::ones);
 
   standardize(x, x_center, x_scale, intercept, center, scale);
 
-  auto lambda             = as<vec>(control["lambda"]);
-  auto alpha              = as<vec>(control["alpha"]);
-  auto lambda_type        = as<std::string>(control["lambda_type"]);
-  auto alpha_type         = as<std::string>(control["alpha_type"]);
-  auto alpha_min_ratio    = as<double>(control["alpha_min_ratio"]);
-  auto q                  = as<double>(control["q"]);
-  auto theta1             = as<double>(control["theta1"]);
-  auto theta2             = as<double>(control["theta2"]);
   const uword path_length = alpha.n_elem;
   double alpha_max        = 0;
 
