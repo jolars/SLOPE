@@ -25,6 +25,7 @@
 #' @export
 #'
 #' @examples
+#' # compute different penalization sequences
 #' bh <- regularizationWeights(100, q = 0.2, type = "bh")
 #'
 #' gaussian <- regularizationWeights(
@@ -43,11 +44,12 @@
 #'
 #' lasso <- regularizationWeights(100, type = "lasso") * mean(oscar)
 #'
+#' # Plot a comparison between these sequences
 #' plot(bh, type = "l", ylab = expression(lambda))
 #' lines(gaussian, col = "dark orange")
 #' lines(oscar, col = "navy")
 #' lines(lasso, col = "red3")
-#' 
+#'
 #' legend(
 #'   "topright",
 #'   legend = c("BH", "Gaussian", "OSCAR", "lasso"),

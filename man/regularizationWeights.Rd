@@ -5,17 +5,21 @@
 \title{Generate Regularization (Penalty) Weights for SLOPE}
 \usage{
 regularizationWeights(
-  n_lambda,
+  n_lambda = 100,
+  type = c("bh", "gaussian", "oscar", "lasso"),
   q = 0.2,
   theta1 = 1,
   theta2 = 0.5,
-  type = c("bh", "gaussian", "oscar"),
   n = NULL
 )
 }
 \arguments{
 \item{n_lambda}{The number of lambdas to generate. This should typically
 be equal to the number of predictors in your data set.}
+
+\item{type}{The type of lambda sequence to use. See documentation for
+in \code{\link[=SLOPE]{SLOPE()}}, including that related to the \code{lambda} parameter in that
+function.}
 
 \item{q}{parameter controlling the shape of the lambda sequence, with
 usage varying depending on the type of path used and has no effect
@@ -32,26 +36,55 @@ when \code{lambda == "OSCAR"}. This parameter basically sets the slope
 for the lambda sequence and is equivalent to \eqn{\lambda_2} in the
 original OSCAR formulation.}
 
-\item{type}{The type of lambda sequence to use. See documentation for
-in \code{\link[=SLOPE]{SLOPE()}}, including that related to the \code{lambda} parameter in that
-function.}
-
 \item{n}{The number of rows (observations) in the design matrix.}
 }
 \value{
 A vector of length \code{n_lambda} with regularization weights.
 }
 \description{
-Please see \code{\link[=SLOPE]{SLOPE()}} for detailed information regarding the parameters in
-this function.
+This function generates sequences of regularizations weights for use in
+\code{\link[=SLOPE]{SLOPE()}} (or elsewhere).
 }
 \details{
+Please see \code{\link[=SLOPE]{SLOPE()}} for detailed information regarding the parameters in
+this function, in particular the section \emph{Regularization Sequences}.
+
 Note that these sequences are automatically scaled (unless a value for
 the \code{alpha} parameter is manually supplied) when using \code{\link[=SLOPE]{SLOPE()}}. In this
 function, nu such scaling is attempted.
 }
 \examples{
-regularizationWeights(100, q = 0.2, lambda_type = "oscar")
+# compute different penalization sequences
+bh <- regularizationWeights(100, q = 0.2, type = "bh")
+
+gaussian <- regularizationWeights(
+  100,
+  q = 0.2,
+  n = 300,
+  type = "gaussian"
+)
+
+oscar <- regularizationWeights(
+  100,
+  theta1 = 1.284,
+  theta2 = 0.0182,
+  type = "oscar"
+)
+
+lasso <- regularizationWeights(100, type = "lasso") * mean(oscar)
+
+# Plot a comparison between these sequences
+plot(bh, type = "l", ylab = expression(lambda))
+lines(gaussian, col = "dark orange")
+lines(oscar, col = "navy")
+lines(lasso, col = "red3")
+
+legend(
+  "topright",
+  legend = c("BH", "Gaussian", "OSCAR", "lasso"),
+  col = c("black", "dark orange", "navy", "red3"),
+  lty = 1
+)
 }
 \seealso{
 \code{\link[=SLOPE]{SLOPE()}}
