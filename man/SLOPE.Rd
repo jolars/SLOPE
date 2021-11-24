@@ -12,7 +12,7 @@ SLOPE(
   center = !inherits(x, "sparseMatrix"),
   scale = c("l2", "l1", "sd", "none"),
   alpha = c("path", "estimate"),
-  lambda = c("bh", "gaussian", "oscar"),
+  lambda = c("bh", "gaussian", "oscar", "lasso"),
   alpha_min_ratio = if (NROW(x) < NCOL(x)) 0.01 else 1e-04,
   path_length = if (alpha[1] == "estimate") 1 else 20,
   q = 0.1 * min(1, NROW(x)/NCOL(x)),
@@ -311,22 +311,21 @@ with \eqn{y_{ik}} being the element in a \eqn{n} by \eqn{(m-1)} matrix, where
 \eqn{m} is the number of classes in the response.
 }
 
-\section{Regularization sequences}{
+\section{Regularization Sequences}{
 
 There are multiple ways of specifying the \code{lambda} sequence
 in \code{SLOPE()}. It is, first of all, possible to select the sequence manually
 by
 using a non-increasing
-numeric vector, possible of length one, as argument instead of a character.
-If all \code{lambda} are the same value, this will
-lead to the ordinary lasso penalty. The greater the differences are between
+numeric vector, possibly of length one, as argument instead of a character.
+The greater the differences are between
 consecutive values along the sequence, the more clustering behavior
 will the model exhibit. Note, also, that the scale of the \eqn{\lambda}
 vector makes no difference if \code{alpha = NULL}, since \code{alpha} will be
 selected automatically to ensure that the model is completely sparse at the
 beginning and almost unregularized at the end. If, however, both
-\code{alpha} and \code{lambda} are manually specified, both of the scales will
-matter.
+\code{alpha} and \code{lambda} are manually specified, then the scales of both do
+matter, so make sure to choose them wisely.
 
 Instead of choosing the sequence manually, one of the following
 automatically generated sequences may be chosen.
@@ -371,6 +370,21 @@ sequence, such that
 for \eqn{i = 1,\dots,p}. We use the parametrization from Zhong and Kwok
 (2021) but use \eqn{\theta_1} and \eqn{\theta_2} instead of \eqn{\lambda_1}
 and \eqn{\lambda_2} to avoid confusion and abuse of notation.
+
+\strong{lasso}
+
+SLOPE is exactly equivalent to the
+lasso when the sequence of regularization weights is constant, i.e.
+\deqn{
+  \lambda_i = 1
+}
+for \eqn{i = 1,\dots,p}. Here, again, we stress that the fact that
+all \eqn{\lambda} are equal to one does not matter as long as
+\code{alpha == NULL} since we scale the vector automatically.
+Note that this option is only here for academic interest and
+to highlight the fact that SLOPE is
+a generalization of the lasso. There are more efficient packages, such as
+\strong{glmnet} and \strong{biglasso}, for fitting the lasso.
 }
 
 \section{Solvers}{
