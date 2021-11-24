@@ -1,87 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://jolars.github.io/SLOPE/CODE_OF_CONDUCT.html</loc>
+    <loc>https://jolars.github.io/SLOPE//index.html</loc>
   </url>
   <url>
-    <loc>https://jolars.github.io/SLOPE/LICENSE.html</loc>
+    <loc>https://jolars.github.io/SLOPE//reference/SLOPE-package.html</loc>
   </url>
   <url>
-    <loc>https://jolars.github.io/SLOPE/articles/index.html</loc>
+    <loc>https://jolars.github.io/SLOPE//reference/SLOPE.html</loc>
   </url>
   <url>
-    <loc>https://jolars.github.io/SLOPE/articles/introduction.html</loc>
+    <loc>https://jolars.github.io/SLOPE//reference/abalone.html</loc>
   </url>
   <url>
-    <loc>https://jolars.github.io/SLOPE/authors.html</loc>
+    <loc>https://jolars.github.io/SLOPE//reference/bodyfat.html</loc>
   </url>
   <url>
-    <loc>https://jolars.github.io/SLOPE/index.html</loc>
+    <loc>https://jolars.github.io/SLOPE//reference/caretSLOPE.html</loc>
   </url>
   <url>
-    <loc>https://jolars.github.io/SLOPE/news/index.html</loc>
+    <loc>https://jolars.github.io/SLOPE//reference/coef.SLOPE.html</loc>
   </url>
   <url>
-    <loc>https://jolars.github.io/SLOPE/reference/SLOPE-package.html</loc>
+    <loc>https://jolars.github.io/SLOPE//reference/deviance.SLOPE.html</loc>
   </url>
   <url>
-    <loc>https://jolars.github.io/SLOPE/reference/SLOPE.html</loc>
+    <loc>https://jolars.github.io/SLOPE//reference/heart.html</loc>
   </url>
   <url>
-    <loc>https://jolars.github.io/SLOPE/reference/abalone.html</loc>
+    <loc>https://jolars.github.io/SLOPE//reference/interpolateCoefficients.html</loc>
   </url>
   <url>
-    <loc>https://jolars.github.io/SLOPE/reference/bodyfat.html</loc>
+    <loc>https://jolars.github.io/SLOPE//reference/interpolatePenalty.html</loc>
   </url>
   <url>
-    <loc>https://jolars.github.io/SLOPE/reference/caretSLOPE.html</loc>
+    <loc>https://jolars.github.io/SLOPE//reference/plot.SLOPE.html</loc>
   </url>
   <url>
-    <loc>https://jolars.github.io/SLOPE/reference/coef.SLOPE.html</loc>
+    <loc>https://jolars.github.io/SLOPE//reference/plot.TrainedSLOPE.html</loc>
   </url>
   <url>
-    <loc>https://jolars.github.io/SLOPE/reference/deviance.SLOPE.html</loc>
+    <loc>https://jolars.github.io/SLOPE//reference/plotDiagnostics.html</loc>
   </url>
   <url>
-    <loc>https://jolars.github.io/SLOPE/reference/heart.html</loc>
+    <loc>https://jolars.github.io/SLOPE//reference/predict.SLOPE.html</loc>
   </url>
   <url>
-    <loc>https://jolars.github.io/SLOPE/reference/index.html</loc>
+    <loc>https://jolars.github.io/SLOPE//reference/print.SLOPE.html</loc>
   </url>
   <url>
-    <loc>https://jolars.github.io/SLOPE/reference/interpolateCoefficients.html</loc>
+    <loc>https://jolars.github.io/SLOPE//reference/regularizationWeights.html</loc>
   </url>
   <url>
-    <loc>https://jolars.github.io/SLOPE/reference/interpolatePenalty.html</loc>
+    <loc>https://jolars.github.io/SLOPE//reference/score.html</loc>
   </url>
   <url>
-    <loc>https://jolars.github.io/SLOPE/reference/plot.SLOPE.html</loc>
+    <loc>https://jolars.github.io/SLOPE//reference/setupDiagnostics.html</loc>
   </url>
   <url>
-    <loc>https://jolars.github.io/SLOPE/reference/plot.TrainedSLOPE.html</loc>
+    <loc>https://jolars.github.io/SLOPE//reference/sortedL1Prox.html</loc>
   </url>
   <url>
-    <loc>https://jolars.github.io/SLOPE/reference/plotDiagnostics.html</loc>
+    <loc>https://jolars.github.io/SLOPE//reference/student.html</loc>
   </url>
   <url>
-    <loc>https://jolars.github.io/SLOPE/reference/predict.SLOPE.html</loc>
+    <loc>https://jolars.github.io/SLOPE//reference/trainSLOPE.html</loc>
   </url>
   <url>
-    <loc>https://jolars.github.io/SLOPE/reference/print.SLOPE.html</loc>
+    <loc>https://jolars.github.io/SLOPE//reference/wine.html</loc>
   </url>
   <url>
-    <loc>https://jolars.github.io/SLOPE/reference/score.html</loc>
+    <loc>https://jolars.github.io/SLOPE//articles/introduction.html</loc>
   </url>
   <url>
-    <loc>https://jolars.github.io/SLOPE/reference/setupDiagnostics.html</loc>
-  </url>
-  <url>
-    <loc>https://jolars.github.io/SLOPE/reference/student.html</loc>
-  </url>
-  <url>
-    <loc>https://jolars.github.io/SLOPE/reference/trainSLOPE.html</loc>
-  </url>
-  <url>
-    <loc>https://jolars.github.io/SLOPE/reference/wine.html</loc>
+    <loc>https://jolars.github.io/SLOPE//articles/prox-solvers.html</loc>
   </url>
 </urlset>

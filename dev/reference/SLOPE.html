@@ -57,8 +57,6 @@ in decreasing order according  to its absolute values." />
 
 <meta name="robots" content="noindex">
 
-
-
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -80,16 +78,9 @@ in decreasing order according  to its absolute values." />
 </script>
 
 
-
-  
-
-  
-
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    
-
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -110,6 +101,12 @@ in decreasing order according  to its absolute values." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="../index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -121,6 +118,9 @@ in decreasing order according  to its absolute values." />
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="../articles/introduction.html">An introduction to SLOPE</a>
+    </li>
+    <li>
+      <a href="../articles/prox-solvers.html">prox-solvers</a>
     </li>
   </ul>
 </li>
@@ -178,7 +178,7 @@ coefficient vector (\(\beta\)) after having sorted it
 in decreasing order according  to its absolute values.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>SLOPE</span><span class='op'>(</span>
+    <pre class="usage"><span class='fu'>SLOPE</span><span class='op'>(</span>
   <span class='va'>x</span>,
   <span class='va'>y</span>,
   family <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"gaussian"</span>, <span class='st'>"binomial"</span>, <span class='st'>"multinomial"</span>, <span class='st'>"poisson"</span><span class='op'>)</span>,
@@ -186,12 +186,13 @@ in decreasing order according  to its absolute values.</p>
   center <span class='op'>=</span> <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/class.html'>inherits</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='st'>"sparseMatrix"</span><span class='op'>)</span>,
   scale <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"l2"</span>, <span class='st'>"l1"</span>, <span class='st'>"sd"</span>, <span class='st'>"none"</span><span class='op'>)</span>,
   alpha <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"path"</span>, <span class='st'>"estimate"</span><span class='op'>)</span>,
-  lambda <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"bh"</span>, <span class='st'>"gaussian"</span>, <span class='st'>"oscar"</span><span class='op'>)</span>,
+  lambda <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"bh"</span>, <span class='st'>"gaussian"</span>, <span class='st'>"oscar"</span>, <span class='st'>"lasso"</span><span class='op'>)</span>,
   alpha_min_ratio <span class='op'>=</span> <span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>&lt;</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NCOL</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span> <span class='fl'>0.01</span> <span class='kw'>else</span> <span class='fl'>1e-04</span>,
   path_length <span class='op'>=</span> <span class='kw'>if</span> <span class='op'>(</span><span class='va'>alpha</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span> <span class='op'>==</span> <span class='st'>"estimate"</span><span class='op'>)</span> <span class='fl'>1</span> <span class='kw'>else</span> <span class='fl'>20</span>,
   q <span class='op'>=</span> <span class='fl'>0.1</span> <span class='op'>*</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>/</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NCOL</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span>,
   theta1 <span class='op'>=</span> <span class='fl'>1</span>,
   theta2 <span class='op'>=</span> <span class='fl'>0.5</span>,
+  prox_method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"stack"</span>, <span class='st'>"pava"</span><span class='op'>)</span>,
   screen <span class='op'>=</span> <span class='cn'>TRUE</span>,
   screen_alg <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"strong"</span>, <span class='st'>"previous"</span><span class='op'>)</span>,
   tol_dev_change <span class='op'>=</span> <span class='fl'>1e-05</span>,
@@ -209,7 +210,7 @@ in decreasing order according  to its absolute values.</p>
   <span class='va'>sigma</span>,
   <span class='va'>n_sigma</span>,
   <span class='va'>lambda_min_ratio</span>
-<span class='op'>)</span></code></pre></div>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -290,7 +291,8 @@ given by <code>tol_dev_change</code>, <code>tol_dev_ratio</code>, and <code>max_
       <th>q</th>
       <td><p>parameter controlling the shape of the lambda sequence, with
 usage varying depending on the type of path used and has no effect
-is a custom <code>lambda</code> sequence is used.</p></td>
+is a custom <code>lambda</code> sequence is used. Must be greater than <code>1e-6</code> and
+smaller than 1.</p></td>
     </tr>
     <tr>
       <th>theta1</th>
@@ -305,6 +307,12 @@ original OSCAR formulation.</p></td>
 when <code>lambda == "OSCAR"</code>. This parameter basically sets the slope
 for the lambda sequence and is equivalent to \(\lambda_2\) in the
 original OSCAR formulation.</p></td>
+    </tr>
+    <tr>
+      <th>prox_method</th>
+      <td><p>method for calculating the proximal operator for
+the Sorted L1 Norm (the SLOPE penalty). Please see <code><a href='sortedL1Prox.html'>sortedL1Prox()</a></code> for
+more information.</p></td>
     </tr>
     <tr>
       <th>screen</th>
@@ -332,9 +340,8 @@ automatically set to 0 if a alpha is manually entered</p></td>
     <tr>
       <th>tol_dev_ratio</th>
       <td><p>the regularization path is stopped if the
-deviance ratio
-\(1 - \mathrm{deviance}/\mathrm{(null-deviance)}\)
-is above this threshold</p></td>
+deviance ratio \(1 - \mathrm{deviance}/\mathrm{(null-deviance)}
+  \) is above this threshold</p></td>
     </tr>
     <tr>
       <th>max_variables</th>
@@ -470,39 +477,44 @@ $$</p>
 <p><strong>Binomial</strong></p>
 <p>The binomial model (logistic regression) has the following objective:
 $$
-  \sum_{i=1}^n \log\left(1+ \exp\left(- y_i \left(x_i^T\beta + \beta_0 \right) \right) \right)
+  \sum_{i=1}^n \log\left(1+ \exp\left(
+    - y_i \left(x_i^T\beta + \beta_0 \right) \right) \right)
 $$
 with \(y \in \{-1, 1\}\).</p>
 <p><strong>Poisson</strong></p>
 <p>In poisson regression, we use the following objective:</p>
 <p>$$
-  -\sum_{i=1}^n \left(y_i\left(x_i^T\beta + \beta_0\right) - \exp\left(x_i^T\beta + \beta_0\right)\right)
+  -\sum_{i=1}^n \left(y_i\left(
+    x_i^T\beta + \beta_0\right) - \exp\left(x_i^T\beta + \beta_0
+  \right)\right)
 $$</p>
 <p><strong>Multinomial</strong></p>
 <p>In multinomial regression, we minimize the full-rank objective
 $$
-  -\sum_{i=1}^n\left( \sum_{k=1}^{m-1} y_{ik}(x_i^T\beta_k + \beta_{0,k})
-                     - \log\sum_{k=1}^{m-1} \exp\big(x_i^T\beta_k + \beta_{0,k}\big) \right)
+  -\sum_{i=1}^n\left(
+    \sum_{k=1}^{m-1} y_{ik}(x_i^T\beta_k + \beta_{0,k})
+    - \log\sum_{k=1}^{m-1} \exp\big(x_i^T\beta_k + \beta_{0,k}\big)
+  \right)
 $$
 with \(y_{ik}\) being the element in a \(n\) by \((m-1)\) matrix, where
 \(m\) is the number of classes in the response.</p>
-    <h2 class="hasAnchor" id="regularization-sequences"><a class="anchor" href="#regularization-sequences"></a>Regularization sequences</h2>
+    <h2 class="hasAnchor" id="regularization-sequences"><a class="anchor" href="#regularization-sequences"></a>Regularization Sequences</h2>
 
     
 
 <p>There are multiple ways of specifying the <code>lambda</code> sequence
-in <code>SLOPE()</code>. It is, first of all, possible to select the sequence manually by
+in <code>SLOPE()</code>. It is, first of all, possible to select the sequence manually
+by
 using a non-increasing
-numeric vector, possible of length one, as argument instead of a character.
-If all <code>lambda</code> are the same value, this will
-lead to the ordinary lasso penalty. The greater the differences are between
+numeric vector, possibly of length one, as argument instead of a character.
+The greater the differences are between
 consecutive values along the sequence, the more clustering behavior
 will the model exhibit. Note, also, that the scale of the \(\lambda\)
 vector makes no difference if <code>alpha = NULL</code>, since <code>alpha</code> will be
 selected automatically to ensure that the model is completely sparse at the
 beginning and almost unregularized at the end. If, however, both
-<code>alpha</code> and <code>lambda</code> are manually specified, both of the scales will
-matter.</p>
+<code>alpha</code> and <code>lambda</code> are manually specified, then the scales of both do
+matter, so make sure to choose them wisely.</p>
 <p>Instead of choosing the sequence manually, one of the following
 automatically generated sequences may be chosen.</p>
 <p><strong>BH (Benjamini--Hochberg)</strong></p>
@@ -518,7 +530,8 @@ that can be set by the user in the call to <code>SLOPE()</code>.</p>
 <p><strong>Gaussian</strong></p>
 <p>This penalty sequence is related to BH, such that
 $$
-  \lambda_i = \lambda^{(\mathrm{BH})}_i \sqrt{1 + w(i-1)\cdot \mathrm{cumsum}(\lambda^2)_i},
+  \lambda_i = \lambda^{(\mathrm{BH})}_i
+  \sqrt{1 + w(i-1)\cdot \mathrm{cumsum}(\lambda^2)_i},
 $$
 for \(i=1,\dots,p\), where \(w(k) = 1/(n-k-1)\). We let
 \(\lambda_1 = \lambda^{(\mathrm{BH})}_1\) and
@@ -535,6 +548,19 @@ $$
 for \(i = 1,\dots,p\). We use the parametrization from Zhong and Kwok
 (2021) but use \(\theta_1\) and \(\theta_2\) instead of \(\lambda_1\)
 and \(\lambda_2\) to avoid confusion and abuse of notation.</p>
+<p><strong>lasso</strong></p>
+<p>SLOPE is exactly equivalent to the
+lasso when the sequence of regularization weights is constant, i.e.
+$$
+  \lambda_i = 1
+$$
+for \(i = 1,\dots,p\). Here, again, we stress that the fact that
+all \(\lambda\) are equal to one does not matter as long as
+<code>alpha == NULL</code> since we scale the vector automatically.
+Note that this option is only here for academic interest and
+to highlight the fact that SLOPE is
+a generalization of the lasso. There are more efficient packages, such as
+<strong>glmnet</strong> and <strong>biglasso</strong>, for fitting the lasso.</p>
     <h2 class="hasAnchor" id="solvers"><a class="anchor" href="#solvers"></a>Solvers</h2>
 
     
@@ -563,10 +589,10 @@ Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
 
     <div class='dont-index'><p><code><a href='plot.SLOPE.html'>plot.SLOPE()</a></code>, <code><a href='plotDiagnostics.html'>plotDiagnostics()</a></code>, <code><a href='score.html'>score()</a></code>, <code><a href='predict.SLOPE.html'>predict.SLOPE()</a></code>,
 <code><a href='trainSLOPE.html'>trainSLOPE()</a></code>, <code><a href='coef.SLOPE.html'>coef.SLOPE()</a></code>, <code><a href='print.SLOPE.html'>print.SLOPE()</a></code>, <code><a href='print.SLOPE.html'>print.SLOPE()</a></code>,
-<code><a href='deviance.SLOPE.html'>deviance.SLOPE()</a></code></p></div>
+<code><a href='deviance.SLOPE.html'>deviance.SLOPE()</a></code>, <code><a href='sortedL1Prox.html'>sortedL1Prox()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'></span>
+    <pre class="examples"><span class='r-in'></span>
 <span class='r-in'><span class='co'># Gaussian response, default lambda sequence</span></span>
 <span class='r-in'><span class='va'>fit</span> <span class='op'>&lt;-</span> <span class='fu'>SLOPE</span><span class='op'>(</span><span class='va'>bodyfat</span><span class='op'>$</span><span class='va'>x</span>, <span class='va'>bodyfat</span><span class='op'>$</span><span class='va'>y</span><span class='op'>)</span></span>
 <span class='r-in'></span>
@@ -594,7 +620,7 @@ Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
 <span class='r-in'>  lambda <span class='op'>=</span> <span class='va'>lambda</span>,</span>
 <span class='r-in'>  alpha <span class='op'>=</span> <span class='va'>alpha</span></span>
 <span class='r-in'><span class='op'>)</span></span>
-</code></pre></div>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -606,11 +632,11 @@ Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
 
       <footer>
       <div class="copyright">
-  <p><p>Developed by Johan Larsson, Jonas Wallin, Malgorzata Bogdan, Ewout van den Berg, Chiara Sabatti, Emmanuel Candes, Evan Patterson, Weijie Su.</p></p>
+  <p>Developed by Johan Larsson, Jonas Wallin, Malgorzata Bogdan, Ewout van den Berg, Chiara Sabatti, Emmanuel Candes, Evan Patterson, Weijie Su.</p>
 </div>
 
 <div class="pkgdown">
-  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
@@ -618,8 +644,6 @@ Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
 
   
 
-
-  
 
   </body>
 </html>

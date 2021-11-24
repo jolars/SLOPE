@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Train a SLOPE model — trainSLOPE • SLOPE</title>
+<title>Generate Regularization (Penalty) Weights for SLOPE — regularizationWeights • SLOPE</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,9 +46,9 @@
 
 
 
-<meta property="og:title" content="Train a SLOPE model — trainSLOPE" />
-<meta property="og:description" content="This function trains a model fit by SLOPE() by tuning its parameters
-through cross-validation." />
+<meta property="og:title" content="Generate Regularization (Penalty) Weights for SLOPE — regularizationWeights" />
+<meta property="og:description" content="This function generates sequences of regularizations weights for use in
+SLOPE() (or elsewhere)." />
 <meta property="og:image" content="https://jolars.github.io/SLOPE/logo.svg" />
 
 
@@ -162,40 +162,38 @@ through cross-validation." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Train a SLOPE model</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jolars/SLOPE/blob/master/R/trainSLOPE.R'><code>R/trainSLOPE.R</code></a></small>
-    <div class="hidden name"><code>trainSLOPE.Rd</code></div>
+    <h1>Generate Regularization (Penalty) Weights for SLOPE</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jolars/SLOPE/blob/master/R/regularizationWeights.R'><code>R/regularizationWeights.R</code></a></small>
+    <div class="hidden name"><code>regularizationWeights.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function trains a model fit by <code><a href='SLOPE.html'>SLOPE()</a></code> by tuning its parameters
-through cross-validation.</p>
+    <p>This function generates sequences of regularizations weights for use in
+<code><a href='SLOPE.html'>SLOPE()</a></code> (or elsewhere).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>trainSLOPE</span><span class='op'>(</span>
-  <span class='va'>x</span>,
-  <span class='va'>y</span>,
+    <pre class="usage"><span class='fu'>regularizationWeights</span><span class='op'>(</span>
+  n_lambda <span class='op'>=</span> <span class='fl'>100</span>,
+  type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"bh"</span>, <span class='st'>"gaussian"</span>, <span class='st'>"oscar"</span>, <span class='st'>"lasso"</span><span class='op'>)</span>,
   q <span class='op'>=</span> <span class='fl'>0.2</span>,
-  number <span class='op'>=</span> <span class='fl'>10</span>,
-  repeats <span class='op'>=</span> <span class='fl'>1</span>,
-  measure <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"mse"</span>, <span class='st'>"mae"</span>, <span class='st'>"deviance"</span>, <span class='st'>"missclass"</span>, <span class='st'>"auc"</span><span class='op'>)</span>,
-  <span class='va'>...</span>
+  theta1 <span class='op'>=</span> <span class='fl'>1</span>,
+  theta2 <span class='op'>=</span> <span class='fl'>0.5</span>,
+  n <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>the design matrix, which can be either a dense
-matrix of the standard <em>matrix</em> class, or a sparse matrix
-inheriting from <a href='https://rdrr.io/pkg/Matrix/man/sparseMatrix.html'>Matrix::sparseMatrix</a>. Data frames will
-be converted to matrices internally.</p></td>
+      <th>n_lambda</th>
+      <td><p>The number of lambdas to generate. This should typically
+be equal to the number of predictors in your data set.</p></td>
     </tr>
     <tr>
-      <th>y</th>
-      <td><p>the response, which for <code>family = "gaussian"</code> must be numeric; for
-<code>family = "binomial"</code> or <code>family = "multinomial"</code>, it can be a factor.</p></td>
+      <th>type</th>
+      <td><p>The type of lambda sequence to use. See documentation for
+in <code><a href='SLOPE.html'>SLOPE()</a></code>, including that related to the <code>lambda</code> parameter in that
+function.</p></td>
     </tr>
     <tr>
       <th>q</th>
@@ -205,67 +203,72 @@ is a custom <code>lambda</code> sequence is used. Must be greater than <code>1e-
 smaller than 1.</p></td>
     </tr>
     <tr>
-      <th>number</th>
-      <td><p>number of folds (cross-validation)</p></td>
+      <th>theta1</th>
+      <td><p>parameter controlling the shape of the lambda sequence
+when <code>lambda == "OSCAR"</code>. This parameter basically sets the intercept
+for the lambda sequence and is equivalent to \(\lambda_1\) in the
+original OSCAR formulation.</p></td>
     </tr>
     <tr>
-      <th>repeats</th>
-      <td><p>number of repeats for each fold (for repeated <em>k</em>-fold cross
-validation)</p></td>
+      <th>theta2</th>
+      <td><p>parameter controlling the shape of the lambda sequence
+when <code>lambda == "OSCAR"</code>. This parameter basically sets the slope
+for the lambda sequence and is equivalent to \(\lambda_2\) in the
+original OSCAR formulation.</p></td>
     </tr>
     <tr>
-      <th>measure</th>
-      <td><p>measure to try to optimize; note that you may
-supply <em>multiple</em> values here and that, by default,
-all the possible measures for the given model will be used.</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>other arguments to pass on to <code><a href='SLOPE.html'>SLOPE()</a></code></p></td>
+      <th>n</th>
+      <td><p>The number of rows (observations) in the design matrix.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An object of class <code>"TrainedSLOPE"</code>, with the following slots:</p>
-<dt>summary</dt><dd><p>a summary of the results with means, standard errors,
-and 0.95 confidence levels</p></dd>
-<dt>data</dt><dd><p>the raw data from the model training</p></dd>
-<dt>optima</dt><dd><p>a <code>data.frame</code> of the best (mean) values for the different metrics and their corresponding parameter values</p></dd>
-<dt>measure</dt><dd><p>a <code>data.frame</code> listing the used metrics and their labels</p></dd>
-<dt>model</dt><dd><p>the model fit to the entire data set</p></dd>
-<dt>call</dt><dd><p>the call</p></dd>
-
+    <p>A vector of length <code>n_lambda</code> with regularization weights.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Note that by default this method matches all of the available metrics
-for the given model family against those provided in the argument
-<code>measure</code>. Collecting these measures is not particularly demanding
-computationally so it is almost always best to leave this argument
-as it is and then choose which argument to focus on in the call
-to <code><a href='plot.TrainedSLOPE.html'>plot.TrainedSLOPE()</a></code>.</p>
-    <h2 class="hasAnchor" id="parallel-operation"><a class="anchor" href="#parallel-operation"></a>Parallel operation</h2>
-
-    
-
-<p>This function uses the <strong>foreach</strong> package to enable parallel
-operation. To enable this, simply register a parallel backend
-using, for instance, <code>doParallel::registerDoParallel()</code> from the
-<strong>doParallel</strong> package before running this function.</p>
+    <p>Please see <code><a href='SLOPE.html'>SLOPE()</a></code> for detailed information regarding the parameters in
+this function, in particular the section <em>Regularization Sequences</em>.</p>
+<p>Note that these sequences are automatically scaled (unless a value for
+the <code>alpha</code> parameter is manually supplied) when using <code><a href='SLOPE.html'>SLOPE()</a></code>. In this
+function, nu such scaling is attempted.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/foreach/man/foreach.html'>foreach::foreach()</a></code>, <code><a href='plot.TrainedSLOPE.html'>plot.TrainedSLOPE()</a></code></p>
-<p>Other model-tuning: 
-<code><a href='caretSLOPE.html'>caretSLOPE</a>()</code>,
-<code><a href='plot.TrainedSLOPE.html'>plot.TrainedSLOPE</a>()</code></p></div>
+    <div class='dont-index'><p><code><a href='SLOPE.html'>SLOPE()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='r-in'><span class='co'># 8-fold cross-validation repeated 5 times</span></span>
-<span class='r-in'><span class='va'>tune</span> <span class='op'>&lt;-</span> <span class='fu'>trainSLOPE</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>mtcars</span>, select <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"mpg"</span>, <span class='st'>"drat"</span>, <span class='st'>"wt"</span><span class='op'>)</span><span class='op'>)</span>,</span>
-<span class='r-in'>                   <span class='va'>mtcars</span><span class='op'>$</span><span class='va'>hp</span>,</span>
-<span class='r-in'>                   q <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.1</span>, <span class='fl'>0.2</span><span class='op'>)</span>,</span>
-<span class='r-in'>                   number <span class='op'>=</span> <span class='fl'>8</span>,</span>
-<span class='r-in'>                   repeats <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span></span>
+    <pre class="examples"><span class='r-in'><span class='co'># compute different penalization sequences</span></span>
+<span class='r-in'><span class='va'>bh</span> <span class='op'>&lt;-</span> <span class='fu'>regularizationWeights</span><span class='op'>(</span><span class='fl'>100</span>, q <span class='op'>=</span> <span class='fl'>0.2</span>, type <span class='op'>=</span> <span class='st'>"bh"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>gaussian</span> <span class='op'>&lt;-</span> <span class='fu'>regularizationWeights</span><span class='op'>(</span></span>
+<span class='r-in'>  <span class='fl'>100</span>,</span>
+<span class='r-in'>  q <span class='op'>=</span> <span class='fl'>0.2</span>,</span>
+<span class='r-in'>  n <span class='op'>=</span> <span class='fl'>300</span>,</span>
+<span class='r-in'>  type <span class='op'>=</span> <span class='st'>"gaussian"</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>oscar</span> <span class='op'>&lt;-</span> <span class='fu'>regularizationWeights</span><span class='op'>(</span></span>
+<span class='r-in'>  <span class='fl'>100</span>,</span>
+<span class='r-in'>  theta1 <span class='op'>=</span> <span class='fl'>1.284</span>,</span>
+<span class='r-in'>  theta2 <span class='op'>=</span> <span class='fl'>0.0182</span>,</span>
+<span class='r-in'>  type <span class='op'>=</span> <span class='st'>"oscar"</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>lasso</span> <span class='op'>&lt;-</span> <span class='fu'>regularizationWeights</span><span class='op'>(</span><span class='fl'>100</span>, type <span class='op'>=</span> <span class='st'>"lasso"</span><span class='op'>)</span> <span class='op'>*</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>oscar</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Plot a comparison between these sequences</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>bh</span>, type <span class='op'>=</span> <span class='st'>"l"</span>, ylab <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/expression.html'>expression</a></span><span class='op'>(</span><span class='va'>lambda</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span><span class='op'>(</span><span class='va'>gaussian</span>, col <span class='op'>=</span> <span class='st'>"dark orange"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span><span class='op'>(</span><span class='va'>oscar</span>, col <span class='op'>=</span> <span class='st'>"navy"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span><span class='op'>(</span><span class='va'>lasso</span>, col <span class='op'>=</span> <span class='st'>"red3"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/graphics/legend.html'>legend</a></span><span class='op'>(</span></span>
+<span class='r-in'>  <span class='st'>"topright"</span>,</span>
+<span class='r-in'>  legend <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"BH"</span>, <span class='st'>"Gaussian"</span>, <span class='st'>"OSCAR"</span>, <span class='st'>"lasso"</span><span class='op'>)</span>,</span>
+<span class='r-in'>  col <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"black"</span>, <span class='st'>"dark orange"</span>, <span class='st'>"navy"</span>, <span class='st'>"red3"</span><span class='op'>)</span>,</span>
+<span class='r-in'>  lty <span class='op'>=</span> <span class='fl'>1</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-plt img'><img src='regularizationWeights-1.png' alt='' width='700' height='433' /></span>
 </pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

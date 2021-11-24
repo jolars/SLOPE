@@ -33,8 +33,6 @@
 </script>
 </head>
 <body data-spy="scroll" data-target="#toc">
-    
-
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -54,6 +52,12 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
+  <a href="../index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -66,6 +70,9 @@
 <li>
       <a href="../articles/introduction.html">An introduction to SLOPE</a>
     </li>
+    <li>
+      <a href="../articles/prox-solvers.html">prox-solvers</a>
+    </li>
   </ul>
 </li>
 <li class="dropdown">
@@ -77,10 +84,10 @@
   <ul class="dropdown-menu" role="menu">
 <li class="dropdown-header">Releases</li>
     <li>
-      <a href="https://larssonjohan.com/post/slope-0-3-0/" class="external-link">Version 0.3.0</a>
+      <a href="https://larssonjohan.com/post/slope-0-3-0/">Version 0.3.0</a>
     </li>
     <li>
-      <a href="https://larssonjohan.com/post/slope-0-2-0/" class="external-link">Version 0.2.0</a>
+      <a href="https://larssonjohan.com/post/slope-0-2-0/">Version 0.2.0</a>
     </li>
     <li class="divider">
     <li>
@@ -91,7 +98,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/jolars/SLOPE/" class="external-link">
+  <a href="https://github.com/jolars/SLOPE/">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -110,11 +117,11 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>An introduction to SLOPE</h1>
-                        <h4 data-toc-skip class="author">Johan Larsson</h4>
+                        <h4 class="author">Johan Larsson</h4>
             
-            <h4 data-toc-skip class="date">2021-06-01</h4>
+            <h4 class="date">2021-11-24</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/jolars/SLOPE/blob/master/vignettes/introduction.Rmd" class="external-link"><code>vignettes/introduction.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/jolars/SLOPE/blob/master/vignettes/introduction.Rmd"><code>vignettes/introduction.Rmd</code></a></small>
       <div class="hidden name"><code>introduction.Rmd</code></div>
 
     </div>
@@ -123,7 +130,7 @@
     
 <div id="background" class="section level2">
 <h2 class="hasAnchor">
-<a href="#background" class="anchor" aria-hidden="true"></a>Background</h2>
+<a href="#background" class="anchor"></a>Background</h2>
 <p>The functions in this package solves problems of the type <span class="math display">\[
 \mathrm{minimize}\left\{f(\beta) + J(\beta; \alpha,\lambda) \right\},
 \]</span> where the second part of the objective is the sorted L1-norm <span class="math display">\[
@@ -142,10 +149,10 @@ J(\beta; \alpha,\lambda) = \alpha \sum_{j=1}^p \lambda_j \lvert \beta \rvert_{(j
 </div>
 <div id="an-example" class="section level2">
 <h2 class="hasAnchor">
-<a href="#an-example" class="anchor" aria-hidden="true"></a>An example</h2>
+<a href="#an-example" class="anchor"></a>An example</h2>
 <p>In the following example, we will use the heart data set, for which the response is a cardiac event. (The package contains several data sets to exemplify modeling. Please see the examples in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>.) The main function of the package is <code><a href="../reference/SLOPE.html">SLOPE()</a></code>, which, more or less, serves as an interface for code written in C++. There are many arguments in the function and most of them relate to either the construction of the regularization path or the penalty (<span class="math inline">\(\lambda\)</span>) sequence used. Here we will use the option <code>lambda = "bh"</code>, which used the BH method detailed in <span class="citation">Bogdan et al. (2015)</span> to select the sequence. (Note that it is also possible to manually insert a sequence.)</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://jolars.github.io/SLOPE/">SLOPE</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://jolars.github.io/SLOPE/">SLOPE</a></span><span class="op">)</span>
 
 <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">heart</span><span class="op">$</span><span class="va">x</span>
 <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">heart</span><span class="op">$</span><span class="va">y</span>
@@ -153,7 +160,7 @@ J(\beta; \alpha,\lambda) = \alpha \sum_{j=1}^p \lambda_j \lvert \beta \rvert_{(j
 <span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SLOPE.html">SLOPE</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, family <span class="op">=</span> <span class="st">"binomial"</span>, lambda <span class="op">=</span> <span class="st">"bh"</span><span class="op">)</span></code></pre></div>
 <p>The default print method gives a summary of the regularization path but it is usually more informative to study a plot of the path.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></code></pre></div>
 <div class="figure">
 <img src="introduction_files/figure-html/unnamed-chunk-2-1.png" alt="Regularization path for a binomial regression model fit to the heart data set." width="576"><p class="caption">
 Regularization path for a binomial regression model fit to the heart data set.
@@ -162,10 +169,10 @@ Regularization path for a binomial regression model fit to the heart data set.
 </div>
 <div id="cross-validation" class="section level2">
 <h2 class="hasAnchor">
-<a href="#cross-validation" class="anchor" aria-hidden="true"></a>Cross-validation</h2>
+<a href="#cross-validation" class="anchor"></a>Cross-validation</h2>
 <p>To determine the strength of regularization, it is almost always necessary to tune the <span class="math inline">\(\lambda\)</span> sequence using resampling. This package features two methods for this: a specification for use with the <strong>caret</strong> package via the function <code><a href="../reference/caretSLOPE.html">caretSLOPE()</a></code> or <code><a href="../reference/trainSLOPE.html">trainSLOPE()</a></code>. While former facilitate easier comparison of SLOPE against other methods as well as a multitude of options for resampling and measuring performance, it does not allow for sparse predictor matrices. We will give an example of <code><a href="../reference/trainSLOPE.html">trainSLOPE()</a></code> here.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">924</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">924</span><span class="op">)</span>
 
 <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">bodyfat</span><span class="op">$</span><span class="va">x</span>
 <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">bodyfat</span><span class="op">$</span><span class="va">y</span>
@@ -173,14 +180,14 @@ Regularization path for a binomial regression model fit to the heart data set.
 <span class="va">tune</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/trainSLOPE.html">trainSLOPE</a></span><span class="op">(</span>
   <span class="va">x</span>,
   <span class="va">y</span>,
-  q <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.2</span><span class="op">)</span>,
+  q <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.2</span><span class="op">)</span>,
   number <span class="op">=</span> <span class="fl">5</span>,
   solver <span class="op">=</span> <span class="st">"admm"</span>,
   repeats <span class="op">=</span> <span class="fl">2</span>
 <span class="op">)</span></code></pre></div>
 <p>As before, the plot method offers the best summary.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tune</span>, measure <span class="op">=</span> <span class="st">"mae"</span><span class="op">)</span> <span class="co"># plot mean absolute error</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">tune</span>, measure <span class="op">=</span> <span class="st">"mae"</span><span class="op">)</span> <span class="co"># plot mean absolute error</span></code></pre></div>
 <div class="figure">
 <img src="introduction_files/figure-html/unnamed-chunk-4-1.png" alt="Model tuning results from Gaussian SLOPE on the bodyfat dataset." width="528"><p class="caption">
 Model tuning results from Gaussian SLOPE on the bodyfat dataset.
@@ -201,16 +208,16 @@ Model tuning results from Gaussian SLOPE on the bodyfat dataset.
 </div>
 <div id="false-discovery-rate" class="section level2">
 <h2 class="hasAnchor">
-<a href="#false-discovery-rate" class="anchor" aria-hidden="true"></a>False discovery rate</h2>
+<a href="#false-discovery-rate" class="anchor"></a>False discovery rate</h2>
 <p>Under assumptions of orthonormality, SLOPE has been shown to control false discovery rate (FDR) of non-zero coefficients (feature weights) in the model <span class="citation">(Bogdan et al. 2015)</span>. It is in many ways analogous to the Benjamini–Hochberg procedure for multiple comparisons.</p>
 <p>Let’s set up a simple experiment to see how SLOPE controls the FDR. We randomly generate data sets with various proportions of true signals. Under this gaussian design with independently and identically distributed columns in <span class="math inline">\(X\)</span>, SLOPE should asymptotically control FDR at the level given by the shape parameter <span class="math inline">\(q\)</span>, which we set to 0.1 in this example.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># proportion of real signals</span>
-<span class="va">q</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.5</span>, length.out <span class="op">=</span> <span class="fl">20</span><span class="op">)</span>
-<span class="va">fdr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">q</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
+<span class="va">q</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.5</span>, length.out <span class="op">=</span> <span class="fl">20</span><span class="op">)</span>
+<span class="va">fdr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">q</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
 
-<span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">q</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+<span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">q</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
   <span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">1000</span>
   <span class="va">p</span> <span class="op">&lt;-</span> <span class="va">n</span> <span class="op">/</span> <span class="fl">2</span>
   <span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">1</span>
@@ -225,22 +232,22 @@ Model tuning results from Gaussian SLOPE on the bodyfat dataset.
     lambda <span class="op">=</span> <span class="st">"gaussian"</span>,
     solver <span class="op">=</span> <span class="st">"admm"</span>,
     q <span class="op">=</span> <span class="fl">0.1</span>,
-    alpha <span class="op">=</span> <span class="va">alpha</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>
+    alpha <span class="op">=</span> <span class="va">alpha</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>
   <span class="op">)</span>
 
-  <span class="va">selected_slope</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">nonzeros</span><span class="op">)</span>
-  <span class="va">V</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="va">selected_slope</span>, <span class="va">signals</span><span class="op">)</span><span class="op">)</span>
-  <span class="va">R</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">selected_slope</span><span class="op">)</span>
+  <span class="va">selected_slope</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">nonzeros</span><span class="op">)</span>
+  <span class="va">V</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sets.html">setdiff</a></span><span class="op">(</span><span class="va">selected_slope</span>, <span class="va">signals</span><span class="op">)</span><span class="op">)</span>
+  <span class="va">R</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">selected_slope</span><span class="op">)</span>
   <span class="va">fdr</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">V</span> <span class="op">/</span> <span class="va">R</span>
 <span class="op">}</span>
 
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://lattice.r-forge.r-project.org/" class="external-link">lattice</a></span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://lattice.r-forge.r-project.org/">lattice</a></span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html">xyplot</a></span><span class="op">(</span>
   <span class="va">fdr</span> <span class="op">~</span> <span class="va">q</span>,
   type <span class="op">=</span> <span class="st">"b"</span>, ylab <span class="op">=</span> <span class="st">"FDR"</span>,
   panel <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">{</span>
-    <span class="fu"><a href="https://rdrr.io/pkg/lattice/man/panel.functions.html" class="external-link">panel.refline</a></span><span class="op">(</span>h <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/pkg/lattice/man/panel.xyplot.html" class="external-link">panel.xyplot</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/pkg/lattice/man/panel.functions.html">panel.refline</a></span><span class="op">(</span>h <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/pkg/lattice/man/panel.xyplot.html">panel.xyplot</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span>
   <span class="op">}</span>
 <span class="op">)</span></code></pre></div>
 <div class="figure">
@@ -252,16 +259,16 @@ Control of false discovery rate using SLOPE.
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2 class="hasAnchor">
-<a href="#references" class="anchor" aria-hidden="true"></a>References</h2>
+<a href="#references" class="anchor"></a>References</h2>
 <div id="refs" class="references">
 <div id="ref-bogdan2015">
-<p>Bogdan, Małgorzata, Ewout van den Berg, Chiara Sabatti, Weijie Su, and Emmanuel J. Candès. 2015. “SLOPE - Adaptive Variable Selection via Convex Optimization.” <em>The Annals of Applied Statistics</em> 9 (3): 1103–40. <a href="https://doi.org/10.1214/15-AOAS842" class="external-link">https://doi.org/10.1214/15-AOAS842</a>.</p>
+<p>Bogdan, Małgorzata, Ewout van den Berg, Chiara Sabatti, Weijie Su, and Emmanuel J. Candès. 2015. “SLOPE - Adaptive Variable Selection via Convex Optimization.” <em>The Annals of Applied Statistics</em> 9 (3): 1103–40. <a href="https://doi.org/10.1214/15-AOAS842">https://doi.org/10.1214/15-AOAS842</a>.</p>
 </div>
 <div id="ref-jia2010">
 <p>Jia, J., and B. Yu. 2010. “On Model Selection Consistency of the Elastic Net When P <span class="math inline">\(&gt;&gt;\)</span> N.” <em>Statistica Sinica</em> 20 (2): 595–611.</p>
 </div>
 <div id="ref-tibshirani1996">
-<p>Tibshirani, Robert. 1996. “Regression Shrinkage and Selection via the Lasso.” <em>Journal of the Royal Statistical Society: Series B (Methodological)</em> 58 (1): 267–88. <a href="http://www.jstor.org/stable/2346178" class="external-link">http://www.jstor.org/stable/2346178</a>.</p>
+<p>Tibshirani, Robert. 1996. “Regression Shrinkage and Selection via the Lasso.” <em>Journal of the Royal Statistical Society: Series B (Methodological)</em> 58 (1): 267–88. <a href="http://www.jstor.org/stable/2346178">http://www.jstor.org/stable/2346178</a>.</p>
 </div>
 </div>
 </div>
@@ -278,13 +285,11 @@ Control of false discovery rate using SLOPE.
 
 
       <footer><div class="copyright">
-  <p></p>
-<p>Developed by Johan Larsson, Jonas Wallin, Malgorzata Bogdan, Ewout van den Berg, Chiara Sabatti, Emmanuel Candes, Evan Patterson, Weijie Su.</p>
+  <p>Developed by Johan Larsson, Jonas Wallin, Malgorzata Bogdan, Ewout van den Berg, Chiara Sabatti, Emmanuel Candes, Evan Patterson, Weijie Su.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.6.1.9001.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
@@ -292,8 +297,6 @@ Control of false discovery rate using SLOPE.
 
   
 
-
-  
 
   </body>
 </html>

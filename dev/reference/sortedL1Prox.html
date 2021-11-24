@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Compute one of several loss metrics on a new data set — score • SLOPE</title>
+<title>Sorted L1 Proximal Operator — sortedL1Prox • SLOPE</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,9 +46,13 @@
 
 
 
-<meta property="og:title" content="Compute one of several loss metrics on a new data set — score" />
-<meta property="og:description" content="This function is a unified interface to return various types of loss for a
-model fit with SLOPE()." />
+<meta property="og:title" content="Sorted L1 Proximal Operator — sortedL1Prox" />
+<meta property="og:description" content="The proximal operator for the Sorted L1 Norm, which is the penalty function
+in SLOPE. It solves the problem
+$$
+  \arg\,\min_x \Big( J(x, \lambda) + \frac{1}{2} |x - v|_2^2\Big)
+$$
+where \(J(x, \lambda)\) is the Sorted L1 Norm." />
 <meta property="og:image" content="https://jolars.github.io/SLOPE/logo.svg" />
 
 
@@ -162,76 +166,52 @@ model fit with SLOPE()." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Compute one of several loss metrics on a new data set</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jolars/SLOPE/blob/master/R/score.R'><code>R/score.R</code></a></small>
-    <div class="hidden name"><code>score.Rd</code></div>
+    <h1>Sorted L1 Proximal Operator</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jolars/SLOPE/blob/master/R/sortedL1Prox.R'><code>R/sortedL1Prox.R</code></a></small>
+    <div class="hidden name"><code>sortedL1Prox.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function is a unified interface to return various types of loss for a
-model fit with <code><a href='SLOPE.html'>SLOPE()</a></code>.</p>
+    <p>The proximal operator for the Sorted L1 Norm, which is the penalty function
+in SLOPE. It solves the problem
+$$
+  \arg\,\min_x \Big( J(x, \lambda) + \frac{1}{2} |x - v|_2^2\Big)
+$$
+where \(J(x, \lambda)\) is the Sorted L1 Norm.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>score</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>measure</span><span class='op'>)</span>
-
-<span class='co'># S3 method for GaussianSLOPE</span>
-<span class='fu'>score</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>x</span>, <span class='va'>y</span>, measure <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"mse"</span>, <span class='st'>"mae"</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='co'># S3 method for BinomialSLOPE</span>
-<span class='fu'>score</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>x</span>, <span class='va'>y</span>, measure <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"mse"</span>, <span class='st'>"mae"</span>, <span class='st'>"deviance"</span>, <span class='st'>"misclass"</span>, <span class='st'>"auc"</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='co'># S3 method for MultinomialSLOPE</span>
-<span class='fu'>score</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>x</span>, <span class='va'>y</span>, measure <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"mse"</span>, <span class='st'>"mae"</span>, <span class='st'>"deviance"</span>, <span class='st'>"misclass"</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='co'># S3 method for PoissonSLOPE</span>
-<span class='fu'>score</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>x</span>, <span class='va'>y</span>, measure <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"mse"</span>, <span class='st'>"mae"</span><span class='op'>)</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>sortedL1Prox</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>lambda</span>, method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"stack"</span>, <span class='st'>"pava"</span><span class='op'>)</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>object</th>
-      <td><p>an object of class <code>"SLOPE"</code></p></td>
-    </tr>
-    <tr>
       <th>x</th>
-      <td><p>feature matrix</p></td>
+      <td><p>A vector. In SLOPE, this is the vector of coefficients.</p></td>
     </tr>
     <tr>
-      <th>y</th>
-      <td><p>response</p></td>
+      <th>lambda</th>
+      <td><p>A non-negative and decreasing sequence
+of weights for the Sorted L1 Norm. Needs to be the same length as
+<code>x</code>.</p></td>
     </tr>
     <tr>
-      <th>measure</th>
-      <td><p>type of target measure. <code>"mse"</code> returns mean squared error.
-<code>"mae"</code> returns mean absolute error, <code>"misclass"</code> returns
-misclassification rate, and <code>"auc"</code> returns area under the ROC curve.</p></td>
+      <th>method</th>
+      <td><p>Method used in the prox. <code>"stack"</code> is a stack-based algorithm
+(Algorithm 4 in Bogdan et al.). <code>"pava"</code> is the PAVA algorithm used
+in isotonic regression (also Algorithm 3 in Bogdan et al.).</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
+
+    <p>M. Bogdan, E. van den Berg, Chiara Sabatti, Weijie Su, and Emmanuel J.
+Candès, “SLOPE – adaptive variable selection via convex optimization,” Ann
+Appl Stat, vol. 9, no. 3, pp. 1103–1140, 2015, doi: 10.1214/15-AOAS842.</p>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>The measure along the regularization path depending on the
-value in <code>measure</code>.#'</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+    <p>An evaluation of the proximal operator at <code>x</code> and <code>lambda</code>.</p>
 
-    <div class='dont-index'><p><code><a href='SLOPE.html'>SLOPE()</a></code>, <code><a href='predict.SLOPE.html'>predict.SLOPE()</a></code></p>
-<p>Other SLOPE-methods: 
-<code><a href='coef.SLOPE.html'>coef.SLOPE</a>()</code>,
-<code><a href='deviance.SLOPE.html'>deviance.SLOPE</a>()</code>,
-<code><a href='plot.SLOPE.html'>plot.SLOPE</a>()</code>,
-<code><a href='predict.SLOPE.html'>predict.SLOPE</a>()</code>,
-<code><a href='print.SLOPE.html'>print.SLOPE</a>()</code></p></div>
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>infert</span>, select <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"induced"</span>, <span class='st'>"age"</span>, <span class='st'>"pooled.stratum"</span><span class='op'>)</span><span class='op'>)</span></span>
-<span class='r-in'><span class='va'>y</span> <span class='op'>&lt;-</span> <span class='va'>infert</span><span class='op'>$</span><span class='va'>case</span></span>
-<span class='r-in'></span>
-<span class='r-in'><span class='va'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='SLOPE.html'>SLOPE</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, family <span class='op'>=</span> <span class='st'>"binomial"</span><span class='op'>)</span></span>
-<span class='r-in'><span class='fu'>score</span><span class='op'>(</span><span class='va'>fit</span>, <span class='va'>x</span>, <span class='va'>y</span>, measure <span class='op'>=</span> <span class='st'>"auc"</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>        p1        p2        p3        p4        p5        p6 </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 0.5150055 0.4921504 0.4952903 0.5025192 0.5090179 0.5101132 </span>
-</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
