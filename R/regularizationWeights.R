@@ -10,6 +10,9 @@
 #' @param n_lambda The number of lambdas to generate. This should typically
 #'   be equal to the number of predictors in your data set.
 #' @param n The number of rows (observations) in the design matrix.
+#' @param lambda_type The type of lambda sequence to use. See documentation for
+#'   in [SLOPE()], including that related to the `lambda` parameter in that
+#'   function.
 #' @inheritParams SLOPE
 #'
 #' @return A vector of length `n_lambda` with regularization weights.

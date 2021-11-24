@@ -31,6 +31,10 @@ when \code{lambda == "OSCAR"}. This parameter basically sets the slope
 for the lambda sequence and is equivalent to \eqn{\lambda_2} in the
 original OSCAR formulation.}
 
+\item{lambda_type}{The type of lambda sequence to use. See documentation for
+in \code{\link[=SLOPE]{SLOPE()}}, including that related to the \code{lambda} parameter in that
+function.}
+
 \item{n}{The number of rows (observations) in the design matrix.}
 }
 \value{
