@@ -1,6 +1,6 @@
 # Equivalent formulation for the SLOPE prox, but
 # using isotonic regression (PAVA) algorithm instead
-prox_sorted_L1_isotone <- function(x, lambda) {
+prox_sorted_l1_isotone <- function(x, lambda) {
   sign <- sign(x)
   x    <- abs(x)
   ord  <- order(x)
@@ -23,7 +23,7 @@ test_that("Prox and isotonic regression agree", {
   x <- rnorm(n)
   lambda <- sort(runif(n), decreasing = TRUE)
 
-  out_isotone_ref <- prox_sorted_L1_isotone(x, lambda)
+  out_isotone_ref <- prox_sorted_l1_isotone(x, lambda)
   out_stack <- sortedL1Prox(x, lambda, "stack")
   out_pava <- sortedL1Prox(x, lambda, "pava")
 
