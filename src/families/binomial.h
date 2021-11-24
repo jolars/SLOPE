@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../results.h"
 #include "family.h"
 #include <RcppArmadillo.h>
 

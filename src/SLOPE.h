@@ -1,15 +1,16 @@
+#include "Results.h"
+#include "SolverResults.h"
 #include "families/families.h"
 #include "kktCheck.h"
 #include "regularizationPath.h"
 #include "rescale.h"
-#include "results.h"
 #include "screening.h"
 #include "standardize.h"
 #include <RcppArmadillo.h>
 #include <memory>
 
 template<typename T>
-Rcpp::List
+Results
 SLOPE(T& x,
       arma::mat& y,
       const std::string family_choice,
@@ -148,7 +149,7 @@ SLOPE(T& x,
 
   bool factorized = false;
 
-  Results res;
+  SolverResults solver_res;
 
   uword k = 0;
 
@@ -221,15 +222,15 @@ SLOPE(T& x,
         factorized = true;
       }
 
-      res = family->fit(
+      solver_res = family->fit(
         x, y, beta, z, u, L, U, xTy, lambda * alpha(k), rho, solver);
-      passes(k) = res.passes;
-      beta      = res.beta;
+      passes(k) = solver_res.passes;
+      beta      = solver_res.beta;
 
       if (diagnostics) {
-        primals.push_back(res.primals);
-        duals.push_back(res.duals);
-        timings.push_back(res.time);
+        primals.push_back(solver_res.primals);
+        duals.push_back(solver_res.duals);
+        timings.push_back(solver_res.time);
         violation_list.push_back(violations);
       }
 
@@ -283,25 +284,25 @@ SLOPE(T& x,
           uword n_active =
             (active_set.n_elem - static_cast<uword>(intercept)) * m;
 
-          res = family->fit(x_subset,
-                            y,
-                            beta.rows(active_set),
-                            z_subset,
-                            u_subset,
-                            L,
-                            U,
-                            xTy,
-                            lambda.head(n_active) * alpha(k),
-                            rho,
-                            solver);
+          solver_res = family->fit(x_subset,
+                                   y,
+                                   beta.rows(active_set),
+                                   z_subset,
+                                   u_subset,
+                                   L,
+                                   U,
+                                   xTy,
+                                   lambda.head(n_active) * alpha(k),
+                                   rho,
+                                   solver);
 
           if (family->name() == "gaussian" && solver == "admm") {
             z(active_set) = z_subset;
             u(active_set) = u_subset;
           }
 
-          beta.rows(active_set) = res.beta;
-          passes(k)             = res.passes;
+          beta.rows(active_set) = solver_res.beta;
+          passes(k)             = solver_res.passes;
         }
 
         uvec check_failures;
@@ -349,15 +350,15 @@ SLOPE(T& x,
       }
 
       if (diagnostics) {
-        primals.push_back(res.primals);
-        duals.push_back(res.duals);
-        timings.push_back(res.time);
+        primals.push_back(solver_res.primals);
+        duals.push_back(solver_res.duals);
+        timings.push_back(solver_res.time);
         violation_list.push_back(violations);
       }
     }
 
     // store coefficients and intercept
-    double deviance       = res.deviance;
+    double deviance       = solver_res.deviance;
     double deviance_ratio = 1.0 - deviance / null_deviance;
     deviances(k)          = deviance;
     deviance_ratios(k)    = deviance_ratio;
@@ -415,16 +416,7 @@ SLOPE(T& x,
     alpha /= n;
   }
 
-  return List::create(Named("betas")          = wrap(betas),
-                      Named("active_sets")    = wrap(active_sets),
-                      Named("passes")         = wrap(passes),
-                      Named("primals")        = wrap(primals),
-                      Named("duals")          = wrap(duals),
-                      Named("time")           = wrap(timings),
-                      Named("n_unique")       = wrap(n_unique),
-                      Named("violations")     = wrap(violation_list),
-                      Named("deviance_ratio") = wrap(deviance_ratios),
-                      Named("null_deviance")  = wrap(null_deviance),
-                      Named("alpha")          = wrap(alpha),
-                      Named("lambda")         = wrap(lambda));
+  return Results{ betas,          active_sets,    passes,   primals,
+                  duals,         timings,        n_unique, deviance_ratios,
+                  null_deviance, violation_list, alpha,    lambda };
 }

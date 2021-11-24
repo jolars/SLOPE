@@ -2,7 +2,7 @@
 
 #include "../infeasibility.h"
 #include "../prox.h"
-#include "../results.h"
+#include "../SolverResults.h"
 #include "../utils.h"
 #include <RcppArmadillo.h>
 
@@ -63,17 +63,17 @@ public:
   virtual std::string name() = 0;
 
   template<typename T>
-  Results fit(const T& x,
-              const arma::mat& y,
-              arma::mat beta,
-              arma::vec& z,
-              arma::vec& u,
-              const arma::mat& L,
-              const arma::mat& U,
-              const arma::vec& xTy,
-              arma::vec lambda,
-              double rho,
-              const std::string solver)
+  SolverResults fit(const T& x,
+                    const arma::mat& y,
+                    arma::mat beta,
+                    arma::vec& z,
+                    arma::vec& u,
+                    const arma::mat& L,
+                    const arma::mat& U,
+                    const arma::vec& xTy,
+                    arma::vec lambda,
+                    double rho,
+                    const std::string solver)
   {
     if (solver == "admm")
       return ADMM(x, y, beta, z, u, L, U, xTy, lambda, rho);
@@ -83,10 +83,10 @@ public:
 
   // FISTA implementation
   template<typename T>
-  Results FISTAImpl(const T& x,
-                    const arma::mat& y,
-                    arma::mat beta,
-                    arma::vec lambda)
+  SolverResults FISTAImpl(const T& x,
+                          const arma::mat& y,
+                          arma::mat beta,
+                          arma::vec lambda)
   {
     using namespace arma;
     using namespace Rcpp;
@@ -239,71 +239,71 @@ public:
 
     double deviance = 2 * primal(y, lin_pred);
 
-    Results res{ beta, passes, primals, duals, time, deviance };
+    SolverResults res{ beta, passes, primals, duals, time, deviance };
 
     return res;
   }
 
-  virtual Results FISTA(const arma::sp_mat& x,
-                        const arma::mat& y,
-                        arma::mat beta,
-                        arma::vec lambda)
+  virtual SolverResults FISTA(const arma::sp_mat& x,
+                              const arma::mat& y,
+                              arma::mat beta,
+                              arma::vec lambda)
   {
     return FISTAImpl(x, y, beta, lambda);
   }
 
-  virtual Results FISTA(const arma::mat& x,
-                        const arma::mat& y,
-                        arma::mat beta,
-                        arma::vec lambda)
+  virtual SolverResults FISTA(const arma::mat& x,
+                              const arma::mat& y,
+                              arma::mat beta,
+                              arma::vec lambda)
   {
     return FISTAImpl(x, y, beta, lambda);
   }
 
-  virtual Results ADMM(const arma::sp_mat& x,
-                       const arma::mat& y,
-                       arma::mat beta,
-                       arma::vec& z,
-                       arma::vec& u,
-                       const arma::mat& L,
-                       const arma::mat& U,
-                       const arma::vec& xTy,
-                       arma::vec lambda,
-                       double rho)
+  virtual SolverResults ADMM(const arma::sp_mat& x,
+                             const arma::mat& y,
+                             arma::mat beta,
+                             arma::vec& z,
+                             arma::vec& u,
+                             const arma::mat& L,
+                             const arma::mat& U,
+                             const arma::vec& xTy,
+                             arma::vec lambda,
+                             double rho)
   {
     return ADMMImpl(x, y, beta, z, u, L, U, xTy, lambda, rho);
   }
 
-  virtual Results ADMM(const arma::mat& x,
-                       const arma::mat& y,
-                       arma::mat beta,
-                       arma::vec& z,
-                       arma::vec& u,
-                       const arma::mat& L,
-                       const arma::mat& U,
-                       const arma::vec& xTy,
-                       arma::vec lambda,
-                       double rho)
+  virtual SolverResults ADMM(const arma::mat& x,
+                             const arma::mat& y,
+                             arma::mat beta,
+                             arma::vec& z,
+                             arma::vec& u,
+                             const arma::mat& L,
+                             const arma::mat& U,
+                             const arma::vec& xTy,
+                             arma::vec lambda,
+                             double rho)
   {
     return ADMMImpl(x, y, beta, z, u, L, U, xTy, lambda, rho);
   }
 
   // ADMM implementation
   template<typename T>
-  Results ADMMImpl(const T& x,
-                   const arma::mat& y,
-                   arma::mat beta,
-                   arma::vec& z,
-                   arma::vec& u,
-                   const arma::mat& L,
-                   const arma::mat& U,
-                   const arma::vec& xTy,
-                   arma::vec lambda,
-                   double rho)
+  SolverResults ADMMImpl(const T& x,
+                         const arma::mat& y,
+                         arma::mat beta,
+                         arma::vec& z,
+                         arma::vec& u,
+                         const arma::mat& L,
+                         const arma::mat& U,
+                         const arma::vec& xTy,
+                         arma::vec lambda,
+                         double rho)
   {
     Rcpp::stop("ADMM solver is not implemented for this family");
 
-    Results res{};
+    SolverResults res{};
 
     return res;
   }

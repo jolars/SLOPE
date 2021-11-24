@@ -1,8 +1,8 @@
 #pragma once
 
+#include "../SolverResults.h"
 #include "../infeasibility.h"
 #include "../prox.h"
-#include "../results.h"
 #include "../utils.h"
 #include "family.h"
 #include <RcppArmadillo.h>
@@ -41,46 +41,46 @@ public:
 
   std::string name() { return "gaussian"; }
 
-  Results ADMM(const arma::mat& x,
-               const arma::mat& y,
-               arma::mat beta,
-               arma::vec& z,
-               arma::vec& u,
-               const arma::mat& L,
-               const arma::mat& U,
-               const arma::vec& xTy,
-               arma::vec lambda,
-               double rho)
+  SolverResults ADMM(const arma::mat& x,
+                     const arma::mat& y,
+                     arma::mat beta,
+                     arma::vec& z,
+                     arma::vec& u,
+                     const arma::mat& L,
+                     const arma::mat& U,
+                     const arma::vec& xTy,
+                     arma::vec lambda,
+                     double rho)
   {
     return ADMMImpl(x, y, beta, z, u, L, U, xTy, lambda, rho);
   }
 
-  Results ADMM(const arma::sp_mat& x,
-               const arma::mat& y,
-               arma::mat beta,
-               arma::vec& z,
-               arma::vec& u,
-               const arma::mat& L,
-               const arma::mat& U,
-               const arma::vec& xTy,
-               arma::vec lambda,
-               double rho)
+  SolverResults ADMM(const arma::sp_mat& x,
+                     const arma::mat& y,
+                     arma::mat beta,
+                     arma::vec& z,
+                     arma::vec& u,
+                     const arma::mat& L,
+                     const arma::mat& U,
+                     const arma::vec& xTy,
+                     arma::vec lambda,
+                     double rho)
   {
     return ADMMImpl(x, y, beta, z, u, L, U, xTy, lambda, rho);
   }
 
   // ADMM
   template<typename T>
-  Results ADMMImpl(const T& x,
-                   const arma::mat& y,
-                   arma::mat beta,
-                   arma::vec& z,
-                   arma::vec& u,
-                   const arma::mat& L,
-                   const arma::mat& U,
-                   const arma::vec& xTy,
-                   arma::vec lambda,
-                   double rho)
+  SolverResults ADMMImpl(const T& x,
+                         const arma::mat& y,
+                         arma::mat beta,
+                         arma::vec& z,
+                         arma::vec& u,
+                         const arma::mat& L,
+                         const arma::mat& U,
+                         const arma::vec& xTy,
+                         arma::vec lambda,
+                         double rho)
   {
     using namespace arma;
     using namespace Rcpp;
@@ -156,7 +156,7 @@ public:
 
     double deviance = 2 * primal(y, x * z);
 
-    Results res{ z, passes, primals, duals, time, deviance };
+    SolverResults res{ z, passes, primals, duals, time, deviance };
 
     return res;
   }
