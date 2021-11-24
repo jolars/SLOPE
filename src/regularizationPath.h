@@ -1,6 +1,6 @@
 #pragma once
 
-#include "lambdaMax.hpp"
+#include "lambdaMax.h"
 #include "lambdaSequence.h"
 #include <RcppArmadillo.h>
 

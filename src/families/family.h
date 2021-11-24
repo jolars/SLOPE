@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../infeasibility.hpp"
+#include "../infeasibility.h"
 #include "../prox.h"
 #include "../results.h"
-#include "../utils.hpp"
+#include "../utils.h"
 #include <RcppArmadillo.h>
 
 class Family

@@ -1,4 +1,4 @@
-#include "SLOPE.hpp"
+#include "SLOPE.h"
 #include <RcppArmadillo.h>
 
 // [[Rcpp::export]]

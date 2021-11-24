@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../results.h"
-#include "family.hpp"
+#include "family.h"
 #include <RcppArmadillo.h>
 
 class Binomial : public Family

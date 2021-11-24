@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../infeasibility.hpp"
+#include "../infeasibility.h"
 #include "../prox.h"
 #include "../results.h"
-#include "../utils.hpp"
-#include "family.hpp"
+#include "../utils.h"
+#include "family.h"
 #include <RcppArmadillo.h>
 
 class Gaussian : public Family

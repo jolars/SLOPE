@@ -1,6 +1,6 @@
-#include "families/families.hpp"
+#include "families/families.h"
 #include "kktCheck.h"
-#include "regularizationPath.hpp"
+#include "regularizationPath.h"
 #include "rescale.h"
 #include "results.h"
 #include "screening.h"

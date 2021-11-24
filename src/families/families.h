@@ -2,11 +2,11 @@
 
 #include <RcppArmadillo.h>
 
-#include "binomial.hpp"
-#include "family.hpp"
-#include "gaussian.hpp"
-#include "multinomial.hpp"
-#include "poisson.hpp"
+#include "binomial.h"
+#include "family.h"
+#include "gaussian.h"
+#include "multinomial.h"
+#include "poisson.h"
 
 // helper to choose family
 template<typename... Ts>

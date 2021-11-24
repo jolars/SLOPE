@@ -38,6 +38,8 @@ lambdaSequence(const arma::uword n_lambda,
     }
   } else if (lambda_type == "oscar") {
     lambda = theta1 + theta2 * (n_lambda - regspace(1, n_lambda));
+  } else if (lambda_type == "lasso") {
+    lambda.ones();
   }
 
   return lambda;
