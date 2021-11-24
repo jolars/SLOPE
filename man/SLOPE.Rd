@@ -95,7 +95,8 @@ given by \code{tol_dev_change}, \code{tol_dev_ratio}, and \code{max_variables}.}
 
 \item{q}{parameter controlling the shape of the lambda sequence, with
 usage varying depending on the type of path used and has no effect
-is a custom \code{lambda} sequence is used.}
+is a custom \code{lambda} sequence is used. Must be greater than \code{1e-6} and
+smaller than 1.}
 
 \item{theta1}{parameter controlling the shape of the lambda sequence
 when \code{lambda == "OSCAR"}. This parameter basically sets the intercept
@@ -275,7 +276,8 @@ objective:
 
 The binomial model (logistic regression) has the following objective:
 \deqn{
-  \sum_{i=1}^n \log\left(1+ \exp\left(- y_i \left(x_i^T\beta + \beta_0 \right) \right) \right)
+  \sum_{i=1}^n \log\left(1+ \exp\left(
+    - y_i \left(x_i^T\beta + \beta_0 \right) \right) \right)
 }{
   \sum log(1+ exp(- y_i x_i^T \beta))
 }
@@ -286,7 +288,9 @@ with \eqn{y \in \{-1, 1\}}{y in {-1, 1}}.
 In poisson regression, we use the following objective:
 
 \deqn{
-  -\sum_{i=1}^n \left(y_i\left(x_i^T\beta + \beta_0\right) - \exp\left(x_i^T\beta + \beta_0\right)\right)
+  -\sum_{i=1}^n \left(y_i\left(
+    x_i^T\beta + \beta_0\right) - \exp\left(x_i^T\beta + \beta_0
+  \right)\right)
 }{
   -\sum (y_i(x_i^T\beta + \beta_0) - exp(x_i^T\beta + \beta_0))
 }
@@ -295,10 +299,13 @@ In poisson regression, we use the following objective:
 
 In multinomial regression, we minimize the full-rank objective
 \deqn{
-  -\sum_{i=1}^n\left( \sum_{k=1}^{m-1} y_{ik}(x_i^T\beta_k + \beta_{0,k})
-                     - \log\sum_{k=1}^{m-1} \exp\big(x_i^T\beta_k + \beta_{0,k}\big) \right)
+  -\sum_{i=1}^n\left(
+    \sum_{k=1}^{m-1} y_{ik}(x_i^T\beta_k + \beta_{0,k})
+    - \log\sum_{k=1}^{m-1} \exp\big(x_i^T\beta_k + \beta_{0,k}\big)
+  \right)
 }{
-  -\sum(y_ik(x_i^T\beta_k + \beta_{0,k}) - log(\sum exp(x_i^T\beta_k + \alpha_{0,k})))
+  -\sum(y_ik(x_i^T\beta_k + \beta_{0,k})
+  - log(\sum exp(x_i^T\beta_k + \alpha_{0,k})))
 }
 with \eqn{y_{ik}} being the element in a \eqn{n} by \eqn{(m-1)} matrix, where
 \eqn{m} is the number of classes in the response.
@@ -307,7 +314,8 @@ with \eqn{y_{ik}} being the element in a \eqn{n} by \eqn{(m-1)} matrix, where
 \section{Regularization sequences}{
 
 There are multiple ways of specifying the \code{lambda} sequence
-in \code{SLOPE()}. It is, first of all, possible to select the sequence manually by
+in \code{SLOPE()}. It is, first of all, possible to select the sequence manually
+by
 using a non-increasing
 numeric vector, possible of length one, as argument instead of a character.
 If all \code{lambda} are the same value, this will
@@ -341,7 +349,8 @@ that can be set by the user in the call to \code{SLOPE()}.
 
 This penalty sequence is related to BH, such that
 \deqn{
-  \lambda_i = \lambda^{(\mathrm{BH})}_i \sqrt{1 + w(i-1)\cdot \mathrm{cumsum}(\lambda^2)_i},
+  \lambda_i = \lambda^{(\mathrm{BH})}_i
+  \sqrt{1 + w(i-1)\cdot \mathrm{cumsum}(\lambda^2)_i},
 }{
   \lambda_i = \lambda^(BH)_i \sqrt{1 + w(i-1) * cumsum(\lambda^2)_i},
 }

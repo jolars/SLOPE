@@ -1,5 +1,12 @@
 # SLOPE (development version)
 
+## New Functions
+
+- `sortedL1Prox()` is a new function that computes the proximal operator for the
+  sorted L1 norm (the penalty term in SLOPE).
+- `regularizationWeights()` is a new function that returns the penalty weights
+  (lambda sequence) for SLOPE or OSCAR.
+
 ## Major changes
 
 - The parametrization for OSCAR models have been corrected and changed. As a
@@ -9,21 +16,18 @@
   Networks and Learning Systems, vol. 23, no. 9, pp. 1436–1447, Sep. 2012, doi:
   10.1109/TNNLS.2012.2200262. `q` is no longer used with OSCAR models. Thanks,
   Nuno Eusebio.
-
-## New Functions
-
-- `sortedL1Prox()` is a new function that computes the proximal operator for the
-  sorted L1 norm (the penalty term in SLOPE).
-- `regularizationWeights()` is a new function that returns the penalty weights
-  (lambda sequence) for SLOPE or OSCAR.
-
-## Minor Changes
-
 - `SLOPE()` has gained a new argument, `prox_method`, which allows the user to
   select prox algorithm to use. There is no an additional algorithm in the
   package, based on the PAVA algorithm used in isotonic regression, that 
   can be used. Note that this addition is mostly of academic interest and 
   does not need to be changed by the user.
+
+## Minor Changes
+
+- The `q` parameter is no longer allowed to be smaller than `1e-6` to avoid
+  constructions of regularization paths with infinite `lambda` values.
+- The `lambda` argument in `SLOPE()` now also allowed the input `"lasso"` to 
+  obtain the standard lasso.
 
 ## Vignettes
 

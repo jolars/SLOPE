@@ -9,7 +9,7 @@ regularizationWeights(
   q = 0.2,
   theta1 = 1,
   theta2 = 0.5,
-  lambda_type = c("bh", "gaussian", "oscar"),
+  type = c("bh", "gaussian", "oscar"),
   n = NULL
 )
 }
@@ -19,7 +19,8 @@ be equal to the number of predictors in your data set.}
 
 \item{q}{parameter controlling the shape of the lambda sequence, with
 usage varying depending on the type of path used and has no effect
-is a custom \code{lambda} sequence is used.}
+is a custom \code{lambda} sequence is used. Must be greater than \code{1e-6} and
+smaller than 1.}
 
 \item{theta1}{parameter controlling the shape of the lambda sequence
 when \code{lambda == "OSCAR"}. This parameter basically sets the intercept
@@ -31,7 +32,7 @@ when \code{lambda == "OSCAR"}. This parameter basically sets the slope
 for the lambda sequence and is equivalent to \eqn{\lambda_2} in the
 original OSCAR formulation.}
 
-\item{lambda_type}{The type of lambda sequence to use. See documentation for
+\item{type}{The type of lambda sequence to use. See documentation for
 in \code{\link[=SLOPE]{SLOPE()}}, including that related to the \code{lambda} parameter in that
 function.}
 

@@ -8,7 +8,7 @@ PKGSRC  := $(shell basename `pwd`)
 all: install
 
 clean:
-	$(DELETE) src/*.o src/*.so
+	$(DELETE) src/*.o src/*.so src/
 
 document: 
 	Rscript -e 'devtools::document(roclets = c("rd", "collate", "namespace"))'
