@@ -1,5 +1,5 @@
 ---
-title: "prox-solvers"
+title: "Proximal Operator Algorithms"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{prox-solvers}
