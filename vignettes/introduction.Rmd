@@ -173,7 +173,8 @@ for (i in seq_along(q)) {
 library(lattice)
 xyplot(
   fdr ~ q,
-  type = "b", ylab = "FDR",
+  type = "b",
+  ylab = "FDR",
   panel = function(...) {
     panel.refline(h = 0.1)
     panel.xyplot(...)
