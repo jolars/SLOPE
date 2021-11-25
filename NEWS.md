@@ -41,6 +41,11 @@
   decreasing. This is now fixed and regularization weights in this case are now
   always non-increasing.
 
+## Deprecated and Defunct
+
+- `yvar` argument in `plotDiagnostics()` that was previously deprecated is
+  now defunct.
+
 # SLOPE 0.3.3
 
 ## Bug fixes

@@ -47,7 +47,6 @@ plotDiagnostics <- function(object,
   if (nrow(d) > 1)
     args$grid <- TRUE
 
-
   args$x <- "primal + dual"
   args$ylab <- "Objective"
   args$auto.key <- list(space = "inside",
