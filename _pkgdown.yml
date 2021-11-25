@@ -38,6 +38,8 @@ reference:
 - title: Utilities
 - contents:
   - plotDiagnostics
+  - regularizationWeights
+  - sortedL1Prox
 - title: Datasets
 - contents:
   - abalone
