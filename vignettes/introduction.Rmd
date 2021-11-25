@@ -26,7 +26,8 @@ $$
 where the second part of the objective is the
 sorted L1-norm
 $$
-J(\beta; \alpha,\lambda) = \alpha \sum_{j=1}^p \lambda_j \lvert \beta \rvert_{(j)},
+  J(\beta; \alpha,\lambda) =
+    \alpha \sum_{j=1}^p \lambda_j \lvert \beta \rvert_{(j)},
 $$
 where $\alpha \in \mathbb{R}_{+}$, $\lambda \in \mathbb{R}_+^p$ and
 $(j)$ represents an rank of the magnitudes of $\beta$ in descending order.
@@ -43,7 +44,7 @@ generalized linear models:
 * Gaussian regression,
 * binomial regression,
 * multinomial regression, and
-* poisson regression.
+* Poisson regression.
 
 SLOPE is an extension of the lasso [@tibshirani1996] and has the ability
 to lead to sparse solutions given a sufficiently strong regularization.
@@ -134,7 +135,7 @@ Benjamini--Hochberg procedure for multiple comparisons.
 
 Let's set up a simple experiment to see how SLOPE controls the FDR.
 We randomly generate data sets with various proportions of
-true signals. Under this gaussian design with independently and identically
+true signals. Under this Gaussian design with independently and identically
 distributed columns in $X$, SLOPE should asymptotically
 control FDR at the level given by the shape parameter $q$, which
 we set to 0.1 in this example.
