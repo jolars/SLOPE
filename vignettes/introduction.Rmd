@@ -170,16 +170,14 @@ for (i in seq_along(q)) {
   fdr[i] <- V / R
 }
 
-library(lattice)
-xyplot(
-  fdr ~ q,
-  type = "b",
-  ylab = "FDR",
-  panel = function(...) {
-    panel.refline(h = 0.1)
-    panel.xyplot(...)
-  }
-)
+library(ggplot2)
+
+ggplot(mapping = aes(q, fdr)) +
+  geom_hline(yintercept = 0.1, lty = 3) +
+  geom_line() +
+  geom_point() +
+  theme_minimal() +
+  labs(y = "False Discovery Rate")
 ```
 
 SLOPE seems to control FDR at roughly the specified level.
