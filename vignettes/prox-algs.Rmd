@@ -1,8 +1,10 @@
 ---
 title: "Proximal Operator Algorithms"
+author: "Johan Larsson"
 output: rmarkdown::html_vignette
+date: "`r Sys.Date()`"
 vignette: >
-  %\VignetteIndexEntry{prox-solvers}
+  %\VignetteIndexEntry{Proximal Operator Algorithms}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -10,7 +12,8 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.align = "center"
 )
 ```
 
@@ -24,7 +27,7 @@ is defined as
 \]
 where \(J(x; \lambda) = \sum_{j=1}^p \lambda_j |\beta_{(j)}|\) is the
 sorted L1 norm, for which
-\[|\beta_{(1)}| \geq |\beta_{(2)} \geq \cdots \geq |\beta_{(p)}\].
+\[|\beta_{(1)}| \geq |\beta_{(2)} \geq \cdots \geq |\beta_{(p)}.\]
 
 ## Algorithms
 
