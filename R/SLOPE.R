@@ -707,7 +707,8 @@ SLOPE <- function(x,
 
   diagnostics <- if (diagnostics) setupDiagnostics(fit) else NULL
 
-  slope_class <- switch(family,
+  slope_class <- switch(
+    family,
     gaussian = "GaussianSLOPE",
     binomial = "BinomialSLOPE",
     poisson = "PoissonSLOPE",
