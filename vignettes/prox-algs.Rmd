@@ -23,7 +23,9 @@ The proximal operator for the sorted L1 norm, the penalty used in SLOPE,
 is defined as
 \[
   \operatorname{prox}_J (v) = 
-    \operatorname*{arg\,min}_x\left( J(x; \lambda) + \frac 1 2 \lVert x - v \rVert_2^2 \right)
+    \operatorname*{arg\,min}_x\left(
+      J(x; \lambda) + \frac 1 2 \lVert x - v \rVert_2^2
+    \right)
 \]
 where \(J(x; \lambda) = \sum_{j=1}^p \lambda_j |\beta_{(j)}|\) is the
 sorted L1 norm, for which
@@ -31,12 +33,11 @@ sorted L1 norm, for which
 
 ## Algorithms
 
-There are several methods for solving this proximal operator and here
-we provide some benchmarks of these methods. Note that these results are 
-almost entirely of academic nature and are added here only to serve as
-reference for others who are interested in working with SLOPE and particularly
-those who might be interested in improving the performance of these 
-algorithms.
+There are several methods for solving this proximal operator and here we
+provide some benchmarks of these methods. Note that these results are almost
+entirely of academic nature and are added here only to serve as reference for
+others who are interested in working with SLOPE and particularly those who
+might be interested in improving the performance of these algorithms.
 
 First, we load the packages we need,.
 
