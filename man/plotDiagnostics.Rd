@@ -21,8 +21,6 @@ plotDiagnostics(
 
 \item{...}{other arguments that will be used to modify the call to
 \code{\link[lattice:xyplot]{lattice::xyplot()}}}
-
-\item{yvar}{deprecated (and ignored)}
 }
 \value{
 An object of class \code{"trellis"}, which, unless stored in a variable,

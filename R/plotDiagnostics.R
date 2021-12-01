@@ -8,7 +8,6 @@
 #' @param ind either "last"
 #' @param xvar what to place on the x axis. `iteration` plots each iteration,
 #'   `time` plots the wall-clock time.
-#' @param yvar deprecated (and ignored)
 #' @param ... other arguments that will be used to modify the call to
 #'   [lattice::xyplot()]
 #'
