@@ -19,4 +19,6 @@
 ^clang-.*
 ^gfortran.*
 ^\.vscode$
-Makefile
+^Makefile$
+^\.cache$
+^src/\.cache$
