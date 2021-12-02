@@ -106,7 +106,7 @@ tune <- trainSLOPE(
   x,
   y,
   q = c(0.1, 0.2),
-  n_folds = 5,
+  number = 5,
   solver = "admm",
   repeats = 2
 )

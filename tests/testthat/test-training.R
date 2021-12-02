@@ -7,7 +7,7 @@
 #     fit <- trainSLOPE(xy$x,
 #                       xy$y,
 #                       family = family,
-#                       n_folds = 2,
+#                       number = 2,
 #                       q = c(0.1, 0.2),
 #                       repeats = 2,
 #                       path_length = 2)
@@ -27,7 +27,7 @@ test_that("plot.trainSLOPE works as expected", {
   expect_s3_class(p, "trellis")
   expect_silent(dont_plot(p))
 
-  fit <- trainSLOPE(x, y, q = c(0.1, 0.2), n_folds = 2, solver = "admm")
+  fit <- trainSLOPE(x, y, q = c(0.1, 0.2), number = 2, solver = "admm")
 
   p <- plot(fit)
   expect_s3_class(p, "trellis")
@@ -40,7 +40,7 @@ test_that("trainSLOPE works properly for binomial family", {
   x <- xy$x
   y <- xy$y
 
-  fit <- trainSLOPE(x, y, q = c(0.1, 0.2), n_folds = 2, family = "binomial")
+  fit <- trainSLOPE(x, y, q = c(0.1, 0.2), number = 2, family = "binomial")
 
   expect_equal(fit$measure$measure, c("mse", "mae", "deviance", "misclass", "auc"))
   expect_equal(fit$measure$label, c("Mean Squared Error", "Mean Absolute Error", "Binomial Deviance",
@@ -65,7 +65,7 @@ test_that("trainSLOPE works properly for gaussian family", {
   x <- xy$x
   y <- xy$y
 
-  fit <- trainSLOPE(x, y, q = c(0.1, 0.2), n_folds = 2, family = "gaussian")
+  fit <- trainSLOPE(x, y, q = c(0.1, 0.2), number = 2, family = "gaussian")
 
   expect_equal(fit$measure$measure, c("mse", "mae"))
   expect_equal(fit$measure$label, c("Mean Squared Error", "Mean Absolute Error"))
@@ -87,7 +87,7 @@ test_that("trainSLOPE works properly for poisson family", {
   x <- xy$x
   y <- xy$y
 
-  fit <- trainSLOPE(x, y, q = c(0.1, 0.2), n_folds = 2, family = "poisson")
+  fit <- trainSLOPE(x, y, q = c(0.1, 0.2), number = 2, family = "poisson")
 
   expect_equal(fit$measure$measure, c("mse", "mae"))
   expect_equal(fit$measure$label, c("Mean Squared Error", "Mean Absolute Error"))
@@ -111,7 +111,7 @@ test_that("trainSLOPE works properly for multinomial family", {
   x <- xy$x
   y <- xy$y
 
-  fit <- trainSLOPE(x, y, q = c(0.1, 0.2), n_folds = 2, family = "multinomial")
+  fit <- trainSLOPE(x, y, q = c(0.1, 0.2), number = 2, family = "multinomial")
 
   expect_equal(fit$measure$measure, c("mse", "mae", "deviance", "misclass"))
   expect_equal(fit$measure$label, c("Mean Squared Error", "Mean Absolute Error",

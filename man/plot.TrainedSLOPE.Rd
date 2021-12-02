@@ -50,7 +50,7 @@ set.seed(123)
 tune <- trainSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
                    mtcars$hp,
                    q = c(0.1, 0.2),
-                   n_folds = 10)
+                   number = 10)
 plot(tune, ci_col = "salmon", col = "black")
 }
 \seealso{
