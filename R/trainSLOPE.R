@@ -17,7 +17,7 @@
 #' **doParallel** package before running this function.
 #'
 #' @inheritParams SLOPE
-#' @param n_folds number of folds (cross-validation)
+#' @param number number of folds (cross-validation)
 #' @param repeats number of repeats for each fold (for repeated *k*-fold cross
 #'   validation)
 #' @param measure measure to try to optimize; note that you may
@@ -44,7 +44,7 @@
 #' tune <- trainSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
 #'                    mtcars$hp,
 #'                    q = c(0.1, 0.2),
-#'                    n_folds = 8,
+#'                    number = 8,
 #'                    repeats = 5,
 #'                    measure = "mse")
 #'
@@ -53,24 +53,24 @@
 #' x <- xy$x
 #' y <- xy$y
 #' fit <- trainSLOPE(x, y, q = c(0.1, 0.2),
-#'                   n_folds = 2, measure = "mse", family = "gaussian")
+#'                   number = 2, measure = "mse", family = "gaussian")
 #'
 #' xy <- SLOPE:::randomProblem(200, p=100, q=0.5, response="binomial")
 #' x <- xy$x
 #' y <- xy$y
 #' fit <- trainSLOPE(x, y, q = c(0.1, 0.2),
-#'                   n_folds = 2, measure = "auc", family = "binomial")
+#'                   number = 2, measure = "auc", family = "binomial")
 #'
 #' xy <- SLOPE:::randomProblem(200, p=100, q=0.5, response="multinomial")
 #' x <- xy$x
 #' y <- xy$y
 #' fit <- trainSLOPE(x, y, q = c(0.1, 0.2),
-#'                   n_folds = 2, measure = "mse", family = "multinomial")
+#'                   number = 2, measure = "mse", family = "multinomial")
 #'
 trainSLOPE <- function(x,
                        y,
                        q = 0.2,
-                       n_folds = 10,
+                       number = 10,
                        repeats = 1,
                        measure = c("mse",
                                    "mae",
@@ -86,8 +86,8 @@ trainSLOPE <- function(x,
 
   y <- as.matrix(y)
 
-  stopifnot(NROW(x) > n_folds,
-            n_folds > 1,
+  stopifnot(NROW(x) > number,
+            number > 1,
             repeats >= 1)
 
   # get initial penalty sequence
@@ -115,14 +115,14 @@ trainSLOPE <- function(x,
   n_q <- length(q)
   n_measure <- length(measure)
 
-  fold_size <- ceiling(n/n_folds)
+  fold_size <- ceiling(n/number)
 
 
   #list of repeated folds
-  fold_id <- rep(list(matrix(c(sample(n), rep(0, n_folds*fold_size - n)), fold_size, byrow = TRUE)), repeats)
+  fold_id <- rep(list(matrix(c(sample(n), rep(0, number*fold_size - n)), fold_size, byrow = TRUE)), repeats)
 
   grid <- expand.grid(q = q,
-                      fold = seq_len(n_folds),
+                      fold = seq_len(number),
                       repetition = seq_len(repeats))
 
   # prevent warnings if no backend registered
@@ -158,12 +158,12 @@ trainSLOPE <- function(x,
 
     unlist(s)
   }
-  tmp <- array(unlist(r), c(path_length*n_q, n_measure, n_folds*repeats))
-  d <- matrix(tmp, c(path_length*n_q*n_measure, n_folds*repeats))
+  tmp <- array(unlist(r), c(path_length*n_q, n_measure, number*repeats))
+  d <- matrix(tmp, c(path_length*n_q*n_measure, number*repeats))
 
   means <- rowMeans(d)
-  se <- apply(d, 1, stats::sd)/sqrt(repeats*n_folds)
-  ci <- stats::qt(0.975, n_folds*repeats - 1)*se
+  se <- apply(d, 1, stats::sd)/sqrt(repeats*number)
+  ci <- stats::qt(0.975, number*repeats - 1)*se
   lo <- means - ci
   hi <- means + ci
 
