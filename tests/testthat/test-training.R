@@ -197,8 +197,7 @@ test_that("trainSLOPE returns error in the case of invalid measures", {
   expect_error(trainSLOPE(x, y, q = c(0.1, 0.2),
                           measure = "misclass",
                           family = "gaussian"),
-               "For the given family: gaussian,
-               measure needs to be one of: mse, mae")
+  "For the given family: gaussian, measure needs to be one of: mse, mae")
 })
 
 
