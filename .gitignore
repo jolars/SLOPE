@@ -4,3 +4,7 @@ inst/doc
 .Rproj.user
 docs/
 .vscode/
+compile_commands.json
+*.swp
+.cache
+src/.cache

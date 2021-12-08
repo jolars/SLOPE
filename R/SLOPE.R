@@ -46,7 +46,8 @@
 #'
 #' The binomial model (logistic regression) has the following objective:
 #' \deqn{
-#'   \sum_{i=1}^n \log\left(1+ \exp\left(- y_i \left(x_i^T\beta + \beta_0 \right) \right) \right)
+#'   \sum_{i=1}^n \log\left(1+ \exp\left(
+#'     - y_i \left(x_i^T\beta + \beta_0 \right) \right) \right)
 #' }{
 #'   \sum log(1+ exp(- y_i x_i^T \beta))
 #' }
@@ -57,7 +58,9 @@
 #' In poisson regression, we use the following objective:
 #'
 #' \deqn{
-#'   -\sum_{i=1}^n \left(y_i\left(x_i^T\beta + \beta_0\right) - \exp\left(x_i^T\beta + \beta_0\right)\right)
+#'   -\sum_{i=1}^n \left(y_i\left(
+#'     x_i^T\beta + \beta_0\right) - \exp\left(x_i^T\beta + \beta_0
+#'   \right)\right)
 #' }{
 #'   -\sum (y_i(x_i^T\beta + \beta_0) - exp(x_i^T\beta + \beta_0))
 #' }
@@ -66,29 +69,32 @@
 #'
 #' In multinomial regression, we minimize the full-rank objective
 #' \deqn{
-#'   -\sum_{i=1}^n\left( \sum_{k=1}^{m-1} y_{ik}(x_i^T\beta_k + \beta_{0,k})
-#'                      - \log\sum_{k=1}^{m-1} \exp\big(x_i^T\beta_k + \beta_{0,k}\big) \right)
+#'   -\sum_{i=1}^n\left(
+#'     \sum_{k=1}^{m-1} y_{ik}(x_i^T\beta_k + \beta_{0,k})
+#'     - \log\sum_{k=1}^{m-1} \exp\big(x_i^T\beta_k + \beta_{0,k}\big)
+#'   \right)
 #' }{
-#'   -\sum(y_ik(x_i^T\beta_k + \beta_{0,k}) - log(\sum exp(x_i^T\beta_k + \alpha_{0,k})))
+#'   -\sum(y_ik(x_i^T\beta_k + \beta_{0,k})
+#'   - log(\sum exp(x_i^T\beta_k + \alpha_{0,k})))
 #' }
 #' with \eqn{y_{ik}} being the element in a \eqn{n} by \eqn{(m-1)} matrix, where
 #' \eqn{m} is the number of classes in the response.
 #'
-#' @section Regularization sequences:
+#' @section Regularization Sequences:
 #' There are multiple ways of specifying the `lambda` sequence
-#' in `SLOPE()`. It is, first of all, possible to select the sequence manually by
+#' in `SLOPE()`. It is, first of all, possible to select the sequence manually
+#' by
 #' using a non-increasing
-#' numeric vector, possible of length one, as argument instead of a character.
-#' If all `lambda` are the same value, this will
-#' lead to the ordinary lasso penalty. The greater the differences are between
+#' numeric vector, possibly of length one, as argument instead of a character.
+#' The greater the differences are between
 #' consecutive values along the sequence, the more clustering behavior
 #' will the model exhibit. Note, also, that the scale of the \eqn{\lambda}
 #' vector makes no difference if `alpha = NULL`, since `alpha` will be
 #' selected automatically to ensure that the model is completely sparse at the
 #' beginning and almost unregularized at the end. If, however, both
-#' `alpha` and `lambda` are manually specified, both of the scales will
-#' matter.
-#'
+#' `alpha` and `lambda` are manually specified, then the scales of both do
+#' matter, so make sure to choose them wisely.
+#' 
 #' Instead of choosing the sequence manually, one of the following
 #' automatically generated sequences may be chosen.
 #'
@@ -110,7 +116,8 @@
 #'
 #' This penalty sequence is related to BH, such that
 #' \deqn{
-#'   \lambda_i = \lambda^{(\mathrm{BH})}_i \sqrt{1 + w(i-1)\cdot \mathrm{cumsum}(\lambda^2)_i},
+#'   \lambda_i = \lambda^{(\mathrm{BH})}_i
+#'   \sqrt{1 + w(i-1)\cdot \mathrm{cumsum}(\lambda^2)_i},
 #' }{
 #'   \lambda_i = \lambda^(BH)_i \sqrt{1 + w(i-1) * cumsum(\lambda^2)_i},
 #' }
@@ -131,6 +138,21 @@
 #' for \eqn{i = 1,\dots,p}. We use the parametrization from Zhong and Kwok
 #' (2021) but use \eqn{\theta_1} and \eqn{\theta_2} instead of \eqn{\lambda_1}
 #' and \eqn{\lambda_2} to avoid confusion and abuse of notation.
+#' 
+#' **lasso**
+#'
+#' SLOPE is exactly equivalent to the
+#' lasso when the sequence of regularization weights is constant, i.e.
+#' \deqn{
+#'   \lambda_i = 1
+#' }
+#' for \eqn{i = 1,\dots,p}. Here, again, we stress that the fact that
+#' all \eqn{\lambda} are equal to one does not matter as long as
+#' `alpha == NULL` since we scale the vector automatically.
+#' Note that this option is only here for academic interest and
+#' to highlight the fact that SLOPE is
+#' a generalization of the lasso. There are more efficient packages, such as
+#' **glmnet** and **biglasso**, for fitting the lasso.
 #'
 #' @section Solvers:
 #'
@@ -180,7 +202,8 @@
 #'   `lambda_max`; used in the selection of `alpha` when `alpha = "path"`.
 #' @param q parameter controlling the shape of the lambda sequence, with
 #'   usage varying depending on the type of path used and has no effect
-#'   is a custom `lambda` sequence is used.
+#'   is a custom `lambda` sequence is used. Must be greater than `1e-6` and
+#'   smaller than 1.
 #' @param theta1 parameter controlling the shape of the lambda sequence
 #'   when `lambda == "OSCAR"`. This parameter basically sets the intercept
 #'   for the lambda sequence and is equivalent to \eqn{\lambda_1} in the
@@ -189,6 +212,9 @@
 #'   when `lambda == "OSCAR"`. This parameter basically sets the slope
 #'   for the lambda sequence and is equivalent to \eqn{\lambda_2} in the
 #'   original OSCAR formulation.
+#' @param prox_method method for calculating the proximal operator for
+#'   the Sorted L1 Norm (the SLOPE penalty). Please see [sortedL1Prox()] for
+#'   more information.
 #' @param max_passes maximum number of passes (outer iterations) for solver
 #' @param diagnostics whether to save diagnostics from the solver
 #'   (timings and other values depending on type of solver)
@@ -210,9 +236,8 @@
 #'   fractional change in deviance falls below this value; note that this is
 #'   automatically set to 0 if a alpha is manually entered
 #' @param tol_dev_ratio the regularization path is stopped if the
-#'   deviance ratio
-#'   \eqn{1 - \mathrm{deviance}/\mathrm{(null-deviance)}}{1 - deviance/(null deviance)}
-#'   is above this threshold
+#'   deviance ratio \eqn{1 - \mathrm{deviance}/\mathrm{(null-deviance)}
+#'   }{1 - deviance/(null deviance)} is above this threshold
 #' @param max_variables criterion for stopping the path in terms of the
 #'   maximum number of unique, nonzero coefficients in absolute value in model.
 #'   For the multinomial family, this value will be multiplied internally with
@@ -289,7 +314,7 @@
 #'
 #' @seealso [plot.SLOPE()], [plotDiagnostics()], [score()], [predict.SLOPE()],
 #'   [trainSLOPE()], [coef.SLOPE()], [print.SLOPE()], [print.SLOPE()],
-#'   [deviance.SLOPE()]
+#'   [deviance.SLOPE()], [sortedL1Prox()]
 #'
 #' @references
 #' Bogdan, M., van den Berg, E., Sabatti, C., Su, W., & Candès, E. J. (2015).
@@ -346,12 +371,13 @@ SLOPE <- function(x,
                   center = !inherits(x, "sparseMatrix"),
                   scale = c("l2", "l1", "sd", "none"),
                   alpha = c("path", "estimate"),
-                  lambda = c("bh", "gaussian", "oscar"),
+                  lambda = c("bh", "gaussian", "oscar", "lasso"),
                   alpha_min_ratio = if (NROW(x) < NCOL(x)) 1e-2 else 1e-4,
                   path_length = if (alpha[1] == "estimate") 1 else 20,
                   q = 0.1 * min(1, NROW(x) / NCOL(x)),
                   theta1 = 1,
                   theta2 = 0.5,
+                  prox_method = c("stack", "pava"),
                   screen = TRUE,
                   screen_alg = c("strong", "previous"),
                   tol_dev_change = 1e-5,
@@ -393,6 +419,7 @@ SLOPE <- function(x,
   family <- match.arg(family)
   solver <- match.arg(solver)
   screen_alg <- match.arg(screen_alg)
+  prox_method_choice <- switch(match.arg(prox_method), stack = 0, pava = 1)
 
   if (solver == "admm" && family != "gaussian") {
     stop("ADMM solver is only supported with `family = 'gaussian'`")
@@ -413,7 +440,7 @@ SLOPE <- function(x,
     is.null(alpha_min_ratio) ||
       (alpha_min_ratio > 0 && alpha_min_ratio < 1),
     max_passes > 0,
-    q > 0,
+    q > 1e-6,
     q < 1,
     length(path_length) == 1,
     path_length >= 1,
@@ -564,6 +591,7 @@ SLOPE <- function(x,
     scale = scale,
     center = center,
     path_length = path_length,
+    prox_method_choice = prox_method_choice,
     n_targets = n_targets,
     screen = screen,
     screen_alg = screen_alg,

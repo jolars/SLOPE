@@ -25,7 +25,8 @@ be converted to matrices internally.}
 
 \item{q}{parameter controlling the shape of the lambda sequence, with
 usage varying depending on the type of path used and has no effect
-is a custom \code{lambda} sequence is used.}
+is a custom \code{lambda} sequence is used. Must be greater than \code{1e-6} and
+smaller than 1.}
 
 \item{number}{number of folds (cross-validation)}
 
