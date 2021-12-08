@@ -80,6 +80,15 @@ trainSLOPE <- function(x,
                        ...) {
   ocall <- match.call()
 
+  if ("missclass" %in% measure) {
+    warning("Measure 'missclass' is deprecated. Please use 'misclass' instead.")
+
+    measure <- measure[! measure %in% "missclass"]
+    if (! "misclass" %in% measure) {
+      measure <- c(measure, "misclass")
+    }
+  }
+
   n <- NROW(x)
 
   measure <- match.arg(measure, several.ok = TRUE)

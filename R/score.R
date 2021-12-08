@@ -104,15 +104,15 @@ score.MultinomialSLOPE <- function(object,
 
   switch(
     measure,
-    mse = apply(y_hat, 3,function(x) mean((x-y)^2)),
-    mae = apply(y_hat, 3,function(x) mean(abs(x-y))),
+    mse = apply(y_hat, 3, function(x) mean((x-y)^2)),
+    mae = apply(y_hat, 3, function(x) mean(abs(x-y))),
     deviance = {
       y_hat <- pmin(pmax(y_hat, prob_min), prob_max)
 
       apply(y_hat, 3, function(p_hat) {-2 * sum(y * log(p_hat))})
     },
     misclass = apply(y_hat, 3, function(x) {
-      n_obs <- dim(x)[1]
+      n_obs <- nrow(x)
       x_class <- array(0, dim = dim(x))
       x_class[cbind(1:n_obs, apply(x, 1, which.max))] <- 1
 
