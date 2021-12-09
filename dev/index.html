@@ -39,6 +39,8 @@
 </script>
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -58,12 +60,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -77,7 +73,7 @@
       <a href="articles/introduction.html">An introduction to SLOPE</a>
     </li>
     <li>
-      <a href="articles/prox-solvers.html">prox-solvers</a>
+      <a href="articles/prox-algs.html">Proximal Operator Algorithms</a>
     </li>
   </ul>
 </li>
@@ -90,13 +86,11 @@
   <ul class="dropdown-menu" role="menu">
 <li class="dropdown-header">Releases</li>
     <li>
-      <a href="https://larssonjohan.com/post/slope-0-3-0/">Version 0.3.0</a>
-    </li>
-    <li>
-      <a href="https://larssonjohan.com/post/slope-0-2-0/">Version 0.2.0</a>
+      <a href="https://larssonjohan.com/post/slope-0-2-0/" class="external-link">Version 0.2.0</a>
     </li>
     <li class="divider">
-    <li>
+    </li>
+<li>
       <a href="news/index.html">Changelog</a>
     </li>
   </ul>
@@ -104,7 +98,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/jolars/SLOPE/">
+  <a href="https://github.com/jolars/SLOPE/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -121,32 +115,32 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="slope-" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#slope-" class="anchor"></a>SLOPE <a href="https://jolars.github.io/SLOPE/"><img src="reference/figures/logo.svg" align="right" height="139"></a>
+<div class="section level1">
+<div class="page-header"><h1 id="slope-">SLOPE <a href="https://jolars.github.io/SLOPE/"><img src="reference/figures/logo.svg" align="right" height="139"></a>
+<a class="anchor" aria-label="anchor" href="#slope-"></a>
 </h1></div>
 <!-- badges: start -->
 
 <p>Efficient implementations for Sorted L-One Penalized Estimation (SLOPE): generalized linear models regularized with the sorted L1-norm. There is support for ordinary least-squares regression, binomial regression, multinomial regression, and poisson regression, as well as both dense and sparse predictor matrices. In addition, the package features predictor screening rules that enable efficient solutions to high-dimensional problems.</p>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
-<p>You can install the current stable release from <a href="https://cran.r-project.org/">CRAN</a> with</p>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<p>You can install the current stable release from <a href="https://cran.r-project.org/" class="external-link">CRAN</a> with</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"SLOPE"</span><span class="op">)</span></code></pre></div>
-<p>or the development version from <a href="https://github.com/">GitHub</a> with</p>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"SLOPE"</span><span class="op">)</span></code></pre></div>
+<p>or the development version from <a href="https://github.com/" class="external-link">GitHub</a> with</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install.packages("remotes")</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"jolars/SLOPE"</span><span class="op">)</span></code></pre></div>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"jolars/SLOPE"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="versioning" class="section level2">
-<h2 class="hasAnchor">
-<a href="#versioning" class="anchor"></a>Versioning</h2>
-<p>SLOPE uses <a href="https://semver.org">semantic versioning</a>.</p>
+<div class="section level2">
+<h2 id="versioning">Versioning<a class="anchor" aria-label="anchor" href="#versioning"></a>
+</h2>
+<p>SLOPE uses <a href="https://semver.org" class="external-link">semantic versioning</a>.</p>
 </div>
-<div id="code-of-conduct" class="section level2">
-<h2 class="hasAnchor">
-<a href="#code-of-conduct" class="anchor"></a>Code of conduct</h2>
+<div class="section level2">
+<h2 id="code-of-conduct">Code of conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>
+</h2>
 <p>Please note that the ‘SLOPE’ project is released with a <a href="https://jolars.github.io/SLOPE/CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
 </div>
 </div>
@@ -154,69 +148,73 @@
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=SLOPE">https://​cloud.r-project.org/​package=SLOPE</a>
-</li>
-<li>Browse source code at <br><a href="https://github.com/jolars/SLOPE/">https://​github.com/​jolars/​SLOPE/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/jolars/SLOPE/issues">https://​github.com/​jolars/​SLOPE/​issues</a>
-</li>
+<li><a href="https://cloud.r-project.org/package=SLOPE" class="external-link">View on CRAN</a></li>
+<li><a href="https://github.com/jolars/SLOPE/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/jolars/SLOPE/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
-<li><small><a href="https://www.r-project.org/Licenses/GPL-3">GPL-3</a></small></li>
+<li><small><a href="https://www.r-project.org/Licenses/GPL-3" class="external-link">GPL-3</a></small></li>
 </ul>
 </div>
+
 <div class="community">
-<h2>Community</h2>
+<h2 data-toc-skip>Community</h2>
 <ul class="list-unstyled">
 <li><a href="CODE_OF_CONDUCT.html">Code of conduct</a></li>
 </ul>
 </div>
+
 <div class="citation">
-<h2>Citation</h2>
+<h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li><a href="authors.html">Citing SLOPE</a></li>
+<li><a href="authors.html#citation">Citing SLOPE</a></li>
 </ul>
 </div>
+
 <div class="developers">
-<h2>Developers</h2>
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Johan Larsson <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-4029-5945" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Jonas Wallin <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-0381-6593" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Johan Larsson <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-4029-5945" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Jonas Wallin <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-0381-6593" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 <li>Malgorzata Bogdan <br><small class="roles"> Author </small>  </li>
 <li>Ewout van den Berg <br><small class="roles"> Author </small>  </li>
 <li>Chiara Sabatti <br><small class="roles"> Author </small>  </li>
 <li>Emmanuel Candes <br><small class="roles"> Author </small>  </li>
 <li>Evan Patterson <br><small class="roles"> Author </small>  </li>
 <li>Weijie Su <br><small class="roles"> Author </small>  </li>
-<li><a href="authors.html">All authors...</a></li>
+<li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/jolars/SLOPE/actions"><img src="https://github.com/jolars/SLOPE/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
-<li><a href="https://codecov.io/github/jolars/SLOPE?branch=master"><img src="https://codecov.io/gh/jolars/SLOPE/branch/master/graph/badge.svg" alt="Coverage status"></a></li>
-<li><a href="https://CRAN.R-project.org/package=SLOPE"><img src="https://www.r-pkg.org/badges/version/SLOPE" alt="CRAN status"></a></li>
-<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
+<li><a href="https://github.com/jolars/SLOPE/actions" class="external-link"><img src="https://github.com/jolars/SLOPE/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
+<li><a href="https://codecov.io/github/jolars/SLOPE?branch=master" class="external-link"><img src="https://codecov.io/gh/jolars/SLOPE/branch/master/graph/badge.svg" alt="Coverage status"></a></li>
+<li><a href="https://CRAN.R-project.org/package=SLOPE" class="external-link"><img src="https://www.r-pkg.org/badges/version/SLOPE" alt="CRAN status"></a></li>
+<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
 </ul>
 </div>
-</div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Johan Larsson, Jonas Wallin, Malgorzata Bogdan, Ewout van den Berg, Chiara Sabatti, Emmanuel Candes, Evan Patterson, Weijie Su.</p>
+  <p></p>
+<p>Developed by Johan Larsson, Jonas Wallin, Malgorzata Bogdan, Ewout van den Berg, Chiara Sabatti, Emmanuel Candes, Evan Patterson, Weijie Su.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -224,6 +222,8 @@
 
   
 
+
+  
 
   </body>
 </html>

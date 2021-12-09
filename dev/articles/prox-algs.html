@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>prox-solvers • SLOPE</title>
+<title>Proximal Operator Algorithms • SLOPE</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="prox-solvers">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Proximal Operator Algorithms">
 <meta property="og:description" content="SLOPE">
 <meta property="og:image" content="https://jolars.github.io/SLOPE/logo.svg">
 <meta name="robots" content="noindex">
@@ -33,6 +33,8 @@
 </script>
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -52,12 +54,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -71,7 +67,7 @@
       <a href="../articles/introduction.html">An introduction to SLOPE</a>
     </li>
     <li>
-      <a href="../articles/prox-solvers.html">prox-solvers</a>
+      <a href="../articles/prox-algs.html">Proximal Operator Algorithms</a>
     </li>
   </ul>
 </li>
@@ -84,13 +80,11 @@
   <ul class="dropdown-menu" role="menu">
 <li class="dropdown-header">Releases</li>
     <li>
-      <a href="https://larssonjohan.com/post/slope-0-3-0/">Version 0.3.0</a>
-    </li>
-    <li>
-      <a href="https://larssonjohan.com/post/slope-0-2-0/">Version 0.2.0</a>
+      <a href="https://larssonjohan.com/post/slope-0-2-0/" class="external-link">Version 0.2.0</a>
     </li>
     <li class="divider">
-    <li>
+    </li>
+<li>
       <a href="../news/index.html">Changelog</a>
     </li>
   </ul>
@@ -98,7 +92,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/jolars/SLOPE/">
+  <a href="https://github.com/jolars/SLOPE/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -113,74 +107,78 @@
 
       
 
-      </header><script src="prox-solvers_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="prox-algs_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>prox-solvers</h1>
+      <h1 data-toc-skip>Proximal Operator Algorithms</h1>
+                        <h4 data-toc-skip class="author">Johan Larsson</h4>
             
+            <h4 data-toc-skip class="date">2021-12-09</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/jolars/SLOPE/blob/master/vignettes/prox-solvers.Rmd"><code>vignettes/prox-solvers.Rmd</code></a></small>
-      <div class="hidden name"><code>prox-solvers.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/jolars/SLOPE/blob/HEAD/vignettes/prox-algs.Rmd" class="external-link"><code>vignettes/prox-algs.Rmd</code></a></small>
+      <div class="hidden name"><code>prox-algs.Rmd</code></div>
 
     </div>
 
     
     
-<div id="the-proximal-operator-in-slope" class="section level1">
-<h1 class="hasAnchor">
-<a href="#the-proximal-operator-in-slope" class="anchor"></a>The Proximal Operator in SLOPE</h1>
+<div class="section level1">
+<h1 id="the-proximal-operator-in-slope">The Proximal Operator in SLOPE<a class="anchor" aria-label="anchor" href="#the-proximal-operator-in-slope"></a>
+</h1>
 <p>The proximal operator for the sorted L1 norm, the penalty used in SLOPE, is defined as <span class="math display">\[
   \operatorname{prox}_J (v) = 
-    \operatorname*{arg\,min}_x\left( J(x; \lambda) + \frac 1 2 \lVert x - v \rVert_2^2 \right)
-\]</span> where <span class="math inline">\(J(x; \lambda) = \sum_{j=1}^p \lambda_j |\beta_{(j)}|\)</span> is the sorted L1 norm, for which <span class="math display">\[|\beta_{(1)}| \geq |\beta_{(2)} \geq \cdots \geq |\beta_{(p)}\]</span>.</p>
-<div id="algorithms" class="section level2">
-<h2 class="hasAnchor">
-<a href="#algorithms" class="anchor"></a>Algorithms</h2>
+    \operatorname*{arg\,min}_x\left(
+      J(x; \lambda) + \frac 1 2 \lVert x - v \rVert_2^2
+    \right)
+\]</span> where <span class="math inline">\(J(x; \lambda) = \sum_{j=1}^p \lambda_j |\beta_{(j)}|\)</span> is the sorted L1 norm, for which <span class="math display">\[|\beta_{(1)}| \geq |\beta_{(2)} \geq \cdots \geq |\beta_{(p)}.\]</span></p>
+<div class="section level2">
+<h2 id="algorithms">Algorithms<a class="anchor" aria-label="anchor" href="#algorithms"></a>
+</h2>
 <p>There are several methods for solving this proximal operator and here we provide some benchmarks of these methods. Note that these results are almost entirely of academic nature and are added here only to serve as reference for others who are interested in working with SLOPE and particularly those who might be interested in improving the performance of these algorithms.</p>
 <p>First, we load the packages we need,.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://jolars.github.io/SLOPE/">SLOPE</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org">tidyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-lib/bench">bench</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://jolars.github.io/SLOPE/">SLOPE</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bench.r-lib.org/" class="external-link">bench</a></span><span class="op">)</span></code></pre></div>
 <p>Then we setup and run our benchmarks, letting <code>p</code> be the length of the vector used in the operator.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/expand_grid.html">expand_grid</a></span><span class="op">(</span>
-  p <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">10000</span>, length.out <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>,
+<code class="sourceCode R"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/expand_grid.html" class="external-link">expand_grid</a></span><span class="op">(</span>
+  p <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">10000</span>, length.out <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>,
   i <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">20</span>,
-  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"stack"</span>, <span class="st">"pava"</span><span class="op">)</span>,
+  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"stack"</span>, <span class="st">"pava"</span><span class="op">)</span>,
   time <span class="op">=</span> <span class="cn">NA</span>
 <span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">2254</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2254</span><span class="op">)</span>
 
-<span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+<span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
   <span class="va">p</span> <span class="op">&lt;-</span> <span class="va">res</span><span class="op">$</span><span class="va">p</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>
 
-  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span>
-  <span class="va">lambda</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span>
+  <span class="va">lambda</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 
-  <span class="va">time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/bench/man/bench_time.html">bench_time</a></span><span class="op">(</span><span class="fu"><a href="../reference/sortedL1Prox.html">sortedL1Prox</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">lambda</span>, <span class="va">res</span><span class="op">$</span><span class="va">method</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
+  <span class="va">time</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://bench.r-lib.org/reference/bench_time.html" class="external-link">bench_time</a></span><span class="op">(</span><span class="fu"><a href="../reference/sortedL1Prox.html">sortedL1Prox</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">lambda</span>, <span class="va">res</span><span class="op">$</span><span class="va">method</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
 
   <span class="va">res</span><span class="op">$</span><span class="va">time</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">time</span><span class="op">[[</span><span class="st">"real"</span><span class="op">]</span><span class="op">]</span> <span class="op">*</span> <span class="fl">1e3</span> <span class="co"># milliseconds</span>
 <span class="op">}</span></code></pre></div>
 <p>Finally, we summarize the results in the figure below.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://scales.r-lib.org">scales</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://scales.r-lib.org" class="external-link">scales</a></span><span class="op">)</span>
 
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">res</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">p</span>, <span class="va">time</span>, fill <span class="op">=</span> <span class="va">method</span>, col <span class="op">=</span> <span class="va">method</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_summary.html">stat_summary</a></span><span class="op">(</span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">res</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">p</span>, <span class="va">time</span>, fill <span class="op">=</span> <span class="va">method</span>, col <span class="op">=</span> <span class="va">method</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_summary.html" class="external-link">stat_summary</a></span><span class="op">(</span>
     geom <span class="op">=</span> <span class="st">"ribbon"</span>,
     fun.data <span class="op">=</span> <span class="va">mean_se</span>,
     alpha <span class="op">=</span> <span class="fl">0.2</span>,
     col <span class="op">=</span> <span class="st">"transparent"</span>
   <span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_summary.html">stat_summary</a></span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"line"</span>, fun <span class="op">=</span> <span class="va">mean</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_log10</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Time (milliseconds)"</span>, x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="figure">
-<img src="prox-solvers_files/figure-html/unnamed-chunk-2-1.png" alt="Comparison in execution times between the PAVA algorithm and the stack-based algorithm for solving the SLOPE prox." width="480"><p class="caption">
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_summary.html" class="external-link">stat_summary</a></span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"line"</span>, fun <span class="op">=</span> <span class="va">mean</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_log10</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Time (milliseconds)"</span>, x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="figure" style="text-align: center">
+<img src="prox-algs_files/figure-html/unnamed-chunk-2-1.png" alt="Comparison in execution times between the PAVA algorithm and the stack-based algorithm for solving the SLOPE prox." width="480"><p class="caption">
 Comparison in execution times between the PAVA algorithm and the stack-based algorithm for solving the SLOPE prox.
 </p>
 </div>
@@ -200,11 +198,13 @@ Comparison in execution times between the PAVA algorithm and the stack-based alg
 
 
       <footer><div class="copyright">
-  <p>Developed by Johan Larsson, Jonas Wallin, Malgorzata Bogdan, Ewout van den Berg, Chiara Sabatti, Emmanuel Candes, Evan Patterson, Weijie Su.</p>
+  <p></p>
+<p>Developed by Johan Larsson, Jonas Wallin, Malgorzata Bogdan, Ewout van den Berg, Chiara Sabatti, Emmanuel Candes, Evan Patterson, Weijie Su.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -212,6 +212,8 @@ Comparison in execution times between the PAVA algorithm and the stack-based alg
 
   
 
+
+  
 
   </body>
 </html>
