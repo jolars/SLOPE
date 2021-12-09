@@ -29,9 +29,10 @@ An evaluation of the proximal operator at \code{x} and \code{lambda}.
 The proximal operator for the Sorted L1 Norm, which is the penalty function
 in SLOPE. It solves the problem
 \deqn{
-  \arg\,\min_x \Big( J(x, \lambda) + \frac{1}{2} |x - v|_2^2\Big)
+  \operatorname{arg\,min}_x
+    \Big( J(x, \lambda) + \frac{1}{2} \lVert x - v\rVert|_2^2\Big)
 }{
-  argmin_x (J(x, \lambda) + 0.5|x - v|_2^2)
+  argmin_x (J(x, \lambda) + 0.5||x - v||_2^2)
 }
 where \eqn{J(x, \lambda)} is the Sorted L1 Norm.
 }
