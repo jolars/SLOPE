@@ -79,31 +79,6 @@ tune <- trainSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
   repeats = 5,
   measure = "mse"
 )
-
-set.seed(42)
-xy <- SLOPE:::randomProblem(200, p = 100, q = 0.5, response = "binomial")
-x <- xy$x
-y <- xy$y
-fit <- trainSLOPE(x, y,
-  q = c(0.1, 0.2),
-  number = 2, measure = "mse", family = "gaussian"
-)
-
-xy <- SLOPE:::randomProblem(200, p = 100, q = 0.5, response = "binomial")
-x <- xy$x
-y <- xy$y
-fit <- trainSLOPE(x, y,
-  q = c(0.1, 0.2),
-  number = 2, measure = "auc", family = "binomial"
-)
-
-xy <- SLOPE:::randomProblem(200, p = 100, q = 0.5, response = "multinomial")
-x <- xy$x
-y <- xy$y
-fit <- trainSLOPE(x, y,
-  q = c(0.1, 0.2),
-  number = 2, measure = "mse", family = "multinomial"
-)
 }
 \seealso{
 \code{\link[foreach:foreach]{foreach::foreach()}}, \code{\link[=plot.TrainedSLOPE]{plot.TrainedSLOPE()}}
