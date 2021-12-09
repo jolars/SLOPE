@@ -5,12 +5,13 @@ test_that("model training works with trainSLOPE", {
     xy <- SLOPE:::randomProblem(1e2, 2, response = family)
 
     fit <- trainSLOPE(xy$x,
-                      xy$y,
-                      family = family,
-                      number = 2,
-                      q = c(0.1, 0.2),
-                      repeats = 2,
-                      path_length = 2)
+      xy$y,
+      family = family,
+      number = 2,
+      q = c(0.1, 0.2),
+      repeats = 2,
+      path_length = 2
+    )
     expect_s3_class(fit, "TrainedSLOPE")
   }
 })
@@ -35,58 +36,64 @@ test_that("plot.trainSLOPE works as expected", {
 
 
 test_that("trainSLOPE works properly for binomial family", {
-  set.seed(42)
-  xy <- SLOPE:::randomProblem(200, p=100, q=0.5, response="binomial")
+  set.seed(1454)
+  xy <- SLOPE:::randomProblem(200, p = 10, q = 0.5, response = "binomial")
   x <- xy$x
   y <- xy$y
 
   fit <- trainSLOPE(x, y, q = c(0.1, 0.2), number = 2, family = "binomial")
 
-  expect_equal(fit$measure$measure,
-               c("mse", "mae", "deviance", "misclass", "auc"))
-  expect_equal(fit$measure$label,
-               c("Mean Squared Error", "Mean Absolute Error",
-                 "Binomial Deviance", "Misclassification Rate", "AUC"))
+  expect_equal(
+    fit$measure$measure,
+    c("mse", "mae", "deviance", "misclass", "auc")
+  )
+  expect_equal(
+    fit$measure$label,
+    c(
+      "Mean Squared Error", "Mean Absolute Error",
+      "Binomial Deviance", "Misclassification Rate", "AUC"
+    )
+  )
 
   expect_equal(
     fit$optima,
     structure(list(
-      q = c(0.1, 0.2, 0.2, 0.1, 0.2),
+      q = c(0.1, 0.1, 0.2, 0.1, 0.1),
       alpha = c(
-        0.0407419692328029,
-        0.0095161892230067,
-        7.46792437250563e-05,
-        0.00586052810915448,
-        0.0095161892230067
+        0.0857618386463366,
+        0.00177453086249557,
+        8.57618386463366e-06,
+        0.0200315767754891,
+        0.00177453086249557
       ),
       measure = c("auc", "deviance", "mae", "misclass", "mse"),
       mean = c(
-        0.660558191808191,
-        0.980242385828498,
-        0.505232740237056,
-        0.235,
-        0.323146578355248
+        0.82236720470667,
+        0.357468195162962,
+        0.179541901444967,
+        0.07,
+        0.111500400822224
       ),
       se = c(
-        0.0427697302697303,
-        0.0895079147155515,
-        0.011858410680709,
-        0.055,
-        0.0303254835186373
+        0.0395490593835067,
+        0.0591266351433017,
+        0.0364692338159319,
+        0.01,
+        0.017110631194972
       ),
       lo = c(
-        0.11711724249003,
-        -0.157063504055364,
-        0.354557346282327,
-        -0.463841260489608,
-        -0.0621752239560481
+        0.319848759056704,
+        -0.393806936328931,
+        -0.283843649991689,
+        -0.057062047361747,
+        -0.105910782306268
       ),
       hi = c(
-        1.20399914112635,
-        2.11754827571236,
-        0.655908134191785,
-        0.933841260489608,
-        0.708468380666544
+        1.32488565035664,
+        1.10874332665486,
+        0.642927452881622,
+        0.197062047361747,
+        0.328911583950716
       )
     ), row.names = c(NA, -5L), class = "data.frame"),
     tolerance = 0.0001
@@ -96,35 +103,47 @@ test_that("trainSLOPE works properly for binomial family", {
 
 test_that("trainSLOPE works properly for gaussian family", {
   set.seed(42)
-  xy <- SLOPE:::randomProblem(200, p = 100, q = 0.5, response = "gaussian")
+  xy <- SLOPE:::randomProblem(200, p = 10, q = 0.5, response = "gaussian")
   x <- xy$x
   y <- xy$y
 
-  fit <- trainSLOPE(x, y, q = c(0.1, 0.2), number = 2, family = "gaussian")
+  fit <- trainSLOPE(
+    x,
+    y,
+    q = c(0.1, 0.2),
+    number = 2,
+    family = "gaussian",
+    tol_rel_gap = 1e-5,
+    tol_infeas = 1e-7
+  )
 
-  expect_equal(fit$measure$measure,
-               c("mse", "mae"))
-  expect_equal(fit$measure$label,
-               c("Mean Squared Error", "Mean Absolute Error"))
+  expect_equal(
+    fit$measure$measure,
+    c("mse", "mae")
+  )
+  expect_equal(
+    fit$measure$label,
+    c("Mean Squared Error", "Mean Absolute Error")
+  )
 
   expect_equal(
     fit$optima,
     structure(list(
       q = c(0.2, 0.2),
-      alpha = c(0.060637891022855, 0.060637891022855),
+      alpha = c(0.0291535803838849, 0.0291535803838849),
       measure = c("mae", "mse"),
-      mean = c(2.86335499483679, 13.1331062209287),
-      se = c(0.172286938561511, 2.15038344415019),
-      lo = c(0.67424188010548, -14.1901060817242),
-      hi = c(5.05246810956809, 40.4563185235815)
+      mean = c(0.815910923266303, 1.04527630688046),
+      se = c(0.0275194184023733, 0.0566349151161424),
+      lo = c(0.466243558825295, 0.325661480198884),
+      hi = c(1.16557828770731, 1.76489113356204)
     ), row.names = c(NA, -2L), class = "data.frame"),
-    tolerance = 0.0001
+    tolerance = 0.001
   )
 })
 
 test_that("trainSLOPE works properly for poisson family", {
   set.seed(42)
-  xy <- SLOPE:::randomProblem(200, p = 100, q = 0.5, response = "poisson")
+  xy <- SLOPE:::randomProblem(200, p = 5, q = 0.5, response = "poisson")
   x <- xy$x
   y <- xy$y
 
@@ -139,13 +158,13 @@ test_that("trainSLOPE works properly for poisson family", {
   expect_equal(
     fit$optima,
     structure(list(
-      q = c(0.2, 0.1),
-      alpha = c(2822597.89902365, 51737675.0334651),
+      q = c(0.2, 0.2),
+      alpha = c(0.694874382791202, 0.162303301420616),
       measure = c("mae", "mse"),
-      mean = c(89508659.6408427, 803377308062305024),
-      se = c(7450055.16497561, 131811729988185280),
-      lo = c(-5153266.58113311, -871449519796954624),
-      hi = c(184170585.862818, 2478204135921564672)
+      mean = c(2.17509028617307, 31.7907389590011),
+      se = c(0.443936208583228, 20.1886058597683),
+      lo = c(-3.46565406988658, -224.729820433151),
+      hi = c(7.81583464223272, 288.311298351153)
     ), row.names = c(NA, -2L), class = "data.frame"),
     tolerance = 0.0001
   )
@@ -154,42 +173,44 @@ test_that("trainSLOPE works properly for poisson family", {
 
 test_that("trainSLOPE works properly for multinomial family", {
   set.seed(42)
-  xy <- SLOPE:::randomProblem(200, p=100, q=0.5, response="multinomial")
+  xy <- SLOPE:::randomProblem(200, p = 5, q = 0.5, response = "multinomial")
   x <- xy$x
   y <- xy$y
 
   fit <- trainSLOPE(x, y, q = c(0.1, 0.2), number = 2, family = "multinomial")
 
   expect_equal(fit$measure$measure, c("mse", "mae", "deviance", "misclass"))
-  expect_equal(fit$measure$label, c("Mean Squared Error",
-                                    "Mean Absolute Error",
-                                    "Multinomial Deviance",
-                                    "Misclassification Rate"))
+  expect_equal(fit$measure$label, c(
+    "Mean Squared Error",
+    "Mean Absolute Error",
+    "Multinomial Deviance",
+    "Misclassification Rate"
+  ))
 
   expect_equal(
     fit$optima,
     structure(list(
-      q = c(0.2, 0.2, 0.2, 0.2),
+      q = c(0.1, 0.2, 0.1, 0.1),
       alpha = c(
-        0.0232836583559346,
-        6.93003501141371e-05,
-        0.000481771041719308,
-        0.0143391993455749
+        0.000271276009840165,
+        9.11438098491086e-06,
+        0.00497243693348613,
+        3.90216946049708e-05
       ),
       measure = c("deviance", "mae", "misclass", "mse"),
-      mean = c(212.520373211118, 0.323759418425716, 0.48, 0.216079211804543),
-      se = c(13.5614867355816, 0.0312753402429364, 0.05, 0.0207765280569875),
+      mean = c(55.1549471708103, 0.103076394047732, 0.125, 0.0548364722790797),
+      se = c(1.20617967890997, 0.0063949508132034, 0.005, 0.000395127349159509),
       lo = c(
-        40.2053462219011,
-        -0.0736314578945576,
-        -0.155310236808735,
-        -0.0479116073944179
+        39.8289812219668,
+        0.0218208397374032,
+        0.0614689763191265,
+        0.0498159032837969
       ),
       hi = c(
-        384.835400200335,
-        0.72115029474599,
-        1.11531023680873,
-        0.480070031003504
+        70.4809131196538,
+        0.184331948358062,
+        0.188531023680874,
+        0.0598570412743624
       )
     ), row.names = c(NA, -4L), class = "data.frame"),
     tolerance = 0.0001
@@ -199,24 +220,17 @@ test_that("trainSLOPE works properly for multinomial family", {
 
 
 test_that("trainSLOPE returns error in the case of invalid measures", {
-
   set.seed(42)
-  xy <- SLOPE:::randomProblem(200, p=100, q=0.5, response="gaussian")
+  xy <- SLOPE:::randomProblem(200, p = 100, q = 0.5, response = "gaussian")
   x <- xy$x
   y <- xy$y
 
-  expect_error(trainSLOPE(x, y, q = c(0.1, 0.2),
-                          measure = "misclass",
-                          family = "gaussian"),
-  "For the given family: gaussian, measure needs to be one of: mse, mae")
+  expect_error(
+    trainSLOPE(x, y,
+      q = c(0.1, 0.2),
+      measure = "misclass",
+      family = "gaussian"
+    ),
+    "For the given family: gaussian, measure needs to be one of: mse, mae"
+  )
 })
-
-
-
-
-
-
-
-
-
-
