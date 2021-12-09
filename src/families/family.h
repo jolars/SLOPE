@@ -43,6 +43,8 @@ public:
     , verbosity(verbosity)
   {}
 
+  virtual ~Family(){}
+
   virtual double primal(const arma::mat& y, const arma::mat& lin_pred) = 0;
 
   virtual double dual(const arma::mat& y, const arma::mat& lin_pred) = 0;
