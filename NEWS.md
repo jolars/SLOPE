@@ -28,6 +28,7 @@
   constructions of regularization paths with infinite `lambda` values.
 - The `lambda` argument in `SLOPE()` now also allowed the input `"lasso"` to 
   obtain the standard lasso.
+- The performance of `trainSLOPE()` 
 
 ## Vignettes
 
@@ -40,11 +41,18 @@
   for `lambda = "gaussian"` were incorrectly computed, increasing and then
   decreasing. This is now fixed and regularization weights in this case are now
   always non-increasing.
+- Misclassification error was previously computed incorrectly in `trainSLOPE()`
+  for multinomial models (thanks @jakubkala and @KrystynaGrzesiak)
+- Performance of `trainSLOPE()` was previously hampered by erroneous 
+  refitting of the models, which has been fixed now (thanks @jakubkala and
+  @KrystynaGrzesiak)
 
 ## Deprecated and Defunct
 
 - `yvar` argument in `plotDiagnostics()` that was previously deprecated is
   now defunct.
+- Using `missclass` for the `measure` argument in `trainSLOPE()` has been
+  deprecated in favor of `misclass`.
 
 # SLOPE 0.3.3
 
