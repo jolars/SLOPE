@@ -44,7 +44,8 @@ An object of class \code{"TrainedSLOPE"}, with the following slots:
 \item{summary}{a summary of the results with means, standard errors,
 and 0.95 confidence levels}
 \item{data}{the raw data from the model training}
-\item{optima}{a \code{data.frame} of the best (mean) values for the different metrics and their corresponding parameter values}
+\item{optima}{a \code{data.frame} of the best (mean)
+values for the different metrics and their corresponding parameter values}
 \item{measure}{a \code{data.frame} listing the used metrics and their labels}
 \item{model}{the model fit to the entire data set}
 \item{call}{the call}
@@ -72,31 +73,37 @@ using, for instance, \code{doParallel::registerDoParallel()} from the
 \examples{
 # 8-fold cross-validation repeated 5 times
 tune <- trainSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
-                   mtcars$hp,
-                   q = c(0.1, 0.2),
-                   number = 8,
-                   repeats = 5,
-                   measure = "mse")
+  mtcars$hp,
+  q = c(0.1, 0.2),
+  number = 8,
+  repeats = 5,
+  measure = "mse"
+)
 
 set.seed(42)
-xy <- SLOPE:::randomProblem(200, p=100, q=0.5, response="binomial")
+xy <- SLOPE:::randomProblem(200, p = 100, q = 0.5, response = "binomial")
 x <- xy$x
 y <- xy$y
-fit <- trainSLOPE(x, y, q = c(0.1, 0.2),
-                  number = 2, measure = "mse", family = "gaussian")
+fit <- trainSLOPE(x, y,
+  q = c(0.1, 0.2),
+  number = 2, measure = "mse", family = "gaussian"
+)
 
-xy <- SLOPE:::randomProblem(200, p=100, q=0.5, response="binomial")
+xy <- SLOPE:::randomProblem(200, p = 100, q = 0.5, response = "binomial")
 x <- xy$x
 y <- xy$y
-fit <- trainSLOPE(x, y, q = c(0.1, 0.2),
-                  number = 2, measure = "auc", family = "binomial")
+fit <- trainSLOPE(x, y,
+  q = c(0.1, 0.2),
+  number = 2, measure = "auc", family = "binomial"
+)
 
-xy <- SLOPE:::randomProblem(200, p=100, q=0.5, response="multinomial")
+xy <- SLOPE:::randomProblem(200, p = 100, q = 0.5, response = "multinomial")
 x <- xy$x
 y <- xy$y
-fit <- trainSLOPE(x, y, q = c(0.1, 0.2),
-                  number = 2, measure = "mse", family = "multinomial")
-
+fit <- trainSLOPE(x, y,
+  q = c(0.1, 0.2),
+  number = 2, measure = "mse", family = "multinomial"
+)
 }
 \seealso{
 \code{\link[foreach:foreach]{foreach::foreach()}}, \code{\link[=plot.TrainedSLOPE]{plot.TrainedSLOPE()}}
