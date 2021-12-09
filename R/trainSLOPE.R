@@ -84,8 +84,7 @@ trainSLOPE <- function(x,
                          "mae",
                          "deviance",
                          "misclass",
-                         "auc",
-                         "missclass"
+                         "auc"
                        ),
                        ...) {
   ocall <- match.call()
