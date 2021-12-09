@@ -45,7 +45,28 @@
 #'                    mtcars$hp,
 #'                    q = c(0.1, 0.2),
 #'                    number = 8,
-#'                    repeats = 5)
+#'                    repeats = 5,
+#'                    measure = "mse")
+#'
+#' set.seed(42)
+#' xy <- SLOPE:::randomProblem(200, p=100, q=0.5, response="binomial")
+#' x <- xy$x
+#' y <- xy$y
+#' fit <- trainSLOPE(x, y, q = c(0.1, 0.2),
+#'                   number = 2, measure = "mse", family = "gaussian")
+#'
+#' xy <- SLOPE:::randomProblem(200, p=100, q=0.5, response="binomial")
+#' x <- xy$x
+#' y <- xy$y
+#' fit <- trainSLOPE(x, y, q = c(0.1, 0.2),
+#'                   number = 2, measure = "auc", family = "binomial")
+#'
+#' xy <- SLOPE:::randomProblem(200, p=100, q=0.5, response="multinomial")
+#' x <- xy$x
+#' y <- xy$y
+#' fit <- trainSLOPE(x, y, q = c(0.1, 0.2),
+#'                   number = 2, measure = "mse", family = "multinomial")
+#'
 trainSLOPE <- function(x,
                        y,
                        q = 0.2,
@@ -54,10 +75,19 @@ trainSLOPE <- function(x,
                        measure = c("mse",
                                    "mae",
                                    "deviance",
-                                   "missclass",
+                                   "misclass",
                                    "auc"),
                        ...) {
   ocall <- match.call()
+
+  if ("missclass" %in% measure) {
+    warning("Measure 'missclass' is deprecated. Please use 'misclass' instead.")
+
+    measure <- measure[! measure %in% "missclass"]
+    if (! "misclass" %in% measure) {
+      measure <- c(measure, "misclass")
+    }
+  }
 
   n <- NROW(x)
 
@@ -79,23 +109,26 @@ trainSLOPE <- function(x,
                gaussian = c("mse", "mae"),
                binomial = c("mse", "mae", "deviance", "misclass", "auc"),
                poisson = c("mse", "mae"),
-               multinomial = c("mse", "mae", "deviance"))
+               multinomial = c("mse", "mae", "deviance", "misclass"))
+
   measure <- measure[measure %in% ok]
 
-  if (length(measure) == 0)
-    stop("measure needs to be one of ", ok)
+  if (length(measure) == 0) {
+    stop(paste0("For the given family: ", family,
+                ", measure needs to be one of: ",
+                paste0(ok, collapse = ", ")))
+  }
 
   alpha <- fit$alpha
-
   path_length <- length(alpha)
   n_q <- length(q)
   n_measure <- length(measure)
 
   fold_size <- ceiling(n/number)
 
-  fold_id <- replicate(repeats, {
-    matrix(c(sample(n), rep(0, number*fold_size - n)), fold_size, byrow = TRUE)
-  })
+
+  #list of repeated folds
+  fold_id <- rep(list(matrix(c(sample(n), rep(0, number*fold_size - n)), fold_size, byrow = TRUE)), repeats)
 
   grid <- expand.grid(q = q,
                       fold = seq_len(number),
@@ -108,28 +141,32 @@ trainSLOPE <- function(x,
   i <- 1 # fixes R CMD check NOTE
 
   r <- foreach(i = seq_len(nrow(grid)), .packages = c("SLOPE")) %dopar% {
-    id <- grid$fold[i]
-    repetition <- grid$repetition[i]
-    q <- grid$q[i]
+    id <- grid[["fold"]][i]
+    repetition <- grid[["repetition"]][i]
+    q <- grid[["q"]][i]
 
-    test_ind <- fold_id[, id, repetition]
+    test_ind <- fold_id[[repetition]][, id]
 
     x_train <- x[-test_ind, , drop = FALSE]
     y_train <- y[-test_ind, , drop = FALSE]
     x_test  <- x[test_ind, , drop = FALSE]
     y_test  <- y[test_ind, , drop = FALSE]
 
+    #arguments for SLOPE
     args <- utils::modifyList(list(x = x_train,
                                    y = y_train,
                                    q = q,
                                    alpha = alpha), list(...))
+
+    #fitting model
+    fit_id <- do.call(SLOPE::SLOPE, args)
+
     s <- lapply(measure, function(m) {
-      SLOPE::score(do.call(SLOPE::SLOPE, args), x_test, y_test, m)
+      SLOPE::score(fit_id, x_test, y_test, measure = m)
     })
 
     unlist(s)
   }
-
   tmp <- array(unlist(r), c(path_length*n_q, n_measure, number*repeats))
   d <- matrix(tmp, c(path_length*n_q*n_measure, number*repeats))
 
@@ -168,7 +205,8 @@ trainSLOPE <- function(x,
       mse = "Mean Squared Error",
       mae = "Mean Absolute Error",
       accuracy = "Accuracy",
-      auc = "AUC"
+      auc = "AUC",
+      misclass = "Misclassification Rate"
     )
   }, FUN.VALUE = character(1))
 

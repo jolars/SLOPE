@@ -90,10 +90,10 @@ score.MultinomialSLOPE <- function(object,
                                                "deviance",
                                                "misclass")) {
   measure <- match.arg(measure)
-
   prob_min <- 1e-05
   prob_max <- 1 - prob_min
 
+  y_observed <- y
   y_hat <- stats::predict(object, x, type = "response", simplify = FALSE)
   y_hat_class <- stats::predict(object, x, type = "class", simplify = FALSE)
 
@@ -101,22 +101,23 @@ score.MultinomialSLOPE <- function(object,
   n_levels <- length(unique(y))
 
   y <- diag(n_levels)[as.numeric(y), ]
-  y <- array(y, dim(y_hat))
 
   switch(
     measure,
-    mse = apply((y - y_hat)^2, c(1, 3), mean),
-    mae = apply(abs(y - y_hat), c(1, 3), mean),
+    mse = apply(y_hat, 3, function(x) mean((x-y)^2)),
+    mae = apply(y_hat, 3, function(x) mean(abs(x-y))),
     deviance = {
       y_hat <- pmin(pmax(y_hat, prob_min), prob_max)
-      pp <- pmin(pmax(y_hat, prob_min), prob_max)
 
-      lp <- y * log(y_hat)
-      ly <- y * log(y)
-      ly[y == 0] <- 0
-      apply(2 * (ly - lp), c(1, 3), sum)
+      apply(y_hat, 3, function(p_hat) {-2 * sum(y * log(p_hat))})
     },
-    misclass = apply(y[, 1] * (y_hat > 0.5) + y[, 2] * (y_hat <= 0.5), 3, mean)
+    misclass = apply(y_hat, 3, function(x) {
+      n_obs <- nrow(x)
+      x_class <- array(0, dim = dim(x))
+      x_class[cbind(1:n_obs, apply(x, 1, which.max))] <- 1
+
+      1 - sum(apply(x_class == y, 1, all)) / n_obs
+    })
   )
 }
 
