@@ -18,10 +18,10 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="Sorted L1 Penalized Estimation">
-<meta property="og:description" content="Efficient implementations for Sorted L-One Penalized Estimation 
-    (SLOPE): generalized linear models regularized with the sorted L1-norm 
-    (Bogdan et al. (2015) &lt;doi:10/gfgwzt&gt;). Supported models include ordinary 
-    least-squares regression, binomial regression, multinomial regression, and 
+<meta property="og:description" content="Efficient implementations for Sorted L-One Penalized Estimation
+    (SLOPE): generalized linear models regularized with the sorted L1-norm
+    (Bogdan et al. (2015) &lt;doi:10/gfgwzt&gt;). Supported models include ordinary
+    least-squares regression, binomial regression, multinomial regression, and
     Poisson regression. Both dense and sparse  predictor matrices are supported.
     In addition, the package features predictor screening rules that enable fast
     and efficient solutions to high-dimensional problems.">
@@ -52,7 +52,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">SLOPE</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -71,6 +71,9 @@
 <li>
       <a href="articles/introduction.html">An introduction to SLOPE</a>
     </li>
+    <li>
+      <a href="articles/prox-algs.html">Proximal Operator Algorithms</a>
+    </li>
   </ul>
 </li>
 <li class="dropdown">
@@ -82,13 +85,11 @@
   <ul class="dropdown-menu" role="menu">
 <li class="dropdown-header">Releases</li>
     <li>
-      <a href="https://larssonjohan.com/post/slope-0-3-0/">Version 0.3.0</a>
-    </li>
-    <li>
-      <a href="https://larssonjohan.com/post/slope-0-2-0/">Version 0.2.0</a>
+      <a href="https://larssonjohan.com/post/slope-0-2-0/" class="external-link">Version 0.2.0</a>
     </li>
     <li class="divider">
-    <li>
+    </li>
+<li>
       <a href="news/index.html">Changelog</a>
     </li>
   </ul>
@@ -96,7 +97,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/jolars/SLOPE/">
+  <a href="https://github.com/jolars/SLOPE/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -113,16 +114,16 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="slope-" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#slope-" class="anchor"></a>SLOPE <a href="https://jolars.github.io/SLOPE/"><img src="reference/figures/logo.svg" align="right" height="139"></a>
+<div class="section level1">
+<div class="page-header"><h1 id="slope-">SLOPE <a href="https://jolars.github.io/SLOPE/"><img src="reference/figures/logo.svg" align="right" height="139"></a>
+<a class="anchor" aria-label="anchor" href="#slope-"></a>
 </h1></div>
 <!-- badges: start -->
 
 <p>Efficient implementations for Sorted L-One Penalized Estimation (SLOPE): generalized linear models regularized with the sorted L1-norm. There is support for ordinary least-squares regression, binomial regression, multinomial regression, and poisson regression, as well as both dense and sparse predictor matrices. In addition, the package features predictor screening rules that enable efficient solutions to high-dimensional problems.</p>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
 <p>You can install the current stable release from <a href="https://cran.r-project.org/" class="external-link">CRAN</a> with</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"SLOPE"</span><span class="op">)</span></code></pre></div>
@@ -131,14 +132,14 @@
 <code class="sourceCode R"><span class="co"># install.packages("remotes")</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"jolars/SLOPE"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="versioning" class="section level2">
-<h2 class="hasAnchor">
-<a href="#versioning" class="anchor"></a>Versioning</h2>
+<div class="section level2">
+<h2 id="versioning">Versioning<a class="anchor" aria-label="anchor" href="#versioning"></a>
+</h2>
 <p>SLOPE uses <a href="https://semver.org" class="external-link">semantic versioning</a>.</p>
 </div>
-<div id="code-of-conduct" class="section level2">
-<h2 class="hasAnchor">
-<a href="#code-of-conduct" class="anchor"></a>Code of conduct</h2>
+<div class="section level2">
+<h2 id="code-of-conduct">Code of conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>
+</h2>
 <p>Please note that the ‘SLOPE’ project is released with a <a href="https://jolars.github.io/SLOPE/CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
 </div>
 </div>
@@ -148,12 +149,9 @@
     <div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=SLOPE">https://​cloud.r-project.org/​package=SLOPE</a>
-</li>
-<li>Browse source code at <br><a href="https://github.com/jolars/SLOPE/">https://​github.com/​jolars/​SLOPE/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/jolars/SLOPE/issues">https://​github.com/​jolars/​SLOPE/​issues</a>
-</li>
+<li><a href="https://cloud.r-project.org/package=SLOPE" class="external-link">View on CRAN</a></li>
+<li><a href="https://github.com/jolars/SLOPE/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/jolars/SLOPE/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
@@ -161,7 +159,7 @@
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
-<li><small><a href="https://www.r-project.org/Licenses/GPL-3">GPL-3</a></small></li>
+<li><small><a href="https://www.r-project.org/Licenses/GPL-3" class="external-link">GPL-3</a></small></li>
 </ul>
 </div>
 
@@ -175,22 +173,22 @@
 <div class="citation">
 <h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li><a href="authors.html">Citing SLOPE</a></li>
+<li><a href="authors.html#citation">Citing SLOPE</a></li>
 </ul>
 </div>
 
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Johan Larsson <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-4029-5945" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Jonas Wallin <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-0381-6593" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Johan Larsson <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-4029-5945" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Jonas Wallin <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-0381-6593" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 <li>Malgorzata Bogdan <br><small class="roles"> Author </small>  </li>
 <li>Ewout van den Berg <br><small class="roles"> Author </small>  </li>
 <li>Chiara Sabatti <br><small class="roles"> Author </small>  </li>
 <li>Emmanuel Candes <br><small class="roles"> Author </small>  </li>
 <li>Evan Patterson <br><small class="roles"> Author </small>  </li>
 <li>Weijie Su <br><small class="roles"> Author </small>  </li>
-<li><a href="authors.html">More on authors...</a></li>
+<li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
 
@@ -215,7 +213,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
