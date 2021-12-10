@@ -1,13 +1,40 @@
 ## Test environments
 
-* Fedora 35, R-release (local)
+* Fedora 35, R-release, clang (local)
 * Windows, R-devel (win-builder)
 * Windows, R-release (win-builder)
-* Fedora Linux, R-devel, clang, gfortran (rhub rocker)
-* Debian Linux, R-devel, GCC ASAN/UBSAN (rhub rocker) 
+* Debian Linux, R-devel, GCC ASAN/UBSAN (local rhub rocker) 
 * Windows Server 2008 R2 SP1, R-devel, 32/64 bit (rhub)
-* Mac OS X 10.15.7, R-devel (github)
+* Ubuntu 20.04, R-release (github)
+* Windows Server 2019, R-release (github)
+* Mac OS X 10.15.7, R-release (github)
 
 ## R CMD check results
 
-0 errors | 0 warnings | 0 notes
+0 errors | 0 warnings | 1 notes
+
+>> * checking CRAN incoming feasibility ... NOTE
+>> Maintainer: 'Johan Larsson <johan.larsson@stat.lu.se>'
+>> Found the following (possibly) invalid URLs:
+>>   URL: https://doi.org/10.1214/15-AOAS842
+>>     From: inst/doc/introduction.html
+>>     Status: 500
+>>     Message: Internal Server Error
+>>   URL: https://doi.org/10/gfgwzt
+>>     From: man/SLOPE.Rd
+>>     Status: 500
+>>     Message: Internal Server Error
+>>   URL: https://www.jstor.org/stable/2346178
+>>     From: inst/doc/introduction.html
+>>     Status: 403
+>>     Message: Forbidden
+>> 
+>> Found the following (possibly) invalid DOIs:
+>>   DOI: 10/gfgwzt
+>>     From: DESCRIPTION
+>>           inst/CITATION
+>>     Status: Internal Server Error
+>>     Message: 500
+
+I believe these notes to be false positives. All of the links work when I
+check them.
