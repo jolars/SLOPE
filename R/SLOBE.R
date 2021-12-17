@@ -81,7 +81,14 @@ rescale_all<-function(results,Xmis){
 #'\doi{10.1080/01621459.2016.1260469}
 #'
 #' @examples
+#' library(graphics)
+#' library(mice)
+#' X <- airquality[, c("Ozone", "Solar.R", "Wind")]
+#' Y <- airquality$Temp
+#' imp <- mice(X, m = 1, printFlag = FALSE)
+#' Xinit <- complete(imp)
 #'
+#' Covmat <- cov(Xinit)
 #' @export ABSLOPE
 #'
 
@@ -102,6 +109,8 @@ ABSLOPE <- function(
   BH = TRUE,
   known_cov = FALSE)
 {
+  #TODO: checkmate
+
 
   # if Covmat is null -> known_cov = FALSE
   known_cov <- !is.null(Covmat)
@@ -110,7 +119,10 @@ ABSLOPE <- function(
 
   #TODO: if Xinit is null -> mice imputation
   if (is.null(Xinit)) {
-    invisible()
+    #imp = mice(Xtrauma,m=1, printFlag = FALSE)
+    #Xfull.sim  = complete(imp)
+    #save(Xfull.sim, file="imputed_mice.Rdata")
+
   }
 
   #TODO: if start is null -> LASSO gives starting coefficients
