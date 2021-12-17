@@ -85,13 +85,39 @@ rescale_all<-function(results,Xmis){
 #' @export ABSLOPE
 #'
 
-ABSLOPE <- function(start, Xmis, Xinit, Y, a_prior, b_prior,
-                    Covmat = diag(rep(1,length(start))), sigma = 1,
-                    FDR = 0.05, tol = 1e-04, known_sigma = FALSE,
-                    max_iter = 100L,
-                    verbose = FALSE,
-                    BH = TRUE,
-                    known_cov = FALSE){
+ABSLOPE <- function(
+  X,
+  Y,
+  start = NULL,
+  Xinit = NULL,
+  a_prior,
+  b_prior,
+  Covmat = diag(rep(1,length(start))),
+  sigma = 1,
+  FDR = 0.05,
+  tol = 1e-04,
+  known_sigma = FALSE,
+  max_iter = 100L,
+  verbose = FALSE,
+  BH = TRUE,
+  known_cov = FALSE)
+{
+
+  # if Covmat is null -> known_cov = FALSE
+  known_cov <- !is.null(Covmat)
+  # if sigma is null -> known_sigma = FALSE
+  known_sigma <- !is.null(sigma)
+
+  #TODO: if Xinit is null -> mice imputation
+  if (is.null(Xinit)) {
+    invisible()
+  }
+
+  #TODO: if start is null -> LASSO gives starting coefficients
+  if (is.null(start)) {
+    invisible()
+  }
+
 
   out <- SLOBE_ADMM_approx_missing(start, Xmis, Xinit, Y, a_prior, b_prior,
                                    Covmat, sigma, FDR , tol, known_sigma,
