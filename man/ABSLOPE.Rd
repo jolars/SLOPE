@@ -5,32 +5,28 @@
 \title{Adaptive Bayesian SLOPE}
 \usage{
 ABSLOPE(
-  start,
-  Xmis,
-  Xinit,
+  X,
   Y,
+  start = NULL,
+  Xinit = NULL,
   a_prior,
   b_prior,
   Covmat = diag(rep(1, length(start))),
   sigma = 1,
   FDR = 0.05,
   tol = 1e-04,
-  known_sigma = FALSE,
   max_iter = 100L,
   verbose = FALSE,
-  BH = TRUE,
-  known_cov = FALSE
+  BH = TRUE
 )
 }
 \arguments{
+\item{Y}{numeric. Response variable.}
+
 \item{start}{the initial vector of regression coefficients for the first
 iteration. Default to the LASSO estimator obtained after}
 
-\item{Xmis}{words, words}
-
 \item{Xinit}{words, words}
-
-\item{Y}{numeric. Response variable.}
 
 \item{a_prior, b_prior}{non-negative parameters of the prior Beta distribution
 on theta.}
@@ -43,8 +39,6 @@ on theta.}
 
 \item{tol}{optimization tolerance.}
 
-\item{known_sigma}{logical. Indicates whether the sigma is known}
-
 \item{max_iter}{the maximal number of iterations of the optimization
 algorithm. Default to 100.}
 
@@ -52,6 +46,10 @@ algorithm. Default to 100.}
 
 \item{BH}{logical. Indicates whether the Benjamini-Hochberg correction for
 multiple testing should be used.}
+
+\item{Xmis}{words, words}
+
+\item{known_sigma}{logical. Indicates whether the sigma is known}
 
 \item{known_cov}{logical. Indicates whether the covariance matrix is known.}
 }
@@ -75,7 +73,22 @@ and is calculated based on the prior knowledge and on the  estimator of
 iterations.
 }
 \examples{
-
+library(graphics)
+library(mice)
+X <- airquality[, c("Ozone", "Solar.R", "Wind")]
+X <- as.matrix(X)
+Y <- airquality$Temp
+imp <- mice(X, m = 1, printFlag = FALSE)
+Xinit <- as.matrix(complete(imp))
+Covmat <- as.matrix(cov(Xinit))
+library(glmnet)
+obj3<-cv.glmnet(Xinit, Y,standardize=FALSE, intercept=FALSE)
+betal<-coefficients(obj3, s='lambda.min');
+coefs <- betal[2:length(betal)]
+fit <- ABSLOPE(X, Y, start = coefs, Xinit = Xinit, a_prior = 0.01,
+b_prior = 0.01, Covmat = diag(rep(1,length(start))), sigma = 1,
+FDR = 0.05, tol = 1e-04, max_iter = 100L,
+verbose = FALSE, BH = TRUE)
 }
 \references{
 Jiang, W., Bogdan, M., Josse, J., Majewski, S., Miasojedow, B.,

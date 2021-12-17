@@ -84,16 +84,24 @@ rescale_all<-function(results,Xmis){
 #' library(graphics)
 #' library(mice)
 #' X <- airquality[, c("Ozone", "Solar.R", "Wind")]
+#' X <- as.matrix(X)
 #' Y <- airquality$Temp
 #' imp <- mice(X, m = 1, printFlag = FALSE)
-#' Xinit <- complete(imp)
-#'
-#' Covmat <- cov(Xinit)
+#' Xinit <- as.matrix(complete(imp))
+#' Covmat <- as.matrix(cov(Xinit))
+#' library(glmnet)
+#' obj3<-cv.glmnet(Xinit, Y,standardize=FALSE, intercept=FALSE)
+#' betal<-coefficients(obj3, s='lambda.min');
+#' coefs <- betal[2:length(betal)]
+#' fit <- ABSLOPE(X, Y, start = coefs, Xinit = Xinit, a_prior = 0.01,
+#' b_prior = 0.01, Covmat = diag(rep(1,length(start))), sigma = 1,
+#' FDR = 0.05, tol = 1e-04, max_iter = 100L,
+#' verbose = FALSE, BH = TRUE)
 #' @export ABSLOPE
 #'
 
 ABSLOPE <- function(
-  X,
+  Xmis,
   Y,
   start = NULL,
   Xinit = NULL,
@@ -103,11 +111,9 @@ ABSLOPE <- function(
   sigma = 1,
   FDR = 0.05,
   tol = 1e-04,
-  known_sigma = FALSE,
   max_iter = 100L,
   verbose = FALSE,
-  BH = TRUE,
-  known_cov = FALSE)
+  BH = TRUE)
 {
   #TODO: checkmate
 
@@ -130,12 +136,12 @@ ABSLOPE <- function(
     invisible()
   }
 
-
   out <- SLOBE_ADMM_approx_missing(start, Xmis, Xinit, Y, a_prior, b_prior,
                                    Covmat, sigma, FDR , tol, known_sigma,
                                    max_iter, verbose , BH , known_cov )
-
-  return(rescale_all(out,Xmis))
+  return(list(out, Xmis))
+  #TODO: fix this!
+  #return(rescale_all(out,Xmis))
 }
 
 # TODO:
