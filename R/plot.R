@@ -3,18 +3,19 @@
 #' Plot the fitted model's regression
 #' coefficients along the regularization path.
 #'
+#' @importFrom ggplot2 aes geom_line facet_wrap xlab ylab theme_bw theme
+#'
 #' @param x an object of class `"SLOPE"`
-#' @param ... parameters that will be used to modify the call to
-#'   [lattice::xyplot()]
+#' @param ... parameters that will be used in \link[ggplot2]{theme}
 #' @param intercept whether to plot the intercept
 #' @param x_variable what to plot on the x axis. `"alpha"` plots
 #'   the scaling parameter for the sequence, `"deviance_ratio"` plots
 #'   the fraction of deviance explained, and `"step"` plots step number.
 #'
-#' @seealso [lattice::xyplot()], [SLOPE()], [plotDiagnostics()]
+#' @seealso [ggplot2::theme()], [SLOPE()], [plotDiagnostics()]
 #' @family SLOPE-methods
 #'
-#' @return An object of class `"trellis"`, which will be plotted on the
+#' @return An object of class `"ggplot"`, which will be plotted on the
 #'   current device unless stored in a variable.
 #' @export
 #'
@@ -28,7 +29,7 @@ plot.SLOPE = function(x,
   object <- x
   x_variable <- match.arg(x_variable)
 
-  coefs <- object$coefficients
+  coefs <- getElement(object, "coefficients")
 
   intercept_in_model <- "(Intercept)" %in% rownames(coefs)
   include_intercept <- intercept && intercept_in_model
@@ -42,8 +43,6 @@ plot.SLOPE = function(x,
   p <- NROW(coefs) # number of features
   m <- NCOL(coefs) # number of responses
 
-  args <- list()
-
   x <- switch(x_variable,
               alpha = object$alpha,
               deviance_ratio = object$deviance_ratio,
@@ -54,76 +53,28 @@ plot.SLOPE = function(x,
                  deviance_ratio = "Fraction Deviance Explained",
                  step = "Step")
 
-  n_x <- length(x)
+
   d <- as.data.frame(as.table(coefs))
-  d$x <- rep(x, each = p*m)
+  d[["x"]] <- rep(x, each = p*m)
 
-  n_col <- length(lattice::trellis.par.get("superpose.line")$col)
-  lty <- rep(1:4, each = n_col)
-  superpose.line <- list(lty = lty)
-
-  # setup key
-  if (p <= 20) {
-    if (n_x == 1) {
-      key <- list(space = "right")
-    } else {
-      key <- list(space = "right", lines = TRUE, points = FALSE)
-    }
-  } else {
-    key <- FALSE
+  if(m > 1) {
+    ggplot(d, aes(x = x, y = Freq, col = Var1)) +
+      geom_line() +
+      facet_wrap(~Var2) +
+      ylab(expression(hat(beta))) +
+      xlab(xlab) +
+      labs(color='Variable name') +
+      theme_bw() +
+      theme(...)
+  }else {
+    ggplot(d, aes(x = x, y = Freq, col = Var1)) +
+      geom_line() +
+      ylab(expression(hat(beta))) +
+      xlab(xlab) +
+      labs(color='Variable name') +
+      theme_bw() +
+      theme(...)
   }
-
-  args <- list(
-    x = if (m > 1)
-      quote(Freq ~ x | Var2)
-    else
-      quote(Freq ~ x),
-    type = if (n_x == 1) "p" else "l",
-    groups = quote(Var1),
-    data = quote(d),
-    ylab = expression(hat(beta)),
-    xlab = xlab,
-    par.settings = list(superpose.line = superpose.line),
-    # scales = list(x = list(log = "e")),
-    # xscale.components = function(lim, ...) {
-    #   x <- lattice::xscale.components.default(lim, ...)
-    #   x$bottom$labels$labels <- parse(text = x$bottom$labels$labels)
-    #   x
-    # },
-    auto.key = key,
-    abline = within(lattice::trellis.par.get("reference.line"), {h = 0})
-  )
-
-  # switch(match.arg(xvar),
-  #        norm = {
-  #          plot_args$xlab <-
-  #            expression(group("|", group("|", hat(beta), "|"), "|")[1])
-  #          plot_data$xval <- if (is.list(beta))
-  #            rowSums(vapply(beta,
-  #                           function(x) colSums(abs(as.matrix(x))),
-  #                           double(ncol(beta[[1]]))))
-  #          else
-  #            colSums(abs(as.matrix(beta)))
-  #        },
-  #        lambda = {
-  #          plot_args$xlab <- expression(lambda)
-  #          plot_args$scales <- list(x = list(log = "e"))
-  #          plot_data$xval <- x$lambda
-  #
-  #          # Prettier x scale
-  #          plot_args$xscale.components <- function(lim, ...) {
-  #            x <- lattice::xscale.components.default(lim, ...)
-  #            x$bottom$labels$labels <- parse(text = x$bottom$labels$labels)
-  #            x
-  #          }
-  #        },
-  #        dev = {
-  #          plot_args$xlab <- "Fraction of deviance explained"
-  #          plot_data$xval <- x$dev.ratio
-  #        })
-
-  # Let the user modify the plot parameters
-  do.call(lattice::xyplot, utils::modifyList(args, list(...)))
 }
 
 #' Plot results from cross-validation
