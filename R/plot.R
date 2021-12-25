@@ -3,7 +3,8 @@
 #' Plot the fitted model's regression
 #' coefficients along the regularization path.
 #'
-#' @importFrom ggplot2 aes geom_line facet_wrap xlab ylab theme_bw theme
+#' @importFrom ggplot2 ggplot aes geom_line facet_wrap xlab ylab theme_bw theme
+#' labs
 #'
 #' @param x an object of class `"SLOPE"`
 #' @param ... parameters that will be used in \link[ggplot2]{theme}
