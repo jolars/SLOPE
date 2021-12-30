@@ -97,6 +97,8 @@ rescale_all<-function(results,Xmis){
 #' b_prior = 0.01, Covmat = diag(rep(1,length(start))), sigma = 1,
 #' FDR = 0.05, tol = 1e-04, max_iter = 100L,
 #' verbose = FALSE, BH = TRUE)
+#' @importFrom glmnet cv.glmnet
+#' @importFrom mice mice complete
 #' @export ABSLOPE
 #'
 
@@ -105,10 +107,10 @@ ABSLOPE <- function(
   Y,
   start = NULL,
   Xinit = NULL,
-  a_prior,
-  b_prior,
-  Covmat = diag(rep(1,length(start))),
-  sigma = 1,
+  a_prior = 0.01 * nrow(Xmis),
+  b_prior = 0.01 * nrow(Xmis),
+  Covmat = NULL,
+  sigma = NULL,
   FDR = 0.05,
   tol = 1e-04,
   max_iter = 100L,
@@ -120,42 +122,32 @@ ABSLOPE <- function(
 
   # if Covmat is null -> known_cov = FALSE
   known_cov <- !is.null(Covmat)
+
   # if sigma is null -> known_sigma = FALSE
   known_sigma <- !is.null(sigma)
 
-  #TODO: if Xinit is null -> mice imputation
+  # if Xinit is null -> mice imputation
   if (is.null(Xinit)) {
-    #imp = mice(Xtrauma,m=1, printFlag = FALSE)
-    #Xfull.sim  = complete(imp)
-    #save(Xfull.sim, file="imputed_mice.Rdata")
-
+    imp = mice(Xmis, m = 1, printFlag = FALSE)
+    Xinit = complete(imp)
   }
 
-  #TODO: if start is null -> LASSO gives starting coefficients
+  # if start is null -> LASSO gives starting coefficients
   if (is.null(start)) {
-    invisible()
+    lasso <-cv.glmnet(Xinit, Y, standardize=FALSE, intercept=FALSE)
+    start <- coefficients(lasso, s='lambda.min')
+    start <- start[2:(ncol(Xinit)+1), 1]
   }
 
   out <- SLOBE_ADMM_approx_missing(start, Xmis, Xinit, Y, a_prior, b_prior,
-                                   Covmat, sigma, FDR , tol, known_sigma,
-                                   max_iter, verbose , BH , known_cov )
+                                   Covmat, sigma, FDR, tol, known_sigma,
+                                   max_iter, verbose, BH, known_cov)
   return(list(out, Xmis))
   #TODO: fix this!
   #return(rescale_all(out,Xmis))
 }
 
 # TODO:
-#
-# 1. If start == NULL then calculate LASSO based on simple imputation with averaged values
-#
-# 2. If Xinit == NULL then use default imputation with means
-# Do we want to use the parameter Xinit or the initial imputation method or both functionalities?
-#
-# 3. What default values for a_prior and b_prior should we choose?
-#
-# 4. If sigma is NULL then assume that known_sigma is FALSE. Known_sigma is redundant
-# (the same as in the case of covmat)
-#
 # 5. verbose is in polish (iteracja)
 #
 # 6. vector lambda is hardcoded
