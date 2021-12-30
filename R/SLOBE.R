@@ -86,17 +86,7 @@ rescale_all<-function(results,Xmis){
 #' X <- airquality[, c("Ozone", "Solar.R", "Wind")]
 #' X <- as.matrix(X)
 #' Y <- airquality$Temp
-#' imp <- mice(X, m = 1, printFlag = FALSE)
-#' Xinit <- as.matrix(complete(imp))
-#' Covmat <- as.matrix(cov(Xinit))
-#' library(glmnet)
-#' obj3<-cv.glmnet(Xinit, Y,standardize=FALSE, intercept=FALSE)
-#' betal<-coefficients(obj3, s='lambda.min');
-#' coefs <- betal[2:length(betal)]
-#' fit <- ABSLOPE(X, Y, start = coefs, Xinit = Xinit, a_prior = 0.01,
-#' b_prior = 0.01, Covmat = diag(rep(1,length(start))), sigma = 1,
-#' FDR = 0.05, tol = 1e-04, max_iter = 100L,
-#' verbose = FALSE, BH = TRUE)
+#' fit <- ABSLOPE(X, Y)
 #' @importFrom glmnet cv.glmnet
 #' @importFrom mice mice complete
 #' @export ABSLOPE
@@ -117,7 +107,6 @@ ABSLOPE <- function(
   verbose = FALSE,
   BH = TRUE)
 {
-
   checkmate::assert_matrix(Xmis)
   checkmate::assert_number(a_prior)
   checkmate::assert_number(b_prior)
@@ -127,17 +116,23 @@ ABSLOPE <- function(
   checkmate::assert_logical(verbose)
   checkmate::assert_logical(BH)
 
-
   # if Covmat is null -> known_cov = FALSE
   known_cov <- !is.null(Covmat)
-
+  # dummy value for a case with unknown covariance matrix
+  if (is.null(Covmat)) {
+    Covmat <- diag(ncol(Xmis))
+  }
   # if sigma is null -> known_sigma = FALSE
   known_sigma <- !is.null(sigma)
+  # dummy value for a case with unknown sigma
+  if (is.null(sigma)) {
+    sigma <- 1
+  }
 
   # if Xinit is null -> mice imputation
   if (is.null(Xinit)) {
     imp = mice(Xmis, m = 1, printFlag = FALSE)
-    Xinit = complete(imp)
+    Xinit = as.matrix(complete(imp))
   }
 
   # if start is null -> LASSO gives starting coefficients
@@ -151,16 +146,15 @@ ABSLOPE <- function(
                                    Covmat, sigma, FDR, tol, known_sigma,
                                    max_iter, verbose, BH, known_cov)
   return(list(out, Xmis))
-  #TODO: fix this!
+  #TODO: fix this! ABSLOPE return NAs
   #return(rescale_all(out,Xmis))
 }
 
 # TODO:
-# 5. verbose is in polish (iteracja)
-#
-# 6. vector lambda is hardcoded
-#
-# 7. examples
+# - verbose is in polish ()
+# - vector lambda is hardcoded
+# - example not working - NAs returned
+# - tests
 
 
 

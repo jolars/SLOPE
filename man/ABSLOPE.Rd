@@ -5,14 +5,14 @@
 \title{Adaptive Bayesian SLOPE}
 \usage{
 ABSLOPE(
-  X,
+  Xmis,
   Y,
   start = NULL,
   Xinit = NULL,
-  a_prior,
-  b_prior,
-  Covmat = diag(rep(1, length(start))),
-  sigma = 1,
+  a_prior = 0.01 * nrow(Xmis),
+  b_prior = 0.01 * nrow(Xmis),
+  Covmat = NULL,
+  sigma = NULL,
   FDR = 0.05,
   tol = 1e-04,
   max_iter = 100L,
@@ -21,6 +21,8 @@ ABSLOPE(
 )
 }
 \arguments{
+\item{Xmis}{words, words}
+
 \item{Y}{numeric. Response variable.}
 
 \item{start}{the initial vector of regression coefficients for the first
@@ -46,8 +48,6 @@ algorithm. Default to 100.}
 
 \item{BH}{logical. Indicates whether the Benjamini-Hochberg correction for
 multiple testing should be used.}
-
-\item{Xmis}{words, words}
 
 \item{known_sigma}{logical. Indicates whether the sigma is known}
 
@@ -78,17 +78,7 @@ library(mice)
 X <- airquality[, c("Ozone", "Solar.R", "Wind")]
 X <- as.matrix(X)
 Y <- airquality$Temp
-imp <- mice(X, m = 1, printFlag = FALSE)
-Xinit <- as.matrix(complete(imp))
-Covmat <- as.matrix(cov(Xinit))
-library(glmnet)
-obj3<-cv.glmnet(Xinit, Y,standardize=FALSE, intercept=FALSE)
-betal<-coefficients(obj3, s='lambda.min');
-coefs <- betal[2:length(betal)]
-fit <- ABSLOPE(X, Y, start = coefs, Xinit = Xinit, a_prior = 0.01,
-b_prior = 0.01, Covmat = diag(rep(1,length(start))), sigma = 1,
-FDR = 0.05, tol = 1e-04, max_iter = 100L,
-verbose = FALSE, BH = TRUE)
+fit <- ABSLOPE(X, Y)
 }
 \references{
 Jiang, W., Bogdan, M., Josse, J., Majewski, S., Miasojedow, B.,

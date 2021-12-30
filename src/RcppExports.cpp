@@ -6,6 +6,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // Center_and_scale
 void Center_and_scale(arma::mat& X, const int& n, const int& p);
 RcppExport SEXP _SLOPE_Center_and_scale(SEXP XSEXP, SEXP nSEXP, SEXP pSEXP) {
