@@ -117,7 +117,15 @@ ABSLOPE <- function(
   verbose = FALSE,
   BH = TRUE)
 {
-  #TODO: checkmate
+
+  checkmate::assert_matrix(Xmis)
+  checkmate::assert_number(a_prior)
+  checkmate::assert_number(b_prior)
+  checkmate::assert_number(FDR)
+  checkmate::assert_number(tol)
+  checkmate::assert_number(max_iter)
+  checkmate::assert_logical(verbose)
+  checkmate::assert_logical(BH)
 
 
   # if Covmat is null -> known_cov = FALSE
