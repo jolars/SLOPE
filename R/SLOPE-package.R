@@ -12,4 +12,4 @@
 ## usethis namespace: end
 
 if(getRversion() >= "2.15.1")
-  utils::globalVariables(c('Freq', 'Var1'))
+  utils::globalVariables(c('Freq', 'Var1', 'alpha', 'lo', 'hi'))
