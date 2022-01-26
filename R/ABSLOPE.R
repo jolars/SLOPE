@@ -81,12 +81,12 @@ rescale_all<-function(results,Xmis){
 #'\doi{10.1080/01621459.2016.1260469}
 #'
 #' @examples
-#' library(graphics)
-#' library(mice)
-#' X <- airquality[, c("Ozone", "Solar.R", "Wind")]
-#' X <- as.matrix(X)
-#' Y <- airquality$Temp
+#' set.seed(17)
+#' xy <- SLOPE:::randomProblem(1e2, 2, response = "gaussian")
+#' X <- as.matrix(xy$x)
+#' Y <- xy$y
 #' fit <- ABSLOPE(X, Y)
+#'
 #' @importFrom glmnet cv.glmnet
 #' @importFrom mice mice complete
 #' @export ABSLOPE
@@ -152,7 +152,6 @@ ABSLOPE <- function(
 # TODO:
 # - verbose is in polish ()
 # - vector lambda is hardcoded
-# - example not working - NAs returned
 # - tests
 
 
