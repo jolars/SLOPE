@@ -145,9 +145,8 @@ ABSLOPE <- function(
   out <- SLOBE_ADMM_approx_missing(start, Xmis, Xinit, Y, a_prior, b_prior,
                                    Covmat, sigma, FDR, tol, known_sigma,
                                    max_iter, verbose, BH, known_cov)
-  return(list(out, Xmis))
-  #TODO: fix this! ABSLOPE return NAs
-  #return(rescale_all(out,Xmis))
+
+  return(rescale_all(out,Xmis))
 }
 
 # TODO:
