@@ -8,5 +8,5 @@ test_that("ABSLOPE", {
   Y <- xy$y
   fit <- ABSLOPE(X, Y)
 
-  expect_false(fit$beta == c(V1 = NaN, V2 = NaN))
+  expect_false(all(is.na(fit$beta)))
 })
