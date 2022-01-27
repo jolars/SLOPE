@@ -48,10 +48,6 @@ algorithm. Default to 100.}
 
 \item{BH}{logical. Indicates whether the Benjamini-Hochberg correction for
 multiple testing should be used.}
-
-\item{known_sigma}{logical. Indicates whether the sigma is known}
-
-\item{known_cov}{logical. Indicates whether the covariance matrix is known.}
 }
 \description{
 Fit a gaussian model regularized with Adaptive Bayesian SLOPE

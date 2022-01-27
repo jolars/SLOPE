@@ -39,13 +39,14 @@ LazyData: true
 Depends:
     R (>= 3.3.0)
 Imports:
+    checkmate,
     foreach,
+    glmnet,
     lattice,
     Matrix,
     methods,
-    Rcpp,
-    glmnet,
-    mice
+    mice,
+    Rcpp
 LinkingTo:
     Rcpp,
     RcppArmadillo (>= 0.9.850.1.0)
