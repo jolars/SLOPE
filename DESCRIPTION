@@ -43,14 +43,15 @@ Imports:
     lattice,
     Matrix,
     methods,
-    Rcpp
+    Rcpp,
+    glmnet,
+    mice
 LinkingTo:
     Rcpp,
     RcppArmadillo (>= 0.9.850.1.0)
 Suggests:
     caret,
     covr,
-    glmnet,
     knitr,
     rmarkdown,
     spelling,

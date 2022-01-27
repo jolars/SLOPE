@@ -73,12 +73,12 @@ and is calculated based on the prior knowledge and on the  estimator of
 iterations.
 }
 \examples{
-library(graphics)
-library(mice)
-X <- airquality[, c("Ozone", "Solar.R", "Wind")]
-X <- as.matrix(X)
-Y <- airquality$Temp
+set.seed(17)
+xy <- SLOPE:::randomProblem(1e2, 2, response = "gaussian")
+X <- as.matrix(xy$x)
+Y <- xy$y
 fit <- ABSLOPE(X, Y)
+
 }
 \references{
 Jiang, W., Bogdan, M., Josse, J., Majewski, S., Miasojedow, B.,
