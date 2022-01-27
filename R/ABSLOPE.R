@@ -1,5 +1,7 @@
 #' rescale
 #'
+#' @importFrom stats na.omit lm
+#'
 #' @param x A number
 #' @param y A number
 
@@ -28,6 +30,11 @@ rescale_all<-function(results,Xmis){
 
 #' Adaptive Bayesian SLOPE
 #'
+#' @importFrom stats coefficients
+#' @importFrom glmnet cv.glmnet
+#' @importFrom mice mice complete
+#' @importFrom checkmate assert_matrix assert_number assert_logical
+#'
 #' @description Fit a gaussian model regularized with Adaptive Bayesian SLOPE
 #' and handle missing values by Stochastic Approximation of Expected
 #' Maximization (SAEM)
@@ -44,13 +51,11 @@ rescale_all<-function(results,Xmis){
 #' @param sigma the variance of the noise. Default to 1.
 #' @param FDR False Discovery Rate. Default to 0.05.
 #' @param tol optimization tolerance.
-#' @param known_sigma logical. Indicates whether the sigma is known
 #' @param max_iter the maximal number of iterations of the optimization
 #' algorithm. Default to 100.
 #' @param verbose verbosity. Default to FALSE
 #' @param BH logical. Indicates whether the Benjamini-Hochberg correction for
 #' multiple testing should be used.
-#' @param known_cov logical. Indicates whether the covariance matrix is known.
 #'
 #' @details \code{ABSLOPE} is the combination of SLOPE and Spike-and-Slab
 #' LASSO (SSL). This approach relies on iterations of the weighted SLOPE
@@ -87,8 +92,6 @@ rescale_all<-function(results,Xmis){
 #' Y <- xy$y
 #' fit <- ABSLOPE(X, Y)
 #'
-#' @importFrom glmnet cv.glmnet
-#' @importFrom mice mice complete
 #' @export ABSLOPE
 #'
 
@@ -107,14 +110,14 @@ ABSLOPE <- function(
   verbose = FALSE,
   BH = TRUE)
 {
-  checkmate::assert_matrix(Xmis)
-  checkmate::assert_number(a_prior)
-  checkmate::assert_number(b_prior)
-  checkmate::assert_number(FDR)
-  checkmate::assert_number(tol)
-  checkmate::assert_number(max_iter)
-  checkmate::assert_logical(verbose)
-  checkmate::assert_logical(BH)
+  assert_matrix(Xmis)
+  assert_number(a_prior)
+  assert_number(b_prior)
+  assert_number(FDR)
+  assert_number(tol)
+  assert_number(max_iter)
+  assert_logical(verbose)
+  assert_logical(BH)
 
   # if Covmat is null -> known_cov = FALSE
   known_cov <- !is.null(Covmat)

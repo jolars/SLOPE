@@ -39,10 +39,13 @@ LazyData: true
 Depends:
     R (>= 3.3.0)
 Imports:
+    checkmate,
     foreach,
+    glmnet,
     lattice,
     Matrix,
     methods,
+    mice,
     Rcpp
 LinkingTo:
     Rcpp,
@@ -50,7 +53,6 @@ LinkingTo:
 Suggests:
     caret,
     covr,
-    glmnet,
     knitr,
     rmarkdown,
     spelling,
