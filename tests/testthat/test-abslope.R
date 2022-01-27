@@ -7,5 +7,6 @@ test_that("ABSLOPE", {
   X <- as.matrix(xy$x)
   Y <- xy$y
   fit <- ABSLOPE(X, Y)
-  assert(fit$beta == c(V1 = NaN, V2 = NaN))
+
+  expect_false(fit$beta == c(V1 = NaN, V2 = NaN))
 })
