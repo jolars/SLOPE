@@ -66,8 +66,11 @@ print.TrainedSLOPE <- function(x, ...) {
 #'
 #' @export
 print.ABSLOPE <- function(x, ...) {
+
   cat("\nCall:\n",
       paste(deparse(x$call), sep = "\n", collapse = "\n"),
       "\n", sep = "")
+
+  cat("\nNon-zero coefficients:", sum(x$beta != 0))
 }
 
