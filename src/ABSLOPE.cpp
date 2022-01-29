@@ -529,7 +529,7 @@ List SLOBE_ADMM_approx_missing(NumericVector start, arma::mat Xmis, NumericMatri
   int iter = 0;
   while (iter < max_iter) {
     if(verbose){
-      Rcout << "Iteracja: " << iter <<"\n" ;
+      Rcout << "Iteration: " << iter << "/" << max_iter << "\n";
     }
     w = 1.0 - (1.0 - c) * gamma;
 
@@ -611,7 +611,7 @@ List SLOBE_ADMM_approx_missing(NumericVector start, arma::mat Xmis, NumericMatri
     }
     if(verbose){
 
-      Rcout<< "Error =  "<< error <<" sigma = "<< sigma <<" theta = "<< theta<<" c = "<< c<<"\n";
+      Rcout<< "Error =  "<< error <<" sigma = "<< sigma <<", theta = "<< theta<<", c = " << c << "\n";
     }
     std::copy(beta_new.begin(), beta_new.end(), beta.begin()) ;
     ++iter;

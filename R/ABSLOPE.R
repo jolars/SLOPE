@@ -152,11 +152,6 @@ ABSLOPE <- function(
   return(rescale_all(out,Xmis))
 }
 
-# TODO:
-# - verbose is in polish ()
-# - vector lambda is hardcoded
-# - tests
-
 
 
 
