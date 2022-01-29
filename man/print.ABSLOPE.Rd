@@ -4,7 +4,7 @@
 \alias{print.ABSLOPE}
 \title{Print results from ABSLOPE fit}
 \usage{
-\method{print}{SLOPE}(x, ...)
+\method{print}{ABSLOPE}(x, ...)
 }
 \arguments{
 \item{x}{an object of class \code{'ABSLOPE'}}

@@ -119,6 +119,8 @@ ABSLOPE <- function(
   assert_logical(verbose)
   assert_logical(BH)
 
+  ocall <- match.call()
+
   # if Covmat is null -> known_cov = FALSE
   known_cov <- !is.null(Covmat)
   # dummy value for a case with unknown covariance matrix
@@ -149,7 +151,12 @@ ABSLOPE <- function(
                                    Covmat, sigma, FDR, tol, known_sigma,
                                    max_iter, verbose, BH, known_cov)
 
-  return(rescale_all(out,Xmis))
+  out <- rescale_all(out,Xmis)
+  out[["call"]] <- ocall
+  return(structure(
+    out,
+    class = c("ABSLOPE", "SLOPE")
+  ))
 }
 
 

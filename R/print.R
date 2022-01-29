@@ -60,7 +60,7 @@ print.TrainedSLOPE <- function(x, ...) {
 #' fit <- ABSLOPE(X, Y)
 #' print(fit)
 #'
-#' @method print SLOPE
+#' @method print ABSLOPE
 #' @family SLOPE-methods
 #' @seealso [ABSLOPE()], [print.ABSLOPE()]
 #'
