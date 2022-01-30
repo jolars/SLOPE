@@ -1,12 +1,13 @@
+context("ABSLOPE")
 
-
-test_that("ABSLOPE", {
+test_that(" ", {
 
   set.seed(17)
-  xy <- SLOPE:::randomProblem(1e2, 2, response = "gaussian")
+  xy <- SLOPE:::randomProblem(1e2, 200, response = "gaussian")
   X <- as.matrix(xy$x)
   Y <- xy$y
   fit <- ABSLOPE(X, Y)
-
-  expect_false(all(is.na(fit$beta)))
+  expect_equal(sum(fit$beta != 0), 6)
+  expect_equal(fit$sigma, 21.6073367639117)
+  expect_equal(fit$intercept, -0.0135406689752608)
 })
