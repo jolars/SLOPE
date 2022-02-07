@@ -6,7 +6,13 @@
 \alias{_PACKAGE}
 \title{SLOPE: Sorted L1 Penalized Estimation}
 \description{
-Efficient implementations for Sorted L-One Penalized Estimation (SLOPE): generalized linear models regularized with the sorted L1-norm (Bogdan et al. (2015) <doi:10/gfgwzt>). Supported models include ordinary least-squares regression, binomial regression, multinomial regression, and Poisson regression. Both dense and sparse predictor matrices are supported. In addition, the package features predictor screening rules that enable fast and efficient solutions to high-dimensional problems.
+Efficient implementations for Sorted L-One Penalized Estimation
+    (SLOPE): generalized linear models regularized with the sorted L1-norm
+    (Bogdan et al. (2015) <doi:10/gfgwzt>). Supported models include ordinary
+    least-squares regression, binomial regression, multinomial regression, and
+    Poisson regression. Both dense and sparse  predictor matrices are supported.
+    In addition, the package features predictor screening rules that enable fast
+    and efficient solutions to high-dimensional problems.
 }
 \seealso{
 Useful links:

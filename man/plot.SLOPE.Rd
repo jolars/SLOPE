@@ -20,11 +20,10 @@
 the scaling parameter for the sequence, \code{"deviance_ratio"} plots
 the fraction of deviance explained, and \code{"step"} plots step number.}
 
-\item{...}{parameters that will be used to modify the call to
-\code{\link[lattice:xyplot]{lattice::xyplot()}}}
+\item{...}{parameters that will be used in \link[ggplot2]{theme}}
 }
 \value{
-An object of class \code{"trellis"}, which will be plotted on the
+An object of class \code{"ggplot"}, which will be plotted on the
 current device unless stored in a variable.
 }
 \description{
@@ -36,7 +35,7 @@ fit <- SLOPE(heart$x, heart$y)
 plot(fit)
 }
 \seealso{
-\code{\link[lattice:xyplot]{lattice::xyplot()}}, \code{\link[=SLOPE]{SLOPE()}}, \code{\link[=plotDiagnostics]{plotDiagnostics()}}
+\code{\link[ggplot2:theme]{ggplot2::theme()}}, \code{\link[=SLOPE]{SLOPE()}}, \code{\link[=plotDiagnostics]{plotDiagnostics()}}
 
 Other SLOPE-methods: 
 \code{\link{coef.SLOPE}()},

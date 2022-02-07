@@ -5,10 +5,12 @@ on:
     branches:
       - main
       - master
+      - ggplot2-vis
   pull_request:
     branches:
       - main
       - master
+      - ggplot2-vis
 
 
 name: R-CMD-check
