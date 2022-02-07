@@ -8,7 +8,6 @@
 #' @param ind either "last"
 #' @param xvar what to place on the x axis. `iteration` plots each iteration,
 #'   `time` plots the wall-clock time.
-#' @param yvar deprecated (and ignored)
 #' @param ... other arguments that will be used to modify the call to
 #'   [lattice::xyplot()]
 #'
@@ -20,20 +19,16 @@
 #' @export
 #'
 #' @examples
-#' x <- SLOPE(abalone$x, abalone$y, alpha = 2, diagnostics = TRUE)
+#' x <- SLOPE(abalone$x, abalone$y, diagnostics = TRUE)
 #' plotDiagnostics(x)
 plotDiagnostics <- function(object,
                             ind = max(object$diagnostics$penalty),
                             xvar = c("time", "iteration"),
-                            yvar,
                             ...) {
 
   stopifnot(inherits(object, "SLOPE"),
             is.numeric(ind),
             length(ind) == 1)
-
-  if (!missing(yvar))
-    warning("'yvar' is deprecated and will be ignored")
 
   xvar <- match.arg(xvar)
 
@@ -50,7 +45,6 @@ plotDiagnostics <- function(object,
 
   if (nrow(d) > 1)
     args$grid <- TRUE
-
 
   args$x <- "primal + dual"
   args$ylab <- "Objective"

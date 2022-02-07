@@ -8,7 +8,6 @@ plotDiagnostics(
   object,
   ind = max(object$diagnostics$penalty),
   xvar = c("time", "iteration"),
-  yvar,
   ...
 )
 }
@@ -19,8 +18,6 @@ plotDiagnostics(
 
 \item{xvar}{what to place on the x axis. \code{iteration} plots each iteration,
 \code{time} plots the wall-clock time.}
-
-\item{yvar}{deprecated (and ignored)}
 
 \item{...}{other arguments that will be used to modify the call to
 \code{\link[lattice:xyplot]{lattice::xyplot()}}}
@@ -35,7 +32,7 @@ the model fitting resulting from a call to \code{\link[=SLOPE]{SLOPE()}} \emph{p
 \code{diagnostics = TRUE}}.
 }
 \examples{
-x <- SLOPE(abalone$x, abalone$y, alpha = 2, diagnostics = TRUE)
+x <- SLOPE(abalone$x, abalone$y, diagnostics = TRUE)
 plotDiagnostics(x)
 }
 \seealso{

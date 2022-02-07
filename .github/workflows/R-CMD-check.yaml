@@ -5,14 +5,11 @@ on:
     branches:
       - main
       - master
-      - abslope
-      - ggplot2-vis
   pull_request:
     branches:
       - main
       - master
-      - abslope
-      - ggplot2-vis
+
 
 name: R-CMD-check
 

@@ -1,20 +1,51 @@
-#include <RcppArmadillo.h>
-#include <memory>
-#include "results.h"
+#include "Results.h"
+#include "SolverResults.h"
 #include "families/families.h"
+#include "kktCheck.h"
+#include "regularizationPath.h"
+#include "rescale.h"
 #include "screening.h"
 #include "standardize.h"
-#include "rescale.h"
-#include "regularizationPath.h"
-#include "kktCheck.h"
-
-using namespace Rcpp;
-using namespace arma;
+#include <RcppArmadillo.h>
+#include <memory>
 
 template<typename T>
-List
-cppSLOPE(T& x, mat& y, const List control)
+Results
+SLOPE(T& x,
+      arma::mat& y,
+      const std::string family_choice,
+      const bool intercept,
+      arma::vec lambda,
+      arma::vec alpha,
+      const std::string lambda_type,
+      const std::string alpha_type,
+      const double alpha_min_ratio,
+      const double q,
+      const double theta1,
+      const double theta2,
+      const bool center,
+      const std::string scale,
+      const arma::rowvec y_center,
+      const arma::rowvec y_scale,
+      const double tol_dev_ratio,
+      const double tol_dev_change,
+      const arma::uword max_variables,
+      bool screen,
+      const std::string screen_alg,
+      const std::string solver,
+      const arma::uword max_passes,
+      const double tol_rel_gap,
+      const double tol_infeas,
+      const double tol_abs,
+      const double tol_rel,
+      const double tol_rel_coef_change,
+      const int prox_method_choice,
+      const bool diagnostics,
+      const arma::uword verbosity)
 {
+  using namespace Rcpp;
+  using namespace arma;
+
   using std::endl;
   using std::setw;
   using std::showpoint;
@@ -22,51 +53,19 @@ cppSLOPE(T& x, mat& y, const List control)
   // significant digits
   Rcout.precision(4);
 
-  auto tol_dev_ratio = as<double>(control["tol_dev_ratio"]);
-  auto tol_dev_change = as<double>(control["tol_dev_change"]);
-  auto max_variables = as<uword>(control["max_variables"]);
-
-  auto diagnostics = as<bool>(control["diagnostics"]);
-  auto verbosity = as<uword>(control["verbosity"]);
-
-  // solver arguments
-  auto solver = as<std::string>(control["solver"]);
-  auto max_passes = as<uword>(control["max_passes"]);
-  auto tol_rel_gap = as<double>(control["tol_rel_gap"]);
-  auto tol_infeas = as<double>(control["tol_infeas"]);
-  auto tol_abs = as<double>(control["tol_abs"]);
-  auto tol_rel = as<double>(control["tol_rel"]);
-  auto tol_rel_coef_change = as<double>(control["tol_rel_coef_change"]);
-
-  auto family_choice = as<std::string>(control["family"]);
-  auto intercept = as<bool>(control["fit_intercept"]);
-  auto screen = as<bool>(control["screen"]);
-  auto screen_alg = as<std::string>(control["screen_alg"]);
-
   auto n = x.n_rows;
   auto p = x.n_cols;
   auto m = y.n_cols;
 
-  auto center = as<bool>(control["center"]);
-  auto scale = as<std::string>(control["scale"]);
+  auto prox_method = ProxMethod(prox_method_choice);
 
-  auto y_center = as<rowvec>(control["y_center"]);
-  auto y_scale = as<rowvec>(control["y_scale"]);
   rowvec x_center(p, fill::zeros);
   rowvec x_scale(p, fill::ones);
 
   standardize(x, x_center, x_scale, intercept, center, scale);
 
-  auto lambda = as<vec>(control["lambda"]);
-  auto alpha = as<vec>(control["alpha"]);
-  auto lambda_type = as<std::string>(control["lambda_type"]);
-  auto alpha_type = as<std::string>(control["alpha_type"]);
-  auto alpha_min_ratio = as<double>(control["alpha_min_ratio"]);
-  auto q = as<double>(control["q"]);
-  auto theta1 = as<double>(control["theta1"]);
-  auto theta2 = as<double>(control["theta2"]);
   const uword path_length = alpha.n_elem;
-  double alpha_max = 0;
+  double alpha_max        = 0;
 
   regularizationPath(alpha,
                      lambda,
@@ -87,6 +86,7 @@ cppSLOPE(T& x, mat& y, const List control)
 
   auto family = setupFamily(family_choice,
                             intercept,
+                            prox_method,
                             diagnostics,
                             max_passes,
                             tol_rel_gap,
@@ -149,7 +149,7 @@ cppSLOPE(T& x, mat& y, const List control)
 
   bool factorized = false;
 
-  Results res;
+  SolverResults solver_res;
 
   uword k = 0;
 
@@ -222,15 +222,15 @@ cppSLOPE(T& x, mat& y, const List control)
         factorized = true;
       }
 
-      res = family->fit(
+      solver_res = family->fit(
         x, y, beta, z, u, L, U, xTy, lambda * alpha(k), rho, solver);
-      passes(k) = res.passes;
-      beta = res.beta;
+      passes(k) = solver_res.passes;
+      beta      = solver_res.beta;
 
       if (diagnostics) {
-        primals.push_back(res.primals);
-        duals.push_back(res.duals);
-        timings.push_back(res.time);
+        primals.push_back(solver_res.primals);
+        duals.push_back(solver_res.duals);
+        timings.push_back(solver_res.time);
         violation_list.push_back(violations);
       }
 
@@ -284,25 +284,25 @@ cppSLOPE(T& x, mat& y, const List control)
           uword n_active =
             (active_set.n_elem - static_cast<uword>(intercept)) * m;
 
-          res = family->fit(x_subset,
-                            y,
-                            beta.rows(active_set),
-                            z_subset,
-                            u_subset,
-                            L,
-                            U,
-                            xTy,
-                            lambda.head(n_active) * alpha(k),
-                            rho,
-                            solver);
+          solver_res = family->fit(x_subset,
+                                   y,
+                                   beta.rows(active_set),
+                                   z_subset,
+                                   u_subset,
+                                   L,
+                                   U,
+                                   xTy,
+                                   lambda.head(n_active) * alpha(k),
+                                   rho,
+                                   solver);
 
           if (family->name() == "gaussian" && solver == "admm") {
             z(active_set) = z_subset;
             u(active_set) = u_subset;
           }
 
-          beta.rows(active_set) = res.beta;
-          passes(k) = res.passes;
+          beta.rows(active_set) = solver_res.beta;
+          passes(k)             = solver_res.passes;
         }
 
         uvec check_failures;
@@ -319,8 +319,9 @@ cppSLOPE(T& x, mat& y, const List control)
                               lambda.head(n_strong) * alpha(k),
                               tol_infeas,
                               intercept);
+
           uvec strong_failures = strong_set(tmp);
-          check_failures = setDiff(strong_failures, active_set);
+          check_failures       = setDiff(strong_failures, active_set);
 
           kkt_violation = check_failures.n_elem > 0;
 
@@ -331,6 +332,7 @@ cppSLOPE(T& x, mat& y, const List control)
         if (!kkt_violation) {
           // check against whole set
           gradient_prev = family->gradient(x, y, x * beta);
+
           uvec tmp = kktCheck(
             gradient_prev, beta, lambda * alpha(k), tol_infeas, intercept);
 
@@ -348,29 +350,29 @@ cppSLOPE(T& x, mat& y, const List control)
       }
 
       if (diagnostics) {
-        primals.push_back(res.primals);
-        duals.push_back(res.duals);
-        timings.push_back(res.time);
+        primals.push_back(solver_res.primals);
+        duals.push_back(solver_res.duals);
+        timings.push_back(solver_res.time);
         violation_list.push_back(violations);
       }
     }
 
     // store coefficients and intercept
-    double deviance = res.deviance;
+    double deviance       = solver_res.deviance;
     double deviance_ratio = 1.0 - deviance / null_deviance;
-    deviances(k) = deviance;
-    deviance_ratios(k) = deviance_ratio;
+    deviances(k)          = deviance;
+    deviance_ratios(k)    = deviance_ratio;
 
     deviance_change =
       k == 0 ? 0.0 : std::abs((deviances(k - 1) - deviance) / deviances(k - 1));
 
     betas.slice(k) = beta;
-    beta_prev = beta;
+    beta_prev      = beta;
 
     active_sets(k) = active_set;
-    uword n_coefs = accu(any(beta != 0, 1));
-    n_variables = n_coefs;
-    n_unique(k) = unique(abs(nonzeros(beta))).eval().n_elem;
+    uword n_coefs  = accu(any(beta != 0, 1));
+    n_variables    = n_coefs;
+    n_unique(k)    = unique(abs(nonzeros(beta))).eval().n_elem;
 
     if (verbosity >= 1)
       Rcout << showpoint << "penalty: " << setw(2) << k << ", dev: " << setw(7)
@@ -414,30 +416,7 @@ cppSLOPE(T& x, mat& y, const List control)
     alpha /= n;
   }
 
-  return List::create(Named("betas") = wrap(betas),
-                      Named("active_sets") = wrap(active_sets),
-                      Named("passes") = wrap(passes),
-                      Named("primals") = wrap(primals),
-                      Named("duals") = wrap(duals),
-                      Named("time") = wrap(timings),
-                      Named("n_unique") = wrap(n_unique),
-                      Named("violations") = wrap(violation_list),
-                      Named("deviance_ratio") = wrap(deviance_ratios),
-                      Named("null_deviance") = wrap(null_deviance),
-                      Named("alpha") = wrap(alpha),
-                      Named("lambda") = wrap(lambda));
-}
-
-// [[Rcpp::export]]
-Rcpp::List
-sparseSLOPE(arma::sp_mat x, arma::mat y, const Rcpp::List control)
-{
-  return cppSLOPE(x, y, control);
-}
-
-// [[Rcpp::export]]
-Rcpp::List
-denseSLOPE(arma::mat x, arma::mat y, const Rcpp::List control)
-{
-  return cppSLOPE(x, y, control);
+  return Results{ betas,         active_sets,    passes,   primals,
+                  duals,         timings,        n_unique, deviance_ratios,
+                  null_deviance, violation_list, alpha,    lambda };
 }

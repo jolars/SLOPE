@@ -1,32 +1,68 @@
 Package: SLOPE
 Title: Sorted L1 Penalized Estimation
-Version: 0.3.3.9000
+Version: 0.4.0
 Authors@R:
-    c(person("Johan", "Larsson", role = c("aut", "cre"),
-             email = "johan.larsson@stat.lu.se",
-             comment = c(ORCID = "0000-0002-4029-5945")),
-      person("Jonas",  "Wallin", role = "aut",
-             email = "jonas.wallin@stat.lu.se",
-             comment = c(ORCID = "0000-0003-0381-6593")),
+    c(
+      person(
+        "Johan",
+        "Larsson",
+        role = c("aut", "cre"),
+        email = "johan.larsson@stat.lu.se",
+        comment = c(ORCID = "0000-0002-4029-5945")
+      ),
+      person(
+        "Jonas",
+        "Wallin",
+        role = "aut",
+        email = "jonas.wallin@stat.lu.se",
+        comment = c(ORCID = "0000-0003-0381-6593")
+      ),
       person("Malgorzata", "Bogdan", role = "aut"),
       person("Ewout", "van den Berg", role = "aut"),
       person("Chiara", "Sabatti", role = "aut"),
       person("Emmanuel", "Candes", role = "aut"),
       person("Evan", "Patterson", role = "aut"),
       person("Weijie", "Su", role = "aut"),
-      person("Jerome", "Friedman", role = "ctb",
-             comment = "code adapted from 'glmnet'"),
-      person("Trevor", "Hastie", role = "ctb",
-             comment = "code adapted from 'glmnet'"),
-      person("Rob", "Tibshirani", role = "ctb",
-             comment = "code adapted from 'glmnet'"),
-      person("Balasubramanian", "Narasimhan", role = "ctb",
-             comment = "code adapted from 'glmnet'"),
-      person("Noah", "Simon", role = "ctb",
-             comment = "code adapted from 'glmnet'"),
-      person("Junyang", "Qian", role = "ctb",
-             comment = "code adapted from 'glmnet'"),
-      person("Akarsh", "Goyal", role = "ctb"))
+      person(
+        "Jerome",
+        "Friedman",
+        role = "ctb",
+        comment = "code adapted from 'glmnet'"
+      ),
+      person(
+        "Trevor",
+        "Hastie",
+        role = "ctb",
+        comment = "code adapted from 'glmnet'"
+      ),
+      person(
+        "Rob",
+        "Tibshirani",
+        role = "ctb",
+        comment = "code adapted from 'glmnet'"
+      ),
+      person(
+        "Balasubramanian",
+        "Narasimhan",
+        role = "ctb",
+        comment = "code adapted from 'glmnet'"
+      ),
+      person(
+        "Noah",
+        "Simon",
+        role = "ctb",
+        comment = "code adapted from 'glmnet'"
+      ),
+      person(
+        "Junyang",
+        "Qian",
+        role = "ctb",
+        comment = "code adapted from 'glmnet'"
+      ),
+      person("Akarsh", "Goyal", role = "ctb"),
+      person("Jakub", "Kała", role = "ctb"),
+      person("Krystyna", "Grzesiak", role = "ctb")
+    )
 Description: Efficient implementations for Sorted L-One Penalized Estimation
     (SLOPE): generalized linear models regularized with the sorted L1-norm
     (Bogdan et al. (2015) <doi:10/gfgwzt>). Supported models include ordinary
@@ -53,6 +89,12 @@ LinkingTo:
 Suggests:
     caret,
     covr,
+    ggplot2,
+    stringr,
+    scales,
+    tidyr,
+    dplyr,
+    bench,
     knitr,
     rmarkdown,
     spelling,

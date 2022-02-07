@@ -2,18 +2,17 @@
 
 #include <RcppArmadillo.h>
 
-using namespace arma;
-using namespace Rcpp;
-
 template<typename T>
-vec
+arma::vec
 lambdaMax(const T& x,
-          const mat& y,
-          const rowvec& y_scale,
-          const uword n_targets,
+          const arma::mat& y,
+          const arma::rowvec& y_scale,
+          const arma::uword n_targets,
           const std::string& family,
           const bool intercept)
 {
+  using namespace arma;
+
   const uword p = x.n_cols;
   mat lambda_max(p, n_targets);
 

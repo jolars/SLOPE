@@ -9,15 +9,19 @@ SLOBE_ADMM_approx_missing <- function(start, Xmis, Xinit, Y, a_prior, b_prior, C
     .Call(`_SLOPE_SLOBE_ADMM_approx_missing`, start, Xmis, Xinit, Y, a_prior, b_prior, Covmat, sigma, FDR, tol, known_sigma, max_iter, verbose, BH, known_cov)
 }
 
+lambdaSequence <- function(n_lambda, q, theta1, theta2, lambda_type, n) {
+    .Call(`_SLOPE_lambdaSequence`, n_lambda, q, theta1, theta2, lambda_type, n)
+}
+
+sortedL1ProxCpp <- function(x, lambda, method) {
+    .Call(`_SLOPE_sortedL1ProxCpp`, x, lambda, method)
+}
+
 sparseSLOPE <- function(x, y, control) {
     .Call(`_SLOPE_sparseSLOPE`, x, y, control)
 }
 
 denseSLOPE <- function(x, y, control) {
     .Call(`_SLOPE_denseSLOPE`, x, y, control)
-}
-
-sorted_l1_prox <- function(x, lambda) {
-    .Call(`_SLOPE_sorted_l1_prox`, x, lambda)
 }
 

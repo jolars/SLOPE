@@ -1,14 +1,11 @@
 #pragma once
 
-#include <RcppArmadillo.h>
-#include "family.h"
-#include "../results.h"
-#include "../utils.h"
+#include "../SolverResults.h"
 #include "../infeasibility.h"
 #include "../prox.h"
-
-using namespace Rcpp;
-using namespace arma;
+#include "../utils.h"
+#include "family.h"
+#include <RcppArmadillo.h>
 
 class Gaussian : public Family
 {
@@ -21,64 +18,73 @@ public:
     : Family(std::forward<Ts>(args)...)
   {}
 
-  double primal(const mat& y, const mat& lin_pred)
+  double primal(const arma::mat& y, const arma::mat& lin_pred)
   {
-    return 0.5 * std::pow(norm(y - lin_pred), 2);
+    return 0.5 * std::pow(arma::norm(y - lin_pred), 2);
   }
 
-  double dual(const mat& y, const mat& lin_pred)
+  double dual(const arma::mat& y, const arma::mat& lin_pred)
   {
-    using namespace std;
-    return 0.5 * std::pow(norm(y, 2), 2) - 0.5 * std::pow(norm(lin_pred, 2), 2);
+    return 0.5 * std::pow(arma::norm(y, 2), 2) -
+           0.5 * std::pow(arma::norm(lin_pred, 2), 2);
   }
 
-  mat pseudoGradient(const mat& y, const mat& lin_pred) { return lin_pred - y; }
+  arma::mat pseudoGradient(const arma::mat& y, const arma::mat& lin_pred)
+  {
+    return lin_pred - y;
+  }
 
-  rowvec fitNullModel(const mat& y, const uword n_classes) { return mean(y); }
+  arma::rowvec fitNullModel(const arma::mat& y, const arma::uword n_classes)
+  {
+    return arma::mean(y);
+  }
 
   std::string name() { return "gaussian"; }
 
-  Results ADMM(const mat& x,
-               const mat& y,
-               mat beta,
-               vec& z,
-               vec& u,
-               const mat& L,
-               const mat& U,
-               const vec& xTy,
-               vec lambda,
-               double rho)
+  SolverResults ADMM(const arma::mat& x,
+                     const arma::mat& y,
+                     arma::mat beta,
+                     arma::vec& z,
+                     arma::vec& u,
+                     const arma::mat& L,
+                     const arma::mat& U,
+                     const arma::vec& xTy,
+                     arma::vec lambda,
+                     double rho)
   {
     return ADMMImpl(x, y, beta, z, u, L, U, xTy, lambda, rho);
   }
 
-  Results ADMM(const sp_mat& x,
-               const mat& y,
-               mat beta,
-               vec& z,
-               vec& u,
-               const mat& L,
-               const mat& U,
-               const vec& xTy,
-               vec lambda,
-               double rho)
+  SolverResults ADMM(const arma::sp_mat& x,
+                     const arma::mat& y,
+                     arma::mat beta,
+                     arma::vec& z,
+                     arma::vec& u,
+                     const arma::mat& L,
+                     const arma::mat& U,
+                     const arma::vec& xTy,
+                     arma::vec lambda,
+                     double rho)
   {
     return ADMMImpl(x, y, beta, z, u, L, U, xTy, lambda, rho);
   }
 
   // ADMM
   template<typename T>
-  Results ADMMImpl(const T& x,
-                   const mat& y,
-                   mat beta,
-                   vec& z,
-                   vec& u,
-                   const mat& L,
-                   const mat& U,
-                   const vec& xTy,
-                   vec lambda,
-                   double rho)
+  SolverResults ADMMImpl(const T& x,
+                         const arma::mat& y,
+                         arma::mat beta,
+                         arma::vec& z,
+                         arma::vec& u,
+                         const arma::mat& L,
+                         const arma::mat& U,
+                         const arma::vec& xTy,
+                         arma::vec lambda,
+                         double rho)
   {
+    using namespace arma;
+    using namespace Rcpp;
+
     std::vector<double> primals;
     std::vector<double> duals;
     std::vector<double> infeasibilities;
@@ -115,11 +121,12 @@ public:
                            (rho * rho);
       }
 
-      z_old = z;
+      z_old    = z;
       beta_hat = alpha * beta + (1 - alpha) * z_old;
 
       z = beta_hat + u;
-      z.tail(lambda.n_elem) = prox(z.tail(lambda.n_elem), lambda / rho);
+      z.tail(lambda.n_elem) =
+        prox(z.tail(lambda.n_elem), lambda / rho, prox_method);
 
       u += (beta_hat - z);
 
@@ -149,7 +156,7 @@ public:
 
     double deviance = 2 * primal(y, x * z);
 
-    Results res{ z, passes, primals, duals, time, deviance };
+    SolverResults res{ z, passes, primals, duals, time, deviance };
 
     return res;
   }

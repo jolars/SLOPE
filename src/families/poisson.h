@@ -1,11 +1,7 @@
 #pragma once
 
-#include <RcppArmadillo.h>
 #include "family.h"
-#include "../results.h"
-
-using namespace Rcpp;
-using namespace arma;
+#include <RcppArmadillo.h>
 
 class Poisson : public Family
 {
@@ -15,24 +11,28 @@ public:
     : Family(std::forward<Ts>(args)...)
   {}
 
-  double primal(const mat& y, const mat& lin_pred)
+  double primal(const arma::mat& y, const arma::mat& lin_pred)
   {
+    using namespace arma;
+
     return -accu(y % lin_pred - trunc_exp(lin_pred) - lgamma(y + 1));
   }
 
-  double dual(const mat& y, const mat& lin_pred)
+  double dual(const arma::mat& y, const arma::mat& lin_pred)
   {
+    using namespace arma;
+
     return -accu(trunc_exp(lin_pred) % (lin_pred - 1) - lgamma(y + 1));
   }
 
-  mat pseudoGradient(const mat& y, const mat& lin_pred)
+  arma::mat pseudoGradient(const arma::mat& y, const arma::mat& lin_pred)
   {
-    return trunc_exp(lin_pred) - y;
+    return arma::trunc_exp(lin_pred) - y;
   }
 
-  rowvec fitNullModel(const mat& y, const uword n_classes)
+  arma::rowvec fitNullModel(const arma::mat& y, const arma::uword n_classes)
   {
-    return trunc_log(mean(y));
+    return arma::trunc_log(arma::mean(y));
   }
 
   std::string name() { return "poisson"; }

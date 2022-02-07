@@ -11,8 +11,6 @@ template:
 
 news:
   releases:
-  - text: "Version 0.3.0"
-    href: https://larssonjohan.com/post/slope-0-3-0/
   - text: "Version 0.2.0"
     href: https://larssonjohan.com/post/slope-0-2-0/
 
@@ -38,6 +36,8 @@ reference:
 - title: Utilities
 - contents:
   - plotDiagnostics
+  - regularizationWeights
+  - sortedL1Prox
 - title: Datasets
 - contents:
   - abalone

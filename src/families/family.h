@@ -1,38 +1,38 @@
 #pragma once
 
-#include <RcppArmadillo.h>
-#include "../results.h"
-#include "../utils.h"
 #include "../infeasibility.h"
 #include "../prox.h"
-
-using namespace Rcpp;
-using namespace arma;
+#include "../SolverResults.h"
+#include "../utils.h"
+#include <RcppArmadillo.h>
 
 class Family
 {
 protected:
   const bool intercept;
+  const ProxMethod prox_method;
   const bool diagnostics;
-  const uword max_passes;
+  const arma::uword max_passes;
   const double tol_rel_gap;
   const double tol_infeas;
   const double tol_abs;
   const double tol_rel;
   const double tol_rel_coef_change;
-  const uword verbosity;
+  const arma::uword verbosity;
 
 public:
   Family(const bool intercept,
+         const ProxMethod prox_method,
          const bool diagnostics,
-         const uword max_passes,
+         const arma::uword max_passes,
          const double tol_rel_gap,
          const double tol_infeas,
          const double tol_abs,
          const double tol_rel,
          const double tol_rel_coef_change,
-         const uword verbosity)
+         const arma::uword verbosity)
     : intercept(intercept)
+    , prox_method(prox_method)
     , diagnostics(diagnostics)
     , max_passes(max_passes)
     , tol_rel_gap(tol_rel_gap)
@@ -43,35 +43,39 @@ public:
     , verbosity(verbosity)
   {}
 
-  virtual double primal(const mat& y, const mat& lin_pred) = 0;
+  virtual ~Family(){}
 
-  virtual double dual(const mat& y, const mat& lin_pred) = 0;
+  virtual double primal(const arma::mat& y, const arma::mat& lin_pred) = 0;
+
+  virtual double dual(const arma::mat& y, const arma::mat& lin_pred) = 0;
 
   // this is not really the true gradient; it needs to multiplied by X^T
-  virtual mat pseudoGradient(const mat& y, const mat& lin_pred) = 0;
+  virtual arma::mat pseudoGradient(const arma::mat& y,
+                                   const arma::mat& lin_pred) = 0;
 
   template<typename T>
-  mat gradient(const T& x, const mat& y, const mat& lin_pred)
+  arma::mat gradient(const T& x, const arma::mat& y, const arma::mat& lin_pred)
   {
     return x.t() * pseudoGradient(y, lin_pred);
   }
 
-  virtual rowvec fitNullModel(const mat& y, const uword n_classes) = 0;
+  virtual arma::rowvec fitNullModel(const arma::mat& y,
+                                    const arma::uword n_classes) = 0;
 
   virtual std::string name() = 0;
 
   template<typename T>
-  Results fit(const T& x,
-              const mat& y,
-              mat beta,
-              vec& z,
-              vec& u,
-              const mat& L,
-              const mat& U,
-              const vec& xTy,
-              vec lambda,
-              double rho,
-              const std::string solver)
+  SolverResults fit(const T& x,
+                    const arma::mat& y,
+                    arma::mat beta,
+                    arma::vec& z,
+                    arma::vec& u,
+                    const arma::mat& L,
+                    const arma::mat& U,
+                    const arma::vec& xTy,
+                    arma::vec lambda,
+                    double rho,
+                    const std::string solver)
   {
     if (solver == "admm")
       return ADMM(x, y, beta, z, u, L, U, xTy, lambda, rho);
@@ -81,12 +85,18 @@ public:
 
   // FISTA implementation
   template<typename T>
-  Results FISTAImpl(const T& x, const mat& y, mat beta, vec lambda)
+  SolverResults FISTAImpl(const T& x,
+                          const arma::mat& y,
+                          arma::mat beta,
+                          arma::vec lambda)
   {
-    uword n = y.n_rows;
-    uword p = x.n_cols;
-    uword m = beta.n_cols;
-    uword pmi = lambda.n_elem;
+    using namespace arma;
+    using namespace Rcpp;
+
+    uword n      = y.n_rows;
+    uword p      = x.n_cols;
+    uword m      = beta.n_cols;
+    uword pmi    = lambda.n_elem;
     uword p_rows = pmi / m;
 
     mat beta_tilde(beta);
@@ -136,7 +146,7 @@ public:
       double G = dual(y, lin_pred);
 
       grad = gradient(x, y, lin_pred);
-      tmp = grad;
+      tmp  = grad;
 
       if (intercept)
         tmp.shed_row(0);
@@ -163,7 +173,7 @@ public:
 
       // check change in coefficients
       double max_change = abs(vectorise(beta - beta_prev)).max();
-      double max_size = abs(vectorise(beta)).max();
+      double max_size   = abs(vectorise(beta)).max();
 
       bool all_zero = (max_size == 0.0) && (max_change == 0.0);
       bool small_change =
@@ -193,9 +203,10 @@ public:
         if (intercept) {
           mat tmp = beta_tilde;
           tmp.shed_row(0);
-          beta_tilde.tail_rows(p_rows) = prox(tmp, lambda * learning_rate);
+          beta_tilde.tail_rows(p_rows) =
+            prox(tmp, lambda * learning_rate, prox_method);
         } else {
-          beta_tilde = prox(beta_tilde, lambda * learning_rate);
+          beta_tilde = prox(beta_tilde, lambda * learning_rate, prox_method);
         }
 
         vec d = vectorise(beta_tilde - beta);
@@ -217,7 +228,7 @@ public:
       }
 
       // FISTA step
-      t = 0.5 * (1.0 + std::sqrt(1.0 + 4.0 * t_old * t_old));
+      t    = 0.5 * (1.0 + std::sqrt(1.0 + 4.0 * t_old * t_old));
       beta = beta_tilde + (t_old - 1.0) / t * (beta_tilde - beta_tilde_old);
 
       beta_prev = beta;
@@ -230,65 +241,71 @@ public:
 
     double deviance = 2 * primal(y, lin_pred);
 
-    Results res{ beta, passes, primals, duals, time, deviance };
+    SolverResults res{ beta, passes, primals, duals, time, deviance };
 
     return res;
   }
 
-  virtual Results FISTA(const sp_mat& x, const mat& y, mat beta, vec lambda)
+  virtual SolverResults FISTA(const arma::sp_mat& x,
+                              const arma::mat& y,
+                              arma::mat beta,
+                              arma::vec lambda)
   {
     return FISTAImpl(x, y, beta, lambda);
   }
 
-  virtual Results FISTA(const mat& x, const mat& y, mat beta, vec lambda)
+  virtual SolverResults FISTA(const arma::mat& x,
+                              const arma::mat& y,
+                              arma::mat beta,
+                              arma::vec lambda)
   {
     return FISTAImpl(x, y, beta, lambda);
   }
 
-  virtual Results ADMM(const sp_mat& x,
-                       const mat& y,
-                       mat beta,
-                       vec& z,
-                       vec& u,
-                       const mat& L,
-                       const mat& U,
-                       const vec& xTy,
-                       vec lambda,
-                       double rho)
+  virtual SolverResults ADMM(const arma::sp_mat& x,
+                             const arma::mat& y,
+                             arma::mat beta,
+                             arma::vec& z,
+                             arma::vec& u,
+                             const arma::mat& L,
+                             const arma::mat& U,
+                             const arma::vec& xTy,
+                             arma::vec lambda,
+                             double rho)
   {
     return ADMMImpl(x, y, beta, z, u, L, U, xTy, lambda, rho);
   }
 
-  virtual Results ADMM(const mat& x,
-                       const mat& y,
-                       mat beta,
-                       vec& z,
-                       vec& u,
-                       const mat& L,
-                       const mat& U,
-                       const vec& xTy,
-                       vec lambda,
-                       double rho)
+  virtual SolverResults ADMM(const arma::mat& x,
+                             const arma::mat& y,
+                             arma::mat beta,
+                             arma::vec& z,
+                             arma::vec& u,
+                             const arma::mat& L,
+                             const arma::mat& U,
+                             const arma::vec& xTy,
+                             arma::vec lambda,
+                             double rho)
   {
     return ADMMImpl(x, y, beta, z, u, L, U, xTy, lambda, rho);
   }
 
   // ADMM implementation
   template<typename T>
-  Results ADMMImpl(const T& x,
-                   const mat& y,
-                   mat beta,
-                   vec& z,
-                   vec& u,
-                   const mat& L,
-                   const mat& U,
-                   const vec& xTy,
-                   vec lambda,
-                   double rho)
+  SolverResults ADMMImpl(const T& x,
+                         const arma::mat& y,
+                         arma::mat beta,
+                         arma::vec& z,
+                         arma::vec& u,
+                         const arma::mat& L,
+                         const arma::mat& U,
+                         const arma::vec& xTy,
+                         arma::vec lambda,
+                         double rho)
   {
-    stop("ADMM solver is not implemented for this family");
+    Rcpp::stop("ADMM solver is not implemented for this family");
 
-    Results res{};
+    SolverResults res{};
 
     return res;
   }
