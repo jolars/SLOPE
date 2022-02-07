@@ -75,11 +75,14 @@ LazyData: true
 Depends:
     R (>= 3.3.0)
 Imports:
+    checkmate,
     foreach,
+    glmnet,
     lattice,
     ggplot2,
     Matrix,
     methods,
+    mice,
     Rcpp
 LinkingTo:
     Rcpp,
@@ -87,7 +90,7 @@ LinkingTo:
 Suggests:
     caret,
     covr,
-    glmnet,
+    ggplot2,
     stringr,
     scales,
     tidyr,

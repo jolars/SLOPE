@@ -45,3 +45,32 @@ print.TrainedSLOPE <- function(x, ...) {
   print(x$optima, ...)
 }
 
+#' Print results from ABSLOPE fit
+#'
+#' @param x an object of class `'ABSLOPE'`
+#' @param ... other arguments passed to [print()]
+#'
+#' @return Prints output on the screen
+#'
+#' @examples
+#' set.seed(17)
+#' xy <- SLOPE:::randomProblem(1e2, 2, response = "gaussian")
+#' X <- as.matrix(xy$x)
+#' Y <- xy$y
+#' fit <- ABSLOPE(X, Y)
+#' print(fit)
+#'
+#' @method print ABSLOPE
+#' @family SLOPE-methods
+#' @seealso [ABSLOPE()], [print.ABSLOPE()]
+#'
+#' @export
+print.ABSLOPE <- function(x, ...) {
+
+  cat("\nCall:\n",
+      paste(deparse(x$call), sep = "\n", collapse = "\n"),
+      "\n", sep = "")
+
+  cat("\nNon-zero coefficients:", sum(x$beta != 0))
+}
+

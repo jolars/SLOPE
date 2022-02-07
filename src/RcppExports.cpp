@@ -11,6 +11,43 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// Center_and_scale
+void Center_and_scale(arma::mat& X, const int& n, const int& p);
+RcppExport SEXP _SLOPE_Center_and_scale(SEXP XSEXP, SEXP nSEXP, SEXP pSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const int& >::type n(nSEXP);
+    Rcpp::traits::input_parameter< const int& >::type p(pSEXP);
+    Center_and_scale(X, n, p);
+    return R_NilValue;
+END_RCPP
+}
+// SLOBE_ADMM_approx_missing
+List SLOBE_ADMM_approx_missing(NumericVector start, arma::mat Xmis, NumericMatrix Xinit, arma::vec Y, double a_prior, double b_prior, arma::mat Covmat, double sigma, double FDR, double tol, bool known_sigma, int max_iter, bool verbose, bool BH, bool known_cov);
+RcppExport SEXP _SLOPE_SLOBE_ADMM_approx_missing(SEXP startSEXP, SEXP XmisSEXP, SEXP XinitSEXP, SEXP YSEXP, SEXP a_priorSEXP, SEXP b_priorSEXP, SEXP CovmatSEXP, SEXP sigmaSEXP, SEXP FDRSEXP, SEXP tolSEXP, SEXP known_sigmaSEXP, SEXP max_iterSEXP, SEXP verboseSEXP, SEXP BHSEXP, SEXP known_covSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type start(startSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Xmis(XmisSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type Xinit(XinitSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< double >::type a_prior(a_priorSEXP);
+    Rcpp::traits::input_parameter< double >::type b_prior(b_priorSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Covmat(CovmatSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< double >::type FDR(FDRSEXP);
+    Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
+    Rcpp::traits::input_parameter< bool >::type known_sigma(known_sigmaSEXP);
+    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
+    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
+    Rcpp::traits::input_parameter< bool >::type BH(BHSEXP);
+    Rcpp::traits::input_parameter< bool >::type known_cov(known_covSEXP);
+    rcpp_result_gen = Rcpp::wrap(SLOBE_ADMM_approx_missing(start, Xmis, Xinit, Y, a_prior, b_prior, Covmat, sigma, FDR, tol, known_sigma, max_iter, verbose, BH, known_cov));
+    return rcpp_result_gen;
+END_RCPP
+}
 // lambdaSequence
 arma::vec lambdaSequence(const arma::uword n_lambda, const double q, const double theta1, const double theta2, const std::string lambda_type, const arma::uword n);
 RcppExport SEXP _SLOPE_lambdaSequence(SEXP n_lambdaSEXP, SEXP qSEXP, SEXP theta1SEXP, SEXP theta2SEXP, SEXP lambda_typeSEXP, SEXP nSEXP) {
@@ -68,6 +105,8 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_SLOPE_Center_and_scale", (DL_FUNC) &_SLOPE_Center_and_scale, 3},
+    {"_SLOPE_SLOBE_ADMM_approx_missing", (DL_FUNC) &_SLOPE_SLOBE_ADMM_approx_missing, 15},
     {"_SLOPE_lambdaSequence", (DL_FUNC) &_SLOPE_lambdaSequence, 6},
     {"_SLOPE_sortedL1ProxCpp", (DL_FUNC) &_SLOPE_sortedL1ProxCpp, 3},
     {"_SLOPE_sparseSLOPE", (DL_FUNC) &_SLOPE_sparseSLOPE, 3},
