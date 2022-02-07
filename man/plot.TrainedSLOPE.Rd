@@ -10,7 +10,7 @@
   plot_min = TRUE,
   ci_alpha = 0.2,
   ci_border = FALSE,
-  ci_col = lattice::trellis.par.get("superpose.line")$col,
+  ci_col = "salmon",
   ...
 )
 }

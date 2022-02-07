@@ -10,4 +10,6 @@
 #' @import Matrix
 #' @import foreach
 ## usethis namespace: end
-NULL
+
+if(getRversion() >= "2.15.1")
+  utils::globalVariables(c('Freq', 'Var1', 'alpha', 'lo', 'hi'))
