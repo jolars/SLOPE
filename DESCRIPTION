@@ -61,7 +61,8 @@ Authors@R:
       ),
       person("Akarsh", "Goyal", role = "ctb"),
       person("Jakub", "Kała", role = "ctb"),
-      person("Krystyna", "Grzesiak", role = "ctb")
+      person("Krystyna", "Grzesiak", role = "ctb"),
+      person("Michal", "Burdukiewicz", comment = c(ORCID = "0000-0001-8926-582X"), role = "ctb")
     )
 Description: Efficient implementations for Sorted L-One Penalized Estimation
     (SLOPE): generalized linear models regularized with the sorted L1-norm
