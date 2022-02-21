@@ -4,17 +4,19 @@
 #' the model fitting resulting from a call to [SLOPE()] *provided that
 #' `diagnostics = TRUE`*.
 #'
+#' @importFrom stats reshape
+#' @importFrom ggplot2 element_blank
+#'
 #' @param object an object of class `"SLOPE"`.
 #' @param ind either "last"
 #' @param xvar what to place on the x axis. `iteration` plots each iteration,
 #'   `time` plots the wall-clock time.
-#' @param ... other arguments that will be used to modify the call to
-#'   [lattice::xyplot()]
+#' @param ... parameters that will be used in \link[ggplot2]{theme}
 #'
-#' @return An object of class `"trellis"`, which, unless stored in a variable,
-#'   will be plotted when its default `print()` method is called.
+#' @return An object of class `"ggplot"`, which will be plotted on the
+#'   current device unless stored in a variable.
 #'
-#' @seealso [SLOPE()]
+#' @seealso [SLOPE()], [ggplot2::theme()]
 #'
 #' @export
 #'
@@ -40,31 +42,38 @@ plotDiagnostics <- function(object,
 
   d <- subset(d, subset = d$penalty == ind)
 
-  # setup a list of arguments to be provided to lattice::xyplot()
-  args <- list(data = d, type = "l")
-
-  if (nrow(d) > 1)
-    args$grid <- TRUE
-
-  args$x <- "primal + dual"
-  args$ylab <- "Objective"
-  args$auto.key <- list(space = "inside",
-                        corner = c(0.95, 0.95),
-                        lines = TRUE,
-                        points = FALSE)
+  d <- reshape(d,
+               direction = "long",
+               varying = c("primal", "dual"),
+               v.names = "Value",
+               idvar = c("iteration", "time", "penalty"),
+               timevar = "Variable",
+               times = c("primal", "dual"))
 
   if (xvar == "time") {
-    args$x <- paste(args$x, "~ time")
-    args$xlab <- "Time (seconds)"
+    plt <- ggplot(d, aes(x = !!quote(time),
+                         y = !!quote(Value),
+                         col = !!quote(Variable))) +
+      xlab("Time (seconds)") +
+      theme_bw()
+
   } else if (xvar == "iteration") {
-    args$x <- paste(args$x, "~ iteration")
-    args$xlab <- "Iteration"
+    plt <- ggplot(d, aes(x = !!quote(iteration),
+                         y = !!quote(Value),
+                         col = !!quote(Variable))) +
+      xlab("Iteration") +
+      theme_bw()
   }
 
-  args$x <- stats::as.formula(args$x)
+  if (nrow(d) <= 1) {
+    plt <- plt + theme(panel.grid.major = element_blank(),
+                       panel.grid.minor = element_blank())
+  }
 
-  args <- utils::modifyList(args,
-                            list(...))
+  plt <- plt +
+    geom_line() +
+    ylab("Objective") +
+    theme(legend.title = element_blank(), ...)
 
-  do.call(lattice::xyplot, args)
+  plt
 }

@@ -59,20 +59,22 @@ plot.SLOPE <- function(x,
   d[["x"]] <- rep(x, each = p*m)
 
   if(m > 1) {
-    ggplot(d, aes(x = x, y = Freq, col = Var1)) +
+    ggplot(d, aes(x = !!quote(x),
+                  y = !!quote(Freq),
+                  col = !!quote(Var1))) +
       geom_line() +
-      facet_wrap(~Var2) +
+      facet_wrap(~!!quote(Var2)) +
       ylab(expression(hat(beta))) +
       xlab(xlab) +
-      labs(color='Variable name') +
+      labs(color = 'Variable name') +
       theme_bw() +
       theme(...)
   }else {
-    ggplot(d, aes(x = x, y = Freq, col = Var1)) +
+    ggplot(d, aes(x = !!quote(x), y = !!quote(Freq), col = !!quote(Var1))) +
       geom_line() +
       ylab(expression(hat(beta))) +
       xlab(xlab) +
-      labs(color='Variable name') +
+      labs(color = 'Variable name') +
       theme_bw() +
       theme(...)
   }
@@ -172,7 +174,7 @@ plot.TrainedSLOPE <- function(x,
 
   xlab <- expression(log[e](alpha))
 
-  p <- ggplot(summary, aes(x = log(alpha), y = mean)) +
+  p <- ggplot(summary, aes(x = log(!!quote(alpha)), y = mean)) +
     theme_bw() +
     geom_line() +
     xlab(xlab) +
@@ -186,7 +188,7 @@ plot.TrainedSLOPE <- function(x,
   if(plot_min) {
 
     p <- p + geom_vline(data = optimum,
-                        aes(xintercept = log(alpha)),
+                        aes(xintercept = log(!!quote(alpha))),
                         linetype = "dotted")
   }
 
@@ -194,7 +196,7 @@ plot.TrainedSLOPE <- function(x,
                                            2*isFALSE(ci_border) +
                                            3*isTRUE(ci_border)]
 
-  p <- p + geom_ribbon(aes(ymin = lo, ymax = hi),
+  p <- p + geom_ribbon(aes(ymin = !!quote(lo), ymax = !!quote(hi)),
                        fill = ci_col,
                        color = border_col,
                        alpha = ci_alpha)

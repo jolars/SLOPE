@@ -79,7 +79,6 @@ Imports:
     checkmate,
     foreach,
     glmnet,
-    lattice,
     ggplot2,
     Matrix,
     methods,
@@ -91,7 +90,6 @@ LinkingTo:
 Suggests:
     caret,
     covr,
-    ggplot2,
     stringr,
     scales,
     tidyr,
