@@ -1,6 +1,5 @@
-context("ABSLOPE")
 
-test_that(" ", {
+test_that("ABSLOPE() returns proper output.", {
 
   set.seed(17)
   xy <- SLOPE:::randomProblem(1e2, 200, response = "gaussian")
