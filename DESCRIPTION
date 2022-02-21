@@ -78,8 +78,8 @@ Depends:
 Imports:
     checkmate,
     foreach,
-    glmnet,
     ggplot2,
+    glmnet,
     Matrix,
     methods,
     mice,

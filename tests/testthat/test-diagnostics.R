@@ -8,6 +8,4 @@ test_that("diagnostics are working properly", {
   p <- plotDiagnostics(fit)
   expect_s3_class(p, "ggplot")
 
-  vdiffr::expect_doppelganger("plotDiagnostics-in-test", p)
-
 })
