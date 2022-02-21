@@ -59,14 +59,14 @@ Maximization (SAEM)
 LASSO (SSL). This approach relies on iterations of the weighted SLOPE
 algorithm and finds the solution by minimizing
 \deqn{
- G(Y,X,\beta) + \sum_{j = 1}^{p} w_j \lambda_{r(\beta,j)}|\beta_j|,
-}
+   G(Y,X,\beta) + \sum_{j = 1}^{p} w_j \lambda_{r(\beta,j)}|\beta_j|,
+  }
 where \eqn{r(\beta,j) = {1,2,...,p}} is the rank of \eqn{\beta_j}  among
 elements in \eqn{\beta} in a descending order. The weight \eqn{w_j} depends
 on the posterior probability that a variable \eqn{X_j} is a true predictor
 and is calculated based on the prior knowledge and on the  estimator of
-\eqn{\beta_j}, the signal sparsity and its average strength from the previous
-iterations.
+\eqn{\beta_j}, the signal sparsity and its average strength from the
+previous iterations.
 }
 \examples{
 set.seed(17)
@@ -74,7 +74,6 @@ xy <- SLOPE:::randomProblem(1e2, 2, response = "gaussian")
 X <- as.matrix(xy$x)
 Y <- xy$y
 fit <- ABSLOPE(X, Y)
-
 }
 \references{
 Jiang, W., Bogdan, M., Josse, J., Majewski, S., Miasojedow, B.,
