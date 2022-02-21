@@ -54,8 +54,7 @@ plotDiagnostics <- function(object,
     plt <- ggplot(d, aes(x = !!quote(time),
                          y = !!quote(Value),
                          col = !!quote(Variable))) +
-      xlab("Time (seconds)") +
-      theme_bw()
+      xlab("Time (seconds)")
 
   } else if (xvar == "iteration") {
     plt <- ggplot(d, aes(x = !!quote(iteration),
