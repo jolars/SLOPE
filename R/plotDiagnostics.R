@@ -61,8 +61,7 @@ plotDiagnostics <- function(object,
     plt <- ggplot(d, aes(x = !!quote(iteration),
                          y = !!quote(Value),
                          col = !!quote(Variable))) +
-      xlab("Iteration") +
-      theme_bw()
+      xlab("Iteration")
   }
 
   if (nrow(d) <= 1) {

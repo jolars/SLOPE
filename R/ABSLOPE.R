@@ -4,6 +4,8 @@
 #'
 #' @param x A number
 #' @param y A number
+#'
+#' @keywords internal
 
 rescale <- function(y,x){
   z <- data.frame(y=y,x=x)
@@ -16,6 +18,8 @@ rescale <- function(y,x){
 #'
 #' @param results A number
 #' @param Xmis A number
+#'
+#' @keywords internal
 
 rescale_all<-function(results,Xmis){
   k = ncol(results$X)

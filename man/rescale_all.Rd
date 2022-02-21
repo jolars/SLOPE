@@ -14,3 +14,4 @@ rescale_all(results, Xmis)
 \description{
 rescale_all
 }
+\keyword{internal}

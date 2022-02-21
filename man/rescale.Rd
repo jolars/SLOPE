@@ -14,3 +14,4 @@ rescale(y, x)
 \description{
 rescale
 }
+\keyword{internal}

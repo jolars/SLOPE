@@ -3,8 +3,7 @@
 #' Plot the fitted model's regression
 #' coefficients along the regularization path.
 #'
-#' @importFrom ggplot2 ggplot aes geom_line facet_wrap xlab ylab theme_bw theme
-#' labs
+#' @importFrom ggplot2 ggplot aes geom_line facet_wrap xlab ylab theme labs
 #'
 #' @param x an object of class `"SLOPE"`
 #' @param ... parameters that will be used in \link[ggplot2]{theme}
@@ -67,7 +66,6 @@ plot.SLOPE <- function(x,
       ylab(expression(hat(beta))) +
       xlab(xlab) +
       labs(color = 'Variable name') +
-      theme_bw() +
       theme(...)
   }else {
     ggplot(d, aes(x = !!quote(x), y = !!quote(Freq), col = !!quote(Var1))) +
@@ -75,7 +73,6 @@ plot.SLOPE <- function(x,
       ylab(expression(hat(beta))) +
       xlab(xlab) +
       labs(color = 'Variable name') +
-      theme_bw() +
       theme(...)
   }
 }
@@ -175,7 +172,6 @@ plot.TrainedSLOPE <- function(x,
   xlab <- expression(log[e](alpha))
 
   p <- ggplot(summary, aes(x = log(!!quote(alpha)), y = mean)) +
-    theme_bw() +
     geom_line() +
     xlab(xlab) +
     ylab(measure_label)
