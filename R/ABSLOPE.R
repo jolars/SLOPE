@@ -20,7 +20,7 @@ rescale <- function(y, x) {
 #' @keywords internal
 
 rescale_all <- function(results, Xmis) {
-  k <- ncol(results[["X"]])
+  k <- NCOL(results[["X"]])
   scales <- sapply(1:k, function(l) rescale(results[["X"]][, l], Xmis[, l]))
   results[["X"]] <- t(t(results[["X"]]) * scales[2, ] + scales[1, ])
   results[["Sigma"]] <- results[["Sigma"]] * (scales[2, ] %*% t(scales[2, ]))
@@ -94,8 +94,8 @@ ABSLOPE <- function(Xmis,
                     Y,
                     start = NULL,
                     Xinit = NULL,
-                    a_prior = 0.01 * nrow(Xmis),
-                    b_prior = 0.01 * nrow(Xmis),
+                    a_prior = 0.01 * NROW(Xmis),
+                    b_prior = 0.01 * NROW(Xmis),
                     Covmat = NULL,
                     sigma = NULL,
                     FDR = 0.05,
@@ -103,6 +103,7 @@ ABSLOPE <- function(Xmis,
                     max_iter = 100L,
                     verbose = FALSE,
                     BH = TRUE) {
+
   checkmate::assert_matrix(Xmis)
   checkmate::assert_number(a_prior)
   checkmate::assert_number(b_prior)
@@ -118,7 +119,7 @@ ABSLOPE <- function(Xmis,
   known_cov <- !is.null(Covmat)
   # dummy value for a case with unknown covariance matrix
   if (is.null(Covmat)) {
-    Covmat <- diag(ncol(Xmis))
+    Covmat <- diag(NCOL(Xmis))
   }
   # if sigma is null -> known_sigma = FALSE
   known_sigma <- !is.null(sigma)
@@ -137,7 +138,7 @@ ABSLOPE <- function(Xmis,
   if (is.null(start)) {
     lasso <- glmnet::cv.glmnet(Xinit, Y, standardize = FALSE, intercept = FALSE)
     start <- stats::coefficients(lasso, s = "lambda.min")
-    start <- start[2:(ncol(Xinit) + 1), 1]
+    start <- start[2:(NCOL(Xinit) + 1), 1]
   }
 
   out <- SLOBE_ADMM_approx_missing(
