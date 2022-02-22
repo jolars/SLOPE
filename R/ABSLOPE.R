@@ -59,6 +59,8 @@ rescale_all <- function(results, Xmis) {
 #'   algorithm and finds the solution by minimizing
 #'   \deqn{
 #'    G(Y,X,\beta) + \sum_{j = 1}^{p} w_j \lambda_{r(\beta,j)}|\beta_j|,
+#'   }{
+#'    G(Y,X,\beta) + \sum w_j |\beta_j|\lambda_r(\beta,j),
 #'   }
 #'   where \eqn{r(\beta,j) = {1,2,...,p}} is the rank of \eqn{\beta_j}  among
 #'   elements in \eqn{\beta} in a descending order. The weight \eqn{w_j} depends
