@@ -6,13 +6,12 @@
 #' @importFrom ggplot2 ggplot aes geom_line facet_wrap xlab ylab theme labs
 #'
 #' @param x an object of class `"SLOPE"`
-#' @param ... parameters that will be used in \link[ggplot2]{theme}
 #' @param intercept whether to plot the intercept
 #' @param x_variable what to plot on the x axis. `"alpha"` plots
 #'   the scaling parameter for the sequence, `"deviance_ratio"` plots
 #'   the fraction of deviance explained, and `"step"` plots step number.
 #'
-#' @seealso [ggplot2::theme()], [SLOPE()], [plotDiagnostics()]
+#' @seealso [SLOPE()], [plotDiagnostics()]
 #' @family SLOPE-methods
 #'
 #' @return An object of class `"ggplot"`, which will be plotted on the
@@ -24,8 +23,9 @@
 #' plot(fit)
 plot.SLOPE <- function(x,
                        intercept = FALSE,
-                       x_variable = c("alpha", "deviance_ratio", "step"),
-                       ...) {
+                       x_variable = c("alpha",
+                                      "deviance_ratio",
+                                      "step")) {
   object <- x
   x_variable <- match.arg(x_variable)
 
@@ -65,15 +65,14 @@ plot.SLOPE <- function(x,
       ggplot2::facet_wrap(~!!quote(Var2)) +
       ggplot2::ylab(expression(hat(beta))) +
       ggplot2::xlab(xlab) +
-      ggplot2::labs(color = 'Variable name') +
-      ggplot2::theme(...)
+      ggplot2::labs(color = 'Variable name')
   }else {
-    ggplot2::ggplot(d, ggplot2::aes(x = !!quote(x), y = !!quote(Freq), col = !!quote(Var1))) +
+    ggplot2::ggplot(d, ggplot2::aes(x = !!quote(x), y = !!quote(Freq),
+                                    col = !!quote(Var1))) +
       ggplot2::geom_line() +
       ggplot2::ylab(expression(hat(beta))) +
       ggplot2::xlab(xlab) +
-      ggplot2::labs(color = 'Variable name') +
-      ggplot2::theme(...)
+      ggplot2::labs(color = 'Variable name')
   }
 }
 
@@ -87,7 +86,6 @@ plot.SLOPE <- function(x,
 #'   models.
 #' @param ci_alpha alpha (opacity) for fill in confidence limits
 #' @param ci_col color for border of confidence limits
-#' @param ... other arguments that are passed on to [lattice::xyplot()]
 #' @param plot_min whether to mark the location of the penalty corresponding
 #'   to the best prediction score
 #' @param ci_border color (or flag to turn off and on) the border of the
@@ -96,10 +94,8 @@ plot.SLOPE <- function(x,
 #' @seealso [trainSLOPE()], [lattice::xyplot()], [lattice::panel.xyplot()]
 #' @family model-tuning
 #'
-#' @return An object of class `"trellis"` is returned and, if used
-#'   interactively, will most likely have its print function
-#'   [lattice::print.trellis()] invoked, which draws the plot on the
-#'   current display device.
+#' @return An object of class `"ggplot"`, which will be plotted on the
+#'   current device unless stored in a variable.
 #'
 #' @export
 #'
@@ -112,13 +108,16 @@ plot.SLOPE <- function(x,
 #'                    number = 10)
 #' plot(tune, ci_col = "salmon", col = "black")
 plot.TrainedSLOPE <- function(x,
-                              measure = c("auto", "mse", "mae",
-                                          "deviance", "auc", "misclass"),
+                              measure = c("auto",
+                                          "mse",
+                                          "mae",
+                                          "deviance",
+                                          "auc",
+                                          "misclass"),
                               plot_min = TRUE,
                               ci_alpha = 0.2,
                               ci_border = FALSE,
-                              ci_col = "salmon",
-                              ...) {
+                              ci_col = "salmon") {
 
   if(!(ci_col %in% grDevices::colors()))
     stop("ci_col", ci_col, "is not a valid color representation.")
@@ -153,7 +152,8 @@ plot.TrainedSLOPE <- function(x,
     stop("you are only allowed to plot one measure at a time")
 
 
-  measure_label <- object[["measure"]][["label"]][object[["measure"]][["measure"]] == measure]
+  measure_label <-
+    object[["measure"]][["label"]][object[["measure"]][["measure"]] == measure]
 
   summary <- object[["summary"]][object[["summary"]][["measure"]] == measure,]
   optimum <- object[["optima"]][object[["optima"]][["measure"]] == measure, ,

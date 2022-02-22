@@ -8,7 +8,6 @@
 #' @param ind either "last"
 #' @param xvar what to place on the x axis. `iteration` plots each iteration,
 #'   `time` plots the wall-clock time.
-#' @param ... parameters that will be used in \link[ggplot2]{theme}
 #'
 #' @return An object of class `"ggplot"`, which will be plotted on the
 #'   current device unless stored in a variable.
@@ -22,8 +21,8 @@
 #' plotDiagnostics(x)
 plotDiagnostics <- function(object,
                             ind = max(object$diagnostics$penalty),
-                            xvar = c("time", "iteration"),
-                            ...) {
+                            xvar = c("time",
+                                     "iteration")) {
 
   stopifnot(inherits(object, "SLOPE"),
             is.numeric(ind),
@@ -68,7 +67,7 @@ plotDiagnostics <- function(object,
   plt <- plt +
     ggplot2::geom_line() +
     ggplot2::ylab("Objective") +
-    ggplot2::theme(legend.title = ggplot2::element_blank(), ...)
+    ggplot2::theme(legend.title = ggplot2::element_blank())
 
   plt
 }

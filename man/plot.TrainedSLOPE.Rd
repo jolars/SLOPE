@@ -10,8 +10,7 @@
   plot_min = TRUE,
   ci_alpha = 0.2,
   ci_border = FALSE,
-  ci_col = "salmon",
-  ...
+  ci_col = "salmon"
 )
 }
 \arguments{
@@ -32,14 +31,10 @@ to the best prediction score}
 confidence limits}
 
 \item{ci_col}{color for border of confidence limits}
-
-\item{...}{other arguments that are passed on to \code{\link[lattice:xyplot]{lattice::xyplot()}}}
 }
 \value{
-An object of class \code{"trellis"} is returned and, if used
-interactively, will most likely have its print function
-\code{\link[lattice:print.trellis]{lattice::print.trellis()}} invoked, which draws the plot on the
-current display device.
+An object of class \code{"ggplot"}, which will be plotted on the
+current device unless stored in a variable.
 }
 \description{
 Plot results from cross-validation

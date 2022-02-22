@@ -7,8 +7,7 @@
 plotDiagnostics(
   object,
   ind = max(object$diagnostics$penalty),
-  xvar = c("time", "iteration"),
-  ...
+  xvar = c("time", "iteration")
 )
 }
 \arguments{
@@ -18,8 +17,6 @@ plotDiagnostics(
 
 \item{xvar}{what to place on the x axis. \code{iteration} plots each iteration,
 \code{time} plots the wall-clock time.}
-
-\item{...}{parameters that will be used in \link[ggplot2]{theme}}
 }
 \value{
 An object of class \code{"ggplot"}, which will be plotted on the
