@@ -4,9 +4,6 @@
 #' the model fitting resulting from a call to [SLOPE()] *provided that
 #' `diagnostics = TRUE`*.
 #'
-#' @importFrom stats reshape
-#' @importFrom ggplot2 element_blank
-#'
 #' @param object an object of class `"SLOPE"`.
 #' @param ind either "last"
 #' @param xvar what to place on the x axis. `iteration` plots each iteration,
@@ -42,36 +39,36 @@ plotDiagnostics <- function(object,
 
   d <- subset(d, subset = d$penalty == ind)
 
-  d <- reshape(d,
-               direction = "long",
-               varying = c("primal", "dual"),
-               v.names = "Value",
-               idvar = c("iteration", "time", "penalty"),
-               timevar = "Variable",
-               times = c("primal", "dual"))
+  d <- stats::reshape(d,
+                      direction = "long",
+                      varying = c("primal", "dual"),
+                      v.names = "Value",
+                      idvar = c("iteration", "time", "penalty"),
+                      timevar = "Variable",
+                      times = c("primal", "dual"))
 
   if (xvar == "time") {
-    plt <- ggplot(d, aes(x = !!quote(time),
-                         y = !!quote(Value),
-                         col = !!quote(Variable))) +
-      xlab("Time (seconds)")
+    plt <- ggplot2::ggplot(d, ggplot2::aes(x = !!quote(time),
+                                           y = !!quote(Value),
+                                           col = !!quote(Variable))) +
+      ggplot2::xlab("Time (seconds)")
 
   } else if (xvar == "iteration") {
-    plt <- ggplot(d, aes(x = !!quote(iteration),
-                         y = !!quote(Value),
-                         col = !!quote(Variable))) +
-      xlab("Iteration")
+    plt <- ggplot2::ggplot(d, ggplot2::aes(x = !!quote(iteration),
+                                           y = !!quote(Value),
+                                           col = !!quote(Variable))) +
+      ggplot2::xlab("Iteration")
   }
 
   if (nrow(d) <= 1) {
-    plt <- plt + theme(panel.grid.major = element_blank(),
-                       panel.grid.minor = element_blank())
+    plt <- plt + ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
+                                panel.grid.minor = ggplot2::element_blank())
   }
 
   plt <- plt +
-    geom_line() +
-    ylab("Objective") +
-    theme(legend.title = element_blank(), ...)
+    ggplot2::geom_line() +
+    ggplot2::ylab("Objective") +
+    ggplot2::theme(legend.title = ggplot2::element_blank(), ...)
 
   plt
 }

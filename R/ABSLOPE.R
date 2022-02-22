@@ -1,7 +1,5 @@
 #' rescale
 #'
-#' @importFrom stats na.omit lm
-#'
 #' @param x A number
 #' @param y A number
 #'
@@ -9,9 +7,9 @@
 
 rescale <- function(y, x) {
   z <- data.frame(y = y, x = x)
-  z <- na.omit(z)
+  z <- stats::na.omit(z)
 
-  lm(x ~ y, data = z)$coef
+  stats::lm(x ~ y, data = z)$coef
 }
 
 #' rescale_all
@@ -33,11 +31,6 @@ rescale_all <- function(results, Xmis) {
 }
 
 #' Adaptive Bayesian SLOPE
-#'
-#' @importFrom stats coefficients
-#' @importFrom glmnet cv.glmnet
-#' @importFrom mice mice complete
-#' @importFrom checkmate assert_matrix assert_number assert_logical
 #'
 #' @description Fit a gaussian model regularized with Adaptive Bayesian SLOPE
 #'   and handle missing values by Stochastic Approximation of Expected
@@ -110,14 +103,14 @@ ABSLOPE <- function(Xmis,
                     max_iter = 100L,
                     verbose = FALSE,
                     BH = TRUE) {
-  assert_matrix(Xmis)
-  assert_number(a_prior)
-  assert_number(b_prior)
-  assert_number(FDR)
-  assert_number(tol)
-  assert_number(max_iter)
-  assert_logical(verbose)
-  assert_logical(BH)
+  checkmate::assert_matrix(Xmis)
+  checkmate::assert_number(a_prior)
+  checkmate::assert_number(b_prior)
+  checkmate::assert_number(FDR)
+  checkmate::assert_number(tol)
+  checkmate::assert_number(max_iter)
+  checkmate::assert_logical(verbose)
+  checkmate::assert_logical(BH)
 
   ocall <- match.call()
 
@@ -136,14 +129,14 @@ ABSLOPE <- function(Xmis,
 
   # if Xinit is null -> mice imputation
   if (is.null(Xinit)) {
-    imp <- mice(Xmis, m = 1, printFlag = FALSE)
-    Xinit <- as.matrix(complete(imp))
+    imp <- mice::mice(Xmis, m = 1, printFlag = FALSE)
+    Xinit <- as.matrix(mice::complete(imp))
   }
 
   # if start is null -> LASSO gives starting coefficients
   if (is.null(start)) {
-    lasso <- cv.glmnet(Xinit, Y, standardize = FALSE, intercept = FALSE)
-    start <- coefficients(lasso, s = "lambda.min")
+    lasso <- glmnet::cv.glmnet(Xinit, Y, standardize = FALSE, intercept = FALSE)
+    start <- stats::coefficients(lasso, s = "lambda.min")
     start <- start[2:(ncol(Xinit) + 1), 1]
   }
 

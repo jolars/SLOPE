@@ -58,29 +58,26 @@ plot.SLOPE <- function(x,
   d[["x"]] <- rep(x, each = p*m)
 
   if(m > 1) {
-    ggplot(d, aes(x = !!quote(x),
-                  y = !!quote(Freq),
-                  col = !!quote(Var1))) +
-      geom_line() +
-      facet_wrap(~!!quote(Var2)) +
-      ylab(expression(hat(beta))) +
-      xlab(xlab) +
-      labs(color = 'Variable name') +
-      theme(...)
+    ggplot2::ggplot(d, ggplot2::aes(x = !!quote(x),
+                                    y = !!quote(Freq),
+                                    col = !!quote(Var1))) +
+      ggplot2::geom_line() +
+      ggplot2::facet_wrap(~!!quote(Var2)) +
+      ggplot2::ylab(expression(hat(beta))) +
+      ggplot2::xlab(xlab) +
+      ggplot2::labs(color = 'Variable name') +
+      ggplot2::theme(...)
   }else {
-    ggplot(d, aes(x = !!quote(x), y = !!quote(Freq), col = !!quote(Var1))) +
-      geom_line() +
-      ylab(expression(hat(beta))) +
-      xlab(xlab) +
-      labs(color = 'Variable name') +
-      theme(...)
+    ggplot2::ggplot(d, ggplot2::aes(x = !!quote(x), y = !!quote(Freq), col = !!quote(Var1))) +
+      ggplot2::geom_line() +
+      ggplot2::ylab(expression(hat(beta))) +
+      ggplot2::xlab(xlab) +
+      ggplot2::labs(color = 'Variable name') +
+      ggplot2::theme(...)
   }
 }
 
 #' Plot results from cross-validation
-#'
-#' @importFrom ggplot2 geom_vline geom_ribbon
-#' @importFrom grDevices colors
 #'
 #' @param x an object of class `'TrainedSLOPE'`, typically from a call
 #'   to [trainSLOPE()]
@@ -123,10 +120,10 @@ plot.TrainedSLOPE <- function(x,
                               ci_col = "salmon",
                               ...) {
 
-  if(!(ci_col %in% colors()))
+  if(!(ci_col %in% grDevices::colors()))
     stop("ci_col", ci_col, "is not a valid color representation.")
 
-  if(!(ci_border %in% colors() | is.logical(ci_border)))
+  if(!(ci_border %in% grDevices::colors() | is.logical(ci_border)))
     stop("ci_border is", ci_border, "when it should be logical or a valid
            color representation.")
 
@@ -171,31 +168,33 @@ plot.TrainedSLOPE <- function(x,
 
   xlab <- expression(log[e](alpha))
 
-  p <- ggplot(summary, aes(x = log(!!quote(alpha)), y = mean)) +
-    geom_line() +
-    xlab(xlab) +
-    ylab(measure_label)
+  p <- ggplot2::ggplot(summary, ggplot2::aes(x = log(!!quote(alpha)),
+                                             y = mean)) +
+    ggplot2::geom_line() +
+    ggplot2::xlab(xlab) +
+    ggplot2::ylab(measure_label)
 
   if (length(q) > 1) {
 
-    p <- p + facet_wrap(~label_q)
+    p <- p + ggplot2::facet_wrap(~label_q)
   }
 
   if(plot_min) {
 
-    p <- p + geom_vline(data = optimum,
-                        aes(xintercept = log(!!quote(alpha))),
-                        linetype = "dotted")
+    p <- p + ggplot2::geom_vline(data = optimum,
+                                 ggplot2::aes(xintercept = log(!!quote(alpha))),
+                                 linetype = "dotted")
   }
 
   border_col <- c(ci_border, NA, ci_col)[is.character(ci_border) +
                                            2*isFALSE(ci_border) +
                                            3*isTRUE(ci_border)]
 
-  p <- p + geom_ribbon(aes(ymin = !!quote(lo), ymax = !!quote(hi)),
-                       fill = ci_col,
-                       color = border_col,
-                       alpha = ci_alpha)
+  p <- p + ggplot2::geom_ribbon(ggplot2::aes(ymin = !!quote(lo),
+                                             ymax = !!quote(hi)),
+                                fill = ci_col,
+                                color = border_col,
+                                alpha = ci_alpha)
 
   p
 }
