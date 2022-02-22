@@ -1,15 +1,15 @@
+
 #' Plot coefficients
 #'
 #' Plot the fitted model's regression
 #' coefficients along the regularization path.
-#'
-#' @importFrom ggplot2 ggplot aes geom_line facet_wrap xlab ylab theme labs
 #'
 #' @param x an object of class `"SLOPE"`
 #' @param intercept whether to plot the intercept
 #' @param x_variable what to plot on the x axis. `"alpha"` plots
 #'   the scaling parameter for the sequence, `"deviance_ratio"` plots
 #'   the fraction of deviance explained, and `"step"` plots step number.
+#' @param ... words
 #'
 #' @seealso [SLOPE()], [plotDiagnostics()]
 #' @family SLOPE-methods
@@ -25,7 +25,8 @@ plot.SLOPE <- function(x,
                        intercept = FALSE,
                        x_variable = c("alpha",
                                       "deviance_ratio",
-                                      "step")) {
+                                      "step"),
+                       ...) {
   object <- x
   x_variable <- match.arg(x_variable)
 
@@ -55,7 +56,7 @@ plot.SLOPE <- function(x,
 
 
   d <- as.data.frame(as.table(coefs))
-  d[["x"]] <- rep(x, each = p*m)
+  d[["x"]] <- rep(x, each = p * m)
 
   if(m > 1) {
     ggplot2::ggplot(d, ggplot2::aes(x = !!quote(x),
@@ -90,8 +91,9 @@ plot.SLOPE <- function(x,
 #'   to the best prediction score
 #' @param ci_border color (or flag to turn off and on) the border of the
 #'   confidence limits
+#' @param ... words
 #'
-#' @seealso [trainSLOPE()], [lattice::xyplot()], [lattice::panel.xyplot()]
+#' @seealso [trainSLOPE()]
 #' @family model-tuning
 #'
 #' @return An object of class `"ggplot"`, which will be plotted on the
@@ -106,7 +108,7 @@ plot.SLOPE <- function(x,
 #'                    mtcars$hp,
 #'                    q = c(0.1, 0.2),
 #'                    number = 10)
-#' plot(tune, ci_col = "salmon", col = "black")
+#' plot(tune, ci_col = "salmon")
 plot.TrainedSLOPE <- function(x,
                               measure = c("auto",
                                           "mse",
@@ -117,7 +119,8 @@ plot.TrainedSLOPE <- function(x,
                               plot_min = TRUE,
                               ci_alpha = 0.2,
                               ci_border = FALSE,
-                              ci_col = "salmon") {
+                              ci_col = "salmon",
+                              ...) {
 
   if(!(ci_col %in% grDevices::colors()))
     stop("ci_col", ci_col, "is not a valid color representation.")
@@ -154,10 +157,12 @@ plot.TrainedSLOPE <- function(x,
 
   measure_label <-
     object[["measure"]][["label"]][object[["measure"]][["measure"]] == measure]
+  summary <-
+    object[["summary"]][object[["summary"]][["measure"]] == measure,]
+  optimum <-
+    object[["optima"]][object[["optima"]][["measure"]] == measure, ,
+                       drop = FALSE]
 
-  summary <- object[["summary"]][object[["summary"]][["measure"]] == measure,]
-  optimum <- object[["optima"]][object[["optima"]][["measure"]] == measure, ,
-                                drop = FALSE]
   optimum[["label_q"]] <- paste0("q = ", as.factor(optimum[["q"]]))
   model <- object[["model"]]
 
@@ -187,8 +192,8 @@ plot.TrainedSLOPE <- function(x,
   }
 
   border_col <- c(ci_border, NA, ci_col)[is.character(ci_border) +
-                                           2*isFALSE(ci_border) +
-                                           3*isTRUE(ci_border)]
+                                           2 * isFALSE(ci_border) +
+                                           3 * isTRUE(ci_border)]
 
   p <- p + ggplot2::geom_ribbon(ggplot2::aes(ymin = !!quote(lo),
                                              ymax = !!quote(hi)),

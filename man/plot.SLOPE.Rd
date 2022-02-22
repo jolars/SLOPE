@@ -4,7 +4,12 @@
 \alias{plot.SLOPE}
 \title{Plot coefficients}
 \usage{
-\method{plot}{SLOPE}(x, intercept = FALSE, x_variable = c("alpha", "deviance_ratio", "step"))
+\method{plot}{SLOPE}(
+  x,
+  intercept = FALSE,
+  x_variable = c("alpha", "deviance_ratio", "step"),
+  ...
+)
 }
 \arguments{
 \item{x}{an object of class \code{"SLOPE"}}
@@ -14,6 +19,8 @@
 \item{x_variable}{what to plot on the x axis. \code{"alpha"} plots
 the scaling parameter for the sequence, \code{"deviance_ratio"} plots
 the fraction of deviance explained, and \code{"step"} plots step number.}
+
+\item{...}{words}
 }
 \value{
 An object of class \code{"ggplot"}, which will be plotted on the
