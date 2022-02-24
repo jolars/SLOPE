@@ -114,7 +114,7 @@ ABSLOPE <- function(Xmis,
   checkmate::assert_logical(verbose)
   checkmate::assert_logical(BH)
 
-  if(!is.matrix(Xmis) | !is.data.frame(Xmis)) {
+  if(!(is.matrix(Xmis) | is.data.frame(Xmis))) {
     stop(paste0("Xmis needs to be matrix or data.frame. You provided ",
                 paste0(class(Xmis), collapse = ", ")))
   }
