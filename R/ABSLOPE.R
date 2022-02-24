@@ -106,7 +106,6 @@ ABSLOPE <- function(Xmis,
                     verbose = FALSE,
                     BH = TRUE) {
 
-  checkmate::assert_matrix(Xmis)
   checkmate::assert_number(a_prior)
   checkmate::assert_number(b_prior)
   checkmate::assert_number(FDR)
@@ -114,6 +113,13 @@ ABSLOPE <- function(Xmis,
   checkmate::assert_number(max_iter)
   checkmate::assert_logical(verbose)
   checkmate::assert_logical(BH)
+
+  if(!is.matrix(Xmis) | !is.data.frame(Xmis)) {
+    stop(paste0("Xmis needs to be matrix or data.frame. You provided ",
+                paste0(class(Xmis), collapse = ", ")))
+  }
+
+  Xmis <- as.matrix(Xmis)
 
   ocall <- match.call()
 
