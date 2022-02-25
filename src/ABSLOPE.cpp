@@ -163,7 +163,8 @@ void argsort(const NumericVector& w,
 
 
 // Computes proximal step of SLOPE(lambda) norm from point y
-// NumericVector y is not assumed to be sorted, sorting is performed within function
+// NumericVector y is not assumed to be sorted, sorting is performed within
+//function
 NumericVector prox_sorted_L1_C(NumericVector y,
                                NumericVector lambda) {
 
@@ -207,7 +208,8 @@ void create_lambda(NumericVector& lam, int p, double FDR, bool BH) {
 // Expectation of truncated gamma distribution
 double EX_trunc_gamma(double a, double b) {
 
-  double c = exp(Rf_pgamma(1.0, a + 1, 1.0 / b, 1, 1) - Rf_pgamma(1.0, a, 1.0/b, 1, 1));
+  double c = exp(Rf_pgamma(1.0, a + 1, 1.0 / b, 1, 1) -
+                 Rf_pgamma(1.0, a, 1.0/b, 1, 1));
   c /= b;
   c *= a;
   return c;
@@ -281,7 +283,8 @@ void div_X_by_w(mat& X_div_w,
 }
 
 
-// Missing data imputation procedure that imputes means of non-missing values in a column
+// Missing data imputation procedure that imputes means of non-missing values
+// in a column
 void impute_mean(mat& X,
                  const int& n,
                  const int &p) {
@@ -487,7 +490,8 @@ void impute_advance(const arma::vec &beta,
 
 }
 
-// A subroutine that updates gamma by using the mean lambda when several beta_i have the same magnitude
+// A subroutine that updates gamma by using the mean lambda when several beta_i
+// have the same magnitude
 void gamma_mean_update(const NumericVector & abs_beta_ord,
                        const NumericVector & lambda,
                        const int & p,
@@ -689,7 +693,8 @@ List SLOBE_ADMM_approx_missing(NumericVector start,
     {
       RSS = sum(pow((X * beta_arma - Y), 2));
       swlambda = sum(wbeta.sort(true) * lambda);
-      sigma = (swlambda + sqrt(pow(swlambda, 2.0) + 4 * (n + 2) * RSS)) / (2 * (n + 2));
+      sigma = (swlambda + sqrt(pow(swlambda, 2.0) + 4 * (n + 2) * RSS)) /
+        (2 * (n + 2));
     }
     lambda_sigma = lambda * sigma;
     sigma_sq = sigma * sigma;
@@ -772,7 +777,8 @@ List SLOBE_ADMM_approx_missing(NumericVector start,
     }
     if(verbose)
     {
-      Rcout<< "Error =  "<< error <<" sigma = "<< sigma <<", theta = "<< theta<<", c = " << c << "\n";
+      Rcout<< "Error =  "<< error <<" sigma = "<< sigma <<", theta = "<<
+        theta<<", c = " << c << "\n";
     }
     std::copy(beta_new.begin(), beta_new.end(), beta.begin()) ;
     ++iter;
