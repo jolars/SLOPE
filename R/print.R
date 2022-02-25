@@ -71,6 +71,6 @@ print.ABSLOPE <- function(x, ...) {
       paste(deparse(x$call), sep = "\n", collapse = "\n"),
       "\n", sep = "")
 
-  cat("\nNon-zero coefficients:", sum(x$beta != 0))
+  cat("\nNon-zero coefficients:", sum(x$coefficients[-1] != 0))
 }
 

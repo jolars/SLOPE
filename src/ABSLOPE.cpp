@@ -784,7 +784,7 @@ List SLOBE_ADMM_approx_missing(NumericVector start,
     ++iter;
   }
 
-  return List::create(Named("beta") = beta,
+  return List::create(Named("coefficients") = beta,
                       Named("sigma") = sigma,
                       Named("theta") = theta,
                       Named("c") = c,

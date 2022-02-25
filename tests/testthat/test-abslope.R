@@ -6,7 +6,10 @@ test_that("ABSLOPE() returns proper output.", {
   X <- as.matrix(xy$x)
   Y <- xy$y
   fit <- ABSLOPE(X, Y)
-  expect_equal(sum(fit$beta != 0), 6)
-  expect_equal(fit$sigma, 21.6073367639117)
-  expect_equal(fit$intercept, -0.0135406689752608)
+  expect_equal(which(fit$coefficients != 0), c(`(Intercept)` = 1L, V57 = 58L,
+                                               V61 = 62L, V96 = 97L, V99 = 100L,
+                                               V126 = 127L, V188 = 189L))
+  expect_equal(fit$sigma, 21.64159, tolerance = 4)
 })
+
+

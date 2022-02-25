@@ -25,8 +25,12 @@ rescale_all <- function(results, Xmis) {
   results[["X"]] <- t(t(results[["X"]]) * scales[2, ] + scales[1, ])
   results[["Sigma"]] <- results[["Sigma"]] * (scales[2, ] %*% t(scales[2, ]))
   results[["mu"]] <- results[["mu"]] * scales[2] + scales[1, ]
-  results[["beta"]] <- results[["beta"]] / scales[2, ]
-  results[["intercept"]] <- -sum(scales[1, ] * results[["beta"]])
+
+  intercept <- -sum(scales[1, ] * results[["coefficients"]])
+  coefs <- c(intercept, results[["coefficients"]] / scales[2, ])
+  names(coefs)[1] <- "(Intercept)"
+
+  results[["coefficients"]] <- coefs
   results
 }
 
