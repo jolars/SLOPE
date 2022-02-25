@@ -58,23 +58,22 @@ plot.SLOPE <- function(x,
   d <- as.data.frame(as.table(coefs))
   d[["x"]] <- rep(x, each = p * m)
 
+  plt <- ggplot2::ggplot(d, ggplot2::aes(x = !!quote(x),
+                                         y = !!quote(Freq),
+                                         col = !!quote(Var1))) +
+    ggplot2::geom_line() +
+    ggplot2::ylab(expression(hat(beta))) +
+    ggplot2::xlab(xlab) +
+    ggplot2::labs(color = 'Variable name')
+
   if(m > 1) {
-    ggplot2::ggplot(d, ggplot2::aes(x = !!quote(x),
-                                    y = !!quote(Freq),
-                                    col = !!quote(Var1))) +
-      ggplot2::geom_line() +
-      ggplot2::facet_wrap(~!!quote(Var2)) +
-      ggplot2::ylab(expression(hat(beta))) +
-      ggplot2::xlab(xlab) +
-      ggplot2::labs(color = 'Variable name')
-  }else {
-    ggplot2::ggplot(d, ggplot2::aes(x = !!quote(x), y = !!quote(Freq),
-                                    col = !!quote(Var1))) +
-      ggplot2::geom_line() +
-      ggplot2::ylab(expression(hat(beta))) +
-      ggplot2::xlab(xlab) +
-      ggplot2::labs(color = 'Variable name')
+
+    plt <- plt + ggplot2::facet_wrap(~!!quote(Var2))
+
   }
+
+  plt
+
 }
 
 #' Plot results from cross-validation
