@@ -9,7 +9,7 @@
 #' @param x_variable what to plot on the x axis. `"alpha"` plots
 #'   the scaling parameter for the sequence, `"deviance_ratio"` plots
 #'   the fraction of deviance explained, and `"step"` plots step number.
-#' @param ... words
+#' @param ... further arguments passed to or from other methods.
 #'
 #' @seealso [SLOPE()], [plotDiagnostics()]
 #' @family SLOPE-methods

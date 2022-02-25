@@ -20,7 +20,7 @@
 the scaling parameter for the sequence, \code{"deviance_ratio"} plots
 the fraction of deviance explained, and \code{"step"} plots step number.}
 
-\item{...}{words}
+\item{...}{further arguments passed to or from other methods.}
 }
 \value{
 An object of class \code{"ggplot"}, which will be plotted on the
