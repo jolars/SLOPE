@@ -43,8 +43,8 @@ rescale_all <- function(results, Xmis) {
 #' @param start the initial vector of regression coefficients for the first
 #' iteration. Default to the LASSO estimator obtained after
 #'
-#' @param Xmis words, words
-#' @param Xinit words, words
+#' @param Xmis model matrix
+#' @param Xinit model matrix with initially imputed NA values
 #' @param Y numeric. Response variable.
 #' @param a_prior,b_prior non-negative parameters of the prior Beta distribution
 #'   on theta.
