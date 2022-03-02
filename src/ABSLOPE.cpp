@@ -54,9 +54,7 @@ template<typename T>
 int evaluateProx(double *y, double *lambda, double *x, size_t n, int *order);
 
 /* ----------------------------------------------------------------------- */
-int evaluateProx(double *y, double *lambda, double *x, size_t n, int *order)
-  /* ----------------------------------------------------------------------- */
-{
+int evaluateProx(double *y, double *lambda, double *x, size_t n, int *order) {
   double d;
   double *s = NULL;
   double *w = NULL;
@@ -71,18 +69,15 @@ int evaluateProx(double *y, double *lambda, double *x, size_t n, int *order)
   idx_i = (size_t *)malloc(sizeof(size_t) * n);
   idx_j = (size_t *)malloc(sizeof(size_t) * n);
 
-  if ((s != NULL) && (w != NULL) && (idx_i != NULL) && (idx_j != NULL))
-  {
+  if ((s != NULL) && (w != NULL) && (idx_i != NULL) && (idx_j != NULL)) {
     k = 0;
-    for (i = 0; i < n; i++)
-    {
+    for (i = 0; i < n; i++) {
       idx_i[k] = i;
       idx_j[k] = i;
       s[k] = y[i] - lambda[i];
       w[k] = s[k];
 
-      while ((k > 0) && (w[k-1] <= w[k]))
-      {
+      while ((k > 0) && (w[k-1] <= w[k])) {
         k--;
         idx_j[k] = i;
         s[k] += s[k + 1];
@@ -92,32 +87,25 @@ int evaluateProx(double *y, double *lambda, double *x, size_t n, int *order)
       k++;
     }
 
-    if (order == NULL)
-    {
-      for (j = 0; j < k; j++)
-      {
-        d = w[j]; if (d < 0) d = 0;
+    if (order == NULL) {
+      for (j = 0; j < k; j++) {
+        d = w[j];
+        if (d < 0) d = 0;
 
-        for (i = idx_i[j]; i <= idx_j[j]; i++)
-        {
+        for (i = idx_i[j]; i <= idx_j[j]; i++) {
           x[i] = d;
         }
       }
-    }
-    else
-    {
-      for (j = 0; j < k; j++)
-      {
-        d = w[j]; if (d < 0) d = 0;
-        for (i = idx_i[j]; i <= idx_j[j]; i++)
-        {
+    } else {
+      for (j = 0; j < k; j++) {
+        d = w[j];
+        if (d < 0) d = 0;
+        for (i = idx_i[j]; i <= idx_j[j]; i++) {
           x[order[i]] = d;
         }
       }
     }
-  }
-  else
-  {
+  } else {
     result = -1;
   }
 
@@ -177,8 +165,7 @@ NumericVector prox_sorted_L1_C(NumericVector y,
   y.sort(true);
   evaluateProx(y.begin(), lambda.begin(), x.begin(), n, NULL);
   NumericVector res(n);
-  for(int k = 0; k < n; k++)
-  {
+  for(int k = 0; k < n; k++) {
     res[order[k]] = sign_y[order[k]] * x[k];
   }
   return res;
@@ -189,15 +176,11 @@ NumericVector prox_sorted_L1_C(NumericVector y,
 void create_lambda(NumericVector& lam, int p, double FDR, bool BH) {
 
   NumericVector h(p);
-  if (BH)
-  {
-    for (double i = 0.0; i < h.size(); ++i)
-    {
+  if (BH) {
+    for (double i = 0.0; i < h.size(); ++i) {
       h[i] = 1 - (FDR* (i+1)/(2*p));
     }
-  }
-  else
-  {
+  } else {
     for (double i = 0.0; i < h.size(); ++i) {
       h[i] = 1 - (FDR* (1)/(2 *p));
     }
@@ -256,7 +239,7 @@ arma::vec slope_admm(const mat& X,
     primal_feas = arma::norm(z_new_arma - x);
 
     z = z_new_arma;
-    if (primal_feas < tol_inf && dual_feas < tol_inf){
+    if (primal_feas < tol_inf && dual_feas < tol_inf) {
       i = max_iter;
     }
 
@@ -273,10 +256,8 @@ void div_X_by_w(mat& X_div_w,
                 const int& n,
                 const int& p) {
 
-  for (int i = 0; i < n; ++i)
-  {
-    for (int j = 0; j < p; ++j)
-    {
+  for (int i = 0; i < n; ++i) {
+    for (int j = 0; j < p; ++j) {
       X_div_w.at(i, j) = X.at(i, j) / w_vec(j);
     }
   }
@@ -291,24 +272,19 @@ void impute_mean(mat& X,
 
   double colmean;
   int non_na_rows;
-  for (int c_num = 0; c_num < p; c_num++)
-  {
+  for (int c_num = 0; c_num < p; c_num++) {
     colmean = 0.0;
     non_na_rows = 0;
 
-    for (int r_num = 0; r_num < n; r_num++)
-    {
-      if (arma::is_finite(X.at(r_num, c_num)))
-      {
+    for (int r_num = 0; r_num < n; r_num++) {
+      if (arma::is_finite(X.at(r_num, c_num))) {
         colmean += X.at(r_num, c_num);
         non_na_rows += 1;
       }
     }
     colmean /= non_na_rows;
-    for (int r_num = 0; r_num < n; r_num++)
-    {
-      if (!arma::is_finite(X.at(r_num, c_num)))
-      {
+    for (int r_num = 0; r_num < n; r_num++) {
+      if (!arma::is_finite(X.at(r_num, c_num))) {
         X.at(r_num, c_num) = colmean;
       }
     }
@@ -323,10 +299,8 @@ void linshrink_cov(mat &X,
 
   rowvec means = sum(X) / n;
   S = X.t() * X;
-  for (int i = 0; i < p; ++i)
-  {
-    for (int j = 0; j < p; ++j)
-    {
+  for (int i = 0; i < p; ++i) {
+    for (int j = 0; j < p; ++j) {
       S.at(i, j) -= n * means[i] * means[j];
       S.at(i, j) /= n;
     }
@@ -338,13 +312,10 @@ void linshrink_cov(mat &X,
   b_bar2 *= n;
   double prod;
   double sum_prod;
-  for (int i = 0; i < p; ++i)
-  {
-    for (int j = 0; j < p; ++j)
-    {
+  for (int i = 0; i < p; ++i) {
+    for (int j = 0; j < p; ++j) {
       sum_prod = 0.0;
-      for (int k = 0; k < n; ++k)
-      {
+      for (int k = 0; k < n; ++k) {
         prod = (X.at(k, i) - means[i]) * (X.at(k, j) - means[j]);
         b_bar2 += prod * prod;
         sum_prod += prod;
@@ -357,8 +328,7 @@ void linshrink_cov(mat &X,
   double a2 = d2 - b2;
   S *= (a2 / d2);
   m *= (b2 / d2);
-  for (int i = 0; i < p; ++i)
-  {
+  for (int i = 0; i < p; ++i) {
     S.at(i, i) += m;
   }
 }
@@ -382,37 +352,27 @@ void impute_row_advance(const vec& beta,
   arma::vec u = zeros(l);
   double r = Y[row];
   int u_ind = 0;
-  for (int i = 0; i < p; ++i)
-  {
-    if (!XisFin.at(row, i))
-    {
-      for (int j = 0; j < p; ++j)
-      {
-        if(XisFin.at(row, j))
-          {
+  for (int i = 0; i < p; ++i) {
+    if (!XisFin.at(row, i)) {
+      for (int j = 0; j < p; ++j) {
+        if(XisFin.at(row, j)) {
           //Rcout << "(row, j): (" << row << "," << j << ")\n";
           u[u_ind] += X.at(row, j) * S.at(j, i);
         }
       }
       u_ind += 1;
     }
-    else
-    {
+    else {
       r -= beta[i] * X.at(row, i);
     }
   }
   //Rcout << "r: " << r << "\n";
   //Rcout << "u: " << u << "\n";
-  for (int i = 0; i < l; ++i)
-  {
-    for (int j = 0; j < l; ++j)
-    {
-      if (i == j)
-      {
+  for (int i = 0; i < l; ++i) {
+    for (int j = 0; j < l; ++j) {
+      if (i == j) {
         A.at(i, j) = 1.0;
-      }
-      else
-      {
+      } else {
         s = nanCols[i];
         t = nanCols[j];
         A.at(i, j) = (beta[s] * beta[t] / sigma_sq + S.at(s, t)) / tau_sq[s];
@@ -421,8 +381,7 @@ void impute_row_advance(const vec& beta,
   }
 
   arma::vec b = zeros(l);
-  for (int i = 0; i < l; ++i)
-  {
+  for (int i = 0; i < l; ++i) {
     t = nanCols[i];
     b[i] =  ((r * beta[t]) / sigma_sq + m[t] - u[i]) / tau_sq[t];
   }
@@ -431,8 +390,7 @@ void impute_row_advance(const vec& beta,
   //Rcout << "A: " << A << "\n";
   //Rcout << "b: " << b << "\n";
   //Rcout << "sol: " << sol << "\n";
-  for (int i = 0; i < l; ++i)
-  {
+  for (int i = 0; i < l; ++i) {
     t = nanCols[i];
     //Rcout << "imputed column: " << t << "\n";
     X.at(row, t) = sol[i];
@@ -455,24 +413,20 @@ void impute_advance(const arma::vec &beta,
 
   arma::vec tau_sq = zeros(p);
   tau_sq = square(beta) / sigma_sq;
-  for (int i = 0; i < p; ++i)
-  {
+  for (int i = 0; i < p; ++i) {
     tau_sq[i] = tau_sq[i] + S.at(i, i);
   }
 
   //Rcout << "tau_sq: " << tau_sq << "\n";
   arma::vec m = zeros(p);
-  for (int i = 0; i < p; ++i)
-  {
-    for (int j = 0; j < p; ++j)
-    {
+  for (int i = 0; i < p; ++i) {
+    for (int j = 0; j < p; ++j) {
       m[i] += mu[j] * S.at(i, j);
     }
   }
   //Rcout << "m: " << m << "\n";
 
-  for (int i = 0; i<anyNanXrows.size(); ++i)
-  {
+  for (int i = 0; i<anyNanXrows.size(); ++i) {
     //Rcout << "rownum: " << i << "\n";
     impute_row_advance(beta,
                        X,
@@ -500,18 +454,13 @@ void gamma_mean_update(const NumericVector & abs_beta_ord,
   double bl_sum = lambda[0] * abs_beta_ord[0];
   double bl_mean;
   int equals_in_sequence = 1;
-  for (int i = 1; i < p; ++i)
-  {
-    if (abs_beta_ord[i] == abs_beta_ord[i - 1])
-    {
+  for (int i = 1; i < p; ++i) {
+    if (abs_beta_ord[i] == abs_beta_ord[i - 1]) {
       bl_sum += lambda[i] * abs_beta_ord[i];
       equals_in_sequence += 1;
-    }
-    else
-    {
+    } else {
       bl_mean = bl_sum / equals_in_sequence;
-      for (int j = i - equals_in_sequence; j < i; j++)
-      {
+      for (int j = i - equals_in_sequence; j < i; j++) {
         gamma_h[j] = bl_mean;
       }
       bl_sum = lambda[i] * abs_beta_ord[i];
@@ -519,15 +468,14 @@ void gamma_mean_update(const NumericVector & abs_beta_ord,
     }
   }
   bl_mean = bl_sum / equals_in_sequence;
-  for (int j = p - equals_in_sequence; j < p; j++)
-  {
+  for (int j = p - equals_in_sequence; j < p; j++) {
     gamma_h[j] = bl_mean;
   }
 }
 
 // [[Rcpp::export]]
 void Center_and_scale(arma::mat& X,const int& n, const int& p){
-  for (int i=0; i<p; ++i){
+  for (int i=0; i<p; ++i) {
     X.col(i) -= sum(X.col(i))/n;
   }
   X = normalise(X);
@@ -577,21 +525,17 @@ List SLOBE_ADMM_approx_missing(NumericVector start,
   LogicalMatrix XisFin(n, p);
   std::vector<int> anyNanXrows;
   std::vector<std::vector<int> > nanIndicesInRow;
-  for (int i = 0; i < n; ++i)
-  {
+  for (int i = 0; i < n; ++i) {
     anyNanInRow = false;
     std::vector<int> nanInd;
-    for (int j = 0; j < p; ++j)
-    {
+    for (int j = 0; j < p; ++j) {
       XisFin.at(i , j) = arma::is_finite(Xmis.at(i, j));
-      if (!XisFin.at(i, j))
-      {
+      if (!XisFin.at(i, j)) {
         nanInd.push_back(j);
         anyNanInRow = true;
       }
     }
-    if (anyNanInRow)
-    {
+    if (anyNanInRow) {
       anyNanXrows.push_back(i);
       nanIndicesInRow.push_back(nanInd);
     }
@@ -601,20 +545,15 @@ List SLOBE_ADMM_approx_missing(NumericVector start,
   arma::mat X = as<mat>(tempX);
   Center_and_scale(X, n, p);
   arma::mat Sigma = zeros(p, p);
-  if (!known_cov)
-    {
+  if (!known_cov) {
     linshrink_cov(X, Sigma, n, p);
-  }
-  else
-  {
+  } else {
     Sigma = Covmat;
   }
   arma::mat S = inv_sympd(Sigma);
   arma::vec mu = zeros(p);
-  for (int i = 0; i < p; ++i)
-  {
-    for (int j = 0; j < n; ++j)
-    {
+  for (int i = 0; i < p; ++i) {
+    for (int j = 0; j < n; ++j) {
       mu.at(i) += X.at(j, i);
     }
     mu[i] /= n;
@@ -627,24 +566,19 @@ List SLOBE_ADMM_approx_missing(NumericVector start,
   // Initialize sigma, c, theta, gamma
   double sstart = sum(start != 0);
   double pstart = 1.0;
-  if (sstart > 0)
-  {
+  if (sstart > 0) {
     pstart = sstart;
   }
-  if (!known_sigma)
-  {
+  if (!known_sigma) {
     sigma = sqrt(sum(pow(X * beta_arma - Y, 2)) / (n - pstart));
   }
   lambda_sigma = lambda * sigma;
   argsort(beta, order);
   double c = 0.0;
-  if (sstart > 0)
-  {
+  if (sstart > 0) {
     double h = (sstart + 1) / (sum(abs(beta))) * (sigma / lambda[p - 1]);
     c = (h < 1.0) ? h : 1.0;
-  }
-  else
-  {
+  } else {
     c = 1.0;
   }
 
@@ -657,18 +591,15 @@ List SLOBE_ADMM_approx_missing(NumericVector start,
   gamma_h = gamma_h * (c - 1) / sigma;
 
   gamma_h = (theta * c) / (theta * c + (1 - theta) * exp(gamma_h));
-  for (int i = 0; i < p; ++i)
-  {
+  for (int i = 0; i < p; ++i) {
     gamma[order[i]] = gamma_h[i];
   }
 
   // Start main loop
   bool converged = false;
   int iter = 0;
-  while (iter < max_iter)
-  {
-    if(verbose)
-    {
+  while (iter < max_iter) {
+    if(verbose) {
       Rcout << "Iteration: " << iter << "/" << max_iter << "\n";
     }
     w = 1.0 - (1.0 - c) * gamma;
@@ -682,15 +613,13 @@ List SLOBE_ADMM_approx_missing(NumericVector start,
     wbeta = abs(wbeta);
     argsort(wbeta, order);
 
-    for (int i = 0; i < p; ++i)
-    {
+    for (int i = 0; i < p; ++i) {
       beta_arma[i] /= w_vec[i];
     }
     beta_new = as<NumericVector>(wrap(beta_arma));
 
     // For the version with unknown sigma, estimate it
-    if (!known_sigma)
-    {
+    if (!known_sigma) {
       RSS = sum(pow((X * beta_arma - Y), 2));
       swlambda = sum(wbeta.sort(true) * lambda);
       sigma = (swlambda + sqrt(pow(swlambda, 2.0) + 4 * (n + 2) * RSS)) /
@@ -700,17 +629,14 @@ List SLOBE_ADMM_approx_missing(NumericVector start,
     sigma_sq = sigma * sigma;
 
     //Estimate covariance matrix
-    if(!known_cov)
-    {
+    if(!known_cov) {
       linshrink_cov(X, Sigma, n, p);
 
       S = inv_sympd(Sigma);
     }
     mu = zeros(p);
-    for (int i = 0; i < p; ++i)
-    {
-      for (int j = 0; j < n; ++j)
-      {
+    for (int i = 0; i < p; ++i) {
+      for (int j = 0; j < n; ++j) {
         mu.at(i) += X.at(j, i);
       }
       mu[i] /= n;
@@ -739,8 +665,7 @@ List SLOBE_ADMM_approx_missing(NumericVector start,
 
     gamma_h = (theta * c)/(theta * c + (1 - theta) * exp(gamma_h));
 
-    for(int i = 0; i < p;++i)
-    {
+    for(int i = 0; i < p; ++i) {
       gamma[order[i]] = gamma_h[i];
     }
 
@@ -751,32 +676,26 @@ List SLOBE_ADMM_approx_missing(NumericVector start,
     b_sum_h = b_sum_h * lambda;
     double b_sum = sum(b_sum_h) / sigma;
 
-    if (sum_gamma > 0)
-    {
-      if (b_sum > 0)
-      {
+    if (sum_gamma > 0) {
+      if (b_sum > 0) {
         c = EX_trunc_gamma(sum_gamma, b_sum);
-      }
-      else
-      {
+      } else {
         c = (sum_gamma + 1) / (sum_gamma + 2);
       }
-    }
-    else
+    } else {
       c = 0.5;
+    }
 
     // update theta
     theta = (sum_gamma + a_prior) / (p + a_prior + b_prior);
 
     // Check stop condition
     error = sum(abs(beta - beta_new));
-    if (error < tol)
-    {
+    if (error < tol) {
       iter = max_iter;
       converged = true;
     }
-    if(verbose)
-    {
+    if(verbose) {
       Rcout<< "Error =  "<< error <<" sigma = "<< sigma <<", theta = "<<
         theta<<", c = " << c << "\n";
     }
