@@ -21,14 +21,14 @@ ABSLOPE(
 )
 }
 \arguments{
-\item{Xmis}{words, words}
+\item{Xmis}{model matrix}
 
 \item{Y}{numeric. Response variable.}
 
 \item{start}{the initial vector of regression coefficients for the first
 iteration. Default to the LASSO estimator obtained after}
 
-\item{Xinit}{words, words}
+\item{Xinit}{model matrix with initially imputed NA values}
 
 \item{a_prior, b_prior}{non-negative parameters of the prior Beta distribution
 on theta.}
