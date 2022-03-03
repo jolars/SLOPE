@@ -7,3 +7,25 @@ test_that("verbosity returns printouts", {
   expect_output(print(SLOPE(x, y, verbosity = 2)))
   expect_output(print(SLOPE(x, y, verbosity = 3)))
 })
+
+test_that("printing trainedSLOPE", {
+  set.seed(1)
+  tune <- trainSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
+    mtcars$hp,
+    q = c(0.1, 0.2),
+    number = 8,
+    repeats = 5,
+    measure = "mse"
+  )
+  expect_output(print(tune))
+})
+
+
+test_that("printing ABSLOPE", {
+  set.seed(17)
+  xy <- SLOPE:::randomProblem(1e2, 200, response = "gaussian")
+  X <- as.matrix(xy$x)
+  Y <- xy$y
+  fit <- ABSLOPE(X, Y)
+  expect_output(print(fit))
+})

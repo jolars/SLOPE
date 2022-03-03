@@ -29,7 +29,7 @@ plot.SLOPE <- function(x,
                        ...) {
   object <- x
 
-  if(class(object)[1] == "ABSLOPE") {
+  if(inherits(object, "ABSLOPE")) {
     stop("There's no plot functionality for ABSLOPE objects -
          x must be fitted by SLOPE function.")
   }

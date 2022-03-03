@@ -51,3 +51,35 @@ test_that("alpha estimation and path_length > 1 returns warning", {
 
   expect_warning(SLOPE(x, y, alpha = "estimate", path_length = 3))
 })
+
+test_that("SLOPE returns an error for empty `y`", {
+
+  expect_error(SLOPE(x = NULL, y = NULL, q = 0.1), "`y` is empty")
+
+})
+
+
+test_that(
+  "SLOPE returns an error for `alpha='estimate'` and `family='gaussian'`", {
+
+  expect_error(SLOPE(bodyfat$x,
+                     bodyfat$y,
+                     alpha = "estimate",
+                     family = "poisson"),
+               "`alpha = 'estimate'` can only be used if `family = 'gaussian'`")
+
+})
+
+
+test_that(
+  "SLOPE returns an error for nonunique `alpha`", {
+
+    expect_error(SLOPE(bodyfat$x,
+                       bodyfat$y,
+                       alpha = rep(1, 10),
+                       family = "gaussian"),
+                 "all values in `alpha` must be unique")
+
+  })
+
+

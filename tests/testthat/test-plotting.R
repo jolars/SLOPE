@@ -19,4 +19,13 @@ test_that("plot.SLOPE works as expected", {
 
   p <- plot(fit, intercept = TRUE, x_variable = "deviance_ratio")
   vdiffr::expect_doppelganger("plot.SLOPE-parameters-in-test", p)
+
+  set.seed(17)
+  xy <- SLOPE:::randomProblem(1e2, 2, response = "gaussian")
+  X <- as.matrix(xy$x)
+  Y <- xy$y
+  fit <- ABSLOPE(X, Y)
+  expect_error(plot(fit), "There's no plot functionality for ABSLOPE objects -
+         x must be fitted by SLOPE function.")
+
 })
