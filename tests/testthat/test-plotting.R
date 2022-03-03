@@ -29,3 +29,18 @@ test_that("plot.SLOPE works as expected", {
          x must be fitted by SLOPE function.")
 
 })
+
+
+
+test_that("plot.trainedSLOPE works as expected", {
+
+  set.seed(123)
+  tune <- trainSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
+                     mtcars$hp,
+                     q = c(0.1, 0.2),
+                     number = 10)
+  p <- plot(tune, ci_col = "salmon")
+
+  vdiffr::expect_doppelganger("plot_trainedSLOPE-in-test", p)
+
+})
