@@ -28,6 +28,12 @@ plot.SLOPE <- function(x,
                                       "step"),
                        ...) {
   object <- x
+
+  if(class(object)[1] == "ABSLOPE") {
+    stop("There's no plot functionality for ABSLOPE objects -
+         x must be fitted by SLOPE function.")
+  }
+
   x_variable <- match.arg(x_variable)
 
   coefs <- getElement(object, "coefficients")
