@@ -88,17 +88,18 @@ LinkingTo:
     Rcpp,
     RcppArmadillo (>= 0.9.850.1.0)
 Suggests:
+    bench,
     caret,
     covr,
-    stringr,
-    scales,
-    tidyr,
     dplyr,
-    bench,
+    ggedit,
     knitr,
     rmarkdown,
+    scales,
     spelling,
+    stringr,
     testthat (>= 2.1.0),
+    tidyr,
     vdiffr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
