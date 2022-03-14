@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SLOPE</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.3.3.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.4.1.9000</span>
       </span>
     </div>
 
@@ -32,7 +32,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -45,7 +45,7 @@
     </li>
   </ul></li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     News
      
     <span class="caret"></span>
@@ -80,32 +80,42 @@
 
     <div class="section level2">
 <h2 class="page-header" data-toc-text="development version" id="slope-development-version">SLOPE (development version)<a class="anchor" aria-label="anchor" href="#slope-development-version"></a></h2>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.4.1" id="slope-041">SLOPE 0.4.1<small>2022-03-14</small><a class="anchor" aria-label="anchor" href="#slope-041"></a></h2>
 <div class="section level3">
-<h3 id="new-functions-development-version">New Functions<a class="anchor" aria-label="anchor" href="#new-functions-development-version"></a></h3>
+<h3 id="bug-fixes-0-4-1">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-4-1"></a></h3>
+<ul><li>The C++ standard library <em>memory</em> was added to a source file to fix compilation errors on some systems.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.4.0" id="slope-040">SLOPE 0.4.0<small>2021-12-10</small><a class="anchor" aria-label="anchor" href="#slope-040"></a></h2>
+<div class="section level3">
+<h3 id="new-functions-0-4-0">New Functions<a class="anchor" aria-label="anchor" href="#new-functions-0-4-0"></a></h3>
 <ul><li>
 <code><a href="../reference/sortedL1Prox.html">sortedL1Prox()</a></code> is a new function that computes the proximal operator for the sorted L1 norm (the penalty term in SLOPE).</li>
 <li>
 <code><a href="../reference/regularizationWeights.html">regularizationWeights()</a></code> is a new function that returns the penalty weights (lambda sequence) for SLOPE or OSCAR.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="major-changes-development-version">Major changes<a class="anchor" aria-label="anchor" href="#major-changes-development-version"></a></h3>
+<h3 id="major-changes-0-4-0">Major changes<a class="anchor" aria-label="anchor" href="#major-changes-0-4-0"></a></h3>
 <ul><li>The parametrization for OSCAR models have been corrected and changed. As a result, <code><a href="../reference/SLOPE.html">SLOPE()</a></code> gains two arguments: <code>theta1</code> and <code>theta2</code> to control the behavior using the parametrization from L. W. Zhong and J. T. Kwok, “Efficient sparse modeling with automatic feature grouping,” IEEE Transactions on Neural Networks and Learning Systems, vol. 23, no. 9, pp. 1436–1447, Sep. 2012, doi: 10.1109/TNNLS.2012.2200262. <code>q</code> is no longer used with OSCAR models. Thanks, Nuno Eusebio.</li>
 <li>
 <code><a href="../reference/SLOPE.html">SLOPE()</a></code> has gained a new argument, <code>prox_method</code>, which allows the user to select prox algorithm to use. There is no an additional algorithm in the package, based on the PAVA algorithm used in isotonic regression, that can be used. Note that this addition is mostly of academic interest and does not need to be changed by the user.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="minor-changes-development-version">Minor Changes<a class="anchor" aria-label="anchor" href="#minor-changes-development-version"></a></h3>
+<h3 id="minor-changes-0-4-0">Minor Changes<a class="anchor" aria-label="anchor" href="#minor-changes-0-4-0"></a></h3>
 <ul><li>The <code>q</code> parameter is no longer allowed to be smaller than <code>1e-6</code> to avoid constructions of regularization paths with infinite <code>lambda</code> values.</li>
 <li>The <code>lambda</code> argument in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> now also allowed the input <code>"lasso"</code> to obtain the standard lasso.</li>
 <li>The performance of <code><a href="../reference/trainSLOPE.html">trainSLOPE()</a></code>
 </li>
 </ul></div>
 <div class="section level3">
-<h3 id="vignettes-development-version">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes-development-version"></a></h3>
+<h3 id="vignettes-0-4-0">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes-0-4-0"></a></h3>
 <ul><li>A new vignette has been added to compare algorithms for the proximal operator.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-development-version">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
+<h3 id="bug-fixes-0-4-0">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-4-0"></a></h3>
 <ul><li>For very small numbers of observations (10 or so), the regularization weights for <code>lambda = "gaussian"</code> were incorrectly computed, increasing and then decreasing. This is now fixed and regularization weights in this case are now always non-increasing.</li>
 <li>Misclassification error was previously computed incorrectly in <code><a href="../reference/trainSLOPE.html">trainSLOPE()</a></code> for multinomial models (thanks <a href="https://github.com/jakubkala" class="external-link">@jakubkala</a> and 1)</li>
 <li>Performance of <code><a href="../reference/trainSLOPE.html">trainSLOPE()</a></code> was previously hampered by erroneous refitting of the models, which has been fixed now (thanks <a href="https://github.com/jakubkala" class="external-link">@jakubkala</a> and
@@ -113,7 +123,7 @@
 </li></ol></li>
 </ul></div>
 <div class="section level3">
-<h3 id="deprecated-and-defunct-development-version">Deprecated and Defunct<a class="anchor" aria-label="anchor" href="#deprecated-and-defunct-development-version"></a></h3>
+<h3 id="deprecated-and-defunct-0-4-0">Deprecated and Defunct<a class="anchor" aria-label="anchor" href="#deprecated-and-defunct-0-4-0"></a></h3>
 <ul><li>
 <code>yvar</code> argument in <code><a href="../reference/plotDiagnostics.html">plotDiagnostics()</a></code> that was previously deprecated is now defunct.</li>
 <li>Using <code>missclass</code> for the <code>measure</code> argument in <code><a href="../reference/trainSLOPE.html">trainSLOPE()</a></code> has been deprecated in favor of <code>misclass</code>.</li>
@@ -240,7 +250,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer></div>

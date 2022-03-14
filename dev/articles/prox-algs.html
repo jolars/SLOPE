@@ -47,7 +47,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SLOPE</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.3.3.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.4.1.9000</span>
       </span>
     </div>
 
@@ -57,7 +57,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -72,7 +72,7 @@
   </ul>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     News
      
     <span class="caret"></span>
@@ -113,7 +113,7 @@
       <h1 data-toc-skip>Proximal Operator Algorithms</h1>
                         <h4 data-toc-skip class="author">Johan Larsson</h4>
             
-            <h4 data-toc-skip class="date">2021-12-09</h4>
+            <h4 data-toc-skip class="date">2022-03-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jolars/SLOPE/blob/HEAD/vignettes/prox-algs.Rmd" class="external-link"><code>vignettes/prox-algs.Rmd</code></a></small>
       <div class="hidden name"><code>prox-algs.Rmd</code></div>
@@ -122,18 +122,18 @@
 
     
     
-<div class="section level1">
-<h1 id="the-proximal-operator-in-slope">The Proximal Operator in SLOPE<a class="anchor" aria-label="anchor" href="#the-proximal-operator-in-slope"></a>
-</h1>
+<div class="section level2">
+<h2 id="the-proximal-operator-in-slope">The Proximal Operator in SLOPE<a class="anchor" aria-label="anchor" href="#the-proximal-operator-in-slope"></a>
+</h2>
 <p>The proximal operator for the sorted L1 norm, the penalty used in SLOPE, is defined as <span class="math display">\[
   \operatorname{prox}_J (v) = 
     \operatorname*{arg\,min}_x\left(
       J(x; \lambda) + \frac 1 2 \lVert x - v \rVert_2^2
     \right)
 \]</span> where <span class="math inline">\(J(x; \lambda) = \sum_{j=1}^p \lambda_j |\beta_{(j)}|\)</span> is the sorted L1 norm, for which <span class="math display">\[|\beta_{(1)}| \geq |\beta_{(2)} \geq \cdots \geq |\beta_{(p)}.\]</span></p>
-<div class="section level2">
-<h2 id="algorithms">Algorithms<a class="anchor" aria-label="anchor" href="#algorithms"></a>
-</h2>
+<div class="section level3">
+<h3 id="algorithms">Algorithms<a class="anchor" aria-label="anchor" href="#algorithms"></a>
+</h3>
 <p>There are several methods for solving this proximal operator and here we provide some benchmarks of these methods. Note that these results are almost entirely of academic nature and are added here only to serve as reference for others who are interested in working with SLOPE and particularly those who might be interested in improving the performance of these algorithms.</p>
 <p>First, we load the packages we need,.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -204,7 +204,7 @@ Comparison in execution times between the PAVA algorithm and the stack-based alg
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
