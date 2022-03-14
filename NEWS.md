@@ -1,3 +1,5 @@
+# SLOPE (development version)
+
 # SLOPE 0.4.1
 
 ## Bug Fixes
