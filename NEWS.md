@@ -1,3 +1,5 @@
+# SLOPE (development version)
+
 # SLOPE 0.4.0
 
 ## New Functions

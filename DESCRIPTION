@@ -1,6 +1,6 @@
 Package: SLOPE
 Title: Sorted L1 Penalized Estimation
-Version: 0.4.0
+Version: 0.4.0.9000
 Authors@R:
     c(
       person(
