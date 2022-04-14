@@ -92,7 +92,6 @@ Suggests:
     caret,
     covr,
     dplyr,
-    ggedit,
     knitr,
     rmarkdown,
     scales,
