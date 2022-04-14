@@ -59,13 +59,6 @@ test_that("plot.trainedSLOPE works as expected", {
   p <- plot(fit, ci_col = "salmon")
 
   vdiffr::expect_doppelganger("binom_plot_trainedSLOPE-in-test", p)
-
-
-  p <- ggedit::remove_geom(p, 'ribbon', idx = NULL)
-
-  vdiffr::expect_doppelganger("dummy_test-test", p)
-
-
 })
 
 
