@@ -1,34 +1,42 @@
+
 #' Plot coefficients
 #'
 #' Plot the fitted model's regression
 #' coefficients along the regularization path.
 #'
 #' @param x an object of class `"SLOPE"`
-#' @param ... parameters that will be used to modify the call to
-#'   [lattice::xyplot()]
 #' @param intercept whether to plot the intercept
 #' @param x_variable what to plot on the x axis. `"alpha"` plots
 #'   the scaling parameter for the sequence, `"deviance_ratio"` plots
 #'   the fraction of deviance explained, and `"step"` plots step number.
+#' @param ... further arguments passed to or from other methods.
 #'
-#' @seealso [lattice::xyplot()], [SLOPE()], [plotDiagnostics()]
+#' @seealso [SLOPE()], [plotDiagnostics()]
 #' @family SLOPE-methods
 #'
-#' @return An object of class `"trellis"`, which will be plotted on the
+#' @return An object of class `"ggplot"`, which will be plotted on the
 #'   current device unless stored in a variable.
 #' @export
 #'
 #' @examples
 #' fit <- SLOPE(heart$x, heart$y)
 #' plot(fit)
-plot.SLOPE = function(x,
-                      intercept = FALSE,
-                      x_variable = c("alpha", "deviance_ratio", "step"),
-                      ...) {
+plot.SLOPE <- function(x,
+                       intercept = FALSE,
+                       x_variable = c("alpha",
+                                      "deviance_ratio",
+                                      "step"),
+                       ...) {
   object <- x
+
+  if(inherits(object, "ABSLOPE")) {
+    stop("There's no plot functionality for ABSLOPE objects -
+         x must be fitted by SLOPE function.")
+  }
+
   x_variable <- match.arg(x_variable)
 
-  coefs <- object$coefficients
+  coefs <- getElement(object, "coefficients")
 
   intercept_in_model <- "(Intercept)" %in% rownames(coefs)
   include_intercept <- intercept && intercept_in_model
@@ -42,88 +50,36 @@ plot.SLOPE = function(x,
   p <- NROW(coefs) # number of features
   m <- NCOL(coefs) # number of responses
 
-  args <- list()
-
   x <- switch(x_variable,
-              alpha = object$alpha,
-              deviance_ratio = object$deviance_ratio,
-              step = seq_along(object$alpha))
+              alpha = object[["alpha"]],
+              deviance_ratio = object[["deviance_ratio"]],
+              step = seq_along(object[["alpha"]]))
 
   xlab <- switch(x_variable,
                  alpha = expression(alpha),
                  deviance_ratio = "Fraction Deviance Explained",
                  step = "Step")
 
-  n_x <- length(x)
+
   d <- as.data.frame(as.table(coefs))
-  d$x <- rep(x, each = p*m)
+  d[["x"]] <- rep(x, each = p * m)
 
-  n_col <- length(lattice::trellis.par.get("superpose.line")$col)
-  lty <- rep(1:4, each = n_col)
-  superpose.line <- list(lty = lty)
+  plt <- ggplot2::ggplot(d, ggplot2::aes(x = !!quote(x),
+                                         y = !!quote(Freq),
+                                         col = !!quote(Var1))) +
+    ggplot2::geom_line() +
+    ggplot2::ylab(expression(hat(beta))) +
+    ggplot2::xlab(xlab) +
+    ggplot2::labs(color = 'Variable name')
 
-  # setup key
-  if (p <= 20) {
-    if (n_x == 1) {
-      key <- list(space = "right")
-    } else {
-      key <- list(space = "right", lines = TRUE, points = FALSE)
-    }
-  } else {
-    key <- FALSE
+  if(m > 1) {
+
+    plt <- plt + ggplot2::facet_wrap(~!!quote(Var2))
+
   }
 
-  args <- list(
-    x = if (m > 1)
-      quote(Freq ~ x | Var2)
-    else
-      quote(Freq ~ x),
-    type = if (n_x == 1) "p" else "l",
-    groups = quote(Var1),
-    data = quote(d),
-    ylab = expression(hat(beta)),
-    xlab = xlab,
-    par.settings = list(superpose.line = superpose.line),
-    # scales = list(x = list(log = "e")),
-    # xscale.components = function(lim, ...) {
-    #   x <- lattice::xscale.components.default(lim, ...)
-    #   x$bottom$labels$labels <- parse(text = x$bottom$labels$labels)
-    #   x
-    # },
-    auto.key = key,
-    abline = within(lattice::trellis.par.get("reference.line"), {h = 0})
-  )
+  plt
 
-  # switch(match.arg(xvar),
-  #        norm = {
-  #          plot_args$xlab <-
-  #            expression(group("|", group("|", hat(beta), "|"), "|")[1])
-  #          plot_data$xval <- if (is.list(beta))
-  #            rowSums(vapply(beta,
-  #                           function(x) colSums(abs(as.matrix(x))),
-  #                           double(ncol(beta[[1]]))))
-  #          else
-  #            colSums(abs(as.matrix(beta)))
-  #        },
-  #        lambda = {
-  #          plot_args$xlab <- expression(lambda)
-  #          plot_args$scales <- list(x = list(log = "e"))
-  #          plot_data$xval <- x$lambda
-  #
-  #          # Prettier x scale
-  #          plot_args$xscale.components <- function(lim, ...) {
-  #            x <- lattice::xscale.components.default(lim, ...)
-  #            x$bottom$labels$labels <- parse(text = x$bottom$labels$labels)
-  #            x
-  #          }
-  #        },
-  #        dev = {
-  #          plot_args$xlab <- "Fraction of deviance explained"
-  #          plot_data$xval <- x$dev.ratio
-  #        })
-
-  # Let the user modify the plot parameters
-  do.call(lattice::xyplot, utils::modifyList(args, list(...)))
 }
 
 #' Plot results from cross-validation
@@ -136,19 +92,17 @@ plot.SLOPE = function(x,
 #'   models.
 #' @param ci_alpha alpha (opacity) for fill in confidence limits
 #' @param ci_col color for border of confidence limits
-#' @param ... other arguments that are passed on to [lattice::xyplot()]
 #' @param plot_min whether to mark the location of the penalty corresponding
 #'   to the best prediction score
 #' @param ci_border color (or flag to turn off and on) the border of the
 #'   confidence limits
+#' @param ... words
 #'
-#' @seealso [trainSLOPE()], [lattice::xyplot()], [lattice::panel.xyplot()]
+#' @seealso [trainSLOPE()]
 #' @family model-tuning
 #'
-#' @return An object of class `"trellis"` is returned and, if used
-#'   interactively, will most likely have its print function
-#'   [lattice::print.trellis()] invoked, which draws the plot on the
-#'   current display device.
+#' @return An object of class `"ggplot"`, which will be plotted on the
+#'   current device unless stored in a variable.
 #'
 #' @export
 #'
@@ -159,18 +113,29 @@ plot.SLOPE = function(x,
 #'                    mtcars$hp,
 #'                    q = c(0.1, 0.2),
 #'                    number = 10)
-#' plot(tune, ci_col = "salmon", col = "black")
-plot.TrainedSLOPE <-
-  function(x,
-           measure = c("auto", "mse", "mae", "deviance", "auc", "misclass"),
-           plot_min = TRUE,
-           ci_alpha = 0.2,
-           ci_border = FALSE,
-           ci_col = lattice::trellis.par.get("superpose.line")$col,
-           ...) {
+#' plot(tune, ci_col = "salmon")
+plot.TrainedSLOPE <- function(x,
+                              measure = c("auto",
+                                          "mse",
+                                          "mae",
+                                          "deviance",
+                                          "auc",
+                                          "misclass"),
+                              plot_min = TRUE,
+                              ci_alpha = 0.2,
+                              ci_border = FALSE,
+                              ci_col = "salmon",
+                              ...) {
+
+  if(!(ci_col %in% grDevices::colors()))
+    stop("ci_col", ci_col, "is not a valid color representation.")
+
+  if(!(ci_border %in% grDevices::colors() | is.logical(ci_border)))
+    stop("ci_border is", ci_border, "when it should be logical or a valid
+           color representation.")
 
   object <- x
-  family <- object$model$family
+  family <- object[["model"]][["family"]]
 
   measure <- match.arg(measure)
 
@@ -183,136 +148,63 @@ plot.TrainedSLOPE <-
       poisson = "mse"
     )
 
-    ind <- match(measure, object$measure$measure)
-
-    if (is.na(ind))
-      measure <- object$measure$measure[1]
+    if (!any(measure %in% object[["measure"]][["measure"]]))
+      measure <- object[["measure"]][["measure"]][1]
   }
 
-  ind <- match(measure, object$measure$measure)
-
-  if (is.na(ind))
+  if (!any(measure %in% object[["measure"]][["measure"]]))
     stop("measure ", measure, " was not used or not available when",
          "fitting the model")
 
   if (length(measure) > 1)
     stop("you are only allowed to plot one measure at a time")
 
-  measure_label <- object$measure$label[ind]
 
-  summary <- object$summary[object$summary$measure == measure, ]
-  optimum <- object$optima[ind, , drop = FALSE]
-  model <- object$model
+  measure_label <-
+    object[["measure"]][["label"]][object[["measure"]][["measure"]] == measure]
+  summary <-
+    object[["summary"]][object[["summary"]][["measure"]] == measure,]
+  optimum <-
+    object[["optima"]][object[["optima"]][["measure"]] == measure, ,
+                       drop = FALSE]
 
-  alpha <- unique(summary$alpha)
-  q <- unique(summary$q)
+  optimum[["label_q"]] <- paste0("q = ", as.factor(optimum[["q"]]))
+  model <- object[["model"]]
 
-  summary$q <- as.factor(summary$q)
+  q <- unique(summary[["q"]])
 
-  # get indices of best fit
-  best_ind <- match(optimum$alpha, summary$alpha)
-
-  if (length(q) > 1) {
-    x <- quote(mean ~ alpha | q)
-
-    strip <- lattice::strip.custom(
-      var.name = "q",
-      sep = expression(" = "),
-      strip.names = TRUE
-    )
-    best_outer_ind <- match(optimum$q, unique(summary$q))
-  } else {
-    x <- quote(mean ~ alpha)
-    strip <- lattice::strip.default
-    best_outer_ind <- 1
-  }
+  summary[["q"]] <- as.factor(summary[["q"]])
+  summary[["label_q"]] <- paste0("q = ", as.factor(summary[["q"]]))
 
   xlab <- expression(log[e](alpha))
 
-  args <- list(
-    x = x,
-    data = summary,
-    type = "l",
-    scales = list(x = list(log = "e", relation = "free")),
-    xlab = xlab,
-    ylab = measure_label,
-    grid = FALSE,
-    lower = summary$lo,
-    upper = summary$hi,
-    plot_min = plot_min,
+  p <- ggplot2::ggplot(summary, ggplot2::aes(x = log(!!quote(alpha)),
+                                             y = mean)) +
+    ggplot2::geom_line() +
+    ggplot2::xlab(xlab) +
+    ggplot2::ylab(measure_label)
 
-    prepanel = function(x,
-                        y,
-                        lower,
-                        upper,
-                        subscripts,
-                        groups = NULL,
-                        ...) {
-      if (any(!is.na(x)) && any(!is.na(y))) {
-        ord <- order(as.numeric(x))
-        if (!is.null(groups)) {
-          gg <- groups[subscripts]
-          dx <- unlist(lapply(split(as.numeric(x)[ord], gg[ord]), diff))
-          dy <- unlist(lapply(split(as.numeric(y)[ord], gg[ord]), diff))
-        } else {
-          dx <- diff(as.numeric(x[ord]))
-          dy <- diff(as.numeric(y[ord]))
-        }
-        list(xlim = range(x, finite = TRUE),
-             ylim = range(c(lower, upper), finite = TRUE),
-             dx = dx,
-             dy = dy,
-             xat = if (is.factor(x)) sort(unique(as.numeric(x))) else NULL,
-             yat = if (is.factor(y)) sort(unique(as.numeric(y))) else NULL)
-      } else {
-        list(xlim = rep(NA, 2),
-             ylim = rep(NA, 2),
-             dx = NA,
-             dy = NA)
-      }
-    },
+  if (length(q) > 1) {
 
-    xscale.components = function(lim, ...) {
-      x <- lattice::xscale.components.default(lim, ...)
-      x$bottom$labels$labels <- parse(text = x$bottom$labels$labels)
-      x
-    },
+    p <- p + ggplot2::facet_wrap(~label_q)
+  }
 
-    strip = strip,
+  if(plot_min) {
 
-    panel = function(x,
-                     y,
-                     subscripts,
-                     lower,
-                     upper,
-                     grid,
-                     plot_min,
-                     plot_1se,
-                     ...) {
-      if (isTRUE(grid))
-        lattice::panel.grid(h = -1, v = -1)
+    p <- p + ggplot2::geom_vline(data = optimum,
+                                 ggplot2::aes(xintercept = log(!!quote(alpha))),
+                                 linetype = "dotted")
+  }
 
-      lattice::panel.polygon(
-        c(x, rev(x)),
-        c(upper[subscripts],
-          rev(lower[subscripts])),
-        col = ci_col,
-        alpha = ci_alpha,
-        border = ci_border
-      )
+  border_col <- c(ci_border, NA, ci_col)[is.character(ci_border) +
+                                           2 * isFALSE(ci_border) +
+                                           3 * isTRUE(ci_border)]
 
-      if (lattice::packet.number() == best_outer_ind) {
-        if (plot_min)
-          lattice::panel.refline(v = x[best_ind],
-                                 col = 1,
-                                 lty = 2)
-      }
+  p <- p + ggplot2::geom_ribbon(ggplot2::aes(ymin = !!quote(lo),
+                                             ymax = !!quote(hi)),
+                                fill = ci_col,
+                                color = border_col,
+                                alpha = ci_alpha)
 
-      lattice::panel.xyplot(x, y, ...)
-    }
-  )
-
-  args <- utils::modifyList(args, list(...))
-
-  do.call(lattice::xyplot, args)
+  p
 }

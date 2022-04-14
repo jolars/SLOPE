@@ -10,7 +10,7 @@
   plot_min = TRUE,
   ci_alpha = 0.2,
   ci_border = FALSE,
-  ci_col = lattice::trellis.par.get("superpose.line")$col,
+  ci_col = "salmon",
   ...
 )
 }
@@ -33,13 +33,11 @@ confidence limits}
 
 \item{ci_col}{color for border of confidence limits}
 
-\item{...}{other arguments that are passed on to \code{\link[lattice:xyplot]{lattice::xyplot()}}}
+\item{...}{words}
 }
 \value{
-An object of class \code{"trellis"} is returned and, if used
-interactively, will most likely have its print function
-\code{\link[lattice:print.trellis]{lattice::print.trellis()}} invoked, which draws the plot on the
-current display device.
+An object of class \code{"ggplot"}, which will be plotted on the
+current device unless stored in a variable.
 }
 \description{
 Plot results from cross-validation
@@ -51,10 +49,10 @@ tune <- trainSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
                    mtcars$hp,
                    q = c(0.1, 0.2),
                    number = 10)
-plot(tune, ci_col = "salmon", col = "black")
+plot(tune, ci_col = "salmon")
 }
 \seealso{
-\code{\link[=trainSLOPE]{trainSLOPE()}}, \code{\link[lattice:xyplot]{lattice::xyplot()}}, \code{\link[lattice:panel.xyplot]{lattice::panel.xyplot()}}
+\code{\link[=trainSLOPE]{trainSLOPE()}}
 
 Other model-tuning: 
 \code{\link{caretSLOPE}()},

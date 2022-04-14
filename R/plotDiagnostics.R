@@ -8,13 +8,11 @@
 #' @param ind either "last"
 #' @param xvar what to place on the x axis. `iteration` plots each iteration,
 #'   `time` plots the wall-clock time.
-#' @param ... other arguments that will be used to modify the call to
-#'   [lattice::xyplot()]
 #'
-#' @return An object of class `"trellis"`, which, unless stored in a variable,
-#'   will be plotted when its default `print()` method is called.
+#' @return An object of class `"ggplot"`, which will be plotted on the
+#'   current device unless stored in a variable.
 #'
-#' @seealso [SLOPE()]
+#' @seealso [SLOPE()], [ggplot2::theme()]
 #'
 #' @export
 #'
@@ -23,8 +21,8 @@
 #' plotDiagnostics(x)
 plotDiagnostics <- function(object,
                             ind = max(object$diagnostics$penalty),
-                            xvar = c("time", "iteration"),
-                            ...) {
+                            xvar = c("time",
+                                     "iteration")) {
 
   stopifnot(inherits(object, "SLOPE"),
             is.numeric(ind),
@@ -40,31 +38,36 @@ plotDiagnostics <- function(object,
 
   d <- subset(d, subset = d$penalty == ind)
 
-  # setup a list of arguments to be provided to lattice::xyplot()
-  args <- list(data = d, type = "l")
-
-  if (nrow(d) > 1)
-    args$grid <- TRUE
-
-  args$x <- "primal + dual"
-  args$ylab <- "Objective"
-  args$auto.key <- list(space = "inside",
-                        corner = c(0.95, 0.95),
-                        lines = TRUE,
-                        points = FALSE)
+  d <- stats::reshape(d,
+                      direction = "long",
+                      varying = c("primal", "dual"),
+                      v.names = "Value",
+                      idvar = c("iteration", "time", "penalty"),
+                      timevar = "Variable",
+                      times = c("primal", "dual"))
 
   if (xvar == "time") {
-    args$x <- paste(args$x, "~ time")
-    args$xlab <- "Time (seconds)"
+    plt <- ggplot2::ggplot(d, ggplot2::aes(x = !!quote(time),
+                                           y = !!quote(Value),
+                                           col = !!quote(Variable))) +
+      ggplot2::xlab("Time (seconds)")
+
   } else if (xvar == "iteration") {
-    args$x <- paste(args$x, "~ iteration")
-    args$xlab <- "Iteration"
+    plt <- ggplot2::ggplot(d, ggplot2::aes(x = !!quote(iteration),
+                                           y = !!quote(Value),
+                                           col = !!quote(Variable))) +
+      ggplot2::xlab("Iteration")
   }
 
-  args$x <- stats::as.formula(args$x)
+  if (nrow(d) <= 1) {
+    plt <- plt + ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
+                                panel.grid.minor = ggplot2::element_blank())
+  }
 
-  args <- utils::modifyList(args,
-                            list(...))
+  plt <- plt +
+    ggplot2::geom_line() +
+    ggplot2::ylab("Objective") +
+    ggplot2::theme(legend.title = ggplot2::element_blank())
 
-  do.call(lattice::xyplot, args)
+  plt
 }

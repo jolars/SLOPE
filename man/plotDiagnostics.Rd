@@ -7,8 +7,7 @@
 plotDiagnostics(
   object,
   ind = max(object$diagnostics$penalty),
-  xvar = c("time", "iteration"),
-  ...
+  xvar = c("time", "iteration")
 )
 }
 \arguments{
@@ -18,13 +17,10 @@ plotDiagnostics(
 
 \item{xvar}{what to place on the x axis. \code{iteration} plots each iteration,
 \code{time} plots the wall-clock time.}
-
-\item{...}{other arguments that will be used to modify the call to
-\code{\link[lattice:xyplot]{lattice::xyplot()}}}
 }
 \value{
-An object of class \code{"trellis"}, which, unless stored in a variable,
-will be plotted when its default \code{print()} method is called.
+An object of class \code{"ggplot"}, which will be plotted on the
+current device unless stored in a variable.
 }
 \description{
 This function plots various diagnostics collected during
@@ -36,5 +32,5 @@ x <- SLOPE(abalone$x, abalone$y, diagnostics = TRUE)
 plotDiagnostics(x)
 }
 \seealso{
-\code{\link[=SLOPE]{SLOPE()}}
+\code{\link[=SLOPE]{SLOPE()}}, \code{\link[ggplot2:theme]{ggplot2::theme()}}
 }

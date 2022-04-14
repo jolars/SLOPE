@@ -29,6 +29,9 @@ Authors:
   \item Emmanuel Candes
   \item Evan Patterson
   \item Weijie Su
+  \item Jakub Kała
+  \item Krystyna Grzesiak
+  \item Michal Burdukiewicz (\href{https://orcid.org/0000-0001-8926-582X}{ORCID})
 }
 
 Other contributors:
@@ -40,8 +43,6 @@ Other contributors:
   \item Noah Simon (code adapted from 'glmnet') [contributor]
   \item Junyang Qian (code adapted from 'glmnet') [contributor]
   \item Akarsh Goyal [contributor]
-  \item Jakub Kała [contributor]
-  \item Krystyna Grzesiak [contributor]
 }
 
 }

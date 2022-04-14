@@ -10,4 +10,5 @@
 #' @import Matrix
 #' @import foreach
 ## usethis namespace: end
+
 NULL
