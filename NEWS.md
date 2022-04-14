@@ -1,5 +1,6 @@
-# SLOPE 0.4.1
+# SLOPE (development version)
 
+# SLOPE 0.4.2
 
 ## New Functions
 
@@ -8,6 +9,13 @@
 ## Major changes
 
 - `plot.SLOPE()`, `plot.trainSLOPE()` and `plotDiagnostics()` have been reimplemented in ggplot2.
+
+# SLOPE 0.4.1
+
+## Bug Fixes
+
+- The C++ standard library *memory* was added to a source file to fix
+  compilation errors on some systems.
 
 # SLOPE 0.4.0
 

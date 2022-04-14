@@ -3,7 +3,7 @@
 * Fedora 35, R-release, clang (local)
 * Windows, R-devel (win-builder)
 * Windows, R-release (win-builder)
-* Debian Linux, R-devel, GCC ASAN/UBSAN (local rhub rocker) 
+* Debian Linux, R-devel, GCC ASAN/UBSAN (rhub)
 * Windows Server 2008 R2 SP1, R-devel, 32/64 bit (rhub)
 * Ubuntu 20.04, R-release (github)
 * Windows Server 2019, R-release (github)
@@ -16,6 +16,10 @@
 >> * checking CRAN incoming feasibility ... NOTE
 >> Maintainer: 'Johan Larsson <johan.larsson@stat.lu.se>'
 >> Found the following (possibly) invalid URLs:
+>>   URL: https://doi.org/10.1111/j.1541-0420.2007.00843.x
+>>     From: man/SLOPE.Rd
+>>     Status: 503
+>>     Message: Service Unavailable
 >>   URL: https://doi.org/10.1214/15-AOAS842
 >>     From: inst/doc/introduction.html
 >>     Status: 500
