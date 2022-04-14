@@ -1,3 +1,14 @@
+# SLOPE 0.4.1
+
+
+## New Functions
+
+- `ABSLOPE()` is a new function that computes the Adaptive Bayesian SLOPE according to Jiang, W., Bogdan, M., Josse, J., Majewski, S., Miasojedow, B., Ročková, V., & TraumaBase® Group. (2021). Adaptive Bayesian SLOPE: Model Selection with Incomplete Data. Journal of Computational and Graphical Statistics, 1-25, doi:10.1080/10618600.2021.1963263.
+
+## Major changes
+
+- `plot.SLOPE()`, `plot.trainSLOPE()` and `plotDiagnostics()` have been reimplemented in ggplot2.
+
 # SLOPE 0.4.0
 
 ## New Functions
