@@ -7,9 +7,9 @@
 rescale_all(results, x_miss)
 }
 \arguments{
-\item{results}{A number}
+\item{results}{Design matrix}
 
-\item{x_miss}{A number}
+\item{x_miss}{Response vector}
 }
 \description{
 rescale_all

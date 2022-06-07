@@ -7,9 +7,9 @@
 rescale(y, x)
 }
 \arguments{
-\item{y}{A number}
+\item{y}{Response vector}
 
-\item{x}{A number}
+\item{x}{Design matrix}
 }
 \description{
 rescale

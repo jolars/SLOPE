@@ -1,7 +1,7 @@
 #' rescale
 #'
-#' @param x A number
-#' @param y A number
+#' @param x Design matrix
+#' @param y Response vector
 #'
 #' @keywords internal
 
@@ -14,8 +14,8 @@ rescale <- function(y, x) {
 
 #' rescale_all
 #'
-#' @param results A number
-#' @param x_miss A number
+#' @param results Design matrix
+#' @param x_miss Response vector
 #'
 #' @keywords internal
 
