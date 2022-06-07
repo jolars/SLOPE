@@ -354,7 +354,6 @@ updateGammaMean(const NumericVector& abs_beta_ord,
   }
 }
 
-// [[Rcpp::export]]
 void
 centerAndScale(arma::mat& x)
 {

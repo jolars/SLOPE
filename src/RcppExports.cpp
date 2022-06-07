@@ -11,16 +11,6 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// centerAndScale
-void centerAndScale(arma::mat& x);
-RcppExport SEXP _SLOPE_centerAndScale(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat& >::type x(xSEXP);
-    centerAndScale(x);
-    return R_NilValue;
-END_RCPP
-}
 // SLOBE_ADMM_approx_missing
 List SLOBE_ADMM_approx_missing(NumericVector beta_start, arma::mat x_miss, NumericMatrix x_init, arma::vec y, double a_prior, double b_prior, arma::mat covmat, double sigma, double fdr, double tol, bool known_sigma, int max_iter, bool verbose, bool bh, bool known_cov);
 RcppExport SEXP _SLOPE_SLOBE_ADMM_approx_missing(SEXP beta_startSEXP, SEXP x_missSEXP, SEXP x_initSEXP, SEXP ySEXP, SEXP a_priorSEXP, SEXP b_priorSEXP, SEXP covmatSEXP, SEXP sigmaSEXP, SEXP fdrSEXP, SEXP tolSEXP, SEXP known_sigmaSEXP, SEXP max_iterSEXP, SEXP verboseSEXP, SEXP bhSEXP, SEXP known_covSEXP) {
@@ -103,7 +93,6 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_SLOPE_centerAndScale", (DL_FUNC) &_SLOPE_centerAndScale, 1},
     {"_SLOPE_SLOBE_ADMM_approx_missing", (DL_FUNC) &_SLOPE_SLOBE_ADMM_approx_missing, 15},
     {"_SLOPE_lambdaSequence", (DL_FUNC) &_SLOPE_lambdaSequence, 6},
     {"_SLOPE_sortedL1ProxCpp", (DL_FUNC) &_SLOPE_sortedL1ProxCpp, 3},
