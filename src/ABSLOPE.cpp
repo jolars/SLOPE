@@ -523,7 +523,7 @@ SLOBE_ADMM_approx_missing(NumericVector beta_start,
   arma::mat x_div_w = zeros(n, p);
   double error = 0.0;
   double swlambda = 0.0;
-  double RSS = 0.0;
+  double rss = 0.0;
   double sigma_sq = 1.0;
 
   // First imputation
@@ -624,9 +624,9 @@ SLOBE_ADMM_approx_missing(NumericVector beta_start,
 
     // For the version with unknown sigma, estimate it
     if (!known_sigma) {
-      RSS = sum(pow((x * beta_arma - y), 2));
+      rss = sum(pow((x * beta_arma - y), 2));
       swlambda = sum(wbeta.sort(true) * lambda);
-      sigma = (swlambda + sqrt(pow(swlambda, 2.0) + 4 * (n + 2) * RSS)) /
+      sigma = (swlambda + sqrt(pow(swlambda, 2.0) + 4 * (n + 2) * rss)) /
               (2 * (n + 2));
     }
     lambda_sigma = lambda * sigma;
