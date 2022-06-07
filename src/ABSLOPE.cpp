@@ -18,6 +18,7 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
+#include "prox.h"
 #include <RcppArmadillo.h>
 #include <algorithm>
 #include <math.h>
@@ -218,6 +219,8 @@ slopeADMM(const arma::mat& x,
           int max_iter = 500,
           double tol_inf = 1e-08)
 {
+  auto prox_method = ProxMethod(0);
+
   // Precompute M = (X^TX + rho I)^{-1}
   // and MXtY = M * X^T * Y for proximal steps of quadratic part
   arma::mat xtx = x.t() * x;
@@ -242,7 +245,8 @@ slopeADMM(const arma::mat& x,
   while (i < max_iter) {
     beta = xtx_xty + xtx * (rho * (z - u));
     beta_plus_u = as<NumericVector>(wrap(beta + u));
-    z_new = prox_sorted_L1_C(beta_plus_u, lam_seq_rho);
+    // z_new = prox_sorted_L1_C(beta_plus_u, lam_seq_rho);
+    z_new = prox(beta + u, lambda / rho, prox_method);
     z_new_arma = as<arma::vec>(z_new);
     u += (beta - z_new_arma);
 
