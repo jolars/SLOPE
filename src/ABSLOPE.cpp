@@ -29,105 +29,6 @@
 using namespace Rcpp;
 using namespace arma;
 
-template<typename T>
-
-/*
- * Copyright 2013, M. Bogdan, E. van den Berg, W. Su, and E.J. Candes
- *
- * The following function is copied from proxSortedL1.c file
- * which is part of SLOPE Toolbox.
- *
- *   The SLOPE Toolbox is free software: you can redistribute it
- *   and/or  modify it under the terms of the GNU General Public License
- *   as published by the Free Software Foundation, either version 3 of
- *   the License, or (at your option) any later version.
- *
- *   The SLOPE Toolbox is distributed in the hope that it will
- *   be useful, but WITHOUT ANY WARRANTY; without even the implied
- *   warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *   See the GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with the SLOPE Toolbox. If not, see
- *   <http://www.gnu.org/licenses/>.
- */
-
-int
-evaluateProx(double* y, double* lambda, double* x, size_t n, int* order);
-
-/* ----------------------------------------------------------------------- */
-int
-evaluateProx(double* y, double* lambda, double* x, size_t n, int* order)
-{
-  double d;
-  double* s = NULL;
-  double* w = NULL;
-  size_t* idx_i = NULL;
-  size_t* idx_j = NULL;
-  size_t i, j, k;
-  int result = 0;
-
-  /* Allocate memory */
-  s = (double*)malloc(sizeof(double) * n);
-  w = (double*)malloc(sizeof(double) * n);
-  idx_i = (size_t*)malloc(sizeof(size_t) * n);
-  idx_j = (size_t*)malloc(sizeof(size_t) * n);
-
-  if ((s != NULL) && (w != NULL) && (idx_i != NULL) && (idx_j != NULL)) {
-    k = 0;
-    for (i = 0; i < n; i++) {
-      idx_i[k] = i;
-      idx_j[k] = i;
-      s[k] = y[i] - lambda[i];
-      w[k] = s[k];
-
-      while ((k > 0) && (w[k - 1] <= w[k])) {
-        k--;
-        idx_j[k] = i;
-        s[k] += s[k + 1];
-        w[k] = s[k] / (i - idx_i[k] + 1);
-      }
-
-      k++;
-    }
-
-    if (order == NULL) {
-      for (j = 0; j < k; j++) {
-        d = w[j];
-        if (d < 0)
-          d = 0;
-
-        for (i = idx_i[j]; i <= idx_j[j]; i++) {
-          x[i] = d;
-        }
-      }
-    } else {
-      for (j = 0; j < k; j++) {
-        d = w[j];
-        if (d < 0)
-          d = 0;
-        for (i = idx_i[j]; i <= idx_j[j]; i++) {
-          x[order[i]] = d;
-        }
-      }
-    }
-  } else {
-    result = -1;
-  }
-
-  /* Deallocate memory */
-  if (s != NULL)
-    free(s);
-  if (w != NULL)
-    free(w);
-  if (idx_i != NULL)
-    free(idx_i);
-  if (idx_j != NULL)
-    free(idx_j);
-
-  return result;
-}
-
 // Comparator class for argsort function
 class CompareByNumericVectorValues
 {
@@ -154,27 +55,6 @@ argsort(const NumericVector& w, IntegerVector ord)
   std::iota(ord.begin(), ord.end(), 0);
   CompareByNumericVectorValues comp = CompareByNumericVectorValues(&w);
   std::sort(ord.begin(), ord.end(), comp);
-}
-
-// Computes proximal step of SLOPE(lambda) norm from point y
-// NumericVector y is not assumed to be sorted, sorting is performed within
-// function
-NumericVector
-prox_sorted_L1_C(NumericVector y, NumericVector lambda)
-{
-  int n = y.size();
-  NumericVector x(n);
-  IntegerVector order(n);
-  argsort(abs(y), order);
-  IntegerVector sign_y = sign(y);
-  y = abs(y);
-  y.sort(true);
-  evaluateProx(y.begin(), lambda.begin(), x.begin(), n, NULL);
-  NumericVector res(n);
-  for (int k = 0; k < n; k++) {
-    res[order[k]] = sign_y[order[k]] * x[k];
-  }
-  return res;
 }
 
 // Creates a vector of weights for SLOPE for a given p and FDR
@@ -229,31 +109,26 @@ slopeADMM(const arma::mat& x,
   }
   xtx = xtx.i();
   arma::vec xtx_xty = xtx * (x.t() * y);
-  NumericVector lam_seq_rho = lambda / rho;
+  arma::vec lambda_div_rho = lambda / rho;
 
   // Prepare variables before starting ADMM loop
   int i = 0;
   arma::vec beta = zeros(p);
   arma::vec z = zeros(p);
+  arma::vec z_new = zeros(p);
   arma::vec u = zeros(p);
-  NumericVector z_new = NumericVector(p);
-  arma::vec z_new_arma = zeros(p);
-  NumericVector beta_plus_u(p);
   double dual_feas, primal_feas;
 
   // ADMM loop
   while (i < max_iter) {
     beta = xtx_xty + xtx * (rho * (z - u));
-    beta_plus_u = as<NumericVector>(wrap(beta + u));
-    // z_new = prox_sorted_L1_C(beta_plus_u, lam_seq_rho);
-    z_new = prox(beta + u, lambda / rho, prox_method);
-    z_new_arma = as<arma::vec>(z_new);
-    u += (beta - z_new_arma);
+    z_new = prox(beta + u, lambda_div_rho, prox_method);
+    u += (beta - z_new);
 
-    dual_feas = arma::norm(rho * (z_new_arma - z));
-    primal_feas = arma::norm(z_new_arma - beta);
+    dual_feas = arma::norm(rho * (z_new - z));
+    primal_feas = arma::norm(z_new - beta);
 
-    z = z_new_arma;
+    z = z_new;
 
     if (primal_feas < tol_inf && dual_feas < tol_inf) {
       i = max_iter;
