@@ -103,9 +103,9 @@ slopeADMM(const arma::mat& x,
   // Precompute M = (X^TX + rho I)^{-1}
   // and MXtY = M * X^T * Y for proximal steps of quadratic part
   arma::mat xtx = x.t() * x;
-  for (int i = 0; i < p; ++i) {
-    xtx(i, i) += rho;
-  }
+
+  xtx.diag() += rho;
+
   xtx = xtx.i();
   arma::vec xtx_xty = xtx * (x.t() * y);
   arma::vec lambda_div_rho = lambda / rho;
@@ -147,7 +147,6 @@ divXbyW(mat& x_div_w,
         const int& n,
         const int& p)
 {
-
   for (int i = 0; i < n; ++i) {
     for (int j = 0; j < p; ++j) {
       x_div_w(i, j) = X(i, j) / w_vec(j);
@@ -488,7 +487,12 @@ SLOBE_ADMM_approx_missing(NumericVector beta_start,
 
     // Compute rewieghted SLOPE estimator using computed weights and sigma
     w_vec = as<vec>(w);
-    divXbyW(x_div_w, x, w_vec, n, p);
+    // divXbyW(x_div_w, x, w_vec, n, p);
+
+    for (uword j = 0; j < p; ++j) {
+      x_div_w.col(j) /= w_vec(j);
+    }
+
     beta_arma = slopeADMM(x_div_w, y, lambda_sigma, p, 1.0);
 
     wbeta = as<NumericVector>(wrap(beta_arma));
@@ -498,6 +502,7 @@ SLOBE_ADMM_approx_missing(NumericVector beta_start,
     for (int i = 0; i < p; ++i) {
       beta_arma[i] /= w_vec[i];
     }
+
     beta_new = as<NumericVector>(wrap(beta_arma));
 
     // For the version with unknown sigma, estimate it
