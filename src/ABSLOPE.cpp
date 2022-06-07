@@ -18,11 +18,11 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
-#include<RcppArmadillo.h>
-#include<math.h>
-#include<stdlib.h>
-#include<numeric>
-#include<algorithm>
+#include <RcppArmadillo.h>
+#include <algorithm>
+#include <math.h>
+#include <numeric>
+#include <stdlib.h>
 
 //[[Rcpp::depends(RcppArmadillo)]]
 using namespace Rcpp;
@@ -51,23 +51,26 @@ template<typename T>
  *   <http://www.gnu.org/licenses/>.
  */
 
-int evaluateProx(double *y, double *lambda, double *x, size_t n, int *order);
+int
+evaluateProx(double* y, double* lambda, double* x, size_t n, int* order);
 
 /* ----------------------------------------------------------------------- */
-int evaluateProx(double *y, double *lambda, double *x, size_t n, int *order) {
+int
+evaluateProx(double* y, double* lambda, double* x, size_t n, int* order)
+{
   double d;
-  double *s = NULL;
-  double *w = NULL;
-  size_t *idx_i = NULL;
-  size_t *idx_j = NULL;
+  double* s = NULL;
+  double* w = NULL;
+  size_t* idx_i = NULL;
+  size_t* idx_j = NULL;
   size_t i, j, k;
   int result = 0;
 
   /* Allocate memory */
-  s = (double *)malloc(sizeof(double) * n);
-  w = (double *)malloc(sizeof(double) * n);
-  idx_i = (size_t *)malloc(sizeof(size_t) * n);
-  idx_j = (size_t *)malloc(sizeof(size_t) * n);
+  s = (double*)malloc(sizeof(double) * n);
+  w = (double*)malloc(sizeof(double) * n);
+  idx_i = (size_t*)malloc(sizeof(size_t) * n);
+  idx_j = (size_t*)malloc(sizeof(size_t) * n);
 
   if ((s != NULL) && (w != NULL) && (idx_i != NULL) && (idx_j != NULL)) {
     k = 0;
@@ -77,7 +80,7 @@ int evaluateProx(double *y, double *lambda, double *x, size_t n, int *order) {
       s[k] = y[i] - lambda[i];
       w[k] = s[k];
 
-      while ((k > 0) && (w[k-1] <= w[k])) {
+      while ((k > 0) && (w[k - 1] <= w[k])) {
         k--;
         idx_j[k] = i;
         s[k] += s[k + 1];
@@ -90,7 +93,8 @@ int evaluateProx(double *y, double *lambda, double *x, size_t n, int *order) {
     if (order == NULL) {
       for (j = 0; j < k; j++) {
         d = w[j];
-        if (d < 0) d = 0;
+        if (d < 0)
+          d = 0;
 
         for (i = idx_i[j]; i <= idx_j[j]; i++) {
           x[i] = d;
@@ -99,7 +103,8 @@ int evaluateProx(double *y, double *lambda, double *x, size_t n, int *order) {
     } else {
       for (j = 0; j < k; j++) {
         d = w[j];
-        if (d < 0) d = 0;
+        if (d < 0)
+          d = 0;
         for (i = idx_i[j]; i <= idx_j[j]; i++) {
           x[order[i]] = d;
         }
@@ -110,17 +115,21 @@ int evaluateProx(double *y, double *lambda, double *x, size_t n, int *order) {
   }
 
   /* Deallocate memory */
-  if (s != NULL) free(s);
-  if (w != NULL) free(w);
-  if (idx_i != NULL) free(idx_i);
-  if (idx_j != NULL) free(idx_j);
+  if (s != NULL)
+    free(s);
+  if (w != NULL)
+    free(w);
+  if (idx_i != NULL)
+    free(idx_i);
+  if (idx_j != NULL)
+    free(idx_j);
 
   return result;
 }
 
 // Comparator class for argsort function
 class CompareByNumericVectorValues
-  {
+{
 private:
   const NumericVector* _values;
 
@@ -129,32 +138,30 @@ public:
   {
     _values = values;
   }
-  bool operator() (const int& a, const int& b)
+  bool operator()(const int& a, const int& b)
   {
     return ((*_values)[a] > (*_values)[b]);
   }
 };
 
-
 // Writes down in IntegerVector ord sequnce of indexes,
 // such that w[ord[i]] >= w[ord[j]] whenever i <= j
 // for the given NumericVector w.
-void argsort(const NumericVector& w,
-             IntegerVector ord) {
+void
+argsort(const NumericVector& w, IntegerVector ord)
+{
 
   std::iota(ord.begin(), ord.end(), 0);
   CompareByNumericVectorValues comp = CompareByNumericVectorValues(&w);
   std::sort(ord.begin(), ord.end(), comp);
 }
 
-
-
-
 // Computes proximal step of SLOPE(lambda) norm from point y
 // NumericVector y is not assumed to be sorted, sorting is performed within
-//function
-NumericVector prox_sorted_L1_C(NumericVector y,
-                               NumericVector lambda) {
+// function
+NumericVector
+prox_sorted_L1_C(NumericVector y, NumericVector lambda)
+{
 
   size_t n = y.size();
   NumericVector x(n);
@@ -165,7 +172,7 @@ NumericVector prox_sorted_L1_C(NumericVector y,
   y.sort(true);
   evaluateProx(y.begin(), lambda.begin(), x.begin(), n, NULL);
   NumericVector res(n);
-  for(int k = 0; k < n; k++) {
+  for (int k = 0; k < n; k++) {
     res[order[k]] = sign_y[order[k]] * x[k];
   }
   return res;
@@ -173,39 +180,45 @@ NumericVector prox_sorted_L1_C(NumericVector y,
 
 // Creates a vector of weights for SLOPE for a given p and FDR
 // Writes down the vector in the passed NumericVector lam
-void create_lambda(NumericVector& lam, int p, double FDR, bool BH) {
+void
+create_lambda(NumericVector& lam, int p, double FDR, bool BH)
+{
 
   NumericVector h(p);
   if (BH) {
     for (double i = 0.0; i < h.size(); ++i) {
-      h[i] = 1 - (FDR* (i+1)/(2*p));
+      h[i] = 1 - (FDR * (i + 1) / (2 * p));
     }
   } else {
     for (double i = 0.0; i < h.size(); ++i) {
-      h[i] = 1 - (FDR* (1)/(2 *p));
+      h[i] = 1 - (FDR * (1) / (2 * p));
     }
   }
   lam = qnorm(h);
 }
 
 // Expectation of truncated gamma distribution
-double EX_trunc_gamma(double a, double b) {
+double
+EX_trunc_gamma(double a, double b)
+{
 
   double c = exp(Rf_pgamma(1.0, a + 1, 1.0 / b, 1, 1) -
-                 Rf_pgamma(1.0, a, 1.0/b, 1, 1));
+                 Rf_pgamma(1.0, a, 1.0 / b, 1, 1));
   c /= b;
   c *= a;
   return c;
 }
 
 // Compute SLOBE estimator for a linear model using ADMM
-arma::vec slope_admm(const mat& X,
-                     const vec& Y,
-                     NumericVector& lambda,
-                     const int& p,
-                     const double& rho,
-                     int max_iter=500,
-                     double tol_inf = 1e-08) {
+arma::vec
+slope_admm(const mat& X,
+           const vec& Y,
+           NumericVector& lambda,
+           const int& p,
+           const double& rho,
+           int max_iter = 500,
+           double tol_inf = 1e-08)
+{
 
   // Precompute M = (X^TX + rho I)^{-1}
   // and MXtY = M * X^T * Y for proximal steps of quadratic part
@@ -250,11 +263,13 @@ arma::vec slope_admm(const mat& X,
 }
 
 // Scaling matrix X by weight vector w
-void div_X_by_w(mat& X_div_w,
-                const mat& X,
-                const vec& w_vec,
-                const int& n,
-                const int& p) {
+void
+div_X_by_w(mat& X_div_w,
+           const mat& X,
+           const vec& w_vec,
+           const int& n,
+           const int& p)
+{
 
   for (int i = 0; i < n; ++i) {
     for (int j = 0; j < p; ++j) {
@@ -263,12 +278,11 @@ void div_X_by_w(mat& X_div_w,
   }
 }
 
-
 // Missing data imputation procedure that imputes means of non-missing values
 // in a column
-void impute_mean(mat& X,
-                 const int& n,
-                 const int &p) {
+void
+impute_mean(mat& X, const int& n, const int& p)
+{
 
   double colmean;
   int non_na_rows;
@@ -291,11 +305,9 @@ void impute_mean(mat& X,
   }
 }
 
-
-void linshrink_cov(mat &X,
-                   arma::mat &S,
-                   const int& n,
-                   const int& p) {
+void
+linshrink_cov(mat& X, arma::mat& S, const int& n, const int& p)
+{
 
   rowvec means = sum(X) / n;
   S = X.t() * X;
@@ -333,18 +345,20 @@ void linshrink_cov(mat &X,
   }
 }
 
-void impute_row_advance(const vec& beta,
-                        mat& X,
-                        const vec& Y,
-                        const mat& S,
-                        const double& sigma_sq,
-                        const LogicalMatrix& XisFin,
-                        const int& n,
-                        const int& p,
-                        const int& row,
-                        const std::vector<int> nanCols,
-                        const vec& m,
-                        const vec& tau_sq) {
+void
+impute_row_advance(const vec& beta,
+                   mat& X,
+                   const vec& Y,
+                   const mat& S,
+                   const double& sigma_sq,
+                   const LogicalMatrix& XisFin,
+                   const int& n,
+                   const int& p,
+                   const int& row,
+                   const std::vector<int> nanCols,
+                   const vec& m,
+                   const vec& tau_sq)
+{
 
   int l = nanCols.size();
   int s, t;
@@ -355,19 +369,18 @@ void impute_row_advance(const vec& beta,
   for (int i = 0; i < p; ++i) {
     if (!XisFin.at(row, i)) {
       for (int j = 0; j < p; ++j) {
-        if(XisFin.at(row, j)) {
-          //Rcout << "(row, j): (" << row << "," << j << ")\n";
+        if (XisFin.at(row, j)) {
+          // Rcout << "(row, j): (" << row << "," << j << ")\n";
           u[u_ind] += X.at(row, j) * S.at(j, i);
         }
       }
       u_ind += 1;
-    }
-    else {
+    } else {
       r -= beta[i] * X.at(row, i);
     }
   }
-  //Rcout << "r: " << r << "\n";
-  //Rcout << "u: " << u << "\n";
+  // Rcout << "r: " << r << "\n";
+  // Rcout << "u: " << u << "\n";
   for (int i = 0; i < l; ++i) {
     for (int j = 0; j < l; ++j) {
       if (i == j) {
@@ -383,33 +396,34 @@ void impute_row_advance(const vec& beta,
   arma::vec b = zeros(l);
   for (int i = 0; i < l; ++i) {
     t = nanCols[i];
-    b[i] =  ((r * beta[t]) / sigma_sq + m[t] - u[i]) / tau_sq[t];
+    b[i] = ((r * beta[t]) / sigma_sq + m[t] - u[i]) / tau_sq[t];
   }
 
   arma::vec sol = solve(A, b);
-  //Rcout << "A: " << A << "\n";
-  //Rcout << "b: " << b << "\n";
-  //Rcout << "sol: " << sol << "\n";
+  // Rcout << "A: " << A << "\n";
+  // Rcout << "b: " << b << "\n";
+  // Rcout << "sol: " << sol << "\n";
   for (int i = 0; i < l; ++i) {
     t = nanCols[i];
-    //Rcout << "imputed column: " << t << "\n";
+    // Rcout << "imputed column: " << t << "\n";
     X.at(row, t) = sol[i];
   }
 }
 
-
 // Imputation procedure for SLOBE with missing values
-void impute_advance(const arma::vec &beta,
-                    mat& X,
-                    const arma::vec &Y,
-                    const mat& S,
-                    const double& sigma_sq,
-                    const int& n,
-                    const int& p,
-                    const vec& mu,
-                    const LogicalMatrix& XisFin,
-                    const std::vector<int> anyNanXrows,
-                    const std::vector<std::vector<int> > nanIndInRows) {
+void
+impute_advance(const arma::vec& beta,
+               mat& X,
+               const arma::vec& Y,
+               const mat& S,
+               const double& sigma_sq,
+               const int& n,
+               const int& p,
+               const vec& mu,
+               const LogicalMatrix& XisFin,
+               const std::vector<int> anyNanXrows,
+               const std::vector<std::vector<int>> nanIndInRows)
+{
 
   arma::vec tau_sq = zeros(p);
   tau_sq = square(beta) / sigma_sq;
@@ -417,17 +431,17 @@ void impute_advance(const arma::vec &beta,
     tau_sq[i] = tau_sq[i] + S.at(i, i);
   }
 
-  //Rcout << "tau_sq: " << tau_sq << "\n";
+  // Rcout << "tau_sq: " << tau_sq << "\n";
   arma::vec m = zeros(p);
   for (int i = 0; i < p; ++i) {
     for (int j = 0; j < p; ++j) {
       m[i] += mu[j] * S.at(i, j);
     }
   }
-  //Rcout << "m: " << m << "\n";
+  // Rcout << "m: " << m << "\n";
 
-  for (int i = 0; i<anyNanXrows.size(); ++i) {
-    //Rcout << "rownum: " << i << "\n";
+  for (int i = 0; i < anyNanXrows.size(); ++i) {
+    // Rcout << "rownum: " << i << "\n";
     impute_row_advance(beta,
                        X,
                        Y,
@@ -441,15 +455,16 @@ void impute_advance(const arma::vec &beta,
                        m,
                        tau_sq);
   }
-
 }
 
 // A subroutine that updates gamma by using the mean lambda when several beta_i
 // have the same magnitude
-void gamma_mean_update(const NumericVector & abs_beta_ord,
-                       const NumericVector & lambda,
-                       const int & p,
-                       NumericVector & gamma_h) {
+void
+gamma_mean_update(const NumericVector& abs_beta_ord,
+                  const NumericVector& lambda,
+                  const int& p,
+                  NumericVector& gamma_h)
+{
 
   double bl_sum = lambda[0] * abs_beta_ord[0];
   double bl_mean;
@@ -474,30 +489,33 @@ void gamma_mean_update(const NumericVector & abs_beta_ord,
 }
 
 // [[Rcpp::export]]
-void Center_and_scale(arma::mat& X,const int& n, const int& p){
-  for (int i=0; i<p; ++i) {
-    X.col(i) -= sum(X.col(i))/n;
+void
+Center_and_scale(arma::mat& X, const int& n, const int& p)
+{
+  for (int i = 0; i < p; ++i) {
+    X.col(i) -= sum(X.col(i)) / n;
   }
   X = normalise(X);
 }
 
-
 // [[Rcpp::export]]
-List SLOBE_ADMM_approx_missing(NumericVector start,
-                               arma::mat Xmis,
-                               NumericMatrix Xinit,
-                               arma::vec Y,
-                               double a_prior,
-                               double b_prior,
-                               arma::mat Covmat,
-                               double sigma = 1.0,
-                               double FDR = 0.05,
-                               double tol = 1e-04,
-                               bool known_sigma = false,
-                               int max_iter = 100,
-                               bool verbose = false,
-                               bool BH = true,
-                               bool known_cov = false) {
+List
+SLOBE_ADMM_approx_missing(NumericVector start,
+                          arma::mat Xmis,
+                          NumericMatrix Xinit,
+                          arma::vec Y,
+                          double a_prior,
+                          double b_prior,
+                          arma::mat Covmat,
+                          double sigma = 1.0,
+                          double FDR = 0.05,
+                          double tol = 1e-04,
+                          bool known_sigma = false,
+                          int max_iter = 100,
+                          bool verbose = false,
+                          bool BH = true,
+                          bool known_cov = false)
+{
 
   // Initialize variables
   int p = start.length();
@@ -524,12 +542,12 @@ List SLOBE_ADMM_approx_missing(NumericVector start,
 
   LogicalMatrix XisFin(n, p);
   std::vector<int> anyNanXrows;
-  std::vector<std::vector<int> > nanIndicesInRow;
+  std::vector<std::vector<int>> nanIndicesInRow;
   for (int i = 0; i < n; ++i) {
     anyNanInRow = false;
     std::vector<int> nanInd;
     for (int j = 0; j < p; ++j) {
-      XisFin.at(i , j) = arma::is_finite(Xmis.at(i, j));
+      XisFin.at(i, j) = arma::is_finite(Xmis.at(i, j));
       if (!XisFin.at(i, j)) {
         nanInd.push_back(j);
         anyNanInRow = true;
@@ -561,7 +579,7 @@ List SLOBE_ADMM_approx_missing(NumericVector start,
 
   // Compute vector lambda based on BH procedure
   NumericVector lambda(p);
-  create_lambda(lambda, p, FDR,BH);
+  create_lambda(lambda, p, FDR, BH);
 
   // Initialize sigma, c, theta, gamma
   double sstart = sum(start != 0);
@@ -584,8 +602,7 @@ List SLOBE_ADMM_approx_missing(NumericVector start,
 
   double theta = (sstart + a_prior) / (a_prior + b_prior + p);
 
-
-  //gamma_h = abs(beta[order]) * (c-1) * lambda / sigma;
+  // gamma_h = abs(beta[order]) * (c-1) * lambda / sigma;
 
   gamma_mean_update(abs(beta[order]), lambda, p, gamma_h);
   gamma_h = gamma_h * (c - 1) / sigma;
@@ -599,7 +616,7 @@ List SLOBE_ADMM_approx_missing(NumericVector start,
   bool converged = false;
   int iter = 0;
   while (iter < max_iter) {
-    if(verbose) {
+    if (verbose) {
       Rcout << "Iteration: " << iter << "/" << max_iter << "\n";
     }
     w = 1.0 - (1.0 - c) * gamma;
@@ -623,13 +640,13 @@ List SLOBE_ADMM_approx_missing(NumericVector start,
       RSS = sum(pow((X * beta_arma - Y), 2));
       swlambda = sum(wbeta.sort(true) * lambda);
       sigma = (swlambda + sqrt(pow(swlambda, 2.0) + 4 * (n + 2) * RSS)) /
-        (2 * (n + 2));
+              (2 * (n + 2));
     }
     lambda_sigma = lambda * sigma;
     sigma_sq = sigma * sigma;
 
-    //Estimate covariance matrix
-    if(!known_cov) {
+    // Estimate covariance matrix
+    if (!known_cov) {
       linshrink_cov(X, Sigma, n, p);
 
       S = inv_sympd(Sigma);
@@ -656,16 +673,15 @@ List SLOBE_ADMM_approx_missing(NumericVector start,
 
     Center_and_scale(X, n, p);
 
-
     // compute new gamma
-    //gamma_h = abs(beta[order]) * (c-1) * lambda / sigma ;
+    // gamma_h = abs(beta[order]) * (c-1) * lambda / sigma ;
 
     gamma_mean_update(abs(beta[order]), lambda, p, gamma_h);
     gamma_h = gamma_h * (c - 1) / sigma;
 
-    gamma_h = (theta * c)/(theta * c + (1 - theta) * exp(gamma_h));
+    gamma_h = (theta * c) / (theta * c + (1 - theta) * exp(gamma_h));
 
-    for(int i = 0; i < p; ++i) {
+    for (int i = 0; i < p; ++i) {
       gamma[order[i]] = gamma_h[i];
     }
 
@@ -695,11 +711,11 @@ List SLOBE_ADMM_approx_missing(NumericVector start,
       iter = max_iter;
       converged = true;
     }
-    if(verbose) {
-      Rcout<< "Error =  "<< error <<" sigma = "<< sigma <<", theta = "<<
-        theta<<", c = " << c << "\n";
+    if (verbose) {
+      Rcout << "Error =  " << error << " sigma = " << sigma
+            << ", theta = " << theta << ", c = " << c << "\n";
     }
-    std::copy(beta_new.begin(), beta_new.end(), beta.begin()) ;
+    std::copy(beta_new.begin(), beta_new.end(), beta.begin());
     ++iter;
   }
 
