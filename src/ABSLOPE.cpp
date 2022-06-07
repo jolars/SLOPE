@@ -490,7 +490,7 @@ SLOBE_ADMM_approx_missing(NumericVector beta_start,
     // divXbyW(x_div_w, x, w_vec, n, p);
 
     for (uword j = 0; j < p; ++j) {
-      x_div_w.col(j) /= w_vec(j);
+      x_div_w.col(j) = x.col(j) / w_vec(j);
     }
 
     beta_arma = slopeADMM(x_div_w, y, lambda_sigma, p, 1.0);
