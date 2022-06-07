@@ -4,12 +4,12 @@
 \alias{rescale_all}
 \title{rescale_all}
 \usage{
-rescale_all(results, Xmis)
+rescale_all(results, x_miss)
 }
 \arguments{
 \item{results}{A number}
 
-\item{Xmis}{A number}
+\item{x_miss}{A number}
 }
 \description{
 rescale_all

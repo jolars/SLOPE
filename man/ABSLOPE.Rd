@@ -5,39 +5,42 @@
 \title{Adaptive Bayesian SLOPE}
 \usage{
 ABSLOPE(
-  Xmis,
-  Y,
-  start = NULL,
-  Xinit = NULL,
-  a_prior = 0.01 * NROW(Xmis),
-  b_prior = 0.01 * NROW(Xmis),
-  Covmat = NULL,
+  x_miss,
+  y,
+  x_init = NULL,
+  beta_start = NULL,
+  a_prior = 0.01 * NROW(x_miss),
+  b_prior = 0.01 * NROW(x_miss),
+  covmat = NULL,
   sigma = NULL,
-  FDR = 0.05,
+  fdr = 0.05,
+  bh = TRUE,
   tol = 1e-04,
   max_iter = 100L,
-  verbose = FALSE,
-  BH = TRUE
+  verbose = FALSE
 )
 }
 \arguments{
-\item{Xmis}{model matrix}
+\item{x_miss}{model matrix}
 
-\item{Y}{numeric. Response variable.}
+\item{y}{numeric. Response variable.}
 
-\item{start}{the initial vector of regression coefficients for the first
+\item{x_init}{model matrix with initially imputed NA values}
+
+\item{beta_start}{the initial vector of regression coefficients for the first
 iteration. Default to the LASSO estimator obtained after}
-
-\item{Xinit}{model matrix with initially imputed NA values}
 
 \item{a_prior, b_prior}{non-negative parameters of the prior Beta distribution
 on theta.}
 
-\item{Covmat}{numeric covariance matrix. Default to identity matrix.}
+\item{covmat}{numeric covariance matrix. Default to identity matrix.}
 
 \item{sigma}{the variance of the noise. Default to 1.}
 
-\item{FDR}{False Discovery Rate. Default to 0.05.}
+\item{fdr}{False Discovery Rate. Default to 0.05.}
+
+\item{bh}{logical. Indicates whether the Benjamini-Hochberg correction for
+multiple testing should be used.}
 
 \item{tol}{optimization tolerance.}
 
@@ -45,9 +48,6 @@ on theta.}
 algorithm. Default to 100.}
 
 \item{verbose}{verbosity. Default to FALSE}
-
-\item{BH}{logical. Indicates whether the Benjamini-Hochberg correction for
-multiple testing should be used.}
 }
 \description{
 Fit a gaussian model regularized with Adaptive Bayesian SLOPE
@@ -59,9 +59,9 @@ Maximization (SAEM)
 LASSO (SSL). This approach relies on iterations of the weighted SLOPE
 algorithm and finds the solution by minimizing
 \deqn{
-   G(Y,X,\beta) + \sum_{j = 1}^{p} w_j \lambda_{r(\beta,j)}|\beta_j|,
+   G(y,X,\beta) + \sum_{j = 1}^{p} w_j \lambda_{r(\beta,j)}|\beta_j|,
   }{
-   G(Y,X,\beta) + \sum w_j |\beta_j|\lambda_r(\beta,j),
+   G(y,X,\beta) + \sum w_j |\beta_j|\lambda_r(\beta,j),
   }
 where \eqn{r(\beta,j) = {1,2,...,p}} is the rank of \eqn{\beta_j}  among
 elements in \eqn{\beta} in a descending order. The weight \eqn{w_j} depends
@@ -73,9 +73,9 @@ previous iterations.
 \examples{
 set.seed(17)
 xy <- SLOPE:::randomProblem(1e2, 200, response = "gaussian")
-X <- as.matrix(xy$x)
-Y <- xy$y
-fit <- ABSLOPE(X, Y)
+x <- as.matrix(xy$x)
+y <- xy$y
+fit <- ABSLOPE(x, y)
 }
 \references{
 Jiang, W., Bogdan, M., Josse, J., Majewski, S., Miasojedow, B.,
