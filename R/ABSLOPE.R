@@ -4,7 +4,6 @@
 #' @param y Response vector
 #'
 #' @keywords internal
-
 rescale <- function(y, x) {
   z <- data.frame(y = y, x = x)
   z <- stats::na.omit(z)
@@ -18,7 +17,6 @@ rescale <- function(y, x) {
 #' @param x_miss Response vector
 #'
 #' @keywords internal
-
 rescale_all <- function(results, x_miss) {
   k <- NCOL(results[["X"]])
   scales <- sapply(1:k, function(l) rescale(results[["X"]][, l], x_miss[, l]))
@@ -93,8 +91,6 @@ rescale_all <- function(results, x_miss) {
 #' y <- xy$y
 #' fit <- ABSLOPE(x, y)
 #' @export ABSLOPE
-#'
-
 ABSLOPE <- function(x_miss,
                     y,
                     x_init = NULL,
