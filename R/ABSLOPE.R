@@ -109,7 +109,6 @@ ABSLOPE <- function(Xmis,
                     max_iter = 100L,
                     verbose = FALSE,
                     BH = TRUE) {
-
   checkmate::assert_number(a_prior)
   checkmate::assert_number(b_prior)
   checkmate::assert_number(FDR)
@@ -118,9 +117,11 @@ ABSLOPE <- function(Xmis,
   checkmate::assert_logical(verbose)
   checkmate::assert_logical(BH)
 
-  if(!(is.matrix(Xmis) | is.data.frame(Xmis))) {
-    stop(paste0("Xmis needs to be matrix or data.frame. You provided ",
-                paste0(class(Xmis), collapse = ", ")))
+  if (!(is.matrix(Xmis) | is.data.frame(Xmis))) {
+    stop(paste0(
+      "Xmis needs to be matrix or data.frame. You provided ",
+      paste0(class(Xmis), collapse = ", ")
+    ))
   }
 
   Xmis <- as.matrix(Xmis)
@@ -154,13 +155,26 @@ ABSLOPE <- function(Xmis,
   }
 
   out <- SLOBE_ADMM_approx_missing(
-    start, Xmis, Xinit, Y, a_prior, b_prior,
-    Covmat, sigma, FDR, tol, known_sigma,
-    max_iter, verbose, BH, known_cov
+    start,
+    Xmis,
+    Xinit,
+    Y,
+    a_prior,
+    b_prior,
+    Covmat,
+    sigma,
+    FDR,
+    tol,
+    known_sigma,
+    max_iter,
+    verbose,
+    BH,
+    known_cov
   )
 
   out <- rescale_all(out, Xmis)
   out[["call"]] <- ocall
+
   structure(
     out,
     class = c("ABSLOPE", "SLOPE")
