@@ -23,9 +23,9 @@ test_that("printing trainedSLOPE", {
 
 test_that("printing ABSLOPE", {
   set.seed(17)
-  xy <- SLOPE:::randomProblem(1e2, 200, response = "gaussian")
-  X <- as.matrix(xy$x)
-  Y <- xy$y
-  fit <- ABSLOPE(X, Y)
+  xy <- SLOPE:::randomProblem(100, 200, response = "gaussian")
+  x <- as.matrix(xy$x)
+  y <- xy$y
+  fit <- ABSLOPE(x, y)
   expect_output(print(fit))
 })
