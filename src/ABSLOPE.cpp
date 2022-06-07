@@ -25,7 +25,6 @@
 #include <numeric>
 #include <stdlib.h>
 
-//[[Rcpp::depends(RcppArmadillo)]]
 using namespace Rcpp;
 using namespace arma;
 
@@ -224,35 +223,35 @@ linShrinkCov(mat& x, arma::mat& s_mat, const int& n, const int& p)
 
 void
 imputeRowAdvance(const vec& beta,
-                 mat& X,
-                 const vec& Y,
-                 const mat& S,
+                 mat& x,
+                 const vec& y,
+                 const mat& s_mat,
                  const double& sigma_sq,
-                 const LogicalMatrix& XisFin,
+                 const LogicalMatrix& x_is_fin,
                  const int& n,
                  const int& p,
                  const int& row,
-                 const std::vector<int> nanCols,
+                 const std::vector<int> nan_cols,
                  const vec& m,
                  const vec& tau_sq)
 {
 
-  int l = nanCols.size();
+  int l = nan_cols.size();
   int s, t;
   arma::mat A = zeros(l, l);
   arma::vec u = zeros(l);
-  double r = Y[row];
+  double r = y[row];
   int u_ind = 0;
   for (int i = 0; i < p; ++i) {
-    if (!XisFin(row, i)) {
+    if (!x_is_fin(row, i)) {
       for (int j = 0; j < p; ++j) {
-        if (XisFin(row, j)) {
-          u[u_ind] += X(row, j) * S(j, i);
+        if (x_is_fin(row, j)) {
+          u[u_ind] += x(row, j) * s_mat(j, i);
         }
       }
       u_ind += 1;
     } else {
-      r -= beta[i] * X(row, i);
+      r -= beta[i] * x(row, i);
     }
   }
 
@@ -261,23 +260,23 @@ imputeRowAdvance(const vec& beta,
       if (i == j) {
         A(i, j) = 1.0;
       } else {
-        s = nanCols[i];
-        t = nanCols[j];
-        A(i, j) = (beta[s] * beta[t] / sigma_sq + S(s, t)) / tau_sq[s];
+        s = nan_cols[i];
+        t = nan_cols[j];
+        A(i, j) = (beta[s] * beta[t] / sigma_sq + s_mat(s, t)) / tau_sq[s];
       }
     }
   }
 
   arma::vec b = zeros(l);
   for (int i = 0; i < l; ++i) {
-    t = nanCols[i];
+    t = nan_cols[i];
     b[i] = ((r * beta[t]) / sigma_sq + m[t] - u[i]) / tau_sq[t];
   }
 
   arma::vec sol = solve(A, b);
   for (int i = 0; i < l; ++i) {
-    t = nanCols[i];
-    X(row, t) = sol[i];
+    t = nan_cols[i];
+    x(row, t) = sol[i];
   }
 }
 
@@ -358,10 +357,10 @@ updateGammaMean(const NumericVector& abs_beta_ord,
 
 // [[Rcpp::export]]
 void
-centerAndScale(arma::mat& x, const int& n, const int& p)
+centerAndScale(arma::mat& x)
 {
-  for (int i = 0; i < p; ++i) {
-    x.col(i) -= sum(x.col(i)) / n;
+  for (arma::uword i = 0; i < x.n_cols; ++i) {
+    x.col(i) -= arma::mean(x.col(i));
   }
   x = normalise(x);
 }
@@ -429,7 +428,7 @@ SLOBE_ADMM_approx_missing(NumericVector beta_start,
 
   NumericMatrix temp_x = clone(x_init);
   arma::mat x = as<mat>(temp_x);
-  centerAndScale(x, n, p);
+  centerAndScale(x);
   arma::mat sigma_mat = zeros(p, p);
   if (!known_cov) {
     linShrinkCov(x, sigma_mat, n, p);
@@ -537,7 +536,7 @@ SLOBE_ADMM_approx_missing(NumericVector beta_start,
                   any_nan_x_rows,
                   nan_indices_in_row);
 
-    centerAndScale(x, n, p);
+    centerAndScale(x);
 
     // compute new gamma
     updateGammaMean(abs(beta[order]), lambda, p, gamma_h);

@@ -12,14 +12,12 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // centerAndScale
-void centerAndScale(arma::mat& x, const int& n, const int& p);
-RcppExport SEXP _SLOPE_centerAndScale(SEXP xSEXP, SEXP nSEXP, SEXP pSEXP) {
+void centerAndScale(arma::mat& x);
+RcppExport SEXP _SLOPE_centerAndScale(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::mat& >::type x(xSEXP);
-    Rcpp::traits::input_parameter< const int& >::type n(nSEXP);
-    Rcpp::traits::input_parameter< const int& >::type p(pSEXP);
-    centerAndScale(x, n, p);
+    centerAndScale(x);
     return R_NilValue;
 END_RCPP
 }
@@ -105,7 +103,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_SLOPE_centerAndScale", (DL_FUNC) &_SLOPE_centerAndScale, 3},
+    {"_SLOPE_centerAndScale", (DL_FUNC) &_SLOPE_centerAndScale, 1},
     {"_SLOPE_SLOBE_ADMM_approx_missing", (DL_FUNC) &_SLOPE_SLOBE_ADMM_approx_missing, 15},
     {"_SLOPE_lambdaSequence", (DL_FUNC) &_SLOPE_lambdaSequence, 6},
     {"_SLOPE_sortedL1ProxCpp", (DL_FUNC) &_SLOPE_sortedL1ProxCpp, 3},
