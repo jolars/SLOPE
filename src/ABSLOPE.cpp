@@ -482,9 +482,7 @@ SLOBE_ADMM_approx_missing(NumericVector beta_start,
     wbeta = abs(wbeta);
     argsort(wbeta, order);
 
-    for (int i = 0; i < p; ++i) {
-      beta_arma[i] /= w_vec[i];
-    }
+    beta_arma /= w_vec;
 
     beta_new = as<NumericVector>(wrap(beta_arma));
 
