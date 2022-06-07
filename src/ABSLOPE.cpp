@@ -139,21 +139,6 @@ slopeADMM(const arma::mat& x,
   return z;
 }
 
-// Scaling matrix X by weight vector w
-void
-divXbyW(mat& x_div_w,
-        const mat& X,
-        const vec& w_vec,
-        const int& n,
-        const int& p)
-{
-  for (int i = 0; i < n; ++i) {
-    for (int j = 0; j < p; ++j) {
-      x_div_w(i, j) = X(i, j) / w_vec(j);
-    }
-  }
-}
-
 // Missing data imputation procedure that imputes means of non-missing values
 // in a column
 void
@@ -486,7 +471,6 @@ SLOBE_ADMM_approx_missing(NumericVector beta_start,
 
     // Compute rewieghted SLOPE estimator using computed weights and sigma
     w_vec = as<vec>(w);
-    // divXbyW(x_div_w, x, w_vec, n, p);
 
     for (uword j = 0; j < p; ++j) {
       x_div_w.col(j) = x.col(j) / w_vec(j);
