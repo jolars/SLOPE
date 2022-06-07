@@ -222,7 +222,7 @@ slopeADMM(const arma::mat& x,
   // and MXtY = M * X^T * Y for proximal steps of quadratic part
   arma::mat xtx = x.t() * x;
   for (int i = 0; i < p; ++i) {
-    xtx.at(i, i) += rho;
+    xtx(i, i) += rho;
   }
   xtx = xtx.i();
   arma::vec xtx_xty = xtx * (x.t() * y);
@@ -272,7 +272,7 @@ divXbyW(mat& x_div_w,
 
   for (int i = 0; i < n; ++i) {
     for (int j = 0; j < p; ++j) {
-      x_div_w.at(i, j) = X.at(i, j) / w_vec(j);
+      x_div_w(i, j) = X(i, j) / w_vec(j);
     }
   }
 }
@@ -290,15 +290,15 @@ imputeMean(mat& x, const int& n, const int& p)
     non_na_rows = 0;
 
     for (int r_num = 0; r_num < n; r_num++) {
-      if (arma::is_finite(x.at(r_num, c_num))) {
-        colmean += x.at(r_num, c_num);
+      if (arma::is_finite(x(r_num, c_num))) {
+        colmean += x(r_num, c_num);
         non_na_rows += 1;
       }
     }
     colmean /= non_na_rows;
     for (int r_num = 0; r_num < n; r_num++) {
-      if (!arma::is_finite(x.at(r_num, c_num))) {
-        x.at(r_num, c_num) = colmean;
+      if (!arma::is_finite(x(r_num, c_num))) {
+        x(r_num, c_num) = colmean;
       }
     }
   }
@@ -311,8 +311,8 @@ linShrinkCov(mat& x, arma::mat& s_mat, const int& n, const int& p)
   s_mat = x.t() * x;
   for (int i = 0; i < p; ++i) {
     for (int j = 0; j < p; ++j) {
-      s_mat.at(i, j) -= n * means[i] * means[j];
-      s_mat.at(i, j) /= n;
+      s_mat(i, j) -= n * means[i] * means[j];
+      s_mat(i, j) /= n;
     }
   }
   double m = trace(s_mat) / p;
@@ -326,11 +326,11 @@ linShrinkCov(mat& x, arma::mat& s_mat, const int& n, const int& p)
     for (int j = 0; j < p; ++j) {
       sum_prod = 0.0;
       for (int k = 0; k < n; ++k) {
-        prod = (x.at(k, i) - means[i]) * (x.at(k, j) - means[j]);
+        prod = (x(k, i) - means[i]) * (x(k, j) - means[j]);
         b_bar2 += prod * prod;
         sum_prod += prod;
       }
-      b_bar2 -= 2 * s_mat.at(i, j) * sum_prod;
+      b_bar2 -= 2 * s_mat(i, j) * sum_prod;
     }
   }
   b_bar2 /= (p * pow(n - 1, 2));
@@ -339,7 +339,7 @@ linShrinkCov(mat& x, arma::mat& s_mat, const int& n, const int& p)
   s_mat *= (a2 / d2);
   m *= (b2 / d2);
   for (int i = 0; i < p; ++i) {
-    s_mat.at(i, i) += m;
+    s_mat(i, i) += m;
   }
 }
 
@@ -365,26 +365,26 @@ imputeRowAdvance(const vec& beta,
   double r = Y[row];
   int u_ind = 0;
   for (int i = 0; i < p; ++i) {
-    if (!XisFin.at(row, i)) {
+    if (!XisFin(row, i)) {
       for (int j = 0; j < p; ++j) {
-        if (XisFin.at(row, j)) {
-          u[u_ind] += X.at(row, j) * S.at(j, i);
+        if (XisFin(row, j)) {
+          u[u_ind] += X(row, j) * S(j, i);
         }
       }
       u_ind += 1;
     } else {
-      r -= beta[i] * X.at(row, i);
+      r -= beta[i] * X(row, i);
     }
   }
 
   for (int i = 0; i < l; ++i) {
     for (int j = 0; j < l; ++j) {
       if (i == j) {
-        A.at(i, j) = 1.0;
+        A(i, j) = 1.0;
       } else {
         s = nanCols[i];
         t = nanCols[j];
-        A.at(i, j) = (beta[s] * beta[t] / sigma_sq + S.at(s, t)) / tau_sq[s];
+        A(i, j) = (beta[s] * beta[t] / sigma_sq + S(s, t)) / tau_sq[s];
       }
     }
   }
@@ -398,7 +398,7 @@ imputeRowAdvance(const vec& beta,
   arma::vec sol = solve(A, b);
   for (int i = 0; i < l; ++i) {
     t = nanCols[i];
-    X.at(row, t) = sol[i];
+    X(row, t) = sol[i];
   }
 }
 
@@ -420,13 +420,13 @@ imputeAdvance(const arma::vec& beta,
   arma::vec tau_sq = zeros(p);
   tau_sq = square(beta) / sigma_sq;
   for (int i = 0; i < p; ++i) {
-    tau_sq[i] = tau_sq[i] + s_mat.at(i, i);
+    tau_sq[i] = tau_sq[i] + s_mat(i, i);
   }
 
   arma::vec m = zeros(p);
   for (int i = 0; i < p; ++i) {
     for (int j = 0; j < p; ++j) {
-      m[i] += mu[j] * s_mat.at(i, j);
+      m[i] += mu[j] * s_mat(i, j);
     }
   }
 
@@ -536,8 +536,8 @@ SLOBE_ADMM_approx_missing(NumericVector beta_start,
     any_nan_in_row = false;
     std::vector<int> nan_ind;
     for (int j = 0; j < p; ++j) {
-      x_is_fin.at(i, j) = arma::is_finite(x_miss.at(i, j));
-      if (!x_is_fin.at(i, j)) {
+      x_is_fin(i, j) = arma::is_finite(x_miss(i, j));
+      if (!x_is_fin(i, j)) {
         nan_ind.push_back(j);
         any_nan_in_row = true;
       }
@@ -561,7 +561,7 @@ SLOBE_ADMM_approx_missing(NumericVector beta_start,
   arma::vec mu = zeros(p);
   for (int i = 0; i < p; ++i) {
     for (int j = 0; j < n; ++j) {
-      mu.at(i) += x.at(j, i);
+      mu(i) += x(j, i);
     }
     mu[i] /= n;
   }
@@ -641,7 +641,7 @@ SLOBE_ADMM_approx_missing(NumericVector beta_start,
     mu = zeros(p);
     for (int i = 0; i < p; ++i) {
       for (int j = 0; j < n; ++j) {
-        mu.at(i) += x.at(j, i);
+        mu(i) += x(j, i);
       }
       mu[i] /= n;
     }
