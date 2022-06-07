@@ -9,7 +9,7 @@ rescale <- function(y, x) {
   z <- data.frame(y = y, x = x)
   z <- stats::na.omit(z)
 
-  stats::lm(x ~ y, data = z)$coef
+  stats::coef(stats::lm(x ~ y, data = z))
 }
 
 #' rescale_all
