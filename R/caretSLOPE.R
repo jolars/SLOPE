@@ -1,4 +1,4 @@
-#' Model objects for model tuning with caret
+#' Model objects for model tuning with caret (deprecated)
 #'
 #' This function can be used in a call to [caret::train()] to enable
 #' model tuning using caret. Note that this function does not properly work
@@ -14,6 +14,8 @@
 #'
 #' @export
 caretSLOPE <- function() {
+  .Deprecated()
+
   list(
     label = "SLOPE",
     library = c("SLOPE", "Matrix"),
