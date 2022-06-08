@@ -19,13 +19,6 @@ test_that("plot.SLOPE works as expected", {
 
   p <- plot(fit, intercept = TRUE, x_variable = "deviance_ratio")
   vdiffr::expect_doppelganger("plot.SLOPE-parameters-in-test", p)
-
-  set.seed(17)
-  xy <- SLOPE:::randomProblem(100, 2, response = "gaussian")
-  x <- as.matrix(xy$x)
-  y <- xy$y
-  fit <- ABSLOPE(x, y)
-  expect_error(plot(fit))
 })
 
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/caretSLOPE.R
 \name{caretSLOPE}
 \alias{caretSLOPE}
-\title{Model objects for model tuning with caret}
+\title{Model objects for model tuning with caret (deprecated)}
 \usage{
 caretSLOPE()
 }

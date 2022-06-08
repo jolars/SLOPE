@@ -31,13 +31,6 @@ plot.SLOPE <- function(x,
                        ...) {
   object <- x
 
-  if (inherits(object, "ABSLOPE")) {
-    stop(
-      "There's no plot functionality for ABSLOPE objects. ",
-      "x must be fitted by SLOPE()."
-    )
-  }
-
   x_variable <- match.arg(x_variable)
 
   coefs <- getElement(object, "coefficients")

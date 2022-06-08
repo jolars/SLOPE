@@ -52,7 +52,6 @@ Other SLOPE-methods:
 \code{\link{deviance.SLOPE}()},
 \code{\link{plot.SLOPE}()},
 \code{\link{predict.SLOPE}()},
-\code{\link{print.ABSLOPE}()},
 \code{\link{print.SLOPE}()}
 }
 \concept{SLOPE-methods}
