@@ -83,7 +83,6 @@ Return predictions from models fit by \code{\link[=SLOPE]{SLOPE()}}.
 \examples{
 fit <- with(mtcars, SLOPE(cbind(mpg, hp), vs, family = "binomial"))
 predict(fit, with(mtcars, cbind(mpg, hp)), type = "class")
-
 }
 \seealso{
 \code{\link[stats:predict]{stats::predict()}}, \code{\link[stats:predict.glm]{stats::predict.glm()}}, \code{\link[=coef.SLOPE]{coef.SLOPE()}}

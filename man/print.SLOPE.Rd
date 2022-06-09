@@ -23,7 +23,6 @@ Print results from SLOPE fit
 \examples{
 fit <- SLOPE(wine$x, wine$y, family = "multinomial")
 print(fit, digits = 1)
-
 }
 \seealso{
 \code{\link[=SLOPE]{SLOPE()}}, \code{\link[=print.SLOPE]{print.SLOPE()}}
