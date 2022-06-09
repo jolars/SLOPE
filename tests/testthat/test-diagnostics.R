@@ -5,7 +5,7 @@ test_that("diagnostics are working properly", {
   fit <- SLOPE(xy$x, xy$y, diagnostics = TRUE, path_length = 10, alpha = 1)
 
   expect_is(fit$diagnostics, "data.frame")
-  p <- plotDiagnostics(fit)
+  p <- plotDiagnostics(fit, xvar = "iteration")
   expect_s3_class(p, "ggplot")
 
   skip_on_ci()
