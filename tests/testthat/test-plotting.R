@@ -16,10 +16,14 @@ test_that("plot.SLOPE works as expected", {
   p1 <- plot(fit)
   p2 <- plot(fit, intercept = TRUE, x_variable = "deviance_ratio")
 
+  fit <- SLOPE(wine$x, wine$y, family = "multinomial")
+  p3 <- plot(fit)
+
   skip_on_ci()
 
   vdiffr::expect_doppelganger("plot.SLOPE-in-test", p1)
   vdiffr::expect_doppelganger("plot.SLOPE-parameters-in-test", p2)
+  vdiffr::expect_doppelganger("plot.SLOPE-multinomial-in-test", p3)
 })
 
 test_that("plot.trainedSLOPE works as expected", {
