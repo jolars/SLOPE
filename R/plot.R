@@ -77,6 +77,10 @@ plot.SLOPE <- function(x,
       color = NULL
     )
 
+  if (x_variable == "alpha") {
+    plt <- plt + ggplot2::scale_x_log10()
+  }
+
   if (m > 1) {
     plt <- plt + ggplot2::facet_wrap("Var2")
   }
