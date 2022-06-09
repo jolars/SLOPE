@@ -74,6 +74,7 @@ foreach
 frac
 geq
 gfgwzt
+ggplot
 glmnet
 http
 https
@@ -99,6 +100,7 @@ proline
 prox
 rVert
 regularizations
+reimplemented
 rvert
 solaris
 sparseMatrix
