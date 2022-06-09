@@ -1,13 +1,13 @@
 ## Test environments
 
-* Fedora 35, R-release, clang (local)
+* Fedora 36, R-release, gcc (local)
 * Windows, R-devel (win-builder)
 * Windows, R-release (win-builder)
 * Debian Linux, R-devel, GCC ASAN/UBSAN (rhub)
 * Windows Server 2008 R2 SP1, R-devel, 32/64 bit (rhub)
-* Ubuntu 20.04, R-release (github)
-* Windows Server 2019, R-release (github)
-* Mac OS X 10.15.7, R-release (github)
+* Ubuntu 20.04, R-release, R-devel (github)
+* Windows Server 2022, R-release (github)
+* Mac OS X 11.6.6, R-release (github)
 
 ## R CMD check results
 
