@@ -8,14 +8,17 @@
 #' @keywords internal
 interpolateCoefficients <- function(beta,
                                     interpolation_list) {
-
   d <- length(interpolation_list$frac)
 
-  ip_beta <- array(NA,
-                   c(dim(beta)[1], dim(beta)[2], d),
-                   dimnames = list(rownames(beta),
-                                   colnames(beta),
-                                   paste(seq_len(d))))
+  ip_beta <- array(
+    NA,
+    c(dim(beta)[1], dim(beta)[2], d),
+    dimnames = list(
+      rownames(beta),
+      colnames(beta),
+      paste(seq_len(d))
+    )
+  )
 
   for (i in seq_along(interpolation_list$left)) {
     ip_beta[, , i] <-

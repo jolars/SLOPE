@@ -26,7 +26,11 @@
 #'
 #' @export
 sortedL1Prox <- function(x, lambda, method = c("stack", "pava")) {
-  prox_method <- switch(match.arg(method), stack = 0, pava = 1)
+  prox_method <- switch(
+    match.arg(method),
+    stack = 0,
+    pava = 1
+  )
 
   stopifnot(
     length(x) == length(lambda),
@@ -40,5 +44,3 @@ sortedL1Prox <- function(x, lambda, method = c("stack", "pava")) {
 
   as.vector(res)
 }
-
-

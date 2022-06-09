@@ -29,7 +29,6 @@ coef.SLOPE <- function(object,
                        simplify = TRUE,
                        sigma,
                        ...) {
-
   if (!missing(sigma)) {
     warning("`sigma` is deprecated. Please use `alpha` instead.")
     alpha <- sigma
@@ -57,8 +56,9 @@ coef.SLOPE <- function(object,
     n_penalties <- length(value)
   }
 
-  if (simplify)
+  if (simplify) {
     beta <- drop(beta)
+  }
 
   beta
 }

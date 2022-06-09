@@ -3,9 +3,9 @@ test_that("screening rules return correct results for instances with known viola
 
   for (solver in c("fista", "admm")) {
     for (family in c("gaussian", "binomial", "poisson", "multinomial")) {
-
-      if (family != "gaussian" && solver == "admm")
+      if (family != "gaussian" && solver == "admm") {
         next
+      }
 
       d <- SLOPE:::randomProblem(100, 10, q = 0.1, response = family)
 

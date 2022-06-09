@@ -9,11 +9,11 @@ test_that("predictions work for all models", {
     fit <- SLOPE(x, y, family = family, path_length = 5)
 
     for (type in c("link", "response", "class")) {
-      if (type == "class" && family %in% c("gaussian", "poisson"))
+      if (type == "class" && family %in% c("gaussian", "poisson")) {
         next
+      }
 
       expect_silent(predict(fit, x, type = type))
     }
   }
 })
-

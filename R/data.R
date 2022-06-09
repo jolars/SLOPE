@@ -194,4 +194,3 @@
 #'  School of Information and Computer Science.
 #' @family datasets
 "student"
-

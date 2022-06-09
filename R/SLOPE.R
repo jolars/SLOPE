@@ -94,7 +94,7 @@
 #' beginning and almost unregularized at the end. If, however, both
 #' `alpha` and `lambda` are manually specified, then the scales of both do
 #' matter, so make sure to choose them wisely.
-#' 
+#'
 #' Instead of choosing the sequence manually, one of the following
 #' automatically generated sequences may be chosen.
 #'
@@ -138,7 +138,7 @@
 #' for \eqn{i = 1,\dots,p}. We use the parametrization from Zhong and Kwok
 #' (2021) but use \eqn{\theta_1} and \eqn{\theta_2} instead of \eqn{\lambda_1}
 #' and \eqn{\lambda_2} to avoid confusion and abuse of notation.
-#' 
+#'
 #' **lasso**
 #'
 #' SLOPE is exactly equivalent to the
@@ -419,7 +419,11 @@ SLOPE <- function(x,
   family <- match.arg(family)
   solver <- match.arg(solver)
   screen_alg <- match.arg(screen_alg)
-  prox_method_choice <- switch(match.arg(prox_method), stack = 0, pava = 1)
+  prox_method_choice <- switch(
+    match.arg(prox_method),
+    stack = 0,
+    pava = 1
+  )
 
   if (solver == "admm" && family != "gaussian") {
     stop("ADMM solver is only supported with `family = 'gaussian'`")

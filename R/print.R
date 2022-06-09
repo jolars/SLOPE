@@ -8,7 +8,6 @@
 #' @examples
 #' fit <- SLOPE(wine$x, wine$y, family = "multinomial")
 #' print(fit, digits = 1)
-#'
 #' @method print SLOPE
 #' @family SLOPE-methods
 #' @seealso [SLOPE()], [print.SLOPE()]
@@ -19,14 +18,18 @@ print.SLOPE <- function(x, ...) {
   n_nonzero <- apply(x$nonzeros, 3, sum)
   deviance_ratio <- x$deviance_ratio
 
-  out <- data.frame(alpha = alpha,
-                    deviance_ratio = deviance_ratio,
-                    n_nonzero = n_nonzero)
+  out <- data.frame(
+    alpha = alpha,
+    deviance_ratio = deviance_ratio,
+    n_nonzero = n_nonzero
+  )
 
   # print call
   cat("\nCall:\n",
-      paste(deparse(x$call), sep = "\n", collapse = "\n"),
-      "\n\n", sep = "")
+    paste(deparse(x$call), sep = "\n", collapse = "\n"),
+    "\n\n",
+    sep = ""
+  )
 
   # print path summary
   cat("Path summary:\n")
@@ -38,7 +41,9 @@ print.SLOPE <- function(x, ...) {
 #' @export
 print.TrainedSLOPE <- function(x, ...) {
   cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"),
-      "\n\n", sep = "")
+    "\n\n",
+    sep = ""
+  )
 
   cat("Optimum values:\n")
 

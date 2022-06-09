@@ -28,7 +28,6 @@
 #' @examples
 #' fit <- with(mtcars, SLOPE(cbind(mpg, hp), vs, family = "binomial"))
 #' predict(fit, with(mtcars, cbind(mpg, hp)), type = "class")
-#'
 #' @export
 predict.SLOPE <- function(object,
                           x,
@@ -39,11 +38,13 @@ predict.SLOPE <- function(object,
                           ...) {
   # This method (the base method) only generates linear predictors
 
-  if (inherits(x, "sparseMatrix"))
+  if (inherits(x, "sparseMatrix")) {
     x <- methods::as(x, "dgCMatrix")
+  }
 
-  if (inherits(x, "data.frame"))
+  if (inherits(x, "data.frame")) {
     x <- as.matrix(x)
+  }
 
   if (!missing(sigma)) {
     warning("`sigma` is deprecated. Please use `alpha` instead.")
@@ -54,8 +55,9 @@ predict.SLOPE <- function(object,
 
   intercept <- "(Intercept)" %in% dimnames(beta)[[1]]
 
-  if (intercept)
+  if (intercept) {
     x <- methods::cbind2(1, x)
+  }
 
   n <- NROW(x)
   p <- NROW(beta)
@@ -64,13 +66,18 @@ predict.SLOPE <- function(object,
 
   stopifnot(p == NCOL(x))
 
-  lin_pred <- array(dim = c(n, m, n_penalties),
-                    dimnames = list(rownames(x),
-                                    dimnames(beta)[[2]],
-                                    dimnames(beta)[[3]]))
+  lin_pred <- array(
+    dim = c(n, m, n_penalties),
+    dimnames = list(
+      rownames(x),
+      dimnames(beta)[[2]],
+      dimnames(beta)[[3]]
+    )
+  )
 
-  for (i in seq_len(n_penalties))
+  for (i in seq_len(n_penalties)) {
     lin_pred[, , i] <- as.matrix(x %*% beta[, , i])
+  }
 
   lin_pred
 }
@@ -87,8 +94,9 @@ predict.GaussianSLOPE <- function(object,
 
   out <- NextMethod(object, type = type) # always linear predictors
 
-  if (simplify)
+  if (simplify) {
     out <- drop(out)
+  }
 
   out
 }
@@ -101,7 +109,6 @@ predict.BinomialSLOPE <- function(object,
                                   type = c("link", "response", "class"),
                                   simplify = TRUE,
                                   ...) {
-
   type <- match.arg(type)
 
   lin_pred <- NextMethod(object, type = type)
@@ -114,15 +121,17 @@ predict.BinomialSLOPE <- function(object,
       cnum <- ifelse(lin_pred > 0, 2, 1)
       clet <- object$class_names[cnum]
 
-      if (is.matrix(cnum))
+      if (is.matrix(cnum)) {
         clet <- array(clet, dim(cnum), dimnames(cnum))
+      }
 
       clet
     }
   )
 
-  if (simplify)
+  if (simplify) {
     out <- drop(out)
+  }
 
   out
 }
@@ -136,7 +145,6 @@ predict.PoissonSLOPE <- function(object,
                                  exact = FALSE,
                                  simplify = TRUE,
                                  ...) {
-
   type <- match.arg(type)
 
   lin_pred <- NextMethod(object, type = type)
@@ -147,8 +155,9 @@ predict.PoissonSLOPE <- function(object,
     response = exp(lin_pred)
   )
 
-  if (simplify)
+  if (simplify) {
     out <- drop(out)
+  }
 
   out
 }
@@ -169,7 +178,6 @@ predict.MultinomialSLOPE <- function(object,
 
   out <- switch(
     type,
-
     response = {
       n <- nrow(lin_pred)
       m <- ncol(lin_pred)
@@ -178,28 +186,28 @@ predict.MultinomialSLOPE <- function(object,
       tmp <- array(0, c(n, m + 1, path_length))
       tmp[, 1:m, ] <- lin_pred
 
-      aperm(apply(tmp, c(1, 3), function(x) exp(x)/sum(exp(x))), c(2, 1, 3))
+      aperm(apply(tmp, c(1, 3), function(x) exp(x) / sum(exp(x))), c(2, 1, 3))
     },
-
     link = lin_pred,
-
     class = {
       response <- stats::predict(object, x, type = "response", simplify = FALSE)
       tmp <- apply(response, c(1, 3), which.max)
       class_names <- object$class_names
 
       predicted_classes <-
-        apply(tmp,
-              2,
-              function(a) factor(a, levels = 1:(m+1), labels = class_names))
+        apply(
+          tmp,
+          2,
+          function(a) factor(a, levels = 1:(m + 1), labels = class_names)
+        )
       colnames(predicted_classes) <- dimnames(lin_pred)[[3]]
       predicted_classes
     }
   )
 
-  if (simplify)
+  if (simplify) {
     out <- drop(out)
+  }
 
   out
 }
-

@@ -17,10 +17,11 @@ setupDiagnostics <- function(res) {
   primal <- unlist(primals)
   dual <- unlist(duals)
 
-  data.frame(iteration = unlist(lapply(nn, seq_len)),
-             time = time,
-             primal = primal,
-             dual = dual,
-             penalty = rep(seq_len(nl), nn))
+  data.frame(
+    iteration = unlist(lapply(nn, seq_len)),
+    time = time,
+    primal = primal,
+    dual = dual,
+    penalty = rep(seq_len(nl), nn)
+  )
 }
-

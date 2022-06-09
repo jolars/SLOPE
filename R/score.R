@@ -24,8 +24,9 @@
 #'
 #' fit <- SLOPE(x, y, family = "binomial")
 #' score(fit, x, y, measure = "auc")
-score <- function(object, x, y, measure)
+score <- function(object, x, y, measure) {
   UseMethod("score")
+}
 
 #' @rdname score
 #' @export
@@ -39,8 +40,9 @@ score.GaussianSLOPE <- function(object,
   y_hat <- stats::predict(object, x, simplify = FALSE)
 
   switch(measure,
-         mse = apply((y_hat - y)^2, 3, mean),
-         mae = apply(abs(y_hat - y), 3, mean))
+    mse = apply((y_hat - y)^2, 3, mean),
+    mae = apply(abs(y_hat - y), 3, mean)
+  )
 }
 
 #' @rdname score
@@ -48,11 +50,13 @@ score.GaussianSLOPE <- function(object,
 score.BinomialSLOPE <- function(object,
                                 x,
                                 y,
-                                measure = c("mse",
-                                            "mae",
-                                            "deviance",
-                                            "misclass",
-                                            "auc")) {
+                                measure = c(
+                                  "mse",
+                                  "mae",
+                                  "deviance",
+                                  "misclass",
+                                  "auc"
+                                )) {
   measure <- match.arg(measure)
 
   prob_min <- 1e-05
@@ -63,8 +67,7 @@ score.BinomialSLOPE <- function(object,
 
   y_hat <- stats::predict(object, x, type = "response", simplify = FALSE)
 
-  switch(
-    measure,
+  switch(measure,
     auc = apply(y_hat, 3, function(y_hat_i) auc(y, y_hat_i)),
     mse = apply((y_hat + y[, 1] - 1)^2 + (y_hat - y[, 2])^2, 3, mean),
     mae = apply(abs(y_hat + y[, 1] - 1) + abs(y_hat - y[, 2]), 3, mean),
@@ -85,10 +88,12 @@ score.BinomialSLOPE <- function(object,
 score.MultinomialSLOPE <- function(object,
                                    x,
                                    y,
-                                   measure = c("mse",
-                                               "mae",
-                                               "deviance",
-                                               "misclass")) {
+                                   measure = c(
+                                     "mse",
+                                     "mae",
+                                     "deviance",
+                                     "misclass"
+                                   )) {
   measure <- match.arg(measure)
   prob_min <- 1e-05
   prob_max <- 1 - prob_min
@@ -102,14 +107,15 @@ score.MultinomialSLOPE <- function(object,
 
   y <- diag(n_levels)[as.numeric(y), ]
 
-  switch(
-    measure,
-    mse = apply(y_hat, 3, function(x) mean((x-y)^2)),
-    mae = apply(y_hat, 3, function(x) mean(abs(x-y))),
+  switch(measure,
+    mse = apply(y_hat, 3, function(x) mean((x - y)^2)),
+    mae = apply(y_hat, 3, function(x) mean(abs(x - y))),
     deviance = {
       y_hat <- pmin(pmax(y_hat, prob_min), prob_max)
 
-      apply(y_hat, 3, function(p_hat) {-2 * sum(y * log(p_hat))})
+      apply(y_hat, 3, function(p_hat) {
+        -2 * sum(y * log(p_hat))
+      })
     },
     misclass = apply(y_hat, 3, function(x) {
       n_obs <- nrow(x)
@@ -127,30 +133,27 @@ score.PoissonSLOPE <- function(object,
                                x,
                                y,
                                measure = c("mse", "mae")) {
-
   measure <- match.arg(measure)
 
   y <- as.vector(y)
   y_hat <- stats::predict(object, x, simplify = FALSE)
 
   switch(measure,
-         mse = apply((y_hat - y)^2, 3, mean),
-         mae = apply(abs(y_hat - y), 3, mean))
+    mse = apply((y_hat - y)^2, 3, mean),
+    mae = apply(abs(y_hat - y), 3, mean)
+  )
 }
 
 auc <- function(y, prob, weights = rep.int(1, nrow(y))) {
   if (is.matrix(y) || is.data.frame(y)) {
-
     ny <- nrow(y)
-    auc(rep(c(0, 1), c(ny, ny)), c(prob,prob), as.vector(weights*y))
-
+    auc(rep(c(0, 1), c(ny, ny)), c(prob, prob), as.vector(weights * y))
   } else {
-
     if (is.null(weights)) {
       rprob <- rank(prob)
       n1 <- sum(y)
       n0 <- length(y) - n1
-      u <- sum(rprob[y == 1]) - n1*(n1 + 1)/2
+      u <- sum(rprob[y == 1]) - n1 * (n1 + 1) / 2
       exp(log(u) - log(n1) - log(n0))
     } else {
       # randomize ties

@@ -2,8 +2,8 @@
 # using isotonic regression (PAVA) algorithm instead
 prox_sorted_l1_isotone <- function(x, lambda) {
   sign <- sign(x)
-  x    <- abs(x)
-  ord  <- order(x)
+  x <- abs(x)
+  ord <- order(x)
 
   res <- stats::isoreg(x[ord] - rev(lambda))
 
@@ -14,7 +14,6 @@ prox_sorted_l1_isotone <- function(x, lambda) {
 }
 
 test_that("Prox and isotonic regression agree", {
-
   library(SLOPE)
   n <- 15
 

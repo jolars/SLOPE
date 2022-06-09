@@ -1,5 +1,4 @@
 test_that("lasso and slope fits are equivalent if all lambda are equal", {
-
   set.seed(1)
   xy <- SLOPE:::randomProblem(100, 10)
   x <- xy$x
@@ -12,11 +11,14 @@ test_that("lasso and slope fits are equivalent if all lambda are equal", {
   lasso <- glmnet(x, y, lambda = 0.6, standardize = FALSE)
   lasso_coef <- as.vector(coef(lasso))
 
-  slope <- SLOPE(x, y,
-                 center = FALSE,
-                 scale = FALSE,
-                 lambda = rep(lambda, ncol(x)),
-                 alpha = 1)
+  slope <- SLOPE(
+    x,
+    y,
+    center = FALSE,
+    scale = FALSE,
+    lambda = rep(lambda, ncol(x)),
+    alpha = 1
+  )
 
   slope_coef <- coef(slope)
 
