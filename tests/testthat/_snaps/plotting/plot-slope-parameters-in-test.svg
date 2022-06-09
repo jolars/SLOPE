@@ -66,65 +66,64 @@
 <text x='324.23' y='568.24' text-anchor='middle' style='font-size: 11.00px; font-family: sans;' textLength='140.04px' lengthAdjust='spacingAndGlyphs'>Fraction Deviance Explained</text>
 <text transform='translate(18.08,286.50) rotate(-90)' style='font-size: 11.00px; font-family: sans;' textLength='5.10px' lengthAdjust='spacingAndGlyphs'>β</text>
 <text transform='translate(13.05,286.53) rotate(-90)' style='font-size: 11.00px; font-family: sans;' textLength='5.16px' lengthAdjust='spacingAndGlyphs'>^</text>
-<rect x='616.90' y='112.12' width='97.62' height='343.65' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<text x='616.90' y='120.83' style='font-size: 11.00px; font-family: sans;' textLength='70.94px' lengthAdjust='spacingAndGlyphs'>Variable name</text>
-<rect x='616.90' y='127.45' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='618.62' y1='136.09' x2='632.45' y2='136.09' style='stroke-width: 1.07; stroke: #F8766D; stroke-linecap: butt;' />
-<rect x='616.90' y='144.73' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='618.62' y1='153.37' x2='632.45' y2='153.37' style='stroke-width: 1.07; stroke: #E9842C; stroke-linecap: butt;' />
-<rect x='616.90' y='162.01' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='618.62' y1='170.65' x2='632.45' y2='170.65' style='stroke-width: 1.07; stroke: #D69100; stroke-linecap: butt;' />
-<rect x='616.90' y='179.29' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='618.62' y1='187.93' x2='632.45' y2='187.93' style='stroke-width: 1.07; stroke: #BC9D00; stroke-linecap: butt;' />
-<rect x='616.90' y='196.57' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='618.62' y1='205.21' x2='632.45' y2='205.21' style='stroke-width: 1.07; stroke: #9CA700; stroke-linecap: butt;' />
-<rect x='616.90' y='213.85' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='618.62' y1='222.49' x2='632.45' y2='222.49' style='stroke-width: 1.07; stroke: #6FB000; stroke-linecap: butt;' />
-<rect x='616.90' y='231.13' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='618.62' y1='239.77' x2='632.45' y2='239.77' style='stroke-width: 1.07; stroke: #00B813; stroke-linecap: butt;' />
-<rect x='616.90' y='248.41' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='618.62' y1='257.05' x2='632.45' y2='257.05' style='stroke-width: 1.07; stroke: #00BD61; stroke-linecap: butt;' />
-<rect x='616.90' y='265.69' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='618.62' y1='274.33' x2='632.45' y2='274.33' style='stroke-width: 1.07; stroke: #00C08E; stroke-linecap: butt;' />
-<rect x='616.90' y='282.97' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='618.62' y1='291.61' x2='632.45' y2='291.61' style='stroke-width: 1.07; stroke: #00C0B4; stroke-linecap: butt;' />
-<rect x='616.90' y='300.25' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='618.62' y1='308.89' x2='632.45' y2='308.89' style='stroke-width: 1.07; stroke: #00BDD4; stroke-linecap: butt;' />
-<rect x='616.90' y='317.53' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='618.62' y1='326.17' x2='632.45' y2='326.17' style='stroke-width: 1.07; stroke: #00B5EE; stroke-linecap: butt;' />
-<rect x='616.90' y='334.81' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='618.62' y1='343.45' x2='632.45' y2='343.45' style='stroke-width: 1.07; stroke: #00A7FF; stroke-linecap: butt;' />
-<rect x='616.90' y='352.09' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='618.62' y1='360.73' x2='632.45' y2='360.73' style='stroke-width: 1.07; stroke: #7F96FF; stroke-linecap: butt;' />
-<rect x='616.90' y='369.37' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='618.62' y1='378.01' x2='632.45' y2='378.01' style='stroke-width: 1.07; stroke: #BC81FF; stroke-linecap: butt;' />
-<rect x='616.90' y='386.65' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='618.62' y1='395.29' x2='632.45' y2='395.29' style='stroke-width: 1.07; stroke: #E26EF7; stroke-linecap: butt;' />
-<rect x='616.90' y='403.93' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='618.62' y1='412.57' x2='632.45' y2='412.57' style='stroke-width: 1.07; stroke: #F863DF; stroke-linecap: butt;' />
-<rect x='616.90' y='421.21' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='618.62' y1='429.85' x2='632.45' y2='429.85' style='stroke-width: 1.07; stroke: #FF62BF; stroke-linecap: butt;' />
-<rect x='616.90' y='438.49' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='618.62' y1='447.13' x2='632.45' y2='447.13' style='stroke-width: 1.07; stroke: #FF6A9A; stroke-linecap: butt;' />
-<text x='639.66' y='139.12' style='font-size: 8.80px; font-family: sans;' textLength='40.11px' lengthAdjust='spacingAndGlyphs'>(Intercept)</text>
-<text x='639.66' y='156.40' style='font-size: 8.80px; font-family: sans;' textLength='14.68px' lengthAdjust='spacingAndGlyphs'>age</text>
-<text x='639.66' y='173.68' style='font-size: 8.80px; font-family: sans;' textLength='9.79px' lengthAdjust='spacingAndGlyphs'>bp</text>
-<text x='639.66' y='190.96' style='font-size: 8.80px; font-family: sans;' textLength='16.15px' lengthAdjust='spacingAndGlyphs'>chol</text>
-<text x='639.66' y='208.24' style='font-size: 8.80px; font-family: sans;' textLength='7.82px' lengthAdjust='spacingAndGlyphs'>hr</text>
-<text x='639.66' y='225.52' style='font-size: 8.80px; font-family: sans;' textLength='35.72px' lengthAdjust='spacingAndGlyphs'>old_peak</text>
-<text x='639.66' y='242.80' style='font-size: 8.80px; font-family: sans;' textLength='29.36px' lengthAdjust='spacingAndGlyphs'>vessels</text>
-<text x='639.66' y='260.08' style='font-size: 8.80px; font-family: sans;' textLength='13.70px' lengthAdjust='spacingAndGlyphs'>sex</text>
-<text x='639.66' y='277.36' style='font-size: 8.80px; font-family: sans;' textLength='26.43px' lengthAdjust='spacingAndGlyphs'>angina</text>
-<text x='639.66' y='294.64' style='font-size: 8.80px; font-family: sans;' textLength='51.87px' lengthAdjust='spacingAndGlyphs'>glucose_high</text>
-<text x='639.66' y='311.92' style='font-size: 8.80px; font-family: sans;' textLength='39.14px' lengthAdjust='spacingAndGlyphs'>cp_typical</text>
-<text x='639.66' y='329.20' style='font-size: 8.80px; font-family: sans;' textLength='44.04px' lengthAdjust='spacingAndGlyphs'>cp_atypical</text>
-<text x='639.66' y='346.48' style='font-size: 8.80px; font-family: sans;' textLength='57.26px' lengthAdjust='spacingAndGlyphs'>cp_nonanginal</text>
-<text x='639.66' y='363.76' style='font-size: 8.80px; font-family: sans;' textLength='55.78px' lengthAdjust='spacingAndGlyphs'>ecg_abnormal</text>
-<text x='639.66' y='381.04' style='font-size: 8.80px; font-family: sans;' textLength='40.13px' lengthAdjust='spacingAndGlyphs'>ecg_estes</text>
-<text x='639.66' y='398.32' style='font-size: 8.80px; font-family: sans;' textLength='37.67px' lengthAdjust='spacingAndGlyphs'>slope_flat</text>
-<text x='639.66' y='415.60' style='font-size: 8.80px; font-family: sans;' textLength='74.87px' lengthAdjust='spacingAndGlyphs'>slope_downsloping</text>
-<text x='639.66' y='432.88' style='font-size: 8.80px; font-family: sans;' textLength='37.67px' lengthAdjust='spacingAndGlyphs'>thal_fixed</text>
-<text x='639.66' y='450.16' style='font-size: 8.80px; font-family: sans;' textLength='57.24px' lengthAdjust='spacingAndGlyphs'>thal_reversible</text>
+<rect x='616.90' y='117.05' width='97.62' height='333.80' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<rect x='616.90' y='122.53' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='618.62' y1='131.17' x2='632.45' y2='131.17' style='stroke-width: 1.07; stroke: #F8766D; stroke-linecap: butt;' />
+<rect x='616.90' y='139.81' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='618.62' y1='148.45' x2='632.45' y2='148.45' style='stroke-width: 1.07; stroke: #E9842C; stroke-linecap: butt;' />
+<rect x='616.90' y='157.09' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='618.62' y1='165.73' x2='632.45' y2='165.73' style='stroke-width: 1.07; stroke: #D69100; stroke-linecap: butt;' />
+<rect x='616.90' y='174.37' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='618.62' y1='183.01' x2='632.45' y2='183.01' style='stroke-width: 1.07; stroke: #BC9D00; stroke-linecap: butt;' />
+<rect x='616.90' y='191.65' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='618.62' y1='200.29' x2='632.45' y2='200.29' style='stroke-width: 1.07; stroke: #9CA700; stroke-linecap: butt;' />
+<rect x='616.90' y='208.93' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='618.62' y1='217.57' x2='632.45' y2='217.57' style='stroke-width: 1.07; stroke: #6FB000; stroke-linecap: butt;' />
+<rect x='616.90' y='226.21' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='618.62' y1='234.85' x2='632.45' y2='234.85' style='stroke-width: 1.07; stroke: #00B813; stroke-linecap: butt;' />
+<rect x='616.90' y='243.49' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='618.62' y1='252.13' x2='632.45' y2='252.13' style='stroke-width: 1.07; stroke: #00BD61; stroke-linecap: butt;' />
+<rect x='616.90' y='260.77' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='618.62' y1='269.41' x2='632.45' y2='269.41' style='stroke-width: 1.07; stroke: #00C08E; stroke-linecap: butt;' />
+<rect x='616.90' y='278.05' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='618.62' y1='286.69' x2='632.45' y2='286.69' style='stroke-width: 1.07; stroke: #00C0B4; stroke-linecap: butt;' />
+<rect x='616.90' y='295.33' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='618.62' y1='303.97' x2='632.45' y2='303.97' style='stroke-width: 1.07; stroke: #00BDD4; stroke-linecap: butt;' />
+<rect x='616.90' y='312.61' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='618.62' y1='321.25' x2='632.45' y2='321.25' style='stroke-width: 1.07; stroke: #00B5EE; stroke-linecap: butt;' />
+<rect x='616.90' y='329.89' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='618.62' y1='338.53' x2='632.45' y2='338.53' style='stroke-width: 1.07; stroke: #00A7FF; stroke-linecap: butt;' />
+<rect x='616.90' y='347.17' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='618.62' y1='355.81' x2='632.45' y2='355.81' style='stroke-width: 1.07; stroke: #7F96FF; stroke-linecap: butt;' />
+<rect x='616.90' y='364.45' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='618.62' y1='373.09' x2='632.45' y2='373.09' style='stroke-width: 1.07; stroke: #BC81FF; stroke-linecap: butt;' />
+<rect x='616.90' y='381.73' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='618.62' y1='390.37' x2='632.45' y2='390.37' style='stroke-width: 1.07; stroke: #E26EF7; stroke-linecap: butt;' />
+<rect x='616.90' y='399.01' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='618.62' y1='407.65' x2='632.45' y2='407.65' style='stroke-width: 1.07; stroke: #F863DF; stroke-linecap: butt;' />
+<rect x='616.90' y='416.29' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='618.62' y1='424.93' x2='632.45' y2='424.93' style='stroke-width: 1.07; stroke: #FF62BF; stroke-linecap: butt;' />
+<rect x='616.90' y='433.57' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='618.62' y1='442.21' x2='632.45' y2='442.21' style='stroke-width: 1.07; stroke: #FF6A9A; stroke-linecap: butt;' />
+<text x='639.66' y='134.20' style='font-size: 8.80px; font-family: sans;' textLength='40.11px' lengthAdjust='spacingAndGlyphs'>(Intercept)</text>
+<text x='639.66' y='151.48' style='font-size: 8.80px; font-family: sans;' textLength='14.68px' lengthAdjust='spacingAndGlyphs'>age</text>
+<text x='639.66' y='168.76' style='font-size: 8.80px; font-family: sans;' textLength='9.79px' lengthAdjust='spacingAndGlyphs'>bp</text>
+<text x='639.66' y='186.04' style='font-size: 8.80px; font-family: sans;' textLength='16.15px' lengthAdjust='spacingAndGlyphs'>chol</text>
+<text x='639.66' y='203.32' style='font-size: 8.80px; font-family: sans;' textLength='7.82px' lengthAdjust='spacingAndGlyphs'>hr</text>
+<text x='639.66' y='220.60' style='font-size: 8.80px; font-family: sans;' textLength='35.72px' lengthAdjust='spacingAndGlyphs'>old_peak</text>
+<text x='639.66' y='237.88' style='font-size: 8.80px; font-family: sans;' textLength='29.36px' lengthAdjust='spacingAndGlyphs'>vessels</text>
+<text x='639.66' y='255.16' style='font-size: 8.80px; font-family: sans;' textLength='13.70px' lengthAdjust='spacingAndGlyphs'>sex</text>
+<text x='639.66' y='272.44' style='font-size: 8.80px; font-family: sans;' textLength='26.43px' lengthAdjust='spacingAndGlyphs'>angina</text>
+<text x='639.66' y='289.72' style='font-size: 8.80px; font-family: sans;' textLength='51.87px' lengthAdjust='spacingAndGlyphs'>glucose_high</text>
+<text x='639.66' y='307.00' style='font-size: 8.80px; font-family: sans;' textLength='39.14px' lengthAdjust='spacingAndGlyphs'>cp_typical</text>
+<text x='639.66' y='324.28' style='font-size: 8.80px; font-family: sans;' textLength='44.04px' lengthAdjust='spacingAndGlyphs'>cp_atypical</text>
+<text x='639.66' y='341.56' style='font-size: 8.80px; font-family: sans;' textLength='57.26px' lengthAdjust='spacingAndGlyphs'>cp_nonanginal</text>
+<text x='639.66' y='358.84' style='font-size: 8.80px; font-family: sans;' textLength='55.78px' lengthAdjust='spacingAndGlyphs'>ecg_abnormal</text>
+<text x='639.66' y='376.12' style='font-size: 8.80px; font-family: sans;' textLength='40.13px' lengthAdjust='spacingAndGlyphs'>ecg_estes</text>
+<text x='639.66' y='393.40' style='font-size: 8.80px; font-family: sans;' textLength='37.67px' lengthAdjust='spacingAndGlyphs'>slope_flat</text>
+<text x='639.66' y='410.68' style='font-size: 8.80px; font-family: sans;' textLength='74.87px' lengthAdjust='spacingAndGlyphs'>slope_downsloping</text>
+<text x='639.66' y='427.96' style='font-size: 8.80px; font-family: sans;' textLength='37.67px' lengthAdjust='spacingAndGlyphs'>thal_fixed</text>
+<text x='639.66' y='445.24' style='font-size: 8.80px; font-family: sans;' textLength='57.24px' lengthAdjust='spacingAndGlyphs'>thal_reversible</text>
 <text x='42.52' y='14.56' style='font-size: 13.20px; font-family: sans;' textLength='180.50px' lengthAdjust='spacingAndGlyphs'>plot.SLOPE-parameters-in-test</text>
 </g>
 </svg>
