@@ -183,15 +183,29 @@ plot.TrainedSLOPE <- function(x,
 
   q <- unique(summary[["q"]])
 
-  xlab <- expression(log[e](alpha))
+  xlab <- expression(alpha)
+
+  border_col <-
+    c(
+      ci_border,
+      NA,
+      ci_col
+    )[is.character(ci_border) + 2 * isFALSE(ci_border) + 3 * isTRUE(ci_border)]
 
   p <- ggplot2::ggplot(
     summary,
-    ggplot2::aes(x = log(!!quote(alpha)), y = mean)
+    ggplot2::aes(x = !!quote(alpha), y = mean)
   ) +
-    ggplot2::geom_line() +
     ggplot2::xlab(xlab) +
-    ggplot2::ylab(measure_label)
+    ggplot2::ylab(measure_label) +
+    ggplot2::scale_x_log10() +
+    ggplot2::geom_ribbon(
+      ggplot2::aes(ymin = !!quote(lo), ymax = !!quote(hi)),
+      fill = ci_col,
+      color = border_col,
+      alpha = ci_alpha
+    ) +
+    ggplot2::geom_line()
 
   if (length(q) > 1) {
     p <- p + ggplot2::facet_wrap(
@@ -203,25 +217,10 @@ plot.TrainedSLOPE <- function(x,
   if (plot_min) {
     p <- p + ggplot2::geom_vline(
       data = optimum,
-      ggplot2::aes(xintercept = log(!!quote(alpha))),
+      ggplot2::aes(xintercept = !!quote(alpha)),
       linetype = "dotted"
     )
   }
-
-  border_col <-
-    c(
-      ci_border,
-      NA,
-      ci_col
-    )[is.character(ci_border) + 2 * isFALSE(ci_border) + 3 * isTRUE(ci_border)]
-
-  p <- p +
-    ggplot2::geom_ribbon(
-      ggplot2::aes(ymin = !!quote(lo), ymax = !!quote(hi)),
-      fill = ci_col,
-      color = border_col,
-      alpha = ci_alpha
-    )
 
   p
 }
