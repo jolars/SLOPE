@@ -1,5 +1,3 @@
-
-
 test_that("deviance() works.", {
   fit <- SLOPE(abalone$x, abalone$y, family = "poisson")
   d <- deviance(fit)
