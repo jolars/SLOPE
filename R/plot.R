@@ -73,12 +73,14 @@ plot.SLOPE <- function(x,
     )
   ) +
     ggplot2::geom_line() +
-    ggplot2::ylab(expression(hat(beta))) +
-    ggplot2::xlab(xlab) +
-    ggplot2::labs(color = "Variable name")
+    ggplot2::labs(
+      x = xlab,
+      y = expression(hat(beta)),
+      color = NULL
+    )
 
   if (m > 1) {
-    plt <- plt + ggplot2::facet_wrap(~ !!quote(Var2))
+    plt <- plt + ggplot2::facet_wrap("Var2")
   }
 
   plt
