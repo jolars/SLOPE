@@ -25,7 +25,7 @@ diagnostics = TRUE."><meta property="og:image" content="https://jolars.github.io
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SLOPE</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
       </span>
     </div>
 
@@ -91,8 +91,7 @@ the model fitting resulting from a call to <code><a href="SLOPE.html">SLOPE()</a
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">plotDiagnostics</span><span class="op">(</span>
   <span class="va">object</span>,
   ind <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">object</span><span class="op">$</span><span class="va">diagnostics</span><span class="op">$</span><span class="va">penalty</span><span class="op">)</span>,
-  xvar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"time"</span>, <span class="st">"iteration"</span><span class="op">)</span>,
-  <span class="va">...</span>
+  xvar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"time"</span>, <span class="st">"iteration"</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -105,18 +104,15 @@ the model fitting resulting from a call to <code><a href="SLOPE.html">SLOPE()</a
 <dt>xvar</dt>
 <dd><p>what to place on the x axis. <code>iteration</code> plots each iteration,
 <code>time</code> plots the wall-clock time.</p></dd>
-<dt>...</dt>
-<dd><p>other arguments that will be used to modify the call to
-<code><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">lattice::xyplot()</a></code></p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>An object of class <code>"trellis"</code>, which, unless stored in a variable,
-will be plotted when its default <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> method is called.</p>
+    <p>An object of class <code>"ggplot"</code>, which will be plotted on the
+current device unless stored in a variable.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code><a href="SLOPE.html">SLOPE()</a></code></p></div>
+    <div class="dont-index"><p><code><a href="SLOPE.html">SLOPE()</a></code>, <code><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">ggplot2::theme()</a></code></p></div>
     </div>
 
     <div id="ref-examples">
@@ -134,11 +130,11 @@ will be plotted when its default <code><a href="https://rdrr.io/r/base/print.htm
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Johan Larsson, Jonas Wallin, Malgorzata Bogdan, Ewout van den Berg, Chiara Sabatti, Emmanuel Candes, Evan Patterson, Weijie Su.</p>
+  <p></p><p>Developed by Johan Larsson, Jonas Wallin, Malgorzata Bogdan, Ewout van den Berg, Chiara Sabatti, Emmanuel Candes, Evan Patterson, Weijie Su, Jakub Kała, Krystyna Grzesiak, Michal Burdukiewicz.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer></div>

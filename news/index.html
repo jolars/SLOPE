@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SLOPE</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
       </span>
     </div>
 
@@ -79,11 +79,21 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="0.5.0" id="slope-050">SLOPE 0.5.0<a class="anchor" aria-label="anchor" href="#slope-050"></a></h2>
+<div class="section level3">
+<h3 id="major-changes-0-5-0">Major changes<a class="anchor" aria-label="anchor" href="#major-changes-0-5-0"></a></h3>
+<ul><li>
+<code><a href="../reference/plot.SLOPE.html">plot.SLOPE()</a></code>, <code>plot.trainSLOPE()</code> and <code><a href="../reference/plotDiagnostics.html">plotDiagnostics()</a></code> have been reimplemented in ggplot2.</li></ul></div>
+<div class="section level3">
+<h3 id="deprecated-functions-0-5-0">Deprecated Functions<a class="anchor" aria-label="anchor" href="#deprecated-functions-0-5-0"></a></h3>
+<ul><li>
+<code><a href="../reference/caretSLOPE.html">caretSLOPE()</a></code> has been deprecated and will be made defunct in version 0.6.0.</li></ul></div>
+</div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="0.4.1" id="slope-041">SLOPE 0.4.1<small>2022-03-14</small><a class="anchor" aria-label="anchor" href="#slope-041"></a></h2>
 <div class="section level3">
 <h3 id="bug-fixes-0-4-1">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-4-1"></a></h3>
-<ul><li>The C++ standard library <em>memory</em> was added to a source file to fix compilation errors on some systems.</li>
-</ul></div>
+<ul><li>The C++ standard library <em>memory</em> was added to a source file to fix compilation errors on some systems.</li></ul></div>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.4.0" id="slope-040">SLOPE 0.4.0<small>2021-12-10</small><a class="anchor" aria-label="anchor" href="#slope-040"></a></h2>
@@ -109,15 +119,12 @@
 </ul></div>
 <div class="section level3">
 <h3 id="vignettes-0-4-0">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes-0-4-0"></a></h3>
-<ul><li>A new vignette has been added to compare algorithms for the proximal operator.</li>
-</ul></div>
+<ul><li>A new vignette has been added to compare algorithms for the proximal operator.</li></ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-0-4-0">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-4-0"></a></h3>
 <ul><li>For very small numbers of observations (10 or so), the regularization weights for <code>lambda = "gaussian"</code> were incorrectly computed, increasing and then decreasing. This is now fixed and regularization weights in this case are now always non-increasing.</li>
 <li>Misclassification error was previously computed incorrectly in <code><a href="../reference/trainSLOPE.html">trainSLOPE()</a></code> for multinomial models (thanks <a href="https://github.com/jakubkala" class="external-link">@jakubkala</a> and 1)</li>
-<li>Performance of <code><a href="../reference/trainSLOPE.html">trainSLOPE()</a></code> was previously hampered by erroneous refitting of the models, which has been fixed now (thanks <a href="https://github.com/jakubkala" class="external-link">@jakubkala</a> and
-<ol class="example" style="list-style-type: decimal"><li>
-</li></ol></li>
+<li>Performance of <code><a href="../reference/trainSLOPE.html">trainSLOPE()</a></code> was previously hampered by erroneous refitting of the models, which has been fixed now (thanks <a href="https://github.com/jakubkala" class="external-link">@jakubkala</a> and<ol class="example" style="list-style-type: decimal"><li></ol></li>
 </ul></div>
 <div class="section level3">
 <h3 id="deprecated-and-defunct-0-4-0">Deprecated and Defunct<a class="anchor" aria-label="anchor" href="#deprecated-and-defunct-0-4-0"></a></h3>
@@ -138,8 +145,7 @@
 <h2 class="page-header" data-toc-text="0.3.2" id="slope-032">SLOPE 0.3.2<small>2020-07-10</small><a class="anchor" aria-label="anchor" href="#slope-032"></a></h2>
 <div class="section level3">
 <h3 id="minor-changes-0-3-2">Minor changes<a class="anchor" aria-label="anchor" href="#minor-changes-0-3-2"></a></h3>
-<ul><li>Added <code>tol_rel_coef_change</code> argument to <code><a href="../reference/SLOPE.html">SLOPE()</a></code> as a convergence criterion for the FISTA solver that sets a tolerance for the relative change in coefficients across iterations.</li>
-</ul></div>
+<ul><li>Added <code>tol_rel_coef_change</code> argument to <code><a href="../reference/SLOPE.html">SLOPE()</a></code> as a convergence criterion for the FISTA solver that sets a tolerance for the relative change in coefficients across iterations.</li></ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-0-3-2">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-2"></a></h3>
 <ul><li>Fixed premature stopping of the solver for the first step of the regularization path (the null model).</li>
@@ -189,8 +195,7 @@
 <h2 class="page-header" data-toc-text="0.2.1" id="slope-021">SLOPE 0.2.1<small>2020-04-16</small><a class="anchor" aria-label="anchor" href="#slope-021"></a></h2>
 <div class="section level3">
 <h3 id="minor-changes-0-2-1">Minor changes<a class="anchor" aria-label="anchor" href="#minor-changes-0-2-1"></a></h3>
-<ul><li>A few examples in <code><a href="https://rdrr.io/r/stats/deviance.html" class="external-link">deviance()</a></code> and <code><a href="../reference/SLOPE.html">SLOPE()</a></code> that were taking too long to execute have been removed or modified.</li>
-</ul></div>
+<ul><li>A few examples in <code><a href="https://rdrr.io/r/stats/deviance.html" class="external-link">deviance()</a></code> and <code><a href="../reference/SLOPE.html">SLOPE()</a></code> that were taking too long to execute have been removed or modified.</li></ul></div>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.2.0" id="slope-020">SLOPE 0.2.0<a class="anchor" aria-label="anchor" href="#slope-020"></a></h2>
@@ -243,11 +248,11 @@
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Johan Larsson, Jonas Wallin, Malgorzata Bogdan, Ewout van den Berg, Chiara Sabatti, Emmanuel Candes, Evan Patterson, Weijie Su.</p>
+  <p></p><p>Developed by Johan Larsson, Jonas Wallin, Malgorzata Bogdan, Ewout van den Berg, Chiara Sabatti, Emmanuel Candes, Evan Patterson, Weijie Su, Jakub Kała, Krystyna Grzesiak, Michal Burdukiewicz.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer></div>
