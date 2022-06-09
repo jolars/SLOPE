@@ -47,15 +47,13 @@ plot.SLOPE <- function(x,
   p <- NROW(coefs) # number of features
   m <- NCOL(coefs) # number of responses
 
-  x <- switch(
-    x_variable,
+  x <- switch(x_variable,
     alpha = object[["alpha"]],
     deviance_ratio = object[["deviance_ratio"]],
     step = seq_along(object[["alpha"]])
   )
 
-  xlab <- switch(
-    x_variable,
+  xlab <- switch(x_variable,
     alpha = expression(alpha),
     deviance_ratio = "Fraction Deviance Explained",
     step = "Step"
@@ -183,12 +181,7 @@ plot.TrainedSLOPE <- function(x,
   opt <- object[["optima"]]
   optimum <- opt[opt[["measure"]] == measure, , drop = FALSE]
 
-  optimum[["label_q"]] <- paste0("q = ", as.factor(optimum[["q"]]))
-
   q <- unique(summary[["q"]])
-
-  summary[["q"]] <- as.factor(summary[["q"]])
-  summary[["label_q"]] <- paste0("q = ", as.factor(summary[["q"]]))
 
   xlab <- expression(log[e](alpha))
 
@@ -201,7 +194,10 @@ plot.TrainedSLOPE <- function(x,
     ggplot2::ylab(measure_label)
 
   if (length(q) > 1) {
-    p <- p + ggplot2::facet_wrap(~label_q)
+    p <- p + ggplot2::facet_wrap(
+      "q",
+      labeller = ggplot2::labeller(q = ggplot2::label_both)
+    )
   }
 
   if (plot_min) {
