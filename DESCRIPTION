@@ -79,7 +79,7 @@ Description: Efficient implementations for Sorted L-One Penalized Estimation
 License: GPL-3
 LazyData: true
 Depends:
-    R (>= 3.3.0)
+    R (>= 3.5.0)
 Imports:
     checkmate,
     foreach,
