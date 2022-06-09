@@ -182,7 +182,6 @@ plot.TrainedSLOPE <- function(x,
   optimum <- opt[opt[["measure"]] == measure, , drop = FALSE]
 
   optimum[["label_q"]] <- paste0("q = ", as.factor(optimum[["q"]]))
-  model <- object[["model"]]
 
   q <- unique(summary[["q"]])
 
