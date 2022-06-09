@@ -13,32 +13,32 @@ test_that("plotting works", {
 
 test_that("plot.SLOPE works as expected", {
   fit <- SLOPE(heart$x, heart$y)
-  p <- plot(fit)
-  vdiffr::expect_doppelganger("plot.SLOPE-in-test", p)
+  p1 <- plot(fit)
+  p2 <- plot(fit, intercept = TRUE, x_variable = "deviance_ratio")
 
-  p <- plot(fit, intercept = TRUE, x_variable = "deviance_ratio")
-  vdiffr::expect_doppelganger("plot.SLOPE-parameters-in-test", p)
+  skip_on_ci()
+
+  vdiffr::expect_doppelganger("plot.SLOPE-in-test", p1)
+  vdiffr::expect_doppelganger("plot.SLOPE-parameters-in-test", p2)
 })
 
 test_that("plot.trainedSLOPE works as expected", {
   set.seed(123)
+
   tune <- trainSLOPE(
     subset(mtcars, select = c("mpg", "drat", "wt")),
     mtcars$hp,
     q = c(0.1, 0.2),
     number = 10
   )
-  p <- plot(tune, ci_col = "salmon")
-  vdiffr::expect_doppelganger("plot_trainedSLOPE-in-test", p)
+  p1 <- plot(tune, ci_col = "salmon")
 
   tune <- trainSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
     mtcars$hp,
     q = 0.4,
     number = 10
   )
-
-  p <- plot(tune, ci_col = "salmon")
-  vdiffr::expect_doppelganger("q_plot_trainedSLOPE-in-test", p)
+  p2 <- plot(tune, ci_col = "salmon")
 
   xy <- SLOPE:::randomProblem(200, p = 10, q = 0.5, response = "binomial")
   x <- xy$x
@@ -46,7 +46,11 @@ test_that("plot.trainedSLOPE works as expected", {
 
   fit <- trainSLOPE(x, y, q = c(0.1, 0.2), number = 2, family = "binomial")
 
-  p <- plot(fit, ci_col = "salmon")
+  p3 <- plot(fit, ci_col = "salmon")
 
-  vdiffr::expect_doppelganger("binom_plot_trainedSLOPE-in-test", p)
+  skip_on_ci()
+
+  vdiffr::expect_doppelganger("plot_trainedSLOPE-in-test", p1)
+  vdiffr::expect_doppelganger("q_plot_trainedSLOPE-in-test", p2)
+  vdiffr::expect_doppelganger("binom_plot_trainedSLOPE-in-test", p3)
 })
