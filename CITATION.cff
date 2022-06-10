@@ -1,0 +1,59 @@
+cff-version: 1.2.0
+title: 'SLOPE: Sorted L1 Penalized Estimation'
+message: >-
+  If you use this software, please cite it using
+  these metadata.
+type: software
+authors:
+  - given-names: Johan
+    family-names: Larsson
+    email: johan.larsson@stat.lu.se
+    affiliation: 'Department of Statistics, Lund University'
+    orcid: 'https://orcid.org/0000-0002-4029-5945'
+  - given-names: Jonas
+    family-names: Wallin
+    email: jonas.wallin@stat.lu.se
+    affiliation: 'Department of Statistics, Lund University'
+    orcid: 'https://orcid.org/0000-0003-0381-6593'
+  - given-names: Malgorzata
+    family-names: Bogdan
+    orcid: 'https://orcid.org/0000-0002-0657-4342'
+    email: malgorzata.bogdan@stat.lu.se
+  - given-names: Ewout
+    name-particle: van der
+    family-names: Berg
+  - given-names: Chiara
+    family-names: Sabatti
+  - given-names: Emmanuel
+    family-names: Candes
+  - given-names: Evan
+    family-names: Patterson
+  - given-names: Weijie
+    family-names: Su
+  - given-names: Jakub
+    family-names: Kała
+  - given-names: Krystyna
+    family-names: Grzesiak
+  - given-names: Michal
+    family-names: Burdukiewicz
+    orcid: 'https://orcid.org/0000-0001-8926-582X'
+repository-code: 'https://github.com/jolars/SLOPE'
+url: 'https://jolars.github.io/SLOPE/'
+abstract: >-
+  Efficient implementations for Sorted L-One
+  Penalized Estimation (SLOPE): generalized linear
+  models regularized with the sorted L1-norm (Bogdan
+  et al. (2015) <doi:10/gfgwzt>). Supported models
+  include ordinary least-squares regression, binomial
+  regression, multinomial regression, and Poisson
+  regression. Both dense and sparse predictor
+  matrices are supported. In addition, the package
+  features predictor screening rules that enable fast
+  and efficient solutions to high-dimensional
+  problems.
+keywords:
+  - SLOPE
+  - regularization
+  - sparse regression
+  - generalized linear models
+license: GPL-3.0-or-later
