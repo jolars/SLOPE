@@ -1,5 +1,10 @@
 # SLOPE (development version)
 
+## Minor Changes
+
+- Update sparse matrix coercion to avoid deprecated functionality in
+  the Matrix package.
+
 # SLOPE 0.5.0
 
 ## Major changes

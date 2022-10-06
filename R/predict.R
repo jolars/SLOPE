@@ -39,7 +39,7 @@ predict.SLOPE <- function(object,
   # This method (the base method) only generates linear predictors
 
   if (inherits(x, "sparseMatrix")) {
-    x <- methods::as(x, "dgCMatrix")
+    x <- as_dgCMatrix(x)
   }
 
   if (inherits(x, "data.frame")) {

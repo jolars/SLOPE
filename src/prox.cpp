@@ -1,6 +1,7 @@
 #include "prox.h"
 
 // Stack-based algorithm (Algorithm 4 in Bogdan et al. 2015)
+
 void
 prox_stack(arma::vec& x, const arma::vec& lambda)
 {
@@ -19,8 +20,8 @@ prox_stack(arma::vec& x, const arma::vec& lambda)
   for (uword i = 0; i < p; i++) {
     idx_i(k) = i;
     idx_j(k) = i;
-    s(k)     = x(i) - lambda(i);
-    w(k)     = s(k);
+    s(k) = x(i) - lambda(i);
+    w(k) = s(k);
 
     while ((k > 0) && (w(k - 1) <= w(k))) {
       k--;
@@ -51,11 +52,11 @@ prox_pava(arma::vec& y, const arma::vec& lambda)
 
   double slope{ 0 };
 
-  yc(0)      = 0;
+  yc(0) = 0;
   yc.tail(n) = cumsum(y - lambda);
 
   uword known = 0;
-  uword ip    = 0;
+  uword ip = 0;
 
   do {
     slope = -datum::inf;
@@ -65,7 +66,7 @@ prox_pava(arma::vec& y, const arma::vec& lambda)
 
       if (tmp > slope) {
         slope = tmp;
-        ip    = i;
+        ip = i;
       }
     }
 
@@ -86,11 +87,11 @@ prox(const arma::mat& beta,
   using namespace arma;
 
   // collect sign of beta and work with sorted absolutes
-  vec beta_vec  = vectorise(beta);
+  vec beta_vec = vectorise(beta);
   vec beta_sign = sign(beta_vec);
-  beta_vec      = abs(beta_vec);
-  uvec ord      = sort_index(beta_vec, "descend");
-  beta_vec      = (beta_vec(ord)).eval();
+  beta_vec = abs(beta_vec);
+  uvec ord = sort_index(beta_vec, "descend");
+  beta_vec = (beta_vec(ord)).eval();
 
   switch (prox_method) {
     case ProxMethod::stack:

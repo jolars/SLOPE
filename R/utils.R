@@ -89,3 +89,16 @@ randomProblem <- function(n = 1000,
     q = q
   )
 }
+
+as_dgCMatrix <- function(x) {
+  methods::as(
+    methods::as(
+      methods::as(
+        x,
+        "dgCMatrix"
+      ),
+      "sparseMatrix"
+    ),
+    "CsparseMatrix"
+  )
+}

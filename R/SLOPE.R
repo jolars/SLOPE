@@ -487,7 +487,7 @@ SLOPE <- function(x,
   }
 
   if (is_sparse) {
-    x <- methods::as(x, "dgCMatrix")
+    x <- as_dgCMatrix(x)
   } else {
     x <- as.matrix(x)
   }
