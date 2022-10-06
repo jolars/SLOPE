@@ -67,7 +67,7 @@ bibentry(
   number  =  3,
   pages   = "1103--1140",
   year    =  2015,
-  doi     = "10/gfgwzt",
+  doi     = "10.1214/15-AOAS842",
   issn    = "1932-6157",
   header  = "To cite the SLOPE method in publications, please use:"
 )

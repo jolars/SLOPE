@@ -10,13 +10,13 @@ all: install
 clean:
 	$(DELETE) src/*.o src/*.so
 
-document: 
+docs: 
 	Rscript -e 'devtools::document(roclets = c("rd", "collate", "namespace"))'
 
 compile-attributes: 
 	Rscript -e 'Rcpp::compileAttributes()'
 
-build: document compile-attributes
+build: docs compile-attributes
 	cd ..;\
 	R CMD build --no-manual $(PKGSRC) --no-build-vignettes
 

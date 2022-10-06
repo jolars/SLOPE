@@ -6,7 +6,7 @@
 \source{
 M. Bogdan, E. van den Berg, Chiara Sabatti, Weijie Su, and Emmanuel J.
 Candès, “SLOPE – adaptive variable selection via convex optimization,” Ann
-Appl Stat, vol. 9, no. 3, pp. 1103–1140, 2015, doi: 10.1214/15-AOAS842.
+Appl Stat, vol. 9, no. 3, pp. 1103–1140, 2015.
 }
 \usage{
 sortedL1Prox(x, lambda, method = c("stack", "pava"))
