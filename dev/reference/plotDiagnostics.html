@@ -88,26 +88,33 @@ the model fitting resulting from a call to <code><a href="SLOPE.html">SLOPE()</a
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">plotDiagnostics</span><span class="op">(</span>
-  <span class="va">object</span>,
-  ind <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">object</span><span class="op">$</span><span class="va">diagnostics</span><span class="op">$</span><span class="va">penalty</span><span class="op">)</span>,
-  xvar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"time"</span>, <span class="st">"iteration"</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plotDiagnostics</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  ind <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">object</span><span class="op">$</span><span class="va">diagnostics</span><span class="op">$</span><span class="va">penalty</span><span class="op">)</span>,</span>
+<span>  xvar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"time"</span>, <span class="st">"iteration"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>an object of class <code>"SLOPE"</code>.</p></dd>
+
+
 <dt>ind</dt>
 <dd><p>either "last"</p></dd>
+
+
 <dt>xvar</dt>
 <dd><p>what to place on the x axis. <code>iteration</code> plots each iteration,
 <code>time</code> plots the wall-clock time.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>An object of class <code>"ggplot"</code>, which will be plotted on the
+    
+
+<p>An object of class <code>"ggplot"</code>, which will be plotted on the
 current device unless stored in a variable.</p>
     </div>
     <div id="see-also">
@@ -117,8 +124,8 @@ current device unless stored in a variable.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="SLOPE.html">SLOPE</a></span><span class="op">(</span><span class="va">abalone</span><span class="op">$</span><span class="va">x</span>, <span class="va">abalone</span><span class="op">$</span><span class="va">y</span>, diagnostics <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">plotDiagnostics</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="SLOPE.html">SLOPE</a></span><span class="op">(</span><span class="va">abalone</span><span class="op">$</span><span class="va">x</span>, <span class="va">abalone</span><span class="op">$</span><span class="va">y</span>, diagnostics <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plotDiagnostics</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotDiagnostics-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
@@ -134,7 +141,7 @@ current device unless stored in a variable.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

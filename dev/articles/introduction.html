@@ -113,7 +113,7 @@
       <h1 data-toc-skip>An introduction to SLOPE</h1>
                         <h4 data-toc-skip class="author">Johan Larsson</h4>
             
-            <h4 data-toc-skip class="date">2022-06-10</h4>
+            <h4 data-toc-skip class="date">2022-10-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jolars/SLOPE/blob/HEAD/vignettes/introduction.Rmd" class="external-link"><code>vignettes/introduction.Rmd</code></a></small>
       <div class="hidden name"><code>introduction.Rmd</code></div>
@@ -147,15 +147,15 @@
 </h2>
 <p>In the following example, we will use the heart data set, for which the response is a cardiac event. (The package contains several data sets to exemplify modeling. Please see the examples in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>.) The main function of the package is <code><a href="../reference/SLOPE.html">SLOPE()</a></code>, which, more or less, serves as an interface for code written in C++. There are many arguments in the function and most of them relate to either the construction of the regularization path or the penalty (<span class="math inline">\(\lambda\)</span>) sequence used. Here we will use the option <code>lambda = "bh"</code>, which used the BH method detailed in <span class="citation">Bogdan et al. (2015)</span> to select the sequence. (Note that it is also possible to manually insert a sequence.)</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://jolars.github.io/SLOPE/">SLOPE</a></span><span class="op">)</span>
-
-<span class="va">x</span> <span class="op">&lt;-</span> <span class="va">heart</span><span class="op">$</span><span class="va">x</span>
-<span class="va">y</span> <span class="op">&lt;-</span> <span class="va">heart</span><span class="op">$</span><span class="va">y</span>
-
-<span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SLOPE.html">SLOPE</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, family <span class="op">=</span> <span class="st">"binomial"</span>, lambda <span class="op">=</span> <span class="st">"bh"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://jolars.github.io/SLOPE/">SLOPE</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">heart</span><span class="op">$</span><span class="va">x</span></span>
+<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">heart</span><span class="op">$</span><span class="va">y</span></span>
+<span></span>
+<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SLOPE.html">SLOPE</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, family <span class="op">=</span> <span class="st">"binomial"</span>, lambda <span class="op">=</span> <span class="st">"bh"</span><span class="op">)</span></span></code></pre></div>
 <p>The default print method gives a summary of the regularization path but it is usually more informative to study a plot of the path.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="introduction_files/figure-html/unnamed-chunk-2-1.png" alt="Regularization path for a binomial regression model fit to the heart data set." width="576"><p class="caption">
 Regularization path for a binomial regression model fit to the heart data set.
@@ -167,22 +167,22 @@ Regularization path for a binomial regression model fit to the heart data set.
 </h2>
 <p>To determine the strength of regularization, it is almost always necessary to tune the <span class="math inline">\(\lambda\)</span> sequence using resampling. This package features two methods for this: a specification for use with the <strong>caret</strong> package via the function <code><a href="../reference/caretSLOPE.html">caretSLOPE()</a></code> or <code><a href="../reference/trainSLOPE.html">trainSLOPE()</a></code>. While former facilitate easier comparison of SLOPE against other methods as well as a multitude of options for resampling and measuring performance, it does not allow for sparse predictor matrices. We will give an example of <code><a href="../reference/trainSLOPE.html">trainSLOPE()</a></code> here.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">924</span><span class="op">)</span>
-
-<span class="va">x</span> <span class="op">&lt;-</span> <span class="va">bodyfat</span><span class="op">$</span><span class="va">x</span>
-<span class="va">y</span> <span class="op">&lt;-</span> <span class="va">bodyfat</span><span class="op">$</span><span class="va">y</span>
-
-<span class="va">tune</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/trainSLOPE.html">trainSLOPE</a></span><span class="op">(</span>
-  <span class="va">x</span>,
-  <span class="va">y</span>,
-  q <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.2</span><span class="op">)</span>,
-  number <span class="op">=</span> <span class="fl">5</span>,
-  solver <span class="op">=</span> <span class="st">"admm"</span>,
-  repeats <span class="op">=</span> <span class="fl">2</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">924</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">bodyfat</span><span class="op">$</span><span class="va">x</span></span>
+<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">bodyfat</span><span class="op">$</span><span class="va">y</span></span>
+<span></span>
+<span><span class="va">tune</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/trainSLOPE.html">trainSLOPE</a></span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">y</span>,</span>
+<span>  q <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.2</span><span class="op">)</span>,</span>
+<span>  number <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  solver <span class="op">=</span> <span class="st">"admm"</span>,</span>
+<span>  repeats <span class="op">=</span> <span class="fl">2</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>As before, the plot method offers the best summary.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tune</span>, measure <span class="op">=</span> <span class="st">"mae"</span><span class="op">)</span> <span class="co"># plot mean absolute error</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tune</span>, measure <span class="op">=</span> <span class="st">"mae"</span><span class="op">)</span> <span class="co"># plot mean absolute error</span></span></code></pre></div>
 <div class="figure">
 <img src="introduction_files/figure-html/unnamed-chunk-4-1.png" alt="Model tuning results from Gaussian SLOPE on the bodyfat dataset." width="528"><p class="caption">
 Model tuning results from Gaussian SLOPE on the bodyfat dataset.
@@ -190,16 +190,16 @@ Model tuning results from Gaussian SLOPE on the bodyfat dataset.
 </div>
 <p>Printing the resulting object will display the optimum values</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tune</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Call:</span>
-<span class="co">#&gt; trainSLOPE(x = x, y = y, q = c(0.1, 0.2), number = 5, repeats = 2, </span>
-<span class="co">#&gt;     solver = "admm")</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Optimum values:</span>
-<span class="co">#&gt;     q       alpha measure      mean       se        lo        hi</span>
-<span class="co">#&gt; 1 0.1 0.001772065     mae  3.613638 0.131824  3.315431  3.911845</span>
-<span class="co">#&gt; 2 0.1 0.001772065     mse 19.536120 1.126976 16.986724 22.085515</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">tune</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; trainSLOPE(x = x, y = y, q = c(0.1, 0.2), number = 5, repeats = 2, </span></span>
+<span><span class="co">#&gt;     solver = "admm")</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Optimum values:</span></span>
+<span><span class="co">#&gt;     q       alpha measure      mean       se        lo        hi</span></span>
+<span><span class="co">#&gt; 1 0.1 0.001772065     mae  3.613638 0.131824  3.315431  3.911845</span></span>
+<span><span class="co">#&gt; 2 0.1 0.001772065     mse 19.536120 1.126976 16.986724 22.085515</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="false-discovery-rate">False discovery rate<a class="anchor" aria-label="anchor" href="#false-discovery-rate"></a>
@@ -207,43 +207,43 @@ Model tuning results from Gaussian SLOPE on the bodyfat dataset.
 <p>Under assumptions of orthonormality, SLOPE has been shown to control false discovery rate (FDR) of non-zero coefficients (feature weights) in the model <span class="citation">(Bogdan et al. 2015)</span>. It is in many ways analogous to the Benjamini–Hochberg procedure for multiple comparisons.</p>
 <p>Let’s set up a simple experiment to see how SLOPE controls the FDR. We randomly generate data sets with various proportions of true signals. Under this Gaussian design with independently and identically distributed columns in <span class="math inline">\(X\)</span>, SLOPE should asymptotically control FDR at the level given by the shape parameter <span class="math inline">\(q\)</span>, which we set to 0.1 in this example.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># proportion of real signals</span>
-<span class="va">q</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.5</span>, length.out <span class="op">=</span> <span class="fl">20</span><span class="op">)</span>
-<span class="va">fdr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">q</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
-
-<span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">q</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">1000</span>
-  <span class="va">p</span> <span class="op">&lt;-</span> <span class="va">n</span> <span class="op">/</span> <span class="fl">2</span>
-  <span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">1</span>
-  <span class="va">problem</span> <span class="op">&lt;-</span> <span class="fu">SLOPE</span><span class="fu">:::</span><span class="fu">randomProblem</span><span class="op">(</span><span class="va">n</span>, <span class="va">p</span>, q <span class="op">=</span> <span class="va">q</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, alpha <span class="op">=</span> <span class="va">alpha</span><span class="op">)</span>
-
-  <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">problem</span><span class="op">$</span><span class="va">x</span>
-  <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">problem</span><span class="op">$</span><span class="va">y</span>
-  <span class="va">signals</span> <span class="op">&lt;-</span> <span class="va">problem</span><span class="op">$</span><span class="va">nonzero</span>
-
-  <span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SLOPE.html">SLOPE</a></span><span class="op">(</span><span class="va">x</span>,
-    <span class="va">y</span>,
-    lambda <span class="op">=</span> <span class="st">"gaussian"</span>,
-    solver <span class="op">=</span> <span class="st">"admm"</span>,
-    q <span class="op">=</span> <span class="fl">0.1</span>,
-    alpha <span class="op">=</span> <span class="va">alpha</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>
-  <span class="op">)</span>
-
-  <span class="va">selected_slope</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">nonzeros</span><span class="op">)</span>
-  <span class="va">V</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="va">selected_slope</span>, <span class="va">signals</span><span class="op">)</span><span class="op">)</span>
-  <span class="va">R</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">selected_slope</span><span class="op">)</span>
-  <span class="va">fdr</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">V</span> <span class="op">/</span> <span class="va">R</span>
-<span class="op">}</span>
-
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span>
-
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">q</span>, <span class="va">fdr</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_hline</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0.1</span>, lty <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">"False Discovery Rate"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># proportion of real signals</span></span>
+<span><span class="va">q</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.5</span>, length.out <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span>
+<span><span class="va">fdr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">q</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">q</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span>
+<span>  <span class="va">p</span> <span class="op">&lt;-</span> <span class="va">n</span> <span class="op">/</span> <span class="fl">2</span></span>
+<span>  <span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
+<span>  <span class="va">problem</span> <span class="op">&lt;-</span> <span class="fu">SLOPE</span><span class="fu">:::</span><span class="fu">randomProblem</span><span class="op">(</span><span class="va">n</span>, <span class="va">p</span>, q <span class="op">=</span> <span class="va">q</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, alpha <span class="op">=</span> <span class="va">alpha</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">problem</span><span class="op">$</span><span class="va">x</span></span>
+<span>  <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">problem</span><span class="op">$</span><span class="va">y</span></span>
+<span>  <span class="va">signals</span> <span class="op">&lt;-</span> <span class="va">problem</span><span class="op">$</span><span class="va">nonzero</span></span>
+<span></span>
+<span>  <span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SLOPE.html">SLOPE</a></span><span class="op">(</span><span class="va">x</span>,</span>
+<span>    <span class="va">y</span>,</span>
+<span>    lambda <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
+<span>    solver <span class="op">=</span> <span class="st">"admm"</span>,</span>
+<span>    q <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>    alpha <span class="op">=</span> <span class="va">alpha</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span>  <span class="va">selected_slope</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">nonzeros</span><span class="op">)</span></span>
+<span>  <span class="va">V</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="va">selected_slope</span>, <span class="va">signals</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">R</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">selected_slope</span><span class="op">)</span></span>
+<span>  <span class="va">fdr</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">V</span> <span class="op">/</span> <span class="va">R</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">q</span>, <span class="va">fdr</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_hline</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0.1</span>, lty <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">"False Discovery Rate"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="introduction_files/figure-html/unnamed-chunk-6-1.png" alt="Control of false discovery rate using SLOPE." width="384"><p class="caption">
 Control of false discovery rate using SLOPE.
@@ -285,7 +285,7 @@ Control of false discovery rate using SLOPE.
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

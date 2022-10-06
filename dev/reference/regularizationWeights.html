@@ -86,14 +86,14 @@ SLOPE() (or elsewhere)."><meta property="og:image" content="https://jolars.githu
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">regularizationWeights</span><span class="op">(</span>
-  n_lambda <span class="op">=</span> <span class="fl">100</span>,
-  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bh"</span>, <span class="st">"gaussian"</span>, <span class="st">"oscar"</span>, <span class="st">"lasso"</span><span class="op">)</span>,
-  q <span class="op">=</span> <span class="fl">0.2</span>,
-  theta1 <span class="op">=</span> <span class="fl">1</span>,
-  theta2 <span class="op">=</span> <span class="fl">0.5</span>,
-  n <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">regularizationWeights</span><span class="op">(</span></span>
+<span>  n_lambda <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bh"</span>, <span class="st">"gaussian"</span>, <span class="st">"oscar"</span>, <span class="st">"lasso"</span><span class="op">)</span>,</span>
+<span>  q <span class="op">=</span> <span class="fl">0.2</span>,</span>
+<span>  theta1 <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  theta2 <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  n <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -101,31 +101,44 @@ SLOPE() (or elsewhere)."><meta property="og:image" content="https://jolars.githu
     <dl><dt>n_lambda</dt>
 <dd><p>The number of lambdas to generate. This should typically
 be equal to the number of predictors in your data set.</p></dd>
+
+
 <dt>type</dt>
 <dd><p>The type of lambda sequence to use. See documentation for
 in <code><a href="SLOPE.html">SLOPE()</a></code>, including that related to the <code>lambda</code> parameter in that
 function.</p></dd>
+
+
 <dt>q</dt>
 <dd><p>parameter controlling the shape of the lambda sequence, with
 usage varying depending on the type of path used and has no effect
 is a custom <code>lambda</code> sequence is used. Must be greater than <code>1e-6</code> and
 smaller than 1.</p></dd>
+
+
 <dt>theta1</dt>
 <dd><p>parameter controlling the shape of the lambda sequence
 when <code>lambda == "OSCAR"</code>. This parameter basically sets the intercept
 for the lambda sequence and is equivalent to \(\lambda_1\) in the
 original OSCAR formulation.</p></dd>
+
+
 <dt>theta2</dt>
 <dd><p>parameter controlling the shape of the lambda sequence
 when <code>lambda == "OSCAR"</code>. This parameter basically sets the slope
 for the lambda sequence and is equivalent to \(\lambda_2\) in the
 original OSCAR formulation.</p></dd>
+
+
 <dt>n</dt>
 <dd><p>The number of rows (observations) in the design matrix.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A vector of length <code>n_lambda</code> with regularization weights.</p>
+    
+
+<p>A vector of length <code>n_lambda</code> with regularization weights.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -142,37 +155,37 @@ function, nu such scaling is attempted.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># compute different penalization sequences</span></span>
-<span class="r-in"><span class="va">bh</span> <span class="op">&lt;-</span> <span class="fu">regularizationWeights</span><span class="op">(</span><span class="fl">100</span>, q <span class="op">=</span> <span class="fl">0.2</span>, type <span class="op">=</span> <span class="st">"bh"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">gaussian</span> <span class="op">&lt;-</span> <span class="fu">regularizationWeights</span><span class="op">(</span></span>
-<span class="r-in">  <span class="fl">100</span>,</span>
-<span class="r-in">  q <span class="op">=</span> <span class="fl">0.2</span>,</span>
-<span class="r-in">  n <span class="op">=</span> <span class="fl">300</span>,</span>
-<span class="r-in">  type <span class="op">=</span> <span class="st">"gaussian"</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">oscar</span> <span class="op">&lt;-</span> <span class="fu">regularizationWeights</span><span class="op">(</span></span>
-<span class="r-in">  <span class="fl">100</span>,</span>
-<span class="r-in">  theta1 <span class="op">=</span> <span class="fl">1.284</span>,</span>
-<span class="r-in">  theta2 <span class="op">=</span> <span class="fl">0.0182</span>,</span>
-<span class="r-in">  type <span class="op">=</span> <span class="st">"oscar"</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">lasso</span> <span class="op">&lt;-</span> <span class="fu">regularizationWeights</span><span class="op">(</span><span class="fl">100</span>, type <span class="op">=</span> <span class="st">"lasso"</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">oscar</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Plot a comparison between these sequences</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bh</span>, type <span class="op">=</span> <span class="st">"l"</span>, ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">lambda</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">gaussian</span>, col <span class="op">=</span> <span class="st">"dark orange"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">oscar</span>, col <span class="op">=</span> <span class="st">"navy"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">lasso</span>, col <span class="op">=</span> <span class="st">"red3"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span></span>
-<span class="r-in">  <span class="st">"topright"</span>,</span>
-<span class="r-in">  legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"BH"</span>, <span class="st">"Gaussian"</span>, <span class="st">"OSCAR"</span>, <span class="st">"lasso"</span><span class="op">)</span>,</span>
-<span class="r-in">  col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"black"</span>, <span class="st">"dark orange"</span>, <span class="st">"navy"</span>, <span class="st">"red3"</span><span class="op">)</span>,</span>
-<span class="r-in">  lty <span class="op">=</span> <span class="fl">1</span></span>
-<span class="r-in"><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># compute different penalization sequences</span></span></span>
+<span class="r-in"><span><span class="va">bh</span> <span class="op">&lt;-</span> <span class="fu">regularizationWeights</span><span class="op">(</span><span class="fl">100</span>, q <span class="op">=</span> <span class="fl">0.2</span>, type <span class="op">=</span> <span class="st">"bh"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">gaussian</span> <span class="op">&lt;-</span> <span class="fu">regularizationWeights</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fl">100</span>,</span></span>
+<span class="r-in"><span>  q <span class="op">=</span> <span class="fl">0.2</span>,</span></span>
+<span class="r-in"><span>  n <span class="op">=</span> <span class="fl">300</span>,</span></span>
+<span class="r-in"><span>  type <span class="op">=</span> <span class="st">"gaussian"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">oscar</span> <span class="op">&lt;-</span> <span class="fu">regularizationWeights</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fl">100</span>,</span></span>
+<span class="r-in"><span>  theta1 <span class="op">=</span> <span class="fl">1.284</span>,</span></span>
+<span class="r-in"><span>  theta2 <span class="op">=</span> <span class="fl">0.0182</span>,</span></span>
+<span class="r-in"><span>  type <span class="op">=</span> <span class="st">"oscar"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">lasso</span> <span class="op">&lt;-</span> <span class="fu">regularizationWeights</span><span class="op">(</span><span class="fl">100</span>, type <span class="op">=</span> <span class="st">"lasso"</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">oscar</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Plot a comparison between these sequences</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bh</span>, type <span class="op">=</span> <span class="st">"l"</span>, ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">lambda</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">gaussian</span>, col <span class="op">=</span> <span class="st">"dark orange"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">oscar</span>, col <span class="op">=</span> <span class="st">"navy"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">lasso</span>, col <span class="op">=</span> <span class="st">"red3"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="st">"topright"</span>,</span></span>
+<span class="r-in"><span>  legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"BH"</span>, <span class="st">"Gaussian"</span>, <span class="st">"OSCAR"</span>, <span class="st">"lasso"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"black"</span>, <span class="st">"dark orange"</span>, <span class="st">"navy"</span>, <span class="st">"red3"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  lty <span class="op">=</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="regularizationWeights-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
@@ -188,7 +201,7 @@ function, nu such scaling is attempted.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

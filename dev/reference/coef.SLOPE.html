@@ -84,36 +84,49 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S3 method for SLOPE</span>
-<span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">object</span>, alpha <span class="op">=</span> <span class="cn">NULL</span>, exact <span class="op">=</span> <span class="cn">FALSE</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">sigma</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for SLOPE</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">object</span>, alpha <span class="op">=</span> <span class="cn">NULL</span>, exact <span class="op">=</span> <span class="cn">FALSE</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">sigma</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>an object of class <code>'SLOPE'</code>.</p></dd>
+
+
 <dt>alpha</dt>
 <dd><p>penalty parameter for SLOPE models; if <code>NULL</code>, the
 values used in the original fit will be used</p></dd>
+
+
 <dt>exact</dt>
 <dd><p>if <code>TRUE</code> and the given parameter values differ from those in
 the original fit, the model will be refit by calling <code><a href="https://rdrr.io/r/stats/update.html" class="external-link">stats::update()</a></code> on
 the object with the new parameters. If <code>FALSE</code>, the predicted values
 will be based on interpolated coefficients from the original
 penalty path.</p></dd>
+
+
 <dt>simplify</dt>
 <dd><p>if <code>TRUE</code>, <code><a href="https://rdrr.io/r/base/drop.html" class="external-link">base::drop()</a></code> will be called before returning
 the coefficients to drop extraneous dimensions</p></dd>
+
+
 <dt>sigma</dt>
 <dd><p>deprecated. Please use <code>alpha</code> instead.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>arguments that are passed on to <code><a href="https://rdrr.io/r/stats/update.html" class="external-link">stats::update()</a></code> (and therefore
 also to <code><a href="SLOPE.html">SLOPE()</a></code>) if <code>exact = TRUE</code> and the given penalty
 is not in <code>object</code></p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Coefficients from the model.</p>
+    
+
+<p>Coefficients from the model.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -136,8 +149,8 @@ please use <code><a href="SLOPE.html">SLOPE()</a></code> to refit the model.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="SLOPE.html">SLOPE</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">mpg</span>, <span class="va">mtcars</span><span class="op">$</span><span class="va">vs</span>, path_length <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="SLOPE.html">SLOPE</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">mpg</span>, <span class="va">mtcars</span><span class="op">$</span><span class="va">vs</span>, path_length <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)          V1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> -0.67805384  0.05552609 </span>
 </code></pre></div>
@@ -154,7 +167,7 @@ please use <code><a href="SLOPE.html">SLOPE()</a></code> to refit the model.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

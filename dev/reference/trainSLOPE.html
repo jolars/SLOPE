@@ -86,15 +86,15 @@ through cross-validation.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">trainSLOPE</span><span class="op">(</span>
-  <span class="va">x</span>,
-  <span class="va">y</span>,
-  q <span class="op">=</span> <span class="fl">0.2</span>,
-  number <span class="op">=</span> <span class="fl">10</span>,
-  repeats <span class="op">=</span> <span class="fl">1</span>,
-  measure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mse"</span>, <span class="st">"mae"</span>, <span class="st">"deviance"</span>, <span class="st">"misclass"</span>, <span class="st">"auc"</span><span class="op">)</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">trainSLOPE</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">y</span>,</span>
+<span>  q <span class="op">=</span> <span class="fl">0.2</span>,</span>
+<span>  number <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  repeats <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  measure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mse"</span>, <span class="st">"mae"</span>, <span class="st">"deviance"</span>, <span class="st">"misclass"</span>, <span class="st">"auc"</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -104,43 +104,64 @@ through cross-validation.</p>
 matrix of the standard <em>matrix</em> class, or a sparse matrix
 inheriting from <a href="https://rdrr.io/pkg/Matrix/man/sparseMatrix.html" class="external-link">Matrix::sparseMatrix</a>. Data frames will
 be converted to matrices internally.</p></dd>
+
+
 <dt>y</dt>
 <dd><p>the response, which for <code>family = "gaussian"</code> must be numeric; for
 <code>family = "binomial"</code> or <code>family = "multinomial"</code>, it can be a factor.</p></dd>
+
+
 <dt>q</dt>
 <dd><p>parameter controlling the shape of the lambda sequence, with
 usage varying depending on the type of path used and has no effect
 is a custom <code>lambda</code> sequence is used. Must be greater than <code>1e-6</code> and
 smaller than 1.</p></dd>
+
+
 <dt>number</dt>
 <dd><p>number of folds (cross-validation)</p></dd>
+
+
 <dt>repeats</dt>
 <dd><p>number of repeats for each fold (for repeated <em>k</em>-fold cross
 validation)</p></dd>
+
+
 <dt>measure</dt>
 <dd><p>measure to try to optimize; note that you may
 supply <em>multiple</em> values here and that, by default,
 all the possible measures for the given model will be used.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>other arguments to pass on to <code><a href="SLOPE.html">SLOPE()</a></code></p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>An object of class <code>"TrainedSLOPE"</code>, with the following slots:</p>
+    
+
+<p>An object of class <code>"TrainedSLOPE"</code>, with the following slots:</p>
 <dl><dt>summary</dt>
 <dd><p>a summary of the results with means, standard errors,
 and 0.95 confidence levels</p></dd>
+
 <dt>data</dt>
 <dd><p>the raw data from the model training</p></dd>
+
 <dt>optima</dt>
 <dd><p>a <code>data.frame</code> of the best (mean)
 values for the different metrics and their corresponding parameter values</p></dd>
+
 <dt>measure</dt>
 <dd><p>a <code>data.frame</code> listing the used metrics and their labels</p></dd>
+
 <dt>model</dt>
 <dd><p>the model fit to the entire data set</p></dd>
+
 <dt>call</dt>
 <dd><p>the call</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -170,14 +191,14 @@ using, for instance, <code>doParallel::registerDoParallel()</code> from the
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># 8-fold cross-validation repeated 5 times</span></span>
-<span class="r-in"><span class="va">tune</span> <span class="op">&lt;-</span> <span class="fu">trainSLOPE</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">mtcars</span>, select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mpg"</span>, <span class="st">"drat"</span>, <span class="st">"wt"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span class="r-in">  <span class="va">mtcars</span><span class="op">$</span><span class="va">hp</span>,</span>
-<span class="r-in">  q <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.2</span><span class="op">)</span>,</span>
-<span class="r-in">  number <span class="op">=</span> <span class="fl">8</span>,</span>
-<span class="r-in">  repeats <span class="op">=</span> <span class="fl">5</span>,</span>
-<span class="r-in">  measure <span class="op">=</span> <span class="st">"mse"</span></span>
-<span class="r-in"><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># 8-fold cross-validation repeated 5 times</span></span></span>
+<span class="r-in"><span><span class="va">tune</span> <span class="op">&lt;-</span> <span class="fu">trainSLOPE</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">mtcars</span>, select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mpg"</span>, <span class="st">"drat"</span>, <span class="st">"wt"</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="va">mtcars</span><span class="op">$</span><span class="va">hp</span>,</span></span>
+<span class="r-in"><span>  q <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  number <span class="op">=</span> <span class="fl">8</span>,</span></span>
+<span class="r-in"><span>  repeats <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>  measure <span class="op">=</span> <span class="st">"mse"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -192,7 +213,7 @@ using, for instance, <code>doParallel::registerDoParallel()</code> from the
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

@@ -86,37 +86,46 @@ model fit with <code><a href="SLOPE.html">SLOPE()</a></code>.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">score</span><span class="op">(</span><span class="va">object</span>, <span class="va">x</span>, <span class="va">y</span>, <span class="va">measure</span><span class="op">)</span>
-
-<span class="co"># S3 method for GaussianSLOPE</span>
-<span class="fu">score</span><span class="op">(</span><span class="va">object</span>, <span class="va">x</span>, <span class="va">y</span>, measure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mse"</span>, <span class="st">"mae"</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># S3 method for BinomialSLOPE</span>
-<span class="fu">score</span><span class="op">(</span><span class="va">object</span>, <span class="va">x</span>, <span class="va">y</span>, measure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mse"</span>, <span class="st">"mae"</span>, <span class="st">"deviance"</span>, <span class="st">"misclass"</span>, <span class="st">"auc"</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># S3 method for MultinomialSLOPE</span>
-<span class="fu">score</span><span class="op">(</span><span class="va">object</span>, <span class="va">x</span>, <span class="va">y</span>, measure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mse"</span>, <span class="st">"mae"</span>, <span class="st">"deviance"</span>, <span class="st">"misclass"</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># S3 method for PoissonSLOPE</span>
-<span class="fu">score</span><span class="op">(</span><span class="va">object</span>, <span class="va">x</span>, <span class="va">y</span>, measure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mse"</span>, <span class="st">"mae"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">score</span><span class="op">(</span><span class="va">object</span>, <span class="va">x</span>, <span class="va">y</span>, <span class="va">measure</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for GaussianSLOPE</span></span>
+<span><span class="fu">score</span><span class="op">(</span><span class="va">object</span>, <span class="va">x</span>, <span class="va">y</span>, measure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mse"</span>, <span class="st">"mae"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for BinomialSLOPE</span></span>
+<span><span class="fu">score</span><span class="op">(</span><span class="va">object</span>, <span class="va">x</span>, <span class="va">y</span>, measure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mse"</span>, <span class="st">"mae"</span>, <span class="st">"deviance"</span>, <span class="st">"misclass"</span>, <span class="st">"auc"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for MultinomialSLOPE</span></span>
+<span><span class="fu">score</span><span class="op">(</span><span class="va">object</span>, <span class="va">x</span>, <span class="va">y</span>, measure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mse"</span>, <span class="st">"mae"</span>, <span class="st">"deviance"</span>, <span class="st">"misclass"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for PoissonSLOPE</span></span>
+<span><span class="fu">score</span><span class="op">(</span><span class="va">object</span>, <span class="va">x</span>, <span class="va">y</span>, measure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mse"</span>, <span class="st">"mae"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>an object of class <code>"SLOPE"</code></p></dd>
+
+
 <dt>x</dt>
 <dd><p>feature matrix</p></dd>
+
+
 <dt>y</dt>
 <dd><p>response</p></dd>
+
+
 <dt>measure</dt>
 <dd><p>type of target measure. <code>"mse"</code> returns mean squared error.
 <code>"mae"</code> returns mean absolute error, <code>"misclass"</code> returns
 misclassification rate, and <code>"auc"</code> returns area under the ROC curve.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>The measure along the regularization path depending on the
+    
+
+<p>The measure along the regularization path depending on the
 value in <code>measure</code>.#'</p>
     </div>
     <div id="see-also">
@@ -132,11 +141,11 @@ value in <code>measure</code>.#'</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">infert</span>, select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"induced"</span>, <span class="st">"age"</span>, <span class="st">"pooled.stratum"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">infert</span><span class="op">$</span><span class="va">case</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="SLOPE.html">SLOPE</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, family <span class="op">=</span> <span class="st">"binomial"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">score</span><span class="op">(</span><span class="va">fit</span>, <span class="va">x</span>, <span class="va">y</span>, measure <span class="op">=</span> <span class="st">"auc"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">infert</span>, select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"induced"</span>, <span class="st">"age"</span>, <span class="st">"pooled.stratum"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">infert</span><span class="op">$</span><span class="va">case</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="SLOPE.html">SLOPE</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, family <span class="op">=</span> <span class="st">"binomial"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">score</span><span class="op">(</span><span class="va">fit</span>, <span class="va">x</span>, <span class="va">y</span>, measure <span class="op">=</span> <span class="st">"auc"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        p1        p2        p3        p4        p5        p6 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0.5150055 0.4921504 0.4952903 0.5025192 0.5090179 0.5101132 </span>
 </code></pre></div>
@@ -153,7 +162,7 @@ value in <code>measure</code>.#'</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

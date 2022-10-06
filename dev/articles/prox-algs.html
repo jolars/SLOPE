@@ -113,7 +113,7 @@
       <h1 data-toc-skip>Proximal Operator Algorithms</h1>
                         <h4 data-toc-skip class="author">Johan Larsson</h4>
             
-            <h4 data-toc-skip class="date">2022-06-10</h4>
+            <h4 data-toc-skip class="date">2022-10-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jolars/SLOPE/blob/HEAD/vignettes/prox-algs.Rmd" class="external-link"><code>vignettes/prox-algs.Rmd</code></a></small>
       <div class="hidden name"><code>prox-algs.Rmd</code></div>
@@ -137,46 +137,46 @@
 <p>There are several methods for solving this proximal operator and here we provide some benchmarks of these methods. Note that these results are almost entirely of academic nature and are added here only to serve as reference for others who are interested in working with SLOPE and particularly those who might be interested in improving the performance of these algorithms.</p>
 <p>First, we load the packages we need,.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://jolars.github.io/SLOPE/">SLOPE</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bench.r-lib.org/" class="external-link">bench</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://jolars.github.io/SLOPE/">SLOPE</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bench.r-lib.org/" class="external-link">bench</a></span><span class="op">)</span></span></code></pre></div>
 <p>Then we setup and run our benchmarks, letting <code>p</code> be the length of the vector used in the operator.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/expand_grid.html" class="external-link">expand_grid</a></span><span class="op">(</span>
-  p <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">10000</span>, length.out <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>,
-  i <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">20</span>,
-  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"stack"</span>, <span class="st">"pava"</span><span class="op">)</span>,
-  time <span class="op">=</span> <span class="cn">NA</span>
-<span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2254</span><span class="op">)</span>
-
-<span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">p</span> <span class="op">&lt;-</span> <span class="va">res</span><span class="op">$</span><span class="va">p</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>
-
-  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span>
-  <span class="va">lambda</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-
-  <span class="va">time</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://bench.r-lib.org/reference/bench_time.html" class="external-link">bench_time</a></span><span class="op">(</span><span class="fu"><a href="../reference/sortedL1Prox.html">sortedL1Prox</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">lambda</span>, <span class="va">res</span><span class="op">$</span><span class="va">method</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
-
-  <span class="va">res</span><span class="op">$</span><span class="va">time</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">time</span><span class="op">[[</span><span class="st">"real"</span><span class="op">]</span><span class="op">]</span> <span class="op">*</span> <span class="fl">1e3</span> <span class="co"># milliseconds</span>
-<span class="op">}</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/expand_grid.html" class="external-link">expand_grid</a></span><span class="op">(</span></span>
+<span>  p <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">10000</span>, length.out <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>,</span>
+<span>  i <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">20</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"stack"</span>, <span class="st">"pava"</span><span class="op">)</span>,</span>
+<span>  time <span class="op">=</span> <span class="cn">NA</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2254</span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">p</span> <span class="op">&lt;-</span> <span class="va">res</span><span class="op">$</span><span class="va">p</span><span class="op">[</span><span class="va">i</span><span class="op">]</span></span>
+<span></span>
+<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span>
+<span>  <span class="va">lambda</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="va">time</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://bench.r-lib.org/reference/bench_time.html" class="external-link">bench_time</a></span><span class="op">(</span><span class="fu"><a href="../reference/sortedL1Prox.html">sortedL1Prox</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">lambda</span>, <span class="va">res</span><span class="op">$</span><span class="va">method</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="va">res</span><span class="op">$</span><span class="va">time</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">time</span><span class="op">[[</span><span class="st">"real"</span><span class="op">]</span><span class="op">]</span> <span class="op">*</span> <span class="fl">1e3</span> <span class="co"># milliseconds</span></span>
+<span><span class="op">}</span></span></code></pre></div>
 <p>Finally, we summarize the results in the figure below.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://scales.r-lib.org" class="external-link">scales</a></span><span class="op">)</span>
-
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">res</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">p</span>, <span class="va">time</span>, fill <span class="op">=</span> <span class="va">method</span>, col <span class="op">=</span> <span class="va">method</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_summary.html" class="external-link">stat_summary</a></span><span class="op">(</span>
-    geom <span class="op">=</span> <span class="st">"ribbon"</span>,
-    fun.data <span class="op">=</span> <span class="va">mean_se</span>,
-    alpha <span class="op">=</span> <span class="fl">0.2</span>,
-    col <span class="op">=</span> <span class="st">"transparent"</span>
-  <span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_summary.html" class="external-link">stat_summary</a></span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"line"</span>, fun <span class="op">=</span> <span class="va">mean</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_log10</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Time (milliseconds)"</span>, x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://scales.r-lib.org" class="external-link">scales</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">res</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">p</span>, <span class="va">time</span>, fill <span class="op">=</span> <span class="va">method</span>, col <span class="op">=</span> <span class="va">method</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_summary.html" class="external-link">stat_summary</a></span><span class="op">(</span></span>
+<span>    geom <span class="op">=</span> <span class="st">"ribbon"</span>,</span>
+<span>    fun.data <span class="op">=</span> <span class="va">mean_se</span>,</span>
+<span>    alpha <span class="op">=</span> <span class="fl">0.2</span>,</span>
+<span>    col <span class="op">=</span> <span class="st">"transparent"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_summary.html" class="external-link">stat_summary</a></span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"line"</span>, fun <span class="op">=</span> <span class="va">mean</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_log10</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Time (milliseconds)"</span>, x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="prox-algs_files/figure-html/unnamed-chunk-2-1.png" alt="Comparison in execution times between the PAVA algorithm and the stack-based algorithm for solving the SLOPE prox." width="480"><p class="caption">
 Comparison in execution times between the PAVA algorithm and the stack-based algorithm for solving the SLOPE prox.
@@ -204,7 +204,7 @@ Comparison in execution times between the PAVA algorithm and the stack-based alg
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

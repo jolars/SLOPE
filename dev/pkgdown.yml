@@ -1,10 +1,10 @@
 pandoc: 2.7.3
-pkgdown: 2.0.3
+pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
   introduction: introduction.html
   prox-algs: prox-algs.html
-last_built: 2022-06-10T07:12Z
+last_built: 2022-10-06T09:52Z
 urls:
   reference: https://jolars.github.io/SLOPE/reference
   article: https://jolars.github.io/SLOPE/articles

@@ -84,16 +84,16 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S3 method for TrainedSLOPE</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span>
-  <span class="va">x</span>,
-  measure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"mse"</span>, <span class="st">"mae"</span>, <span class="st">"deviance"</span>, <span class="st">"auc"</span>, <span class="st">"misclass"</span><span class="op">)</span>,
-  plot_min <span class="op">=</span> <span class="cn">TRUE</span>,
-  ci_alpha <span class="op">=</span> <span class="fl">0.2</span>,
-  ci_border <span class="op">=</span> <span class="cn">FALSE</span>,
-  ci_col <span class="op">=</span> <span class="st">"salmon"</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for TrainedSLOPE</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  measure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"mse"</span>, <span class="st">"mae"</span>, <span class="st">"deviance"</span>, <span class="st">"auc"</span>, <span class="st">"misclass"</span><span class="op">)</span>,</span>
+<span>  plot_min <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  ci_alpha <span class="op">=</span> <span class="fl">0.2</span>,</span>
+<span>  ci_border <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  ci_col <span class="op">=</span> <span class="st">"salmon"</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -101,27 +101,42 @@
     <dl><dt>x</dt>
 <dd><p>an object of class <code>'TrainedSLOPE'</code>, typically from a call
 to <code><a href="trainSLOPE.html">trainSLOPE()</a></code></p></dd>
+
+
 <dt>measure</dt>
 <dd><p>any of the measures used in the call to <code><a href="trainSLOPE.html">trainSLOPE()</a></code>. If
 <code>measure = "auto"</code> then deviance will be used for binomial and multinomial
 models, whilst mean-squared error will be used for Gaussian and Poisson
 models.</p></dd>
+
+
 <dt>plot_min</dt>
 <dd><p>whether to mark the location of the penalty corresponding
 to the best prediction score</p></dd>
+
+
 <dt>ci_alpha</dt>
 <dd><p>alpha (opacity) for fill in confidence limits</p></dd>
+
+
 <dt>ci_border</dt>
 <dd><p>color (or flag to turn off and on) the border of the
 confidence limits</p></dd>
+
+
 <dt>ci_col</dt>
 <dd><p>color for border of confidence limits</p></dd>
+
+
 <dt>...</dt>
 <dd><p>words</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>An object of class <code>"ggplot"</code>, which will be plotted on the
+    
+
+<p>An object of class <code>"ggplot"</code>, which will be plotted on the
 current device unless stored in a variable.</p>
     </div>
     <div id="see-also">
@@ -134,14 +149,14 @@ current device unless stored in a variable.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># Cross-validation for a SLOPE binomial model</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">tune</span> <span class="op">&lt;-</span> <span class="fu"><a href="trainSLOPE.html">trainSLOPE</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">mtcars</span>, select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mpg"</span>, <span class="st">"drat"</span>, <span class="st">"wt"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span class="r-in">  <span class="va">mtcars</span><span class="op">$</span><span class="va">hp</span>,</span>
-<span class="r-in">  q <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.2</span><span class="op">)</span>,</span>
-<span class="r-in">  number <span class="op">=</span> <span class="fl">10</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tune</span>, ci_col <span class="op">=</span> <span class="st">"salmon"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Cross-validation for a SLOPE binomial model</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tune</span> <span class="op">&lt;-</span> <span class="fu"><a href="trainSLOPE.html">trainSLOPE</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">mtcars</span>, select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mpg"</span>, <span class="st">"drat"</span>, <span class="st">"wt"</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="va">mtcars</span><span class="op">$</span><span class="va">hp</span>,</span></span>
+<span class="r-in"><span>  q <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  number <span class="op">=</span> <span class="fl">10</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tune</span>, ci_col <span class="op">=</span> <span class="st">"salmon"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot.TrainedSLOPE-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
@@ -157,7 +172,7 @@ current device unless stored in a variable.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

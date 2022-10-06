@@ -96,7 +96,7 @@ where \(J(x, \lambda)\) is the Sorted L1 Norm.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">sortedL1Prox</span><span class="op">(</span><span class="va">x</span>, <span class="va">lambda</span>, method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"stack"</span>, <span class="st">"pava"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">sortedL1Prox</span><span class="op">(</span><span class="va">x</span>, <span class="va">lambda</span>, method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"stack"</span>, <span class="st">"pava"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="source">
@@ -109,18 +109,25 @@ Appl Stat, vol. 9, no. 3, pp. 1103–1140, 2015, doi: 10.1214/15-AOAS842.</p>
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>A vector. In SLOPE, this is the vector of coefficients.</p></dd>
+
+
 <dt>lambda</dt>
 <dd><p>A non-negative and decreasing sequence
 of weights for the Sorted L1 Norm. Needs to be the same length as
 <code>x</code>.</p></dd>
+
+
 <dt>method</dt>
 <dd><p>Method used in the prox. <code>"stack"</code> is a stack-based algorithm
 (Algorithm 4 in Bogdan et al.). <code>"pava"</code> is the PAVA algorithm used
 in isotonic regression (also Algorithm 3 in Bogdan et al.).</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>An evaluation of the proximal operator at <code>x</code> and <code>lambda</code>.</p>
+    
+
+<p>An evaluation of the proximal operator at <code>x</code> and <code>lambda</code>.</p>
     </div>
 
   </div>
@@ -135,7 +142,7 @@ in isotonic regression (also Algorithm 3 in Bogdan et al.).</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

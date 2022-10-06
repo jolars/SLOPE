@@ -92,39 +92,39 @@ in decreasing order according  to its absolute values.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">SLOPE</span><span class="op">(</span>
-  <span class="va">x</span>,
-  <span class="va">y</span>,
-  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gaussian"</span>, <span class="st">"binomial"</span>, <span class="st">"multinomial"</span>, <span class="st">"poisson"</span><span class="op">)</span>,
-  intercept <span class="op">=</span> <span class="cn">TRUE</span>,
-  center <span class="op">=</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">inherits</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">"sparseMatrix"</span><span class="op">)</span>,
-  scale <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"l2"</span>, <span class="st">"l1"</span>, <span class="st">"sd"</span>, <span class="st">"none"</span><span class="op">)</span>,
-  alpha <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"path"</span>, <span class="st">"estimate"</span><span class="op">)</span>,
-  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bh"</span>, <span class="st">"gaussian"</span>, <span class="st">"oscar"</span>, <span class="st">"lasso"</span><span class="op">)</span>,
-  alpha_min_ratio <span class="op">=</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NROW</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NCOL</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="fl">0.01</span> <span class="kw">else</span> <span class="fl">1e-04</span>,
-  path_length <span class="op">=</span> <span class="kw">if</span> <span class="op">(</span><span class="va">alpha</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">==</span> <span class="st">"estimate"</span><span class="op">)</span> <span class="fl">1</span> <span class="kw">else</span> <span class="fl">20</span>,
-  q <span class="op">=</span> <span class="fl">0.1</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NROW</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NCOL</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>,
-  theta1 <span class="op">=</span> <span class="fl">1</span>,
-  theta2 <span class="op">=</span> <span class="fl">0.5</span>,
-  prox_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"stack"</span>, <span class="st">"pava"</span><span class="op">)</span>,
-  screen <span class="op">=</span> <span class="cn">TRUE</span>,
-  screen_alg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"strong"</span>, <span class="st">"previous"</span><span class="op">)</span>,
-  tol_dev_change <span class="op">=</span> <span class="fl">1e-05</span>,
-  tol_dev_ratio <span class="op">=</span> <span class="fl">0.995</span>,
-  max_variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NROW</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,
-  solver <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"fista"</span>, <span class="st">"admm"</span><span class="op">)</span>,
-  max_passes <span class="op">=</span> <span class="fl">1e+06</span>,
-  tol_abs <span class="op">=</span> <span class="fl">1e-05</span>,
-  tol_rel <span class="op">=</span> <span class="fl">1e-04</span>,
-  tol_rel_gap <span class="op">=</span> <span class="fl">1e-05</span>,
-  tol_infeas <span class="op">=</span> <span class="fl">0.001</span>,
-  tol_rel_coef_change <span class="op">=</span> <span class="fl">0.001</span>,
-  diagnostics <span class="op">=</span> <span class="cn">FALSE</span>,
-  verbosity <span class="op">=</span> <span class="fl">0</span>,
-  <span class="va">sigma</span>,
-  <span class="va">n_sigma</span>,
-  <span class="va">lambda_min_ratio</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">SLOPE</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">y</span>,</span>
+<span>  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gaussian"</span>, <span class="st">"binomial"</span>, <span class="st">"multinomial"</span>, <span class="st">"poisson"</span><span class="op">)</span>,</span>
+<span>  intercept <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  center <span class="op">=</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">inherits</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">"sparseMatrix"</span><span class="op">)</span>,</span>
+<span>  scale <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"l2"</span>, <span class="st">"l1"</span>, <span class="st">"sd"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
+<span>  alpha <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"path"</span>, <span class="st">"estimate"</span><span class="op">)</span>,</span>
+<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bh"</span>, <span class="st">"gaussian"</span>, <span class="st">"oscar"</span>, <span class="st">"lasso"</span><span class="op">)</span>,</span>
+<span>  alpha_min_ratio <span class="op">=</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NROW</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NCOL</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="fl">0.01</span> <span class="kw">else</span> <span class="fl">1e-04</span>,</span>
+<span>  path_length <span class="op">=</span> <span class="kw">if</span> <span class="op">(</span><span class="va">alpha</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">==</span> <span class="st">"estimate"</span><span class="op">)</span> <span class="fl">1</span> <span class="kw">else</span> <span class="fl">20</span>,</span>
+<span>  q <span class="op">=</span> <span class="fl">0.1</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NROW</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NCOL</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  theta1 <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  theta2 <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  prox_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"stack"</span>, <span class="st">"pava"</span><span class="op">)</span>,</span>
+<span>  screen <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  screen_alg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"strong"</span>, <span class="st">"previous"</span><span class="op">)</span>,</span>
+<span>  tol_dev_change <span class="op">=</span> <span class="fl">1e-05</span>,</span>
+<span>  tol_dev_ratio <span class="op">=</span> <span class="fl">0.995</span>,</span>
+<span>  max_variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NROW</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,</span>
+<span>  solver <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"fista"</span>, <span class="st">"admm"</span><span class="op">)</span>,</span>
+<span>  max_passes <span class="op">=</span> <span class="fl">1e+06</span>,</span>
+<span>  tol_abs <span class="op">=</span> <span class="fl">1e-05</span>,</span>
+<span>  tol_rel <span class="op">=</span> <span class="fl">1e-04</span>,</span>
+<span>  tol_rel_gap <span class="op">=</span> <span class="fl">1e-05</span>,</span>
+<span>  tol_infeas <span class="op">=</span> <span class="fl">0.001</span>,</span>
+<span>  tol_rel_coef_change <span class="op">=</span> <span class="fl">0.001</span>,</span>
+<span>  diagnostics <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  verbosity <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  <span class="va">sigma</span>,</span>
+<span>  <span class="va">n_sigma</span>,</span>
+<span>  <span class="va">lambda_min_ratio</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -134,22 +134,34 @@ in decreasing order according  to its absolute values.</p>
 matrix of the standard <em>matrix</em> class, or a sparse matrix
 inheriting from <a href="https://rdrr.io/pkg/Matrix/man/sparseMatrix.html" class="external-link">Matrix::sparseMatrix</a>. Data frames will
 be converted to matrices internally.</p></dd>
+
+
 <dt>y</dt>
 <dd><p>the response, which for <code>family = "gaussian"</code> must be numeric; for
 <code>family = "binomial"</code> or <code>family = "multinomial"</code>, it can be a factor.</p></dd>
+
+
 <dt>family</dt>
 <dd><p>model family (objective); see <strong>Families</strong> for details.</p></dd>
+
+
 <dt>intercept</dt>
 <dd><p>whether to fit an intercept</p></dd>
+
+
 <dt>center</dt>
 <dd><p>whether to center predictors or not by their mean. Defaults
 to <code>TRUE</code> if <code>x</code> is dense and <code>FALSE</code> otherwise.</p></dd>
+
+
 <dt>scale</dt>
 <dd><p>type of scaling to apply to predictors.</p><ul><li><p><code>"l1"</code> scales predictors to have L1 norms of one.</p></li>
 <li><p><code>"l2"</code> scales predictors to have L2 norms of one.#'</p></li>
 <li><p><code>"sd"</code> scales predictors to have a population standard deviation one.</p></li>
 <li><p><code>"none"</code> applies no scaling.</p></li>
 </ul></dd>
+
+
 <dt>alpha</dt>
 <dd><p>scale for regularization path: either a decreasing numeric
 vector (possibly of length 1) or a character vector; in the latter case,
@@ -164,43 +176,61 @@ on the type of standardization that is applied to <code>x</code>. For <code>scal
 alpha will be scaled by \(n\), and for <code>scale = "l1"</code> no scaling is
 applied. Note, however, that the <code>alpha</code> that is returned in the
 resulting value is the <strong>unstandardized</strong> alpha.</p></dd>
+
+
 <dt>lambda</dt>
 <dd><p>either a character vector indicating the method used
 to construct the lambda path or a numeric non-decreasing
 vector with length equal to the number
 of coefficients in the model; see section <strong>Regularization sequences</strong>
 for details.</p></dd>
+
+
 <dt>alpha_min_ratio</dt>
 <dd><p>smallest value for <code>lambda</code> as a fraction of
 <code>lambda_max</code>; used in the selection of <code>alpha</code> when <code>alpha = "path"</code>.</p></dd>
+
+
 <dt>path_length</dt>
 <dd><p>length of regularization path; note that the path
 returned may still be shorter due to the early termination criteria
 given by <code>tol_dev_change</code>, <code>tol_dev_ratio</code>, and <code>max_variables</code>.</p></dd>
+
+
 <dt>q</dt>
 <dd><p>parameter controlling the shape of the lambda sequence, with
 usage varying depending on the type of path used and has no effect
 is a custom <code>lambda</code> sequence is used. Must be greater than <code>1e-6</code> and
 smaller than 1.</p></dd>
+
+
 <dt>theta1</dt>
 <dd><p>parameter controlling the shape of the lambda sequence
 when <code>lambda == "OSCAR"</code>. This parameter basically sets the intercept
 for the lambda sequence and is equivalent to \(\lambda_1\) in the
 original OSCAR formulation.</p></dd>
+
+
 <dt>theta2</dt>
 <dd><p>parameter controlling the shape of the lambda sequence
 when <code>lambda == "OSCAR"</code>. This parameter basically sets the slope
 for the lambda sequence and is equivalent to \(\lambda_2\) in the
 original OSCAR formulation.</p></dd>
+
+
 <dt>prox_method</dt>
 <dd><p>method for calculating the proximal operator for
 the Sorted L1 Norm (the SLOPE penalty). Please see <code><a href="sortedL1Prox.html">sortedL1Prox()</a></code> for
 more information.</p></dd>
+
+
 <dt>screen</dt>
 <dd><p>whether to use predictor screening rules (rules that allow
 some predictors to be discarded prior to fitting), which improve speed
 greatly when the number of predictors is larger than the number
 of observations.</p></dd>
+
+
 <dt>screen_alg</dt>
 <dd><p>what type of screening algorithm to use.</p><ul><li><p><code>"strong"</code> uses the set from the strong screening rule and check
 against the full set</p></li>
@@ -208,98 +238,145 @@ against the full set</p></li>
 against the strong set, and finally against the full set if there are
 no violations in the strong set</p></li>
 </ul></dd>
+
+
 <dt>tol_dev_change</dt>
 <dd><p>the regularization path is stopped if the
 fractional change in deviance falls below this value; note that this is
 automatically set to 0 if a alpha is manually entered</p></dd>
+
+
 <dt>tol_dev_ratio</dt>
 <dd><p>the regularization path is stopped if the
 deviance ratio \(1 - \mathrm{deviance}/\mathrm{(null-deviance)}
   \) is above this threshold</p></dd>
+
+
 <dt>max_variables</dt>
 <dd><p>criterion for stopping the path in terms of the
 maximum number of unique, nonzero coefficients in absolute value in model.
 For the multinomial family, this value will be multiplied internally with
 the number of levels of the response minus one.</p></dd>
+
+
 <dt>solver</dt>
 <dd><p>type of solver use, either <code>"fista"</code> or <code>"admm"</code>;
 all families currently support FISTA but only <code>family = "gaussian"</code>
 supports ADMM.</p></dd>
+
+
 <dt>max_passes</dt>
 <dd><p>maximum number of passes (outer iterations) for solver</p></dd>
+
+
 <dt>tol_abs</dt>
 <dd><p>absolute tolerance criterion for ADMM solver</p></dd>
+
+
 <dt>tol_rel</dt>
 <dd><p>relative tolerance criterion for ADMM solver</p></dd>
+
+
 <dt>tol_rel_gap</dt>
 <dd><p>stopping criterion for the duality gap; used only with
 FISTA solver.</p></dd>
+
+
 <dt>tol_infeas</dt>
 <dd><p>stopping criterion for the level of infeasibility; used
 with FISTA solver and KKT checks in screening algorithm.</p></dd>
+
+
 <dt>tol_rel_coef_change</dt>
 <dd><p>relative tolerance criterion for change
 in coefficients between iterations, which is reached when
 the maximum absolute change in any coefficient divided by the maximum
 absolute coefficient size is less than this value.</p></dd>
+
+
 <dt>diagnostics</dt>
 <dd><p>whether to save diagnostics from the solver
 (timings and other values depending on type of solver)</p></dd>
+
+
 <dt>verbosity</dt>
 <dd><p>level of verbosity for displaying output from the
 program. Setting this to 1 displays basic information on the path level,
 2 a little bit more information on the path level, and 3 displays
 information from the solver.</p></dd>
+
+
 <dt>sigma</dt>
 <dd><p>deprecated; please use <code>alpha</code> instead</p></dd>
+
+
 <dt>n_sigma</dt>
 <dd><p>deprecated; please use <code>path_length</code> instead</p></dd>
+
+
 <dt>lambda_min_ratio</dt>
 <dd><p>deprecated; please use <code>alpha_min_ratio</code> instead</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>An object of class <code>"SLOPE"</code> with the following slots:</p>
+    
+
+<p>An object of class <code>"SLOPE"</code> with the following slots:</p>
 <dl><dt>coefficients</dt>
 <dd><p>a three-dimensional array of the coefficients from the
 model fit, including the intercept if it was fit.
 There is one row for each coefficient, one column
 for each target (dependent variable), and
 one slice for each penalty.</p></dd>
+
 <dt>nonzeros</dt>
 <dd><p>a three-dimensional logical array indicating whether a
 coefficient was zero or not</p></dd>
+
 <dt>lambda</dt>
 <dd><p>the lambda vector that when multiplied by a value in <code>alpha</code>
 gives the penalty vector at that point along the regularization
 path</p></dd>
+
 <dt>alpha</dt>
 <dd><p>vector giving the (unstandardized) scaling of the lambda sequence</p></dd>
+
 <dt>class_names</dt>
 <dd><p>a character vector giving the names of the classes for binomial and
 multinomial families</p></dd>
+
 <dt>passes</dt>
 <dd><p>the number of passes the solver took at each step on the path</p></dd>
+
 <dt>violations</dt>
 <dd><p>the number of violations of the screening rule at each step on the path;
 only available if <code>diagnostics = TRUE</code> in the call to <code>SLOPE()</code>.</p></dd>
+
 <dt>active_sets</dt>
 <dd><p>a list where each element indicates the indices of the
 coefficients that were active at that point in the regularization path</p></dd>
+
 <dt>unique</dt>
 <dd><p>the number of unique predictors (in absolute value)</p></dd>
+
 <dt>deviance_ratio</dt>
 <dd><p>the deviance ratio (as a fraction of 1)</p></dd>
+
 <dt>null_deviance</dt>
 <dd><p>the deviance of the null (intercept-only) model</p></dd>
+
 <dt>family</dt>
 <dd><p>the name of the family used in the model fit</p></dd>
+
 <dt>diagnostics</dt>
 <dd><p>a <code>data.frame</code> of objective values for the primal and dual problems, as
 well as a measure of the infeasibility, time, and iteration; only
 available if <code>diagnostics = TRUE</code> in the call to <code>SLOPE()</code>.</p></dd>
+
 <dt>call</dt>
 <dd><p>the call used for fitting the model</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -459,34 +536,34 @@ Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co"># Gaussian response, default lambda sequence</span></span>
-<span class="r-in"><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">SLOPE</span><span class="op">(</span><span class="va">bodyfat</span><span class="op">$</span><span class="va">x</span>, <span class="va">bodyfat</span><span class="op">$</span><span class="va">y</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Poisson response, OSCAR-type lambda sequence</span></span>
-<span class="r-in"><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">SLOPE</span><span class="op">(</span></span>
-<span class="r-in">  <span class="va">abalone</span><span class="op">$</span><span class="va">x</span>,</span>
-<span class="r-in">  <span class="va">abalone</span><span class="op">$</span><span class="va">y</span>,</span>
-<span class="r-in">  family <span class="op">=</span> <span class="st">"poisson"</span>,</span>
-<span class="r-in">  lambda <span class="op">=</span> <span class="st">"oscar"</span>,</span>
-<span class="r-in">  theta1 <span class="op">=</span> <span class="fl">1</span>,</span>
-<span class="r-in">  theta2 <span class="op">=</span> <span class="fl">0.9</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Multinomial response, custom alpha and lambda</span></span>
-<span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">wine</span><span class="op">$</span><span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span></span>
-<span class="r-in"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">wine</span><span class="op">$</span><span class="va">x</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.005</span></span>
-<span class="r-in"><span class="va">lambda</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">1.8</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="va">p</span> <span class="op">*</span> <span class="va">m</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">SLOPE</span><span class="op">(</span></span>
-<span class="r-in">  <span class="va">wine</span><span class="op">$</span><span class="va">x</span>,</span>
-<span class="r-in">  <span class="va">wine</span><span class="op">$</span><span class="va">y</span>,</span>
-<span class="r-in">  family <span class="op">=</span> <span class="st">"multinomial"</span>,</span>
-<span class="r-in">  lambda <span class="op">=</span> <span class="va">lambda</span>,</span>
-<span class="r-in">  alpha <span class="op">=</span> <span class="va">alpha</span></span>
-<span class="r-in"><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Gaussian response, default lambda sequence</span></span></span>
+<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">SLOPE</span><span class="op">(</span><span class="va">bodyfat</span><span class="op">$</span><span class="va">x</span>, <span class="va">bodyfat</span><span class="op">$</span><span class="va">y</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Poisson response, OSCAR-type lambda sequence</span></span></span>
+<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">SLOPE</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">abalone</span><span class="op">$</span><span class="va">x</span>,</span></span>
+<span class="r-in"><span>  <span class="va">abalone</span><span class="op">$</span><span class="va">y</span>,</span></span>
+<span class="r-in"><span>  family <span class="op">=</span> <span class="st">"poisson"</span>,</span></span>
+<span class="r-in"><span>  lambda <span class="op">=</span> <span class="st">"oscar"</span>,</span></span>
+<span class="r-in"><span>  theta1 <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  theta2 <span class="op">=</span> <span class="fl">0.9</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Multinomial response, custom alpha and lambda</span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">wine</span><span class="op">$</span><span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">wine</span><span class="op">$</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.005</span></span></span>
+<span class="r-in"><span><span class="va">lambda</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">1.8</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="va">p</span> <span class="op">*</span> <span class="va">m</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">SLOPE</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">wine</span><span class="op">$</span><span class="va">x</span>,</span></span>
+<span class="r-in"><span>  <span class="va">wine</span><span class="op">$</span><span class="va">y</span>,</span></span>
+<span class="r-in"><span>  family <span class="op">=</span> <span class="st">"multinomial"</span>,</span></span>
+<span class="r-in"><span>  lambda <span class="op">=</span> <span class="va">lambda</span>,</span></span>
+<span class="r-in"><span>  alpha <span class="op">=</span> <span class="va">alpha</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -501,7 +578,7 @@ Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>
