@@ -428,7 +428,7 @@ fit <- SLOPE(
 \references{
 Bogdan, M., van den Berg, E., Sabatti, C., Su, W., & Candès, E. J. (2015).
 SLOPE -- adaptive variable selection via convex optimization. The Annals of
-Applied Statistics, 9(3), 1103–1140. \doi{10/gfgwzt}
+Applied Statistics, 9(3), 1103–1140. \doi{10.1214/15-AOAS842}
 
 Bondell, H. D., & Reich, B. J. (2008). Simultaneous Regression Shrinkage,
 Variable Selection, and Supervised Clustering of Predictors with OSCAR.

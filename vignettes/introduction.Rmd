@@ -182,4 +182,4 @@ ggplot(mapping = aes(q, fdr)) +
 
 SLOPE seems to control FDR at roughly the specified level.
 
-## References
+# References
