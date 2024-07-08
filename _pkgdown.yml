@@ -12,37 +12,37 @@ template:
 
 news:
   releases:
-  - text: "Version 0.2.0"
-    href: https://larssonjohan.com/post/slope-0-2-0/
+    - text: "Version 0.2.0"
+      href: https://larssonjohan.com/post/slope-0-2-0/
 
 reference:
-- title: Main Functionality
-  desc: Fit the model with `SLOPE()`, visualize the results with
-        `plot.SLOPE()`, and produce predictions for new data with
-        `predict.SLOPE()`.
-- contents:
-  - SLOPE
-  - plot.SLOPE
-  - print.SLOPE
-  - predict.SLOPE
-  - coef.SLOPE
-  - deviance.SLOPE
-  - score
-- title: Model Tuning
-- contents:
-  - trainSLOPE
-  - caretSLOPE
-  - plot.TrainedSLOPE
-  - print.TrainedSLOPE
-- title: Utilities
-- contents:
-  - plotDiagnostics
-  - regularizationWeights
-  - sortedL1Prox
-- title: Datasets
-- contents:
-  - abalone
-  - bodyfat
-  - heart
-  - student
-  - wine
+  - title: Main Functionality
+    desc: Fit the model with `SLOPE()`, visualize the results with
+      `plot.SLOPE()`, and produce predictions for new data with
+      `predict.SLOPE()`.
+  - contents:
+      - SLOPE
+      - plot.SLOPE
+      - print.SLOPE
+      - predict.SLOPE
+      - coef.SLOPE
+      - deviance.SLOPE
+      - score
+  - title: Model Tuning
+  - contents:
+      - trainSLOPE
+      - caretSLOPE
+      - plot.TrainedSLOPE
+      - print.TrainedSLOPE
+  - title: Utilities
+  - contents:
+      - plotDiagnostics
+      - regularizationWeights
+      - sortedL1Prox
+  - title: Datasets
+  - contents:
+      - abalone
+      - bodyfat
+      - heart
+      - student
+      - wine
