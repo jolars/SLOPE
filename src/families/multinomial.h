@@ -36,7 +36,7 @@ public:
     return accu(lse) - accu(lin_pred % trunc_exp(lin_pred.each_col() - lse));
   }
 
-  arma::mat pseudoGradient(const arma::mat& y, const arma::mat& lin_pred)
+  arma::mat partialGradient(const arma::mat& y, const arma::mat& lin_pred)
   {
     using namespace arma;
 

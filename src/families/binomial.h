@@ -26,7 +26,7 @@ public:
     return dot(r - 1.0, trunc_log(1.0 - r)) - dot(r, trunc_log(r));
   }
 
-  arma::mat pseudoGradient(const arma::mat& y, const arma::mat& lin_pred)
+  arma::mat partialGradient(const arma::mat& y, const arma::mat& lin_pred)
   {
     return -y / (1.0 + arma::trunc_exp(y % lin_pred));
   }

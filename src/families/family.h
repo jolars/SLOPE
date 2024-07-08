@@ -50,13 +50,13 @@ public:
   virtual double dual(const arma::mat& y, const arma::mat& lin_pred) = 0;
 
   // this is not really the true gradient; it needs to multiplied by X^T
-  virtual arma::mat pseudoGradient(const arma::mat& y,
+  virtual arma::mat partialGradient(const arma::mat& y,
                                    const arma::mat& lin_pred) = 0;
 
   template<typename T>
   arma::mat gradient(const T& x, const arma::mat& y, const arma::mat& lin_pred)
   {
-    return x.t() * pseudoGradient(y, lin_pred);
+    return x.t() * partialGradient(y, lin_pred);
   }
 
   virtual arma::rowvec fitNullModel(const arma::mat& y,

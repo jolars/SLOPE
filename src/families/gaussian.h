@@ -29,7 +29,7 @@ public:
            0.5 * std::pow(arma::norm(lin_pred, 2), 2);
   }
 
-  arma::mat pseudoGradient(const arma::mat& y, const arma::mat& lin_pred)
+  arma::mat partialGradient(const arma::mat& y, const arma::mat& lin_pred)
   {
     return lin_pred - y;
   }

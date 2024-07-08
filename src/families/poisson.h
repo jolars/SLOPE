@@ -25,7 +25,7 @@ public:
     return -accu(trunc_exp(lin_pred) % (lin_pred - 1) - lgamma(y + 1));
   }
 
-  arma::mat pseudoGradient(const arma::mat& y, const arma::mat& lin_pred)
+  arma::mat partialGradient(const arma::mat& y, const arma::mat& lin_pred)
   {
     return arma::trunc_exp(lin_pred) - y;
   }
