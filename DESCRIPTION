@@ -85,7 +85,6 @@ Imports:
     checkmate,
     foreach,
     ggplot2,
-    glmnet,
     Matrix,
     methods,
     mice,
@@ -96,6 +95,7 @@ LinkingTo:
 Suggests:
     bench,
     caret,
+    glmnet,
     covr,
     dplyr,
     knitr,
