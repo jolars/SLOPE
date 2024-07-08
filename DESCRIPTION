@@ -107,7 +107,7 @@ Suggests:
     tidyr,
     vdiffr
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.3.2
 Language: en-US
 Encoding: UTF-8
 URL: https://jolars.github.io/SLOPE/, https://github.com/jolars/SLOPE
