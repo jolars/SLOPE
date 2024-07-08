@@ -3,7 +3,6 @@
 \docType{package}
 \name{SLOPE-package}
 \alias{SLOPE-package}
-\alias{_PACKAGE}
 \title{SLOPE: Sorted L1 Penalized Estimation}
 \description{
 Efficient implementations for Sorted L-One Penalized Estimation (SLOPE): generalized linear models regularized with the sorted L1-norm (Bogdan et al. 2015). Supported models include ordinary least-squares regression, binomial regression, multinomial regression, and Poisson regression. Both dense and sparse predictor matrices are supported. In addition, the package features predictor screening rules that enable fast and efficient solutions to high-dimensional problems.
@@ -18,7 +17,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Johan Larsson \email{johan.larsson@stat.lu.se} (\href{https://orcid.org/0000-0002-4029-5945}{ORCID})
+\strong{Maintainer}: Johan Larsson \email{johanlarsson@outlook.com} (\href{https://orcid.org/0000-0002-4029-5945}{ORCID})
 
 Authors:
 \itemize{
