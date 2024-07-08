@@ -6,6 +6,7 @@ development:
 url: https://jolars.github.io/SLOPE/
 
 template:
+  bootstrap: 5
   params:
     ganalytics: UA-85513662-2
 
