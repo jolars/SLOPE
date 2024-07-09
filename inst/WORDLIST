@@ -1,5 +1,4 @@
 ADMM
-AOAS
 ASAN
 Appl
 BH
@@ -73,7 +72,6 @@ fluoroscopy
 foreach
 frac
 geq
-gfgwzt
 ggplot
 glmnet
 http
@@ -94,6 +92,7 @@ operatorname
 orthonormality
 pectoris
 phenols
+pkgdown
 poisson
 proanthocyanins
 proline
@@ -103,7 +102,6 @@ regularizations
 reimplemented
 rvert
 solaris
-sparseMatrix
 th
 tw
 unregularized
