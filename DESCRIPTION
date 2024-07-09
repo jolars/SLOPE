@@ -82,7 +82,6 @@ LazyData: true
 Depends:
     R (>= 3.5.0)
 Imports:
-    checkmate,
     foreach,
     ggplot2,
     Matrix,
