@@ -65,7 +65,7 @@ SLOPE(T& x,
   standardize(x, x_center, x_scale, intercept, center, scale);
 
   const uword path_length = alpha.n_elem;
-  double alpha_max        = 0;
+  double alpha_max = 0;
 
   regularizationPath(alpha,
                      lambda,
@@ -225,7 +225,7 @@ SLOPE(T& x,
       solver_res = family->fit(
         x, y, beta, z, u, L, U, xTy, lambda * alpha(k), rho, solver);
       passes(k) = solver_res.passes;
-      beta      = solver_res.beta;
+      beta = solver_res.beta;
 
       if (diagnostics) {
         primals.push_back(solver_res.primals);
@@ -302,7 +302,7 @@ SLOPE(T& x,
           }
 
           beta.rows(active_set) = solver_res.beta;
-          passes(k)             = solver_res.passes;
+          passes(k) = solver_res.passes;
         }
 
         uvec check_failures;
@@ -321,7 +321,7 @@ SLOPE(T& x,
                               intercept);
 
           uvec strong_failures = strong_set(tmp);
-          check_failures       = setDiff(strong_failures, active_set);
+          check_failures = setDiff(strong_failures, active_set);
 
           kkt_violation = check_failures.n_elem > 0;
 
@@ -358,21 +358,21 @@ SLOPE(T& x,
     }
 
     // store coefficients and intercept
-    double deviance       = solver_res.deviance;
+    double deviance = solver_res.deviance;
     double deviance_ratio = 1.0 - deviance / null_deviance;
-    deviances(k)          = deviance;
-    deviance_ratios(k)    = deviance_ratio;
+    deviances(k) = deviance;
+    deviance_ratios(k) = deviance_ratio;
 
     deviance_change =
       k == 0 ? 0.0 : std::abs((deviances(k - 1) - deviance) / deviances(k - 1));
 
     betas.slice(k) = beta;
-    beta_prev      = beta;
+    beta_prev = beta;
 
     active_sets(k) = active_set;
-    uword n_coefs  = accu(any(beta != 0, 1));
-    n_variables    = n_coefs;
-    n_unique(k)    = unique(abs(nonzeros(beta))).eval().n_elem;
+    uword n_coefs = accu(any(beta != 0, 1));
+    n_variables = n_coefs;
+    n_unique(k) = unique(abs(nonzeros(beta))).eval().n_elem;
 
     if (verbosity >= 1)
       Rcout << showpoint << "penalty: " << setw(2) << k << ", dev: " << setw(7)

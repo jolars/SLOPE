@@ -1,5 +1,5 @@
-#include <RcppArmadillo.h>
 #include "standardize.h"
+#include <RcppArmadillo.h>
 
 void
 standardize(arma::mat& x,
@@ -58,7 +58,7 @@ standardize(arma::sp_mat& x,
       x_scale(j) = norm(x.col(j), 2);
     } else if (scale == "sd") {
       double xbar = accu(x.col(j)) / n;
-      x_scale(j)  = norm(x.col(j) - xbar) / std::sqrt(n);
+      x_scale(j) = norm(x.col(j) - xbar) / std::sqrt(n);
     } else if (scale == "max") {
       x_scale(j) = x.col(j).max();
     }
