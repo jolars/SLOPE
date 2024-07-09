@@ -24,4 +24,4 @@
 ^src/\.cache$
 ^CRAN-SUBMISSION$
 ^\.prettierrc\.toml$
-^CITATION.cff
+^CITATION.cff$
