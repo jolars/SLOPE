@@ -1,3 +1,11 @@
+# SLOPE 0.5.2
+
+## Minor Changes
+
+- Website updated to bootstrap 5-based pkgdown theme.
+- Updated e-mail of maintainer.
+- Dependencies on checkmate and mice were dropped.
+
 # SLOPE 0.5.1
 
 ## Minor Changes
@@ -21,7 +29,7 @@
 
 ## Bug Fixes
 
-- The C++ standard library *memory* was added to a source file to fix
+- The C++ standard library _memory_ was added to a source file to fix
   compilation errors on some systems.
 
 # SLOPE 0.4.0
@@ -44,17 +52,17 @@
   Nuno Eusebio.
 - `SLOPE()` has gained a new argument, `prox_method`, which allows the user to
   select prox algorithm to use. There is no an additional algorithm in the
-  package, based on the PAVA algorithm used in isotonic regression, that 
-  can be used. Note that this addition is mostly of academic interest and 
+  package, based on the PAVA algorithm used in isotonic regression, that
+  can be used. Note that this addition is mostly of academic interest and
   does not need to be changed by the user.
 
 ## Minor Changes
 
 - The `q` parameter is no longer allowed to be smaller than `1e-6` to avoid
   constructions of regularization paths with infinite `lambda` values.
-- The `lambda` argument in `SLOPE()` now also allowed the input `"lasso"` to 
+- The `lambda` argument in `SLOPE()` now also allowed the input `"lasso"` to
   obtain the standard lasso.
-- The performance of `trainSLOPE()` 
+- The performance of `trainSLOPE()`
 
 ## Vignettes
 
@@ -69,7 +77,7 @@
   always non-increasing.
 - Misclassification error was previously computed incorrectly in `trainSLOPE()`
   for multinomial models (thanks @jakubkala and @KrystynaGrzesiak)
-- Performance of `trainSLOPE()` was previously hampered by erroneous 
+- Performance of `trainSLOPE()` was previously hampered by erroneous
   refitting of the models, which has been fixed now (thanks @jakubkala and
   @KrystynaGrzesiak)
 
@@ -214,5 +222,5 @@ means there are several changes to the API, including deprecated functions.
   new data
 - a new function `plotDiagnostics()` has been included to visualize
   data from the solver (if `diagnostics = TRUE` in the call to `SLOPE()`)
-- OSCAR-type penalty sequences can be used by setting `lambda = "oscar" in the call to `SLOPE()`
+- OSCAR-type penalty sequences can be used by setting `lambda = "oscar" in the call to`SLOPE()`
 - the test suite for the package has been greatly extended
