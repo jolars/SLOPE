@@ -1,15 +1,10 @@
-# SLOPE 0.5.2
+# SLOPE 0.5.1
 
 ## Minor Changes
 
 - Website updated to bootstrap 5-based pkgdown theme.
 - Updated e-mail of maintainer.
 - Dependencies on checkmate and mice were dropped.
-
-# SLOPE 0.5.1
-
-## Minor Changes
-
 - Update sparse matrix coercion to avoid deprecated functionality in the Matrix
   package.
 
