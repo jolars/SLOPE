@@ -65,7 +65,7 @@ bibentry(
 bibentry(
   bibtype = "Article",
   title = "{{SLOPE}} -- Adaptive Variable Selection via Convex Optimization",
-  author = personList(
+  author = c(
     person("Małgorzata", "Bogdan"),
     person("Ewout", "van den Berg"),
     person("Chiara", "Sabatti"),
