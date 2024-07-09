@@ -41,7 +41,7 @@ if (length(author)) {
   has_authors_at_R_field <- TRUE
 } else {
   has_authors_at_R_field <- FALSE
-  author <- as.personList(meta$Author)
+  author <- as.person(meta$Author)
 }
 
 author <- format(author, include = c("given", "family"))
