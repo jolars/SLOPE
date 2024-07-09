@@ -28,6 +28,7 @@ coef.SLOPE <- function(object,
                        exact = FALSE,
                        simplify = TRUE,
                        sigma,
+                       only_nonzeros = FALSE,
                        ...) {
   if (!missing(sigma)) {
     warning("`sigma` is deprecated. Please use `alpha` instead.")
@@ -58,6 +59,13 @@ coef.SLOPE <- function(object,
 
   if (simplify) {
     beta <- drop(beta)
+  }
+
+  if(only_nonzeros) {
+    if(is.null(dim(beta)))
+      beta = beta[which(beta != 0, arr.ind = TRUE)]
+    else
+      beta = apply(beta, 1, function(vec) vec[which(vec != 0, arr.ind = TRUE)])
   }
 
   beta
