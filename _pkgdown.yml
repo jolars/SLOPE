@@ -13,7 +13,7 @@ template:
 news:
   releases:
     - text: "Version 0.2.0"
-      href: https://larssonjohan.com/post/slope-0-2-0/
+      href: https://jolars.co/blog/2020-04-14-slope-0-2-0/
 
 reference:
   - title: Main Functionality
