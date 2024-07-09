@@ -1,13 +1,14 @@
 ## Test environments
 
-- Fedora 40, R-release, gcc (local)
+- Fedora 40 gcc, R-release (local)
 - Windows, R-devel (win-builder)
 - Windows, R-release (win-builder)
-- Debian Linux, R-devel, GCC ASAN/UBSAN (rhub)
-- Windows Server 2008 R2 SP1, R-devel, 32/64 bit (rhub)
-- Ubuntu 20.04, R-release, R-devel (github)
-- Windows Server 2022, R-release (github)
-- Mac OS X 11.6.6, R-release (github)
+- Ubuntu 22.04, R-release, R-devel (github)
+- Windows Server 2022 10.0.20348, R-release (github)
+- Mac OS X 14.5, R-release (github)
+- Ubuntu 22.04.4 with rchk, R-devel (rhub)
+- Fedora Linux 38 with valgrind, R-devel (rhub)
+- Ubuntu 22.04.4 LTS with clang-asan, R-devel (rhub)
 
 ## R CMD check results
 
