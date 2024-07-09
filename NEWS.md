@@ -1,48 +1,46 @@
-# News
+# SLOPE 0.5.2
 
-## SLOPE 0.5.2
-
-### Minor Changes
+## Minor Changes
 
 - Website updated to bootstrap 5-based pkgdown theme.
 - Updated e-mail of maintainer.
 - Dependencies on checkmate and mice were dropped.
 
-## SLOPE 0.5.1
+# SLOPE 0.5.1
 
-### Minor Changes
+## Minor Changes
 
 - Update sparse matrix coercion to avoid deprecated functionality in the Matrix
   package.
 
-## SLOPE 0.5.0
+# SLOPE 0.5.0
 
-### Major changes
+## Major changes
 
 - `plot.SLOPE()`, `plot.trainSLOPE()` and `plotDiagnostics()` have been
   reimplemented in ggplot2.
 
-### Deprecated Functions
+## Deprecated Functions
 
 - `caretSLOPE()` has been deprecated and will be made defunct in version 0.6.0.
 
-## SLOPE 0.4.1
+# SLOPE 0.4.1
 
-### Bug Fixes
+## Bug Fixes
 
 - The C++ standard library _memory_ was added to a source file to fix
   compilation errors on some systems.
 
-## SLOPE 0.4.0
+# SLOPE 0.4.0
 
-### New Functions
+## New Functions
 
 - `sortedL1Prox()` is a new function that computes the proximal operator for the
   sorted L1 norm (the penalty term in SLOPE).
 - `regularizationWeights()` is a new function that returns the penalty weights
   (lambda sequence) for SLOPE or OSCAR.
 
-### Major changes
+## Major changes
 
 - The parametrization for OSCAR models have been corrected and changed. As a
   result, `SLOPE()` gains two arguments: `theta1` and `theta2` to control the
@@ -57,7 +55,7 @@
   used. Note that this addition is mostly of academic interest and does not need
   to be changed by the user.
 
-### Minor Changes
+## Minor Changes
 
 - The `q` parameter is no longer allowed to be smaller than `1e-6` to avoid
   constructions of regularization paths with infinite `lambda` values.
@@ -65,11 +63,11 @@
   obtain the standard lasso.
 - The performance of `trainSLOPE()`
 
-### Vignettes
+## Vignettes
 
 - A new vignette has been added to compare algorithms for the proximal operator.
 
-### Bug Fixes
+## Bug Fixes
 
 - For very small numbers of observations (10 or so), the regularization weights
   for `lambda = "gaussian"` were incorrectly computed, increasing and then
@@ -81,39 +79,39 @@
   of the models, which has been fixed now (thanks @jakubkala and
   @KrystynaGrzesiak)
 
-### Deprecated and Defunct
+## Deprecated and Defunct
 
 - `yvar` argument in `plotDiagnostics()` that was previously deprecated is now
   defunct.
 - Using `missclass` for the `measure` argument in `trainSLOPE()` has been
   deprecated in favor of `misclass`.
 
-## SLOPE 0.3.3
+# SLOPE 0.3.3
 
-### Bug fixes
+## Bug fixes
 
 - Fixed first coefficient missing from plot if no intercept was used in the call
   to `SLOPE()`.
 - Fixed incorrect results when `intercept = FALSE` and `family = "gaussian"`
-  (##13, thanks, Patrick Tardivel).
+  (#13, thanks, Patrick Tardivel).
 
-## SLOPE 0.3.2
+# SLOPE 0.3.2
 
-### Minor changes
+## Minor changes
 
 - Added `tol_rel_coef_change` argument to `SLOPE()` as a convergence criterion
   for the FISTA solver that sets a tolerance for the relative change in
   coefficients across iterations.
 
-### Bug fixes
+## Bug fixes
 
 - Fixed premature stopping of the solver for the first step of the
   regularization path (the null model).
 - Actually fix UBSAN/ASAN sanitizer warnings by modifying code for FISTA solver.
 
-## SLOPE 0.3.1
+# SLOPE 0.3.1
 
-### Bug fixes
+## Bug fixes
 
 - Fixed package build breaking on solaris because of missing STL namespace
   specifier for `std::sqrt()` in `src/SLOPE.cpp`.
@@ -121,9 +119,9 @@
   ADMM solvers. Thanks, @straw-boy.
 - Fixed sanitizer warning from CRAN checks.
 
-## SLOPE 0.3.0
+# SLOPE 0.3.0
 
-### Major changes
+## Major changes
 
 - Scaling of `alpha` (previously `sigma`) is now invariant to the number of
   observations, which is achieved by scaling the penalty part of the objective
@@ -143,7 +141,7 @@
   the sample standard deviation, i.e. the scaling factor now used is the number
   of observations (and not the number of observations minus one as before).
 
-### Minor changes
+## Minor changes
 
 - Default `path_length` has changed from 100 to 20.
 - `plot.SLOPE()` has gained an argument `x_variable` that controls what is
@@ -154,26 +152,26 @@
   include also the last solution (which was not the case before). Thanks,
   @straw-boy.
 
-### Bug fixes
+## Bug fixes
 
 - Plotting models that are completely sparse no longer throws an error.
 - `rho` instead of `1` is now used in the factorization part for the ADMM
   solver.
 
-## SLOPE 0.2.1
+# SLOPE 0.2.1
 
-### Minor changes
+## Minor changes
 
 - A few examples in `deviance()` and `SLOPE()` that were taking too long to
   execute have been removed or modified.
 
-## SLOPE 0.2.0
+# SLOPE 0.2.0
 
 This version of SLOPE represents a major change to the package. We have merged
 functionality from the owl package into this package, which means there are
 several changes to the API, including deprecated functions.
 
-### Major changes
+## Major changes
 
 - `SLOPE_solver()`, `SLOPE_solver_matlab()`, `prox_sorted_L1()`, and
   `create_lambda()` have been deprecated (and will be defunct in the next
@@ -209,7 +207,7 @@ several changes to the API, including deprecated functions.
 - there are now five datasets included in the package
 - the introductory vignette has been replaced
 
-### Minor changes
+## Minor changes
 
 - a new function `deviance()` returns the deviance from the fit
 - a new function `score()` can be used to assess model performance against new
