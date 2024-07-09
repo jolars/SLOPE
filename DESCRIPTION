@@ -87,7 +87,6 @@ Imports:
     ggplot2,
     Matrix,
     methods,
-    mice,
     Rcpp
 LinkingTo:
     Rcpp,
