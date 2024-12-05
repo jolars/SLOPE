@@ -8,3 +8,11 @@ compile_commands.json
 *.swp
 .cache
 src/.cache
+
+# NIX
+# Ignore build outputs from performing a nix-build or  command
+result
+result-*
+
+# Ignore direnv folder
+.direnv/

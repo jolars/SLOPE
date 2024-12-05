@@ -25,3 +25,6 @@
 ^CRAN-SUBMISSION$
 ^\.prettierrc\.toml$
 ^CITATION.cff$
+^.direnv$
+^.flake.lock$
+^.flake.nix$
