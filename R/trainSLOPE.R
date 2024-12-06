@@ -214,19 +214,20 @@ trainSLOPE <- function(x,
   rownames(summary) <- NULL
   rownames(optima) <- NULL
 
-  structure(list(
-    summary = summary,
-    data = d,
-    optima = optima,
-    measure = data.frame(
-      measure = measure,
-      label = labels,
-      row.names = NULL,
-      stringsAsFactors = FALSE
+  structure(
+    list(
+      summary = summary,
+      data = d,
+      optima = optima,
+      measure = data.frame(
+        measure = measure,
+        label = labels,
+        row.names = NULL,
+        stringsAsFactors = FALSE
+      ),
+      model = fit,
+      call = ocall
     ),
-    model = fit,
-    call = ocall
-  ),
-  class = "TrainedSLOPE"
+    class = "TrainedSLOPE"
   )
 }
