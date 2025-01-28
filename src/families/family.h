@@ -1,8 +1,8 @@
 #pragma once
 
+#include "../SolverResults.h"
 #include "../infeasibility.h"
 #include "../prox.h"
-#include "../SolverResults.h"
 #include "../utils.h"
 #include <RcppArmadillo.h>
 
@@ -41,9 +41,10 @@ public:
     , tol_rel(tol_rel)
     , tol_rel_coef_change(tol_rel_coef_change)
     , verbosity(verbosity)
-  {}
+  {
+  }
 
-  virtual ~Family(){}
+  virtual ~Family() {}
 
   virtual double primal(const arma::mat& y, const arma::mat& lin_pred) = 0;
 
@@ -51,7 +52,7 @@ public:
 
   // this is not really the true gradient; it needs to multiplied by X^T
   virtual arma::mat partialGradient(const arma::mat& y,
-                                   const arma::mat& lin_pred) = 0;
+                                    const arma::mat& lin_pred) = 0;
 
   template<typename T>
   arma::mat gradient(const T& x, const arma::mat& y, const arma::mat& lin_pred)
@@ -93,10 +94,10 @@ public:
     using namespace arma;
     using namespace Rcpp;
 
-    uword n      = y.n_rows;
-    uword p      = x.n_cols;
-    uword m      = beta.n_cols;
-    uword pmi    = lambda.n_elem;
+    uword n = y.n_rows;
+    uword p = x.n_cols;
+    uword m = beta.n_cols;
+    uword pmi = lambda.n_elem;
     uword p_rows = pmi / m;
 
     mat beta_tilde(beta);
@@ -146,7 +147,7 @@ public:
       double G = dual(y, lin_pred);
 
       grad = gradient(x, y, lin_pred);
-      tmp  = grad;
+      tmp = grad;
 
       if (intercept)
         tmp.shed_row(0);
@@ -173,7 +174,7 @@ public:
 
       // check change in coefficients
       double max_change = abs(vectorise(beta - beta_prev)).max();
-      double max_size   = abs(vectorise(beta)).max();
+      double max_size = abs(vectorise(beta)).max();
 
       bool all_zero = (max_size == 0.0) && (max_change == 0.0);
       bool small_change =
@@ -228,7 +229,7 @@ public:
       }
 
       // FISTA step
-      t    = 0.5 * (1.0 + std::sqrt(1.0 + 4.0 * t_old * t_old));
+      t = 0.5 * (1.0 + std::sqrt(1.0 + 4.0 * t_old * t_old));
       beta = beta_tilde + (t_old - 1.0) / t * (beta_tilde - beta_tilde_old);
 
       beta_prev = beta;
