@@ -16,6 +16,10 @@
       in
       {
         devShells.default = pkgs.mkShell {
+          shellHook = ''
+            mkdir -p "$(pwd)/_libs"
+            export R_LIBS_USER="$(pwd)/_libs"
+          '';
           packages = [
             pkgs.bashInteractive
             (pkgs.rWrapper.override {
