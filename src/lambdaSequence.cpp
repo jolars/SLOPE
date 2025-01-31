@@ -25,7 +25,7 @@ lambdaSequence(const arma::uword n_lambda,
 
       for (uword i = 1; i < n_lambda; ++i) {
         sum_sq += std::pow(lambda(i - 1), 2);
-        double w = std::max(1.0, static_cast<double>(n - i - 1));
+        double w = std::max(1.0, static_cast<double>(n) - i - 1.0));
         lambda(i) *= std::sqrt(1.0 + sum_sq / w);
       }
 
