@@ -15,4 +15,5 @@ SolverResults::SolverResults(arma::mat beta,
   , duals(duals)
   , time(time)
   , deviance(deviance)
-{}
+{
+}

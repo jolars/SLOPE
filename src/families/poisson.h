@@ -9,7 +9,8 @@ public:
   template<typename... Ts>
   Poisson(Ts... args)
     : Family(std::forward<Ts>(args)...)
-  {}
+  {
+  }
 
   double primal(const arma::mat& y, const arma::mat& lin_pred)
   {

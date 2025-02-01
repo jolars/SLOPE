@@ -19,7 +19,7 @@ matrixSubset(const arma::sp_mat& x, const arma::uvec& active_set)
   sp_mat x_subset(n, p);
 
   for (uword j = 0; j < p; ++j) {
-    uword k         = active_set(j);
+    uword k = active_set(j);
     x_subset.col(j) = x.col(k);
   }
 

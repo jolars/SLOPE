@@ -5,7 +5,7 @@
 enum class ProxMethod
 {
   stack = 0,
-  pava  = 1
+  pava = 1
 };
 
 arma::mat

@@ -24,4 +24,5 @@ Results::Results(const arma::cube betas,
   , violations(violations)
   , alpha(alpha)
   , lambda(lambda)
-{}
+{
+}

@@ -16,7 +16,8 @@ public:
   template<typename... Ts>
   Gaussian(Ts... args)
     : Family(std::forward<Ts>(args)...)
-  {}
+  {
+  }
 
   double primal(const arma::mat& y, const arma::mat& lin_pred)
   {
@@ -121,7 +122,7 @@ public:
                            (rho * rho);
       }
 
-      z_old    = z;
+      z_old = z;
       beta_hat = alpha * beta + (1 - alpha) * z_old;
 
       z = beta_hat + u;

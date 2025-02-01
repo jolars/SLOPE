@@ -9,4 +9,3 @@ rescale(arma::cube& betas,
         const arma::rowvec& y_center,
         const arma::rowvec& y_scale,
         const bool intercept);
-

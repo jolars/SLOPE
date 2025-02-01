@@ -29,7 +29,7 @@ regularizationPath(arma::vec& alpha,
   const sword n = x.n_rows;
   const uword m = y.n_cols;
 
-  const sword n_lambda    = lambda.n_elem;
+  const sword n_lambda = lambda.n_elem;
   const uword path_length = alpha.n_elem;
 
   if (lambda_type != "user") {
