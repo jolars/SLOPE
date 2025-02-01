@@ -26,5 +26,6 @@
 ^\.prettierrc\.toml$
 ^CITATION.cff$
 ^.direnv$
-^.flake.lock$
-^.flake.nix$
+^flake.lock$
+^flake.nix$
+^.envrc$
