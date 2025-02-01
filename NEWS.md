@@ -1,5 +1,10 @@
 # SLOPE (development version)
 
+## Bug Fixes
+
+- Fixed bug when computing regularization weights for type `"gaussian"` when the
+  number of observations is less than the number of variables.
+
 # SLOPE 0.5.1
 
 ## Minor Changes
