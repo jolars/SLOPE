@@ -22,6 +22,7 @@
 ^Makefile$
 ^\.cache$
 ^src/\.cache$
+^src/compile_commands\.json$
 ^CRAN-SUBMISSION$
 ^\.prettierrc\.toml$
 ^CITATION.cff$
