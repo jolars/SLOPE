@@ -20,38 +20,47 @@
             mkdir -p "$(pwd)/_libs"
             export R_LIBS_USER="$(pwd)/_libs"
           '';
-          packages = [
-            pkgs.bashInteractive
-            (pkgs.rWrapper.override {
-              packages = with pkgs.rPackages; [
-                Matrix
-                Rcpp
-                RcppArmadillo
-                bench
-                caret
-                covr
-                devtools
-                doParallel
-                dplyr
-                foreach
-                ggplot2
-                glmnet
-                knitr
-                knockoff
-                languageserver
-                patchwork
-                rmarkdown
-                scales
-                spelling
-                stringr
-                testthat
-                tidyr
-                tidyverse
-                usethis
-                vdiffr
-              ];
-            })
-          ];
+          packages =
+            let
+              SLOPE = (
+                pkgs.rPackages.buildRPackage {
+                  name = "SLOPE";
+                  src = ./.;
+                  propagatedBuildInputs = with pkgs.rPackages; [
+                    foreach
+                    ggplot2
+                    Matrix
+                    Rcpp
+                    RcppArmadillo
+                    bench
+                    caret
+                    glmnet
+                    covr
+                    dplyr
+                    knitr
+                    rmarkdown
+                    scales
+                    spelling
+                    stringr
+                    testthat
+                    tidyr
+                    vdiffr
+                  ];
+                }
+              );
+            in
+            [
+              pkgs.bashInteractive
+              (pkgs.rWrapper.override {
+                packages = with pkgs.rPackages; [
+                  devtools
+                  languageserver
+                  SLOPE
+                  tidyverse
+                  usethis
+                ];
+              })
+            ];
         };
       }
     );
