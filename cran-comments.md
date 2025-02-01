@@ -1,26 +1,18 @@
 ## Test environments
 
-- Fedora 40 gcc, R-release (local)
+- nixos-unstable gcc and clang, R-release (local)
 - Windows, R-devel (win-builder)
 - Windows, R-release (win-builder)
-- Ubuntu 22.04, R-release, R-devel (github)
-- Windows Server 2022 10.0.20348, R-release (github)
-- Mac OS X 14.5, R-release (github)
-- Ubuntu 22.04.4 with rchk, R-devel (rhub)
+- Ubuntu-latest, R-release and devel, R-devel (github)
+- Windows-latest, R-release (github)
+- Mac OS X-latest, R-release (github)
+- Ubuntu 22.04.5 with rchk, R-devel (rhub)
 - Fedora Linux 38 with valgrind, R-devel (rhub)
-- Ubuntu 22.04.4 LTS with clang-asan, R-devel (rhub)
+- Ubuntu 22.04.5 LTS with clang-asan, R-devel (rhub)
 
 ## R CMD check results
 
-0 errors | 0 warnings | 1 notes
-
-* checking CRAN incoming feasibility ... [17s] NOTE
-  Maintainer: 'Johan Larsson <johanlarsson@outlook.com>'
-
-  New maintainer:
-    Johan Larsson <johanlarsson@outlook.com>
-  Old maintainer(s):
-    Johan Larsson <johan.larsson@stat.lu.se>
+0 errors | 0 warnings | 0 notes
 
 ## Reverse Dependencies
 
