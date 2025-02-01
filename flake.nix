@@ -58,6 +58,7 @@
                   SLOPE
                   tidyverse
                   usethis
+                  rhub
                 ];
               })
             ];
