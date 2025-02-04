@@ -113,8 +113,7 @@ predict.BinomialSLOPE <- function(object,
 
   lin_pred <- NextMethod(object, type = type)
 
-  out <- switch(
-    type,
+  out <- switch(type,
     link = lin_pred,
     response = 1 / (1 + exp(-lin_pred)),
     class = {
@@ -149,8 +148,7 @@ predict.PoissonSLOPE <- function(object,
 
   lin_pred <- NextMethod(object, type = type)
 
-  out <- switch(
-    type,
+  out <- switch(type,
     link = lin_pred,
     response = exp(lin_pred)
   )
@@ -176,8 +174,7 @@ predict.MultinomialSLOPE <- function(object,
   lin_pred <- NextMethod(object, type = type, simplify = FALSE)
   m <- NCOL(lin_pred)
 
-  out <- switch(
-    type,
+  out <- switch(type,
     response = {
       n <- nrow(lin_pred)
       m <- ncol(lin_pred)
