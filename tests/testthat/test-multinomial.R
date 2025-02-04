@@ -4,12 +4,13 @@ test_that("glmnet and SLOPE return same unpenalized model", {
   n <- 100
   x1 <- rnorm(n)
   x2 <- rnorm(n)
-  prob <- matrix(c(
-    rep(1, n),
-    exp(3 + 2 * x1 + x2),
-    exp(-1 + x1 - 3 * x2)
-  ),
-  ncol = 3
+  prob <- matrix(
+    c(
+      rep(1, n),
+      exp(3 + 2 * x1 + x2),
+      exp(-1 + x1 - 3 * x2)
+    ),
+    ncol = 3
   )
   prob <- sweep(prob, 1, apply(prob, 1, sum), "/")
 
