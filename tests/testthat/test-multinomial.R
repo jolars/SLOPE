@@ -1,41 +1,29 @@
 test_that("glmnet and SLOPE return same unpenalized model", {
-  set.seed(129)
-
-  n <- 100
-  x1 <- rnorm(n)
-  x2 <- rnorm(n)
-  prob <- matrix(
-    c(
-      rep(1, n),
-      exp(3 + 2 * x1 + x2),
-      exp(-1 + x1 - 3 * x2)
-    ),
-    ncol = 3
+  # Fixed predictors
+  x1 <- c(
+    1.2, -0.5, 0.8, -1.1, 0.3, 1.5, -0.2, 0.7, -0.9, 0.4,
+    0.1, -1.3, 0.6, -0.7, 1.1, -0.4, 0.9, -1.0, 0.5, -0.8
   )
-  prob <- sweep(prob, 1, apply(prob, 1, sum), "/")
+  x2 <- c(
+    -0.3, 0.7, -1.2, 0.4, -0.8, 0.2, -0.5, 1.1, -0.9, 0.6,
+    -1.0, 0.3, -0.7, 0.8, -0.4, 1.3, -0.6, 0.5, -1.1, 0.9
+  )
 
-  y <- double(n)
-
-  for (i in 1:n) {
-    y[i] <- sample(3, 1, replace = TRUE, prob = prob[i, ])
-  }
+  # Fixed response (deliberately creating a pattern)
+  y <- c(
+    1, 2, 3, 1, 2, 3, 1, 2, 3, 1,
+    2, 3, 1, 2, 3, 1, 2, 3, 1, 2
+  )
 
   x <- scale(cbind(x1, x2))
   y <- factor(y)
 
-  library(glmnet)
-  fit <- glmnet(
-    x,
-    y,
-    family = "multinomial",
-    lambda = 0,
-    thresh = 1e-10,
-    standardize = FALSE
-  )
-  g_coef <- as.matrix(do.call(cbind, coef(fit)))
-
-  g_coef[, ] <- g_coef[, ] - g_coef[, 3]
-  g_coef <- g_coef[, 1:2]
+  g_coef <- structure(c(
+    0.201106343886854, 0.286875567305304, 0.395516767951309,
+    0.175083912785424, 0.200156047570187, 0.631090659835371
+  ), dim = 3:2, dimnames = list(
+    c("", "x1", "x2"), c("1", "2")
+  ))
 
   ofit <- SLOPE(x, y, family = "multinomial", alpha = 1e-9)
 
