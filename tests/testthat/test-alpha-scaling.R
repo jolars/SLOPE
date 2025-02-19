@@ -23,9 +23,7 @@ test_that("penalty strength is invariant to number of observations", {
           family = family,
           alpha = alpha,
           scale = scale,
-          center = center,
-          tol_rel_gap = 1e-6,
-          tol_infeas = 1e-6
+          center = center
         )
         f1 <- SLOPE(
           x_large,
@@ -33,9 +31,7 @@ test_that("penalty strength is invariant to number of observations", {
           family = family,
           alpha = alpha,
           scale = scale,
-          center = center,
-          tol_rel_gap = 1e-6,
-          tol_infeas = 1e-6
+          center = center
         )
 
         expect_equivalent(coef(f0), coef(f1), tol = 1e-3)

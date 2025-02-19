@@ -15,7 +15,7 @@
 #' @export
 print.SLOPE <- function(x, ...) {
   alpha <- x$alpha
-  n_nonzero <- apply(x$nonzeros, 3, sum)
+  n_nonzero <- vapply(x$nonzeros, sum, FUN.VALUE = double(1))
   deviance_ratio <- x$deviance_ratio
 
   out <- data.frame(

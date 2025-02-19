@@ -8,8 +8,9 @@ test_that("unregularized gaussian models work as expected", {
 
   g <- SLOPE(x, y, family = "gaussian", alpha = 1e-12)
 
-  expect_equivalent(coef(lm_fit),
-    coef(g),
+  expect_equivalent(
+    coef(lm_fit),
+    as.matrix(coef(g)),
     tol = 1e-3
   )
 })
@@ -50,11 +51,10 @@ test_that("diagonal X, known solution", {
     center = FALSE,
     scale = "none",
     lambda = lambda / n,
-    alpha = 1,
-    verbosity = 0
+    alpha = 1
   )
 
   beta <- coef(res)
 
-  expect_equal(beta, c(4, 3, 2, 1), check.attributes = FALSE)
+  expect_equal(as.vector(beta), c(4, 3, 2, 1), check.attributes = FALSE)
 })

@@ -89,10 +89,9 @@ Imports:
     Rcpp
 LinkingTo:
     Rcpp,
-    RcppArmadillo (>= 0.9.850.1.0)
+    RcppEigen (>= 0.3.4.0.0)
 Suggests:
     bench,
-    glmnet,
     covr,
     dplyr,
     knitr,
@@ -100,8 +99,8 @@ Suggests:
     scales,
     spelling,
     testthat (>= 2.1.0),
-    tidyr,
-    vdiffr
+    tidyr
+SystemRequirements: C++17
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Language: en-US

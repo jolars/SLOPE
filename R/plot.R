@@ -1,4 +1,3 @@
-
 #' Plot coefficients
 #'
 #' Plot the fitted model's regression
@@ -34,18 +33,12 @@ plot.SLOPE <- function(x,
   x_variable <- match.arg(x_variable)
 
   coefs <- getElement(object, "coefficients")
+  intercepts <- getElement(object, "intercepts")
 
-  intercept_in_model <- "(Intercept)" %in% rownames(coefs)
-  include_intercept <- intercept && intercept_in_model
+  include_intercept <- intercept && object$has_intercept
 
-  if (include_intercept) {
-    coefs <- coefs[, , , drop = FALSE]
-  } else if (intercept_in_model) {
-    coefs <- coefs[-1, , , drop = FALSE]
-  }
-
-  p <- NROW(coefs) # number of features
-  m <- NCOL(coefs) # number of responses
+  p <- NROW(coefs[[1L]]) # number of features
+  m <- NCOL(coefs[[1L]]) # number of responses
 
   x <- switch(x_variable,
     alpha = object[["alpha"]],
@@ -59,30 +52,62 @@ plot.SLOPE <- function(x,
     step = "Step"
   )
 
-  d <- as.data.frame(as.table(coefs))
-  d[["x"]] <- rep(x, each = p * m)
+  coefs <- stats::coef(object, simplify = TRUE, intercept = include_intercept)
 
-  plt <- ggplot2::ggplot(
-    d,
-    ggplot2::aes(
-      x = !!quote(x),
-      y = !!quote(Freq),
-      col = !!quote(Var1)
-    )
-  ) +
-    ggplot2::geom_line() +
-    ggplot2::labs(
-      x = xlab,
-      y = expression(hat(beta)),
-      color = NULL
-    )
+  if (m == 1) {
+    d <- data.frame(t(as.matrix(coefs)))
+    d_long <- utils::stack(d)
+    d_long[["x"]] <- rep(x, times = p + include_intercept)
+
+    plt <- ggplot2::ggplot(
+      d_long,
+      ggplot2::aes(
+        x = !!quote(x),
+        y = !!quote(values),
+        col = !!quote(ind)
+      )
+    ) +
+      ggplot2::labs(
+        x = xlab,
+        y = expression(hat(beta)),
+        color = NULL
+      )
+  } else {
+    d_longs <- vector("list", m)
+    for (k in seq_len(m)) {
+      d <- data.frame(t(as.matrix(coefs[[1]])))
+      d_long <- utils::stack(d)
+      d_long[["x"]] <- rep(x, times = p + include_intercept)
+      d_long[["response"]] <- rep_len(k, nrow(d_long))
+      d_longs[[k]] <- d_long
+    }
+
+    d_long <- do.call(rbind, d_longs)
+
+    plt <- ggplot2::ggplot(
+      d_long,
+      ggplot2::aes(
+        x = !!quote(x),
+        y = !!quote(values),
+        col = !!quote(ind)
+      )
+    ) +
+      ggplot2::facet_wrap("response") +
+      ggplot2::labs(
+        x = xlab,
+        y = expression(hat(beta)),
+        color = NULL
+      )
+  }
+
+  if (p == 1) {
+    plt <- plt + ggplot2::geom_point()
+  } else {
+    plt <- plt + ggplot2::geom_line()
+  }
 
   if (x_variable == "alpha") {
     plt <- plt + ggplot2::scale_x_log10()
-  }
-
-  if (m > 1) {
-    plt <- plt + ggplot2::facet_wrap("Var2")
   }
 
   plt
@@ -139,7 +164,7 @@ plot.TrainedSLOPE <- function(x,
     stop("ci_col", ci_col, "is not a valid color representation.")
   }
 
-  if (!(ci_border %in% grDevices::colors() | is.logical(ci_border))) {
+  if (!(ci_border %in% grDevices::colors() || is.logical(ci_border))) {
     stop(
       "ci_border is",
       ci_border,

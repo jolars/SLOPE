@@ -48,7 +48,12 @@ download.file(
 tmp <- e1071::read.matrix.csr(temp_file, fac = FALSE)
 unlink(temp_file)
 tmp_x <- as.data.frame(as.matrix(tmp$x))
+
+data_out <- cbind(tmp$y, tmp_x)
+
 tmp_x$V1 <- as.factor(tmp_x$V1)
+
+readr::write_csv(data_out, "abalone.csv")
 
 tmp_x <- as.data.frame(model.matrix(~., tmp_x))[, -1]
 colnames(tmp_x) <- c(

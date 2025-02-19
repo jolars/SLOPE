@@ -51,18 +51,13 @@ predict.SLOPE <- function(object,
     alpha <- sigma
   }
 
-  beta <- stats::coef(object, alpha = alpha, simplify = FALSE)
-
-  intercept <- "(Intercept)" %in% dimnames(beta)[[1]]
-
-  if (intercept) {
-    x <- methods::cbind2(1, x)
-  }
+  beta <- getElement(object, "coefficients")
+  intercepts <- getElement(object, "intercepts")
 
   n <- NROW(x)
-  p <- NROW(beta)
-  m <- NCOL(beta)
-  n_penalties <- dim(beta)[3]
+  p <- NROW(beta[[1L]])
+  m <- NCOL(beta[[1L]])
+  n_penalties <- length(beta)
 
   stopifnot(p == NCOL(x))
 
@@ -70,13 +65,13 @@ predict.SLOPE <- function(object,
     dim = c(n, m, n_penalties),
     dimnames = list(
       rownames(x),
-      dimnames(beta)[[2]],
-      dimnames(beta)[[3]]
+      dimnames(beta[[1L]])[[2]]
     )
   )
 
   for (i in seq_len(n_penalties)) {
-    lin_pred[, , i] <- as.matrix(x %*% beta[, , i])
+    lp <- as.matrix(x %*% beta[[i]])
+    lin_pred[, , i] <- sweep(lp, 2, intercepts[[i]], "+")
   }
 
   lin_pred
@@ -180,7 +175,7 @@ predict.MultinomialSLOPE <- function(object,
       m <- ncol(lin_pred)
       path_length <- dim(lin_pred)[3]
 
-      tmp <- array(0, c(n, m + 1, path_length))
+      tmp <- array(0, c(n, m, path_length))
       tmp[, 1:m, ] <- lin_pred
 
       aperm(apply(tmp, c(1, 3), function(x) exp(x) / sum(exp(x))), c(2, 1, 3))
@@ -195,7 +190,7 @@ predict.MultinomialSLOPE <- function(object,
         apply(
           tmp,
           2,
-          function(a) factor(a, levels = 1:(m + 1), labels = class_names)
+          function(a) factor(a, levels = 1:m, labels = class_names)
         )
       colnames(predicted_classes) <- dimnames(lin_pred)[[3]]
       predicted_classes

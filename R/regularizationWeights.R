@@ -88,7 +88,7 @@ regularizationWeights <- function(n_lambda = 100,
     stop("`n` cannot be NULL when `type = 'gaussian''")
   }
 
-  lambda <- lambdaSequence(n_lambda, q, theta1, theta2, type, n)
+  lambda <- lambdaSequenceCpp(n_lambda, q, theta1, theta2, type, n)
 
   as.vector(lambda)
 }

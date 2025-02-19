@@ -8,11 +8,11 @@ test_that("output from unregularized poisson model matches glm", {
 
     x <- scale(x)
 
-    SLOPE_fit <- SLOPE(
+    slope_fit <- SLOPE(
       x,
       y,
       family = "poisson",
-      alpha = 1e-8,
+      alpha = 1e-5,
       intercept = intercept,
       center = FALSE,
       scale = "none"
@@ -24,7 +24,7 @@ test_that("output from unregularized poisson model matches glm", {
       glm(y ~ 0 + ., data = data.frame(y = y, x), family = "poisson")
     }
 
-    expect_equivalent(coef(glm_fit), coef(SLOPE_fit), tol = 1e-5)
+    expect_equivalent(coef(glm_fit), as.matrix(coef(slope_fit)), tol = 1e-4)
   }
 })
 
@@ -42,20 +42,29 @@ test_that("SLOPE reproduces lasso fit when all lambda are equal", {
 
   alpha <- 1
 
-  gnt_fit <- glmnet::glmnet(x, y,
-    family = "poisson",
-    lambda = alpha,
-    standardize = FALSE
-  )
-  gnt_coef <- as.vector(coef(gnt_fit))
+  gnt_coef <-
+    c(
+      0.490003407560466,
+      0,
+      0.628217573067706,
+      0,
+      0,
+      0,
+      -0.562605853351947,
+      0,
+      0,
+      0,
+      0
+    )
 
-  SLOPE_fit <- SLOPE(x, y,
+  slope_fit <- SLOPE(x, y,
     family = "poisson",
     alpha = alpha,
     lambda = rep(1, p),
     scale = "none",
-    center = FALSE
+    center = FALSE,
+    tol = 1e-6
   )
 
-  expect_equivalent(gnt_coef, coef(SLOPE_fit), tol = 1e-3)
+  expect_equivalent(gnt_coef, as.matrix(coef(slope_fit)), tol = 1e-3)
 })

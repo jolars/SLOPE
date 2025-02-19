@@ -240,30 +240,23 @@
 #'   maximum number of unique, nonzero coefficients in absolute value in model.
 #'   For the multinomial family, this value will be multiplied internally with
 #'   the number of levels of the response minus one.
-#' @param tol_rel_gap stopping criterion for the duality gap; used only with
-#'   FISTA solver.
-#' @param tol_infeas stopping criterion for the level of infeasibility; used
-#'   with FISTA solver and KKT checks in screening algorithm.
-#' @param tol_abs absolute tolerance criterion for ADMM solver
-#' @param tol_rel relative tolerance criterion for ADMM solver
-#' @param tol_rel_coef_change relative tolerance criterion for change
-#'   in coefficients between iterations, which is reached when
-#'   the maximum absolute change in any coefficient divided by the maximum
-#'   absolute coefficient size is less than this value.
-#' @param sigma deprecated; please use `alpha` instead
-#' @param n_sigma deprecated; please use `path_length` instead
-#' @param lambda_min_ratio deprecated; please use `alpha_min_ratio` instead
-#' @param solver type of solver use, either `"fista"` or `"admm"`;
-#'   all families currently support FISTA but only `family = "gaussian"`
-#'   supports ADMM.
+#' @param tol stopping criterion for the solvers in terms of the relative
+#'   duality gap
+#' @param tol_rel_gap DEPRECATED
+#' @param tol_infeas DEPRECATED
+#' @param tol_abs DEPRECATED
+#' @param tol_rel relative DEPRECATED
+#' @param tol_rel_coef_change DEPRECATED
+#' @param solver type of solver use, either `"auto"`, `"hybrid"`, `"pgd"`, or
+#'   `"fista"`; `"auto"` means that the solver is automatically selected,
+#'   which currently means that `"hybrid"` is used for all objectives
+#'   except multinomial ones, in which case FISTA (`"fista"`) is used.
 #'
 #' @return An object of class `"SLOPE"` with the following slots:
 #' \item{coefficients}{
-#'   a three-dimensional array of the coefficients from the
-#'   model fit, including the intercept if it was fit.
-#'   There is one row for each coefficient, one column
-#'   for each target (dependent variable), and
-#'   one slice for each penalty.
+#'   a list of the coefficients from the
+#'   model fit, not including the intercept.
+#'   The coefficients are stored as sparse matrices.
 #' }
 #' \item{nonzeros}{
 #'   a three-dimensional logical array indicating whether a
@@ -308,6 +301,12 @@
 #' SLOPE -- adaptive variable selection via convex optimization. The Annals of
 #' Applied Statistics, 9(3), 1103–1140.
 #'
+#' Larsson, J., Klopfenstein, Q., Massias, M., & Wallin, J. (2023). Coordinate
+#' descent for SLOPE. In F. Ruiz, J. Dy, & J.-W. van de Meent (Eds.),
+#' Proceedings of the 26th international conference on artificial
+#' intelligence and statistics (Vol. 206, pp. 4802–4821). PMLR.
+#' https://proceedings.mlr.press/v206/larsson23a.html
+#'
 #' Bondell, H. D., & Reich, B. J. (2008). Simultaneous Regression Shrinkage,
 #' Variable Selection, and Supervised Clustering of Predictors with OSCAR.
 #' Biometrics, 64(1), 115–123. JSTOR.
@@ -337,7 +336,7 @@
 #' )
 #'
 #' # Multinomial response, custom alpha and lambda
-#' m <- length(unique(wine$y)) - 1
+#' m <- length(unique(wine$y))
 #' p <- ncol(wine$x)
 #'
 #' alpha <- 0.005
@@ -354,36 +353,61 @@ SLOPE <- function(x,
                   y,
                   family = c("gaussian", "binomial", "multinomial", "poisson"),
                   intercept = TRUE,
-                  center = !inherits(x, "sparseMatrix"),
-                  scale = c("l2", "l1", "sd", "none"),
+                  center = c("mean", "min", "none"),
+                  scale = c("sd", "l1", "l2", "max_abs", "none"),
                   alpha = c("path", "estimate"),
                   lambda = c("bh", "gaussian", "oscar", "lasso"),
                   alpha_min_ratio = if (NROW(x) < NCOL(x)) 1e-2 else 1e-4,
-                  path_length = if (alpha[1] == "estimate") 1 else 20,
-                  q = 0.1 * min(1, NROW(x) / NCOL(x)),
+                  path_length = 100,
+                  q = 0.1,
                   theta1 = 1,
                   theta2 = 0.5,
-                  prox_method,
-                  screen = TRUE,
-                  screen_alg = c("strong", "previous"),
                   tol_dev_change = 1e-5,
-                  tol_dev_ratio = 0.995,
+                  tol_dev_ratio = 0.999,
                   max_variables = NROW(x),
-                  solver = c("fista", "admm"),
+                  solver = c("auto", "hybrid", "pgd", "fista", "admm"),
                   max_passes = 1e6,
-                  tol_abs = 1e-5,
-                  tol_rel = 1e-4,
-                  tol_rel_gap = 1e-5,
-                  tol_infeas = 1e-3,
-                  tol_rel_coef_change = 1e-3,
+                  tol = 1e-4,
                   diagnostics = FALSE,
-                  verbosity = 0,
-                  sigma,
-                  n_sigma,
-                  lambda_min_ratio) {
-  if (!missing(sigma)) {
-    warning("`sigma` argument is deprecated; please use `alpha` instead")
-    alpha <- sigma
+                  tol_abs,
+                  tol_rel,
+                  tol_rel_gap,
+                  tol_infeas,
+                  tol_rel_coef_change,
+                  prox_method,
+                  screen,
+                  verbosity,
+                  screen_alg) {
+  if (!missing(tol_abs)) {
+    warning("`tol_abs` argument is deprecated and has no effect")
+  }
+
+  if (!missing(tol_rel)) {
+    warning("`tol_rel` argument is deprecated and has no effect")
+  }
+
+  if (!missing(tol_rel_gap)) {
+    warning("`tol_rel_gap` argument is deprecated and has no effect")
+  }
+
+  if (!missing(tol_infeas)) {
+    warning("`tol_infeas` argument is deprecated and has no effect")
+  }
+
+  if (!missing(tol_rel_coef_change)) {
+    warning("`tol_rel_coef_change` argument is deprecated and has no effect")
+  }
+
+  if (!missing(screen)) {
+    warning("`screen` argument is deprecated and has no effect")
+  }
+
+  if (!missing(screen_alg)) {
+    warning("`screen_alg` argument is deprecated and has no effect")
+  }
+
+  if (!missing(verbosity)) {
+    warning("`verbosity` argument is deprecated and has no effect")
   }
 
   if (!missing(prox_method)) {
@@ -393,40 +417,45 @@ SLOPE <- function(x,
     )
   }
 
-  if (!missing(n_sigma)) {
-    warning(
-      "`n_sigma` argument is deprecated; please use `path_length` instead"
-    )
-    path_length <- n_sigma
-  }
-
-  if (!missing(lambda_min_ratio)) {
-    warning(
-      "`lambda_min_ratio` is deprecated; please use `alpha_min_ratio` instead"
-    )
-    alpha_min_ratio <- lambda_min_ratio
-  }
-
   ocall <- match.call()
 
   family <- match.arg(family)
   solver <- match.arg(solver)
-  screen_alg <- match.arg(screen_alg)
 
-  if (solver == "admm" && family != "gaussian") {
-    stop("ADMM solver is only supported with `family = 'gaussian'`")
-  }
-
-  if (is.character(scale)) {
-    scale <- match.arg(scale)
-  } else if (is.logical(scale) && length(scale) == 1L) {
-    scale <- ifelse(scale, "l2", "none")
-  } else {
-    stop("`scale` must be logical or a character")
+  if (solver == "admm") {
+    stop("The ADMM solver has been removed; setting `solver` to `'auto'`")
+    solver <- "auto"
   }
 
   n <- NROW(x)
   p <- NCOL(x)
+
+  centers <- double(0)
+  scales <- double(0)
+
+  if (is.character(scale)) {
+    scale <- match.arg(scale)
+  } else if (is.logical(scale) && length(scale) == 1L) {
+    scale <- if (scale) "sd" else "none"
+  } else if (length(scale) == p && is.numeric(scale)) {
+    scales <- scale
+    scale <- "manual"
+  } else {
+    stop("`scale` must be logical, a character, or a numeric of length ncol(x)")
+  }
+
+  if (is.character(center)) {
+    center <- match.arg(center)
+  } else if (is.logical(center) && length(center) == 1L) {
+    center <- if (center) "mean" else "none"
+  } else if (length(center) == p && is.numeric(center)) {
+    centers <- center
+    center <- "manual"
+  } else {
+    stop(
+      "`center` must be logical, a character, or a numeric of length ncol(x)"
+    )
+  }
 
   stopifnot(
     is.null(alpha_min_ratio) ||
@@ -440,13 +469,8 @@ SLOPE <- function(x,
     is.finite(max_passes),
     is.logical(diagnostics),
     is.logical(intercept),
-    tol_rel_gap >= 0,
-    tol_infeas >= 0,
-    tol_abs >= 0,
-    tol_rel >= 0,
-    is.logical(center),
-    tol_rel_coef_change >= 0,
-    is.numeric(tol_rel_coef_change),
+    tol >= 0,
+    is.finite(tol),
     theta1 >= 0,
     theta2 >= 0,
     is.finite(theta1),
@@ -480,16 +504,10 @@ SLOPE <- function(x,
     x <- as.matrix(x)
   }
 
-  if (is_sparse && center) {
-    stop("centering would destroy sparsity in `x` (predictor matrix)")
-  }
-
   res <- preprocessResponse(family, y, fit_intercept)
   y <- as.matrix(res$y)
-  y_center <- res$y_center
-  y_scale <- res$y_scale
   class_names <- res$class_names
-  m <- n_targets <- res$n_targets
+  m <- res$n_targets
   response_names <- res$response_names
   variable_names <- colnames(x)
   max_variables <- max_variables * m
@@ -506,7 +524,7 @@ SLOPE <- function(x,
 
     if (alpha == "path") {
       alpha_type <- "auto"
-      alpha <- double(path_length)
+      alpha <- double(0)
     } else if (alpha == "estimate") {
       if (family != "gaussian") {
         stop("`alpha = 'estimate'` can only be used if `family = 'gaussian'`")
@@ -515,9 +533,7 @@ SLOPE <- function(x,
       alpha_type <- "estimate"
       alpha <- NULL
 
-      if (path_length > 1) {
-        warning("`path_length` ignored since `alpha = 'estimate'`")
-      }
+      path_length <- 1
     }
   } else {
     alpha <- as.double(alpha)
@@ -546,8 +562,6 @@ SLOPE <- function(x,
     max_variables <- (NCOL(x) + intercept) * m
   }
 
-  n_lambda <- m * p
-
   if (is.character(lambda)) {
     lambda_type <- match.arg(lambda)
 
@@ -558,7 +572,7 @@ SLOPE <- function(x,
       )
     }
 
-    lambda <- double(n_lambda)
+    lambda <- double(0)
   } else {
     lambda_type <- "user"
     lambda <- as.double(lambda)
@@ -577,44 +591,30 @@ SLOPE <- function(x,
   }
 
   control <- list(
+    alpha = alpha,
+    alpha_min_ratio = alpha_min_ratio,
+    centering_type = center,
+    centers = centers,
+    diagnostics = diagnostics,
     family = family,
     fit_intercept = fit_intercept,
-    is_sparse = is_sparse,
-    scale = scale,
-    center = center,
-    path_length = path_length,
-    n_targets = n_targets,
-    screen = screen,
-    screen_alg = screen_alg,
-    alpha = alpha,
-    alpha_type = alpha_type,
     lambda = lambda,
     lambda_type = lambda_type,
-    alpha_min_ratio = alpha_min_ratio,
+    max_passes = max_passes,
+    max_variables = max_variables,
+    path_length = path_length,
     q = q,
+    scales = scales,
+    scaling_type = scale,
+    solver = solver,
     theta1 = theta1,
     theta2 = theta2,
-    y_center = y_center,
-    y_scale = y_scale,
-    max_passes = max_passes,
-    diagnostics = diagnostics,
-    verbosity = verbosity,
-    max_variables = max_variables,
-    solver = solver,
+    tol = tol,
     tol_dev_change = tol_dev_change,
-    tol_dev_ratio = tol_dev_ratio,
-    tol_rel_gap = tol_rel_gap,
-    tol_infeas = tol_infeas,
-    tol_abs = tol_abs,
-    tol_rel = tol_rel,
-    tol_rel_coef_change = tol_rel_coef_change
+    tol_dev_ratio = tol_dev_ratio
   )
 
   fitSLOPE <- if (is_sparse) sparseSLOPE else denseSLOPE
-
-  if (intercept) {
-    x <- cbind(1, x)
-  }
 
   if (alpha_type %in% c("path", "user")) {
     fit <- fitSLOPE(x, y, control)
@@ -641,7 +641,7 @@ SLOPE <- function(x,
 
         fit <- fitSLOPE(x, y, control)
 
-        selected <- which(abs(drop(fit$betas)) > 0)
+        selected <- which(abs(drop(fit$betas[[1]])) > 0)
 
         if (fit_intercept) {
           selected <- union(1, selected)
@@ -664,24 +664,13 @@ SLOPE <- function(x,
   lambda <- fit$lambda
   alpha <- fit$alpha
   path_length <- length(alpha)
+  intercepts <- fit$intercepts
   beta <- fit$betas
-  nonzeros <- apply(beta, c(2, 3), function(x) abs(x) > 0)
+  # TODO: Do not return nonzeros; it's just wasting space.
+  nonzeros <- lapply(beta, function(b) abs(b) > 0)
   coefficients <- beta
 
-  if (fit_intercept) {
-    nonzeros <- nonzeros[-1, , , drop = FALSE]
-    dimnames(coefficients) <- list(
-      c("(Intercept)", variable_names),
-      response_names[1:n_targets],
-      paste0("p", seq_len(path_length))
-    )
-  } else {
-    dimnames(coefficients) <- list(
-      variable_names,
-      response_names[1:n_targets],
-      paste0("p", seq_len(path_length))
-    )
-  }
+  names(coefficients) <- paste0("p", seq_along(beta))
 
   # check if maximum number of passes where reached anywhere
   passes <- fit$passes
@@ -706,16 +695,19 @@ SLOPE <- function(x,
 
   structure(
     list(
+      intercepts = intercepts,
       coefficients = coefficients,
       nonzeros = nonzeros,
       lambda = lambda,
-      alpha = alpha,
+      alpha = alpha[seq_along(beta)],
+      variable_names = variable_names,
       class_names = class_names,
       passes = passes,
       deviance_ratio = drop(fit$deviance_ratio),
       null_deviance = fit$null_deviance,
       family = family,
       diagnostics = diagnostics,
+      has_intercept = fit_intercept,
       call = ocall
     ),
     class = c(slope_class, "SLOPE")

@@ -1,9 +1,9 @@
 test_that("unregularized logistic regression matches output from glm()", {
   set.seed(1)
-  X <- scale(matrix(rnorm(3000), ncol = 3))
-  x1 <- X[, 1]
-  x2 <- X[, 2]
-  x3 <- X[, 3]
+  x <- scale(matrix(rnorm(3000), ncol = 3))
+  x1 <- x[, 1]
+  x2 <- x[, 2]
+  x3 <- x[, 3]
   z <- 1 + 2 * x1 + 3 * x2 + x3
   pr <- 1 / (1 + exp(-z))
   y <- rbinom(1000, 1, pr)
@@ -17,8 +17,11 @@ test_that("unregularized logistic regression matches output from glm()", {
     alpha = 1e-7
   )
 
-  expect_equivalent(coef(glm_fit),
-    coef(g_model),
+  intercept <- g_model$intercept
+
+  expect_equivalent(
+    coef(glm_fit),
+    as.vector(coef(g_model)),
     tol = 1e-3
   )
 })
@@ -40,7 +43,7 @@ test_that("regularized slope logistic regression picks out correct features", {
 
   y <- rbinom(n, 1, prob)
 
-  SLOPE_fit <- SLOPE(x, y, family = "binomial", alpha = 1 / sqrt(n))
+  slope_fit <- SLOPE(x, y, family = "binomial", alpha = 1 / sqrt(n))
 
-  expect_setequal(nz, which(SLOPE_fit$nonzeros))
+  expect_setequal(nz, which(slope_fit$nonzeros[[1]]))
 })

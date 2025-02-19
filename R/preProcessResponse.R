@@ -7,22 +7,12 @@ preprocessResponse <- function(family, y, fit_intercept) {
         stop("response for Gaussian regression must be one-dimensional.")
       }
 
-      if (fit_intercept) {
-        y_center <- mean(y)
-        y <- as.matrix(y - y_center)
-      } else {
-        y_center <- 0
-      }
-
-      y_scale <- 1
-
       list(
         y = y,
-        y_center = y_center,
-        y_scale = y_scale,
         n_classes = 1L,
         n_targets = 1L,
-        class_names = NA_character_
+        class_names = NA_character_,
+        response_names = colnames(y)
       )
     },
     binomial = {
@@ -48,12 +38,10 @@ preprocessResponse <- function(family, y, fit_intercept) {
       class_names <- names(y_table)
 
       # Transform response to {-1, 1}, which is used internally
-      y <- as.matrix(ifelse(as.numeric(as.factor(y)) == 1, -1, 1))
+      y <- ifelse(as.numeric(as.factor(y)) == 1, -1, 1)
 
       list(
         y = y,
-        y_center = 0,
-        y_scale = 1,
         n_classes = 1L,
         n_targets = 1L,
         class_names = class_names,
@@ -70,13 +58,8 @@ preprocessResponse <- function(family, y, fit_intercept) {
       min_class <- min(y_table)
       class_names <- names(y_table)
       n_classes <- length(y_table)
-      n_targets <- n_classes - 1
-
-      Y <- matrix(NA, NROW(y), n_targets)
-
-      for (k in 1:n_targets) {
-        Y[, k] <- as.integer(y == names(y_table)[k])
-      }
+      n_targets <- n_classes
+      y_out <- as.numeric(y) - 1 # In libslope, classes are 0-indexed
 
       if (n_classes == 2) {
         stop("only two classes in response. Are you looking for family = 'binomial'?")
@@ -91,9 +74,7 @@ preprocessResponse <- function(family, y, fit_intercept) {
       }
 
       list(
-        y = Y,
-        y_center = rep(0, n_targets),
-        y_scale = rep(1, n_targets),
+        y = y_out,
         n_classes = n_classes,
         n_targets = n_targets,
         class_names = class_names,
@@ -111,8 +92,6 @@ preprocessResponse <- function(family, y, fit_intercept) {
 
       list(
         y = y,
-        y_center = 0,
-        y_scale = 1,
         n_classes = 1L,
         n_targets = 1L,
         class_names = NA_character_,

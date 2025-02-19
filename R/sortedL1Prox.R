@@ -39,7 +39,7 @@ sortedL1Prox <- function(x, lambda, method) {
     all(is.finite(x))
   )
 
-  res <- sortedL1ProxCpp(as.matrix(x), lambda, 0)
+  res <- sortedL1ProxCpp(as.matrix(x), lambda)
 
   as.vector(res)
 }
