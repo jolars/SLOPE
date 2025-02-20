@@ -200,10 +200,6 @@ a character vector giving the names of the classes for binomial and
 multinomial families
 }
 \item{passes}{the number of passes the solver took at each step on the path}
-\item{active_sets}{
-a list where each element indicates the indices of the
-coefficients that were active at that point in the regularization path
-}
 \item{unique}{
 the number of unique predictors (in absolute value)
 }

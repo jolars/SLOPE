@@ -284,10 +284,6 @@
 #'   multinomial families
 #' }
 #' \item{passes}{the number of passes the solver took at each step on the path}
-#' \item{active_sets}{
-#'   a list where each element indicates the indices of the
-#'   coefficients that were active at that point in the regularization path
-#' }
 #' \item{unique}{
 #'   the number of unique predictors (in absolute value)
 #' }
@@ -671,7 +667,6 @@ SLOPE <- function(x,
   lambda <- fit$lambda
   alpha <- fit$alpha
   path_length <- length(alpha)
-  active_sets <- lapply(drop(fit$active_sets), function(x) drop(x) + 1)
   beta <- fit$betas
   nonzeros <- apply(beta, c(2, 3), function(x) abs(x) > 0)
   coefficients <- beta
@@ -720,7 +715,6 @@ SLOPE <- function(x,
       alpha = alpha,
       class_names = class_names,
       passes = passes,
-      active_sets = active_sets,
       unique = drop(fit$n_unique),
       deviance_ratio = drop(fit$deviance_ratio),
       null_deviance = fit$null_deviance,

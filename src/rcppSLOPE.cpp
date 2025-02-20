@@ -75,7 +75,6 @@ callSLOPE(T& x, arma::mat& y, const Rcpp::List control)
                       verbosity);
 
   return Rcpp::List::create(Named("betas") = wrap(res.betas),
-                            Named("active_sets") = wrap(res.active_sets),
                             Named("passes") = wrap(res.passes),
                             Named("primals") = wrap(res.primals),
                             Named("duals") = wrap(res.duals),
