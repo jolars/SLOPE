@@ -1,4 +1,4 @@
-# SLOPE 0.6.0
+# SLOPE 0.5.2.9000
 
 ## Breaking Changes
 
