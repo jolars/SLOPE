@@ -33,7 +33,6 @@
                     Rcpp
                     RcppArmadillo
                     bench
-                    caret
                     glmnet
                     covr
                     dplyr

@@ -31,7 +31,6 @@ reference:
   - title: Model Tuning
   - contents:
       - trainSLOPE
-      - caretSLOPE
       - plot.TrainedSLOPE
       - print.TrainedSLOPE
   - title: Utilities

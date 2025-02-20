@@ -89,12 +89,8 @@ plot(fit)
 ## Cross-validation
 
 To determine the strength of regularization, it is almost always necessary to
-tune the $\lambda$ sequence using resampling. This package features two
-methods for this: a specification for use with the **caret** package via
-the function `caretSLOPE()` or `trainSLOPE()`. While former facilitate
-easier comparison of SLOPE against other methods as well as a multitude
-of options for resampling and measuring performance, it does not
-allow for sparse predictor matrices. We will give an example of `trainSLOPE()`
+tune the $\lambda$ sequence using resampling. This package features 
+the function `trainSLOPE()` to do this. We will give an example of `trainSLOPE()`
 here.
 
 ```{r}
