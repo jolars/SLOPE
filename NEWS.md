@@ -1,3 +1,16 @@
+# SLOPE 0.6.0
+
+## Breaking Changes
+
+- The `caretSLOPE()` function that was deprecated has now been removed from the
+  package.
+- Fields `unique`, `violations`, and `active_sets` are no longer stored in the
+  `SLOPE` object. These fields were typically only used for debugging purposes.
+- The `prox_method` and `method` arguments in `SLOPE()` and `sortedL1Prox()`,
+  respectively, have been removed. The proximal operator is now always computed
+  using the fast stack-based algorithm. There was never any reason to use the
+  slower PAVA algorithm.
+
 # SLOPE 0.5.2
 
 ## Bug Fixes
