@@ -200,9 +200,6 @@ a character vector giving the names of the classes for binomial and
 multinomial families
 }
 \item{passes}{the number of passes the solver took at each step on the path}
-\item{unique}{
-the number of unique predictors (in absolute value)
-}
 \item{deviance_ratio}{
 the deviance ratio (as a fraction of 1)
 }

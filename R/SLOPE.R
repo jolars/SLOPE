@@ -284,9 +284,6 @@
 #'   multinomial families
 #' }
 #' \item{passes}{the number of passes the solver took at each step on the path}
-#' \item{unique}{
-#'   the number of unique predictors (in absolute value)
-#' }
 #' \item{deviance_ratio}{
 #'   the deviance ratio (as a fraction of 1)
 #' }
@@ -715,7 +712,6 @@ SLOPE <- function(x,
       alpha = alpha,
       class_names = class_names,
       passes = passes,
-      unique = drop(fit$n_unique),
       deviance_ratio = drop(fit$deviance_ratio),
       null_deviance = fit$null_deviance,
       family = family,

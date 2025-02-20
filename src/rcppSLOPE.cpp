@@ -79,7 +79,6 @@ callSLOPE(T& x, arma::mat& y, const Rcpp::List control)
                             Named("primals") = wrap(res.primals),
                             Named("duals") = wrap(res.duals),
                             Named("time") = wrap(res.time),
-                            Named("n_unique") = wrap(res.n_unique),
                             Named("deviance_ratio") = wrap(res.deviance_ratio),
                             Named("null_deviance") = wrap(res.null_deviance),
                             Named("alpha") = wrap(res.alpha),
