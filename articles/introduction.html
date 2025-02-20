@@ -177,13 +177,9 @@ data set.
 <p>To determine the strength of regularization, it is almost always
 necessary to tune the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>λ</mi><annotation encoding="application/x-tex">\lambda</annotation></semantics></math>
-sequence using resampling. This package features two methods for this: a
-specification for use with the <strong>caret</strong> package via the
-function <code><a href="../reference/caretSLOPE.html">caretSLOPE()</a></code> or <code><a href="../reference/trainSLOPE.html">trainSLOPE()</a></code>. While
-former facilitate easier comparison of SLOPE against other methods as
-well as a multitude of options for resampling and measuring performance,
-it does not allow for sparse predictor matrices. We will give an example
-of <code><a href="../reference/trainSLOPE.html">trainSLOPE()</a></code> here.</p>
+sequence using resampling. This package features the function
+<code><a href="../reference/trainSLOPE.html">trainSLOPE()</a></code> to do this. We will give an example of
+<code><a href="../reference/trainSLOPE.html">trainSLOPE()</a></code> here.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">924</span><span class="op">)</span></span>
 <span></span>
