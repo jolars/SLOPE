@@ -40,7 +40,6 @@
                     rmarkdown
                     scales
                     spelling
-                    stringr
                     testthat
                     tidyr
                     vdiffr
