@@ -30,3 +30,4 @@
 ^flake\.lock$
 ^flake\.nix$
 ^\.envrc$
+^Taskfile.yml$
