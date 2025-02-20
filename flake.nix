@@ -49,10 +49,12 @@
                 }
               );
             in
+            with pkgs;
             [
-              pkgs.bashInteractive
-              (pkgs.rWrapper.override {
-                packages = with pkgs.rPackages; [
+              bashInteractive
+              go-task
+              (rWrapper.override {
+                packages = with rPackages; [
                   devtools
                   languageserver
                   SLOPE
