@@ -284,10 +284,6 @@
 #'   multinomial families
 #' }
 #' \item{passes}{the number of passes the solver took at each step on the path}
-#' \item{violations}{
-#'   the number of violations of the screening rule at each step on the path;
-#'   only available if `diagnostics = TRUE` in the call to [SLOPE()].
-#' }
 #' \item{active_sets}{
 #'   a list where each element indicates the indices of the
 #'   coefficients that were active at that point in the regularization path
@@ -418,8 +414,7 @@ SLOPE <- function(x,
   family <- match.arg(family)
   solver <- match.arg(solver)
   screen_alg <- match.arg(screen_alg)
-  prox_method_choice <- switch(
-    match.arg(prox_method),
+  prox_method_choice <- switch(match.arg(prox_method),
     stack = 0,
     pava = 1
   )
@@ -710,8 +705,7 @@ SLOPE <- function(x,
 
   diagnostics <- if (diagnostics) setupDiagnostics(fit) else NULL
 
-  slope_class <- switch(
-    family,
+  slope_class <- switch(family,
     gaussian = "GaussianSLOPE",
     binomial = "BinomialSLOPE",
     poisson = "PoissonSLOPE",
@@ -726,7 +720,6 @@ SLOPE <- function(x,
       alpha = alpha,
       class_names = class_names,
       passes = passes,
-      violations = fit$violations,
       active_sets = active_sets,
       unique = drop(fit$n_unique),
       deviance_ratio = drop(fit$deviance_ratio),
