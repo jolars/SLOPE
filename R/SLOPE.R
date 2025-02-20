@@ -212,9 +212,7 @@
 #'   when `lambda == "OSCAR"`. This parameter basically sets the slope
 #'   for the lambda sequence and is equivalent to \eqn{\lambda_2} in the
 #'   original OSCAR formulation.
-#' @param prox_method method for calculating the proximal operator for
-#'   the Sorted L1 Norm (the SLOPE penalty). Please see [sortedL1Prox()] for
-#'   more information.
+#' @param prox_method DEPRECATED
 #' @param max_passes maximum number of passes (outer iterations) for solver
 #' @param diagnostics whether to save diagnostics from the solver
 #'   (timings and other values depending on type of solver)
@@ -365,7 +363,7 @@ SLOPE <- function(x,
                   q = 0.1 * min(1, NROW(x) / NCOL(x)),
                   theta1 = 1,
                   theta2 = 0.5,
-                  prox_method = c("stack", "pava"),
+                  prox_method,
                   screen = TRUE,
                   screen_alg = c("strong", "previous"),
                   tol_dev_change = 1e-5,
@@ -388,6 +386,13 @@ SLOPE <- function(x,
     alpha <- sigma
   }
 
+  if (!missing(prox_method)) {
+    warning(
+      "The 'method' argument is deprecated and ",
+      "has no effect. It will be removed in a future version."
+    )
+  }
+
   if (!missing(n_sigma)) {
     warning(
       "`n_sigma` argument is deprecated; please use `path_length` instead"
@@ -407,10 +412,6 @@ SLOPE <- function(x,
   family <- match.arg(family)
   solver <- match.arg(solver)
   screen_alg <- match.arg(screen_alg)
-  prox_method_choice <- switch(match.arg(prox_method),
-    stack = 0,
-    pava = 1
-  )
 
   if (solver == "admm" && family != "gaussian") {
     stop("ADMM solver is only supported with `family = 'gaussian'`")
@@ -582,7 +583,6 @@ SLOPE <- function(x,
     scale = scale,
     center = center,
     path_length = path_length,
-    prox_method_choice = prox_method_choice,
     n_targets = n_targets,
     screen = screen,
     screen_alg = screen_alg,

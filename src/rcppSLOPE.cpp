@@ -38,7 +38,7 @@ callSLOPE(T& x, arma::mat& y, const Rcpp::List control)
   auto tol_abs = as<double>(control["tol_abs"]);
   auto tol_rel = as<double>(control["tol_rel"]);
   auto tol_rel_coef_change = as<double>(control["tol_rel_coef_change"]);
-  auto prox_method_choice = as<int>(control["prox_method_choice"]);
+  int prox_method_choice = 0;
   auto diagnostics = as<bool>(control["diagnostics"]);
   auto verbosity = as<uword>(control["verbosity"]);
 

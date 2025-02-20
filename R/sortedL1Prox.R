@@ -14,9 +14,7 @@
 #' @param lambda A non-negative and decreasing sequence
 #'   of weights for the Sorted L1 Norm. Needs to be the same length as
 #'   `x`.
-#' @param method Method used in the prox. `"stack"` is a stack-based algorithm
-#'   (Algorithm 4 in Bogdan et al.). `"pava"` is the PAVA algorithm used
-#'   in isotonic regression (also Algorithm 3 in Bogdan et al.).
+#' @param method DEPRECATED
 #' @return An evaluation of the proximal operator at `x` and `lambda`.
 #'
 #' @source
@@ -25,12 +23,13 @@
 #' Appl Stat, vol. 9, no. 3, pp. 1103–1140, 2015.
 #'
 #' @export
-sortedL1Prox <- function(x, lambda, method = c("stack", "pava")) {
-  prox_method <- switch(
-    match.arg(method),
-    stack = 0,
-    pava = 1
-  )
+sortedL1Prox <- function(x, lambda, method) {
+  if (!missing(method)) {
+    warning(
+      "The 'method' argument is deprecated and ",
+      "has no effect. It will be removed in a future version."
+    )
+  }
 
   stopifnot(
     length(x) == length(lambda),
@@ -40,7 +39,7 @@ sortedL1Prox <- function(x, lambda, method = c("stack", "pava")) {
     all(is.finite(x))
   )
 
-  res <- sortedL1ProxCpp(as.matrix(x), lambda, prox_method)
+  res <- sortedL1ProxCpp(as.matrix(x), lambda, 0)
 
   as.vector(res)
 }

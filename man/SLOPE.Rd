@@ -18,7 +18,7 @@ SLOPE(
   q = 0.1 * min(1, NROW(x)/NCOL(x)),
   theta1 = 1,
   theta2 = 0.5,
-  prox_method = c("stack", "pava"),
+  prox_method,
   screen = TRUE,
   screen_alg = c("strong", "previous"),
   tol_dev_change = 1e-05,
@@ -108,9 +108,7 @@ when \code{lambda == "OSCAR"}. This parameter basically sets the slope
 for the lambda sequence and is equivalent to \eqn{\lambda_2} in the
 original OSCAR formulation.}
 
-\item{prox_method}{method for calculating the proximal operator for
-the Sorted L1 Norm (the SLOPE penalty). Please see \code{\link[=sortedL1Prox]{sortedL1Prox()}} for
-more information.}
+\item{prox_method}{DEPRECATED}
 
 \item{screen}{whether to use predictor screening rules (rules that allow
 some predictors to be discarded prior to fitting), which improve speed
