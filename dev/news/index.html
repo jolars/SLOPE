@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SLOPE</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.5.1.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.5.2.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,7 +49,20 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="slope-development-version">SLOPE (development version)<a class="anchor" aria-label="anchor" href="#slope-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.5.2.9000" id="slope-0529000">SLOPE 0.5.2.9000<a class="anchor" aria-label="anchor" href="#slope-0529000"></a></h2>
+<div class="section level3">
+<h3 id="breaking-changes-0-5-2-9000">Breaking Changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-5-2-9000"></a></h3>
+<ul><li>The <code>caretSLOPE()</code> function that was deprecated has now been removed from the package.</li>
+<li>Fields <code>unique</code>, <code>violations</code>, and <code>active_sets</code> are no longer stored in the <code>SLOPE</code> object. These fields were typically only used for debugging purposes.</li>
+<li>The <code>prox_method</code> and <code>method</code> arguments in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> and <code><a href="../reference/sortedL1Prox.html">sortedL1Prox()</a></code>, respectively, have been removed. The proximal operator is now always computed using the fast stack-based algorithm. There was never any reason to use the slower PAVA algorithm.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.5.2" id="slope-052">SLOPE 0.5.2<a class="anchor" aria-label="anchor" href="#slope-052"></a></h2><p class="text-muted">CRAN release: 2025-02-01</p>
+<div class="section level3">
+<h3 id="bug-fixes-0-5-2">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-5-2"></a></h3>
+<ul><li>Fixed bug when computing regularization weights for type <code>"gaussian"</code> when the number of observations is less than the number of variables.</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.5.1" id="slope-051">SLOPE 0.5.1<a class="anchor" aria-label="anchor" href="#slope-051"></a></h2><p class="text-muted">CRAN release: 2024-07-09</p>
@@ -71,7 +84,7 @@
 <div class="section level3">
 <h3 id="deprecated-functions-0-5-0">Deprecated Functions<a class="anchor" aria-label="anchor" href="#deprecated-functions-0-5-0"></a></h3>
 <ul><li>
-<code><a href="../reference/caretSLOPE.html">caretSLOPE()</a></code> has been deprecated and will be made defunct in version 0.6.0.</li>
+<code>caretSLOPE()</code> has been deprecated and will be made defunct in version 0.6.0.</li>
 </ul></div>
 </div>
     <div class="section level2">
@@ -214,7 +227,7 @@
 <code>SLOPE</code> now uses screening rules to speed up model fitting in the high-dimensional regime</li>
 <li>most of the code is now written in C++ using the <strong>Rcpp</strong> and <strong>RcppArmadillo</strong> packages</li>
 <li>a new function <code><a href="../reference/trainSLOPE.html">trainSLOPE()</a></code> trains SLOPE with repeated k-folds cross-validation</li>
-<li>a new function <code><a href="../reference/caretSLOPE.html">caretSLOPE()</a></code> enables model-tuning using the <strong>caret</strong> package</li>
+<li>a new function <code>caretSLOPE()</code> enables model-tuning using the <strong>caret</strong> package</li>
 <li>
 <code><a href="../reference/SLOPE.html">SLOPE()</a></code> now fits an entire path of regularization sequences by default</li>
 <li>the <code>normalize</code> option to <code><a href="../reference/SLOPE.html">SLOPE()</a></code> has been replaced by <code>scale</code> and <code>center</code>, which allows granular options for standardization</li>
