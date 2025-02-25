@@ -1,4 +1,4 @@
-test_that("intepolating coefficients works properly", {
+test_that("interpolating coefficients works properly", {
   set.seed(3)
   xy <- SLOPE:::randomProblem(100, 10)
 
