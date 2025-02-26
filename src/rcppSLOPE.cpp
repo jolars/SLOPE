@@ -1,100 +1,118 @@
-#include "Results.h"
-#include "SLOPE.h"
-#include <RcppArmadillo.h>
+#include "slope/slope.h"
+#include <RcppEigen.h>
 
 template<typename T>
 Rcpp::List
-callSLOPE(T& x, arma::mat& y, const Rcpp::List control)
+callSLOPE(T& x, const Eigen::MatrixXd& y, const Rcpp::List& control)
 {
-  using namespace arma;
-
+  using Eigen::ArrayXd;
+  using Eigen::VectorXd;
   using Rcpp::as;
   using Rcpp::Named;
   using Rcpp::wrap;
 
-  auto family_choice = as<std::string>(control["family"]);
-  auto intercept = as<bool>(control["fit_intercept"]);
-  auto lambda = as<vec>(control["lambda"]);
-  auto alpha = as<vec>(control["alpha"]);
-  auto lambda_type = as<std::string>(control["lambda_type"]);
-  auto alpha_type = as<std::string>(control["alpha_type"]);
+  auto diagnostics = as<bool>(control["diagnostics"]);
+  auto alpha = as<ArrayXd>(control["alpha"]);
   auto alpha_min_ratio = as<double>(control["alpha_min_ratio"]);
+  auto centering_type = as<std::string>(control["centering_type"]);
+  auto centers = as<VectorXd>(control["centers"]);
+  auto intercept = as<bool>(control["fit_intercept"]);
+  auto lambda = as<ArrayXd>(control["lambda"]);
+  auto lambda_type = as<std::string>(control["lambda_type"]);
+  auto max_clusters = as<int>(control["max_variables"]);
+  auto max_it = as<int>(control["max_passes"]);
+  auto loss_type = as<std::string>(control["family"]);
+  auto path_length = as<int>(control["path_length"]);
   auto q = as<double>(control["q"]);
+  auto scales = as<VectorXd>(control["scales"]);
+  auto scaling_type = as<std::string>(control["scaling_type"]);
+  auto solver_type = as<std::string>(control["solver"]);
   auto theta1 = as<double>(control["theta1"]);
   auto theta2 = as<double>(control["theta2"]);
-  auto center = as<bool>(control["center"]);
-  auto scale = as<std::string>(control["scale"]);
-  auto y_center = as<rowvec>(control["y_center"]);
-  auto y_scale = as<rowvec>(control["y_scale"]);
-  auto tol_dev_ratio = as<double>(control["tol_dev_ratio"]);
+  auto tol = as<double>(control["tol"]);
   auto tol_dev_change = as<double>(control["tol_dev_change"]);
-  auto max_variables = as<uword>(control["max_variables"]);
-  auto screen = as<bool>(control["screen"]);
-  auto screen_alg = as<std::string>(control["screen_alg"]);
-  auto solver = as<std::string>(control["solver"]);
-  auto max_passes = as<uword>(control["max_passes"]);
-  auto tol_rel_gap = as<double>(control["tol_rel_gap"]);
-  auto tol_infeas = as<double>(control["tol_infeas"]);
-  auto tol_abs = as<double>(control["tol_abs"]);
-  auto tol_rel = as<double>(control["tol_rel"]);
-  auto tol_rel_coef_change = as<double>(control["tol_rel_coef_change"]);
-  int prox_method_choice = 0;
-  auto diagnostics = as<bool>(control["diagnostics"]);
-  auto verbosity = as<uword>(control["verbosity"]);
+  auto tol_dev_ratio = as<double>(control["tol_dev_ratio"]);
 
-  Results res = SLOPE(x,
-                      y,
-                      family_choice,
-                      intercept,
-                      lambda,
-                      alpha,
-                      lambda_type,
-                      alpha_type,
-                      alpha_min_ratio,
-                      q,
-                      theta1,
-                      theta2,
-                      center,
-                      scale,
-                      y_center,
-                      y_scale,
-                      tol_dev_ratio,
-                      tol_dev_change,
-                      max_variables,
-                      screen,
-                      screen_alg,
-                      solver,
-                      max_passes,
-                      tol_rel_gap,
-                      tol_infeas,
-                      tol_abs,
-                      tol_rel,
-                      tol_rel_coef_change,
-                      prox_method_choice,
-                      diagnostics,
-                      verbosity);
+  slope::Slope model;
 
-  return Rcpp::List::create(Named("betas") = wrap(res.betas),
-                            Named("passes") = wrap(res.passes),
-                            Named("primals") = wrap(res.primals),
-                            Named("duals") = wrap(res.duals),
-                            Named("time") = wrap(res.time),
-                            Named("deviance_ratio") = wrap(res.deviance_ratio),
-                            Named("null_deviance") = wrap(res.null_deviance),
-                            Named("alpha") = wrap(res.alpha),
-                            Named("lambda") = wrap(res.lambda));
+  // Map family to loss_type
+  if (loss_type == "gaussian") {
+    loss_type = "quadratic";
+  } else if (loss_type == "binomial") {
+    loss_type = "logistic";
+  }
+
+  // overwrite solver type for Poisson regression,
+  // since the hybrid solver has convergence issues for this
+  // objective
+  if (solver_type == "auto") {
+    if (loss_type == "poisson") {
+      solver_type = "fista";
+    }
+  }
+
+  model.setAlphaMinRatio(alpha_min_ratio);
+  model.setDevChangeTol(tol_dev_change);
+  model.setDevRatioTol(tol_dev_ratio);
+  model.setIntercept(intercept);
+  model.setMaxClusters(max_clusters);
+  model.setMaxIterations(max_it);
+  model.setLoss(loss_type);
+  model.setOscarParameters(theta1, theta2);
+  model.setPathLength(path_length);
+  model.setQ(q);
+  model.setSolver(solver_type);
+  model.setTol(tol);
+  model.setDiagnostics(diagnostics);
+
+  if (centering_type == "manual") {
+    model.setCentering(centers);
+  } else {
+    model.setCentering(centering_type);
+  }
+
+  if (lambda_type != "user") {
+    model.setLambdaType(lambda_type);
+  }
+
+  if (scaling_type == "manual") {
+    model.setScaling(scales);
+  } else {
+    model.setScaling(scaling_type);
+  }
+
+  slope::SlopePath fit = model.path(x, y, alpha, lambda);
+
+  return Rcpp::List::create(
+    Named("intercepts") = wrap(fit.getIntercepts()),
+    Named("betas") = wrap(fit.getCoefs()),
+    Named("passes") = wrap(fit.getPasses()),
+    Named("primals") = wrap(fit.getPrimals()),
+    Named("duals") = wrap(fit.getDuals()),
+    Named("time") = wrap(fit.getTime()),
+    Named("deviance_ratio") = wrap(fit.getDevianceRatios()),
+    Named("null_deviance") = wrap(fit.getNullDeviance()),
+    Named("alpha") = wrap(fit.getAlpha()),
+    Named("lambda") = wrap(fit.getLambda()));
 }
 
 // [[Rcpp::export]]
 Rcpp::List
-sparseSLOPE(arma::sp_mat x, arma::mat y, const Rcpp::List control)
+sparseSLOPE(Eigen::SparseMatrix<double>& x,
+            const Eigen::MatrixXd& y,
+            const Rcpp::List& control)
 {
   return callSLOPE(x, y, control);
 }
 
 // [[Rcpp::export]]
 Rcpp::List
-denseSLOPE(arma::mat x, arma::mat y, const Rcpp::List control)
+denseSLOPE(Eigen::MatrixXd& x,
+           const Eigen::MatrixXd& y,
+           const Rcpp::List& control)
 {
+  if (!x.allFinite()) {
+    throw std::invalid_argument("Input matrix must not contain missing values");
+  }
   return callSLOPE(x, y, control);
 }

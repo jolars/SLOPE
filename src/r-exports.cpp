@@ -1,13 +1,26 @@
-#include "prox.h"
-#include <RcppArmadillo.h>
+#include "slope/regularization_sequence.h"
+#include "slope/sorted_l1_norm.h"
+#include <RcppEigen.h>
 
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-arma::mat
-sortedL1ProxCpp(const arma::mat& x, const arma::vec& lambda, const int method)
+Eigen::MatrixXd
+sortedL1ProxCpp(const Eigen::MatrixXd& x, const Eigen::ArrayXd& lambda)
 {
-  auto prox_method = ProxMethod(method);
+  slope::SortedL1Norm norm;
 
-  return prox(x, lambda, prox_method);
+  return norm.prox(x, lambda);
+}
+
+// [[Rcpp::export]]
+Eigen::ArrayXd
+lambdaSequenceCpp(const int n_lambda,
+                  const double q,
+                  const double theta1,
+                  const double theta2,
+                  const std::string& lambda_type,
+                  const int n)
+{
+  return slope::lambdaSequence(n_lambda, q, lambda_type, n, theta1, theta2);
 }

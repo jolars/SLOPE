@@ -31,9 +31,8 @@
                     ggplot2
                     Matrix
                     Rcpp
-                    RcppArmadillo
+                    RcppEigen
                     bench
-                    glmnet
                     covr
                     dplyr
                     knitr
@@ -42,7 +41,9 @@
                     spelling
                     testthat
                     tidyr
-                    vdiffr
+                    SparseM
+                    caret
+                    e1071
                   ];
                 }
               );
@@ -50,6 +51,7 @@
             with pkgs;
             [
               bashInteractive
+              autoconf
               go-task
               (rWrapper.override {
                 packages = with rPackages; [

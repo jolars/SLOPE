@@ -4,10 +4,12 @@
 \alias{interpolateCoefficients}
 \title{Interpolate coefficients}
 \usage{
-interpolateCoefficients(beta, interpolation_list)
+interpolateCoefficients(beta, intercepts, interpolation_list)
 }
 \arguments{
 \item{beta}{coefficients}
+
+\item{intercepts}{intercepts}
 
 \item{interpolation_list}{a list generated from \code{\link[=interpolatePenalty]{interpolatePenalty()}}}
 }

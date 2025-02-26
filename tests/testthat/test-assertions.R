@@ -32,11 +32,6 @@ test_that("unsupported error settings are caught", {
   expect_error(SLOPE(x, y, family = "binomial", solver = "admm"))
 })
 
-test_that("sparse matrix and centering throws", {
-  xy <- SLOPE:::randomProblem(density = 0.1)
-  expect_error(SLOPE(xy$x, xy$y, center = TRUE))
-})
-
 test_that("specifying alpha estimation throws if not gaussian", {
   x <- matrix(1, 3, 3)
   y <- double(3)
@@ -44,13 +39,6 @@ test_that("specifying alpha estimation throws if not gaussian", {
   expect_error(
     SLOPE(x, y, alpha = "estimate", family = "binomial", path_length = 1)
   )
-})
-
-test_that("alpha estimation and path_length > 1 returns warning", {
-  x <- matrix(1, 3, 3)
-  y <- double(3)
-
-  expect_warning(SLOPE(x, y, alpha = "estimate", path_length = 3))
 })
 
 test_that("SLOPE returns an error for empty `y`", {

@@ -1,5 +1,13 @@
 # SLOPE 0.5.2.9000
 
+This update of SLOPE brings an entirely different C++ implementation of the
+underlying package based on the C++ library
+[libslope](https://github.com/jolars/libslope). It comes with several large and
+breaking changes with respect to the previous version of the package.
+
+We realized that this may throw off some users, and hope that you will be
+patient with dealing with the large number of breaking changes.
+
 ## Breaking Changes
 
 - The `caretSLOPE()` function that was deprecated has now been removed from the
@@ -10,6 +18,80 @@
   respectively, have been removed. The proximal operator is now always computed
   using the fast stack-based algorithm. There was never any reason to use the
   slower PAVA algorithm.
+- The ADMM solver has been removed from the package. Calling `SLOPE()` with
+  `solver = "admm"` will now throws a warning and the value will be
+  automatically set to `"auto"`.
+- `alpha` is now scaled by `n` (the number of observations) and differences with
+  respect to the type of scaling are no longer taken into account.
+- The multinomial family now uses the redundant parameterization of the
+  multinomial logistic regression model. This means that regularization
+  sequences need to be of length `p` times `m` (number of classes). The returned
+  coefficients from `SLOPE()` now have dimensions `p` times `m` (rather than
+  `m - 1`).
+- The object `coefficients` from `SLOPE()` is now a list of sparse matrices
+  (rather than a three-dimensional array as before). Now it contains only the
+  coefficients and not the intercepts. The intercepts are instead stored in
+  `intercepts` in the returned object and are always present even if
+  `intercept = FALSE`.
+- The behavior of `coef.SLOPE()` has changed somewhat.
+- The default value of `q` in `SLOPE()` has changed from
+  `0.1 * min(1, NROW(x) / NCOL(x))` to `0.1`.
+- Arguments `sigma`, `n_sigma`, and `lambda_min_ratio` in `SLOPE()` that were
+  previously deprecated have been removed.
+- `SLOPE()` now internally solves the problem normalized by scaling with the
+  number of observations, which means that values returned in `deviance` and
+  `prmals` and `duals` if `diagnostics = TRUE` are now scaled by `n`.
+- `path_length` in `SLOPE()` now defaults to 100 (previously 20).
+- `tol_dev_ratio` in `SLOPE()` now defaults to `0.999` (previously `0.995`).
+
+## Deprecated Functionality
+
+- Arguments `tol_rel_gap`, `tol_infeas`, `tol_abs`, `tol_rel`, `tol_rel_coef` in
+  `SLOPE()` are now deprecated. The solvers now all rely on the same tolerance
+  criterion, which is set by `tol` and uses the duality gap normalized by the
+  current primal value.
+- Arguments `screen` and `screen_alg` are now deprecated and have no effect.
+  Feature screening is always used. These arguments were only used for
+  debugging.
+- The argument `verbosity` in `SLOPE()` is now defunct and has no effect.
+- The argument `prox_method` in `SLOPE()` and `sortedL1Prox()` is now defunct
+  and has no effect.
+
+## New Features
+
+- Centering `x` in `SLOPE()` is now allowed again.
+- Centers and scales can now be specified manually by providing vectors to
+  `center` and `scale` in `SLOPE()`.
+- A new solver based on a hybrid method of proximal gradient descent and
+  coordinate descent is available and used by default by the Gaussian and
+  binomial families. Use it by specifying `solver = "hybrid"`.
+- Solver can now be set to `"auto"`, in which case the package automatically
+  chooses a solver.
+- The returned duality gaps when `diagnostics = TRUE` are now _true_ duality
+  gaps, computed by guaranteeing that the dual variable is feasible (which was
+  not the case previously).
+- `scale` in `SLOPE()` gains a new option `"max_abs"` which scales the columns
+  of `x` by their maximum absolute value.
+
+## Performance Improvements
+
+The new hybrid algorithm that's implemented in libslope and now used in the
+package constitutes a major upgrade in terms of performance.
+
+- The solver is now much more memory-efficient and can avoid copies of the
+  design matrix entirely by normalizing the columns just-in-time. This is the
+  standard behavior. Future versions of the package will allow the user to
+  specify whether to copy (and modify) the design matrix or not.
+
+## Dependencies
+
+We have made an effort to reduce the footprint of the package and reduce the
+number of dependencies.
+
+- The package now relies on Eigen (through RcppEigen) rather than Armadillo,
+  which means that there is no longer any reliance on BLAS and LAPACK libraries.
+- The `vdiffr` and `glmnet` packages in the `Suggests` field that were used for
+  testing are now removed.
 
 # SLOPE 0.5.2
 

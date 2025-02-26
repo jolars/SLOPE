@@ -1,1 +1,38 @@
-PKG_LIBS = $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
+PKG_CXXFLAGS=-I.
+
+CXX_STD = CXX17
+
+SOURCES = \
+    RcppExports.cpp \
+    r-exports.cpp \
+    rcppSLOPE.cpp \
+    slope/clusters.cpp \
+    slope/kkt_check.cpp \
+    slope/losses/logistic.cpp \
+    slope/losses/multinomial.cpp \
+    slope/losses/poisson.cpp \
+    slope/losses/quadratic.cpp \
+    slope/losses/setup_loss.cpp \
+    slope/math.cpp \
+    slope/normalize.cpp \
+    slope/qnorm.cpp \
+    slope/regularization_sequence.cpp \
+    slope/screening.cpp \
+    slope/slope.cpp \
+    slope/solvers/hybrid.cpp \
+    slope/solvers/pgd.cpp \
+    slope/solvers/setup_solver.cpp \
+    slope/solvers/slope_threshold.cpp \
+    slope/sorted_l1_norm.cpp \
+    slope/timer.cpp \
+    slope/utils.cpp
+
+# Obtain the object files
+OBJECTS=$(SOURCES:.cpp=.o)
+
+# Make the shared object
+all: $(SHLIB)
+
+# Provide recipe to remove all objects
+clean:
+	@rm -f $(OBJECTS)

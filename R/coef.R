@@ -9,6 +9,8 @@
 #' please use [SLOPE()] to refit the model.
 #'
 #' @param object an object of class `'SLOPE'`.
+#' @param intercept whether to include the intercept in the output; only
+#'   applicable when `simplify = TRUE` and an intercept has been fit.
 #' @param ... arguments that are passed on to [stats::update()] (and therefore
 #'   also to [SLOPE()]) if `exact = TRUE` and the given penalty
 #'   is not in `object`
@@ -21,12 +23,13 @@
 #'
 #' @export
 #' @examples
-#' fit <- SLOPE(mtcars$mpg, mtcars$vs, path_length = 1)
+#' fit <- SLOPE(mtcars$mpg, mtcars$vs, path_length = 10)
 #' coef(fit)
 coef.SLOPE <- function(object,
                        alpha = NULL,
                        exact = FALSE,
                        simplify = TRUE,
+                       intercept = TRUE,
                        sigma,
                        ...) {
   if (!missing(sigma)) {
@@ -35,29 +38,53 @@ coef.SLOPE <- function(object,
   }
 
   beta <- object$coefficients
-
-  n_penalties <- dim(beta)[3]
-
+  intercepts <- getElement(object, "intercepts")
   penalty <- object$alpha
   value <- alpha
 
   if (is.null(value)) {
-    n_penalties <- length(penalty)
   } else if (all(value %in% penalty)) {
-    n_penalties <- length(value)
-    beta <- beta[, , penalty %in% value, drop = FALSE]
+    beta <- beta[[penalty %in% value]]
   } else if (exact) {
     object <- stats::update(object, alpha = alpha, ...)
     beta <- object$coefficients
+    intercepts <- getElement(object, "intercepts")
   } else {
     stopifnot(value >= 0)
     interpolation_list <- interpolatePenalty(penalty, value)
-    beta <- interpolateCoefficients(beta, interpolation_list)
-    n_penalties <- length(value)
+    res <- interpolateCoefficients(beta, intercepts, interpolation_list)
+    beta <- res$beta
+    intercepts <- res$intercepts
   }
 
+  m <- NCOL(beta[[1]])
+
   if (simplify) {
-    beta <- drop(beta)
+    has_intercept <- getElement(object, "has_intercept")
+
+    beta_out <- vector("list", m)
+
+    for (i in seq_len(m)) {
+      beta_out[[i]] <- do.call(
+        cbind,
+        lapply(beta, function(x) x[, i, drop = FALSE])
+      )
+
+      if (intercept && has_intercept) {
+        intercepts_i <- as.vector(do.call(cbind, lapply(intercepts, "[", i)))
+        beta_out[[i]] <- rbind(
+          intercepts_i,
+          beta_out[[i]],
+          deparse.level = 0
+        )
+      }
+    }
+
+    beta <- beta_out
+
+    if (m == 1) {
+      beta <- beta[[1]]
+    }
   }
 
   beta

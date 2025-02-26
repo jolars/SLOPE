@@ -9,33 +9,31 @@ SLOPE(
   y,
   family = c("gaussian", "binomial", "multinomial", "poisson"),
   intercept = TRUE,
-  center = !inherits(x, "sparseMatrix"),
-  scale = c("l2", "l1", "sd", "none"),
+  center = c("mean", "min", "none"),
+  scale = c("sd", "l1", "l2", "max_abs", "none"),
   alpha = c("path", "estimate"),
   lambda = c("bh", "gaussian", "oscar", "lasso"),
   alpha_min_ratio = if (NROW(x) < NCOL(x)) 0.01 else 1e-04,
-  path_length = if (alpha[1] == "estimate") 1 else 20,
-  q = 0.1 * min(1, NROW(x)/NCOL(x)),
+  path_length = 100,
+  q = 0.1,
   theta1 = 1,
   theta2 = 0.5,
-  prox_method,
-  screen = TRUE,
-  screen_alg = c("strong", "previous"),
   tol_dev_change = 1e-05,
-  tol_dev_ratio = 0.995,
+  tol_dev_ratio = 0.999,
   max_variables = NROW(x),
-  solver = c("fista", "admm"),
+  solver = c("auto", "hybrid", "pgd", "fista", "admm"),
   max_passes = 1e+06,
-  tol_abs = 1e-05,
-  tol_rel = 1e-04,
-  tol_rel_gap = 1e-05,
-  tol_infeas = 0.001,
-  tol_rel_coef_change = 0.001,
+  tol = 1e-04,
   diagnostics = FALSE,
-  verbosity = 0,
-  sigma,
-  n_sigma,
-  lambda_min_ratio
+  tol_abs,
+  tol_rel,
+  tol_rel_gap,
+  tol_infeas,
+  tol_rel_coef_change,
+  prox_method,
+  screen,
+  verbosity,
+  screen_alg
 )
 }
 \arguments{
@@ -108,22 +106,6 @@ when \code{lambda == "OSCAR"}. This parameter basically sets the slope
 for the lambda sequence and is equivalent to \eqn{\lambda_2} in the
 original OSCAR formulation.}
 
-\item{prox_method}{DEPRECATED}
-
-\item{screen}{whether to use predictor screening rules (rules that allow
-some predictors to be discarded prior to fitting), which improve speed
-greatly when the number of predictors is larger than the number
-of observations.}
-
-\item{screen_alg}{what type of screening algorithm to use.
-\itemize{
-\item \code{"strong"} uses the set from the strong screening rule and check
-against the full set
-\item \code{"previous"} first fits with the previous active set, then checks
-against the strong set, and finally against the full set if there are
-no violations in the strong set
-}}
-
 \item{tol_dev_change}{the regularization path is stopped if the
 fractional change in deviance falls below this value; note that this is
 automatically set to 0 if a alpha is manually entered}
@@ -137,49 +119,56 @@ maximum number of unique, nonzero coefficients in absolute value in model.
 For the multinomial family, this value will be multiplied internally with
 the number of levels of the response minus one.}
 
-\item{solver}{type of solver use, either \code{"fista"} or \code{"admm"};
-all families currently support FISTA but only \code{family = "gaussian"}
-supports ADMM.}
+\item{solver}{type of solver use, either \code{"auto"}, \code{"hybrid"}, \code{"pgd"}, or
+\code{"fista"}; \code{"auto"} means that the solver is automatically selected,
+which currently means that \code{"hybrid"} is used for all objectives
+except multinomial ones, in which case FISTA (\code{"fista"}) is used.}
 
 \item{max_passes}{maximum number of passes (outer iterations) for solver}
 
-\item{tol_abs}{absolute tolerance criterion for ADMM solver}
-
-\item{tol_rel}{relative tolerance criterion for ADMM solver}
-
-\item{tol_rel_gap}{stopping criterion for the duality gap; used only with
-FISTA solver.}
-
-\item{tol_infeas}{stopping criterion for the level of infeasibility; used
-with FISTA solver and KKT checks in screening algorithm.}
-
-\item{tol_rel_coef_change}{relative tolerance criterion for change
-in coefficients between iterations, which is reached when
-the maximum absolute change in any coefficient divided by the maximum
-absolute coefficient size is less than this value.}
+\item{tol}{stopping criterion for the solvers in terms of the relative
+duality gap}
 
 \item{diagnostics}{whether to save diagnostics from the solver
 (timings and other values depending on type of solver)}
+
+\item{tol_abs}{DEPRECATED}
+
+\item{tol_rel}{relative DEPRECATED}
+
+\item{tol_rel_gap}{DEPRECATED}
+
+\item{tol_infeas}{DEPRECATED}
+
+\item{tol_rel_coef_change}{DEPRECATED}
+
+\item{prox_method}{DEPRECATED}
+
+\item{screen}{whether to use predictor screening rules (rules that allow
+some predictors to be discarded prior to fitting), which improve speed
+greatly when the number of predictors is larger than the number
+of observations.}
 
 \item{verbosity}{level of verbosity for displaying output from the
 program. Setting this to 1 displays basic information on the path level,
 2 a little bit more information on the path level, and 3 displays
 information from the solver.}
 
-\item{sigma}{deprecated; please use \code{alpha} instead}
-
-\item{n_sigma}{deprecated; please use \code{path_length} instead}
-
-\item{lambda_min_ratio}{deprecated; please use \code{alpha_min_ratio} instead}
+\item{screen_alg}{what type of screening algorithm to use.
+\itemize{
+\item \code{"strong"} uses the set from the strong screening rule and check
+against the full set
+\item \code{"previous"} first fits with the previous active set, then checks
+against the strong set, and finally against the full set if there are
+no violations in the strong set
+}}
 }
 \value{
 An object of class \code{"SLOPE"} with the following slots:
 \item{coefficients}{
-a three-dimensional array of the coefficients from the
-model fit, including the intercept if it was fit.
-There is one row for each coefficient, one column
-for each target (dependent variable), and
-one slice for each penalty.
+a list of the coefficients from the
+model fit, not including the intercept.
+The coefficients are stored as sparse matrices.
 }
 \item{nonzeros}{
 a three-dimensional logical array indicating whether a
@@ -398,7 +387,7 @@ fit <- SLOPE(
 )
 
 # Multinomial response, custom alpha and lambda
-m <- length(unique(wine$y)) - 1
+m <- length(unique(wine$y))
 p <- ncol(wine$x)
 
 alpha <- 0.005
@@ -416,6 +405,12 @@ fit <- SLOPE(
 Bogdan, M., van den Berg, E., Sabatti, C., Su, W., & Candès, E. J. (2015).
 SLOPE -- adaptive variable selection via convex optimization. The Annals of
 Applied Statistics, 9(3), 1103–1140.
+
+Larsson, J., Klopfenstein, Q., Massias, M., & Wallin, J. (2023). Coordinate
+descent for SLOPE. In F. Ruiz, J. Dy, & J.-W. van de Meent (Eds.),
+Proceedings of the 26th international conference on artificial
+intelligence and statistics (Vol. 206, pp. 4802–4821). PMLR.
+https://proceedings.mlr.press/v206/larsson23a.html
 
 Bondell, H. D., & Reich, B. J. (2008). Simultaneous Regression Shrinkage,
 Variable Selection, and Supervised Clustering of Predictors with OSCAR.

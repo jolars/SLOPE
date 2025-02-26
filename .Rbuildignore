@@ -31,3 +31,6 @@
 ^flake\.nix$
 ^\.envrc$
 ^Taskfile.yml$
+^doc$
+^Meta$
+^_libs$
