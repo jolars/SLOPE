@@ -16,3 +16,5 @@ result-*
 
 # Ignore direnv folder
 .direnv/
+
+_libs
