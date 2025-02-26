@@ -25,7 +25,6 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/introduction.html">An introduction to SLOPE</a></li>
-    <li><a class="dropdown-item" href="../articles/prox-algs.html">Proximal Operator Algorithms</a></li>
   </ul></li>
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
@@ -50,11 +49,55 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.5.2.9000" id="slope-0529000">SLOPE 0.5.2.9000<a class="anchor" aria-label="anchor" href="#slope-0529000"></a></h2>
+<p>This update of SLOPE brings an entirely different C++ implementation of the underlying package based on the C++ library <a href="https://github.com/jolars/libslope" class="external-link">libslope</a>. It comes with several large and breaking changes with respect to the previous version of the package.</p>
+<p>We realized that this may throw off some users, and hope that you will be patient with dealing with the large number of breaking changes.</p>
 <div class="section level3">
 <h3 id="breaking-changes-0-5-2-9000">Breaking Changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-5-2-9000"></a></h3>
 <ul><li>The <code>caretSLOPE()</code> function that was deprecated has now been removed from the package.</li>
 <li>Fields <code>unique</code>, <code>violations</code>, and <code>active_sets</code> are no longer stored in the <code>SLOPE</code> object. These fields were typically only used for debugging purposes.</li>
 <li>The <code>prox_method</code> and <code>method</code> arguments in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> and <code><a href="../reference/sortedL1Prox.html">sortedL1Prox()</a></code>, respectively, have been removed. The proximal operator is now always computed using the fast stack-based algorithm. There was never any reason to use the slower PAVA algorithm.</li>
+<li>The ADMM solver has been removed from the package. Calling <code><a href="../reference/SLOPE.html">SLOPE()</a></code> with <code>solver = "admm"</code> will now throws a warning and the value will be automatically set to <code>"auto"</code>.</li>
+<li>
+<code>alpha</code> is now scaled by <code>n</code> (the number of observations) and differences with respect to the type of scaling are no longer taken into account.</li>
+<li>The multinomial family now uses the redundant parameterization of the multinomial logistic regression model. This means that regularization sequences need to be of length <code>p</code> times <code>m</code> (number of classes). The returned coefficients from <code><a href="../reference/SLOPE.html">SLOPE()</a></code> now have dimensions <code>p</code> times <code>m</code> (rather than <code>m - 1</code>).</li>
+<li>The object <code>coefficients</code> from <code><a href="../reference/SLOPE.html">SLOPE()</a></code> is now a list of sparse matrices (rather than a three-dimensional array as before). Now it contains only the coefficients and not the intercepts. The intercepts are instead stored in <code>intercepts</code> in the returned object and are always present even if <code>intercept = FALSE</code>.</li>
+<li>The behavior of <code><a href="../reference/coef.SLOPE.html">coef.SLOPE()</a></code> has changed somewhat.</li>
+<li>The default value of <code>q</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> has changed from <code>0.1 * min(1, NROW(x) / NCOL(x))</code> to <code>0.1</code>.</li>
+<li>Arguments <code>sigma</code>, <code>n_sigma</code>, and <code>lambda_min_ratio</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> that were previously deprecated have been removed.</li>
+<li>
+<code><a href="../reference/SLOPE.html">SLOPE()</a></code> now internally solves the problem normalized by scaling with the number of observations, which means that values returned in <code>deviance</code> and <code>prmals</code> and <code>duals</code> if <code>diagnostics = TRUE</code> are now scaled by <code>n</code>.</li>
+<li>
+<code>path_length</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> now defaults to 100 (previously 20).</li>
+<li>
+<code>tol_dev_ratio</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> now defaults to <code>0.999</code> (previously <code>0.995</code>).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="deprecated-functionality-0-5-2-9000">Deprecated Functionality<a class="anchor" aria-label="anchor" href="#deprecated-functionality-0-5-2-9000"></a></h3>
+<ul><li>Arguments <code>tol_rel_gap</code>, <code>tol_infeas</code>, <code>tol_abs</code>, <code>tol_rel</code>, <code>tol_rel_coef</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> are now deprecated. The solvers now all rely on the same tolerance criterion, which is set by <code>tol</code> and uses the duality gap normalized by the current primal value.</li>
+<li>Arguments <code>screen</code> and <code>screen_alg</code> are now deprecated and have no effect. Feature screening is always used. These arguments were only used for debugging.</li>
+<li>The argument <code>verbosity</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> is now defunct and has no effect.</li>
+<li>The argument <code>prox_method</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> and <code><a href="../reference/sortedL1Prox.html">sortedL1Prox()</a></code> is now defunct and has no effect.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-features-0-5-2-9000">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-5-2-9000"></a></h3>
+<ul><li>Centering <code>x</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> is now allowed again.</li>
+<li>Centers and scales can now be specified manually by providing vectors to <code>center</code> and <code>scale</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>.</li>
+<li>A new solver based on a hybrid method of proximal gradient descent and coordinate descent is available and used by default by the Gaussian and binomial families. Use it by specifying <code>solver = "hybrid"</code>.</li>
+<li>Solver can now be set to <code>"auto"</code>, in which case the package automatically chooses a solver.</li>
+<li>The returned duality gaps when <code>diagnostics = TRUE</code> are now <em>true</em> duality gaps, computed by guaranteeing that the dual variable is feasible (which was not the case previously).</li>
+<li>
+<code>scale</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> gains a new option <code>"max_abs"</code> which scales the columns of <code>x</code> by their maximum absolute value.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="performance-improvements-0-5-2-9000">Performance Improvements<a class="anchor" aria-label="anchor" href="#performance-improvements-0-5-2-9000"></a></h3>
+<p>The new hybrid algorithm that’s implemented in libslope and now used in the package constitutes a major upgrade in terms of performance.</p>
+<ul><li>The solver is now much more memory-efficient and can avoid copies of the design matrix entirely by normalizing the columns just-in-time. This is the standard behavior. Future versions of the package will allow the user to specify whether to copy (and modify) the design matrix or not.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="dependencies-0-5-2-9000">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies-0-5-2-9000"></a></h3>
+<p>We have made an effort to reduce the footprint of the package and reduce the number of dependencies.</p>
+<ul><li>The package now relies on Eigen (through RcppEigen) rather than Armadillo, which means that there is no longer any reliance on BLAS and LAPACK libraries.</li>
+<li>The <code>vdiffr</code> and <code>glmnet</code> packages in the <code>Suggests</code> field that were used for testing are now removed.</li>
 </ul></div>
 </div>
     <div class="section level2">

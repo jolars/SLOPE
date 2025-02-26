@@ -3,8 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   introduction: introduction.html
-  prox-algs: prox-algs.html
-last_built: 2025-02-26T10:46Z
+last_built: 2025-02-26T21:10Z
 urls:
   reference: https://jolars.github.io/SLOPE/reference
   article: https://jolars.github.io/SLOPE/articles

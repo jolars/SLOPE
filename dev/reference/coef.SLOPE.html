@@ -25,7 +25,6 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/introduction.html">An introduction to SLOPE</a></li>
-    <li><a class="dropdown-item" href="../articles/prox-algs.html">Proximal Operator Algorithms</a></li>
   </ul></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
@@ -56,7 +55,15 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'SLOPE'</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">object</span>, alpha <span class="op">=</span> <span class="cn">NULL</span>, exact <span class="op">=</span> <span class="cn">FALSE</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">sigma</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  alpha <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  exact <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  simplify <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  intercept <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">sigma</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -83,6 +90,11 @@ penalty path.</p></dd>
 <dt id="arg-simplify">simplify<a class="anchor" aria-label="anchor" href="#arg-simplify"></a></dt>
 <dd><p>if <code>TRUE</code>, <code><a href="https://rdrr.io/r/base/drop.html" class="external-link">base::drop()</a></code> will be called before returning
 the coefficients to drop extraneous dimensions</p></dd>
+
+
+<dt id="arg-intercept">intercept<a class="anchor" aria-label="anchor" href="#arg-intercept"></a></dt>
+<dd><p>whether to include the intercept in the output; only
+applicable when <code>simplify = TRUE</code> and an intercept has been fit.</p></dd>
 
 
 <dt id="arg-sigma">sigma<a class="anchor" aria-label="anchor" href="#arg-sigma"></a></dt>
@@ -120,10 +132,15 @@ please use <code><a href="SLOPE.html">SLOPE()</a></code> to refit the model.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="SLOPE.html">SLOPE</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">mpg</span>, <span class="va">mtcars</span><span class="op">$</span><span class="va">vs</span>, path_length <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="SLOPE.html">SLOPE</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">mpg</span>, <span class="va">mtcars</span><span class="op">$</span><span class="va">vs</span>, path_length <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)          V1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> -0.67805384  0.05552609 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 x 8 sparse Matrix of class "dgCMatrix"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 0.4375 -0.27721605 -0.53407168 -0.62638081 -0.65955499 -0.67147717</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] .       0.03557461  0.04835946  0.05295409  0.05460532  0.05519874</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -0.6757618 -0.67730159</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,]  0.0554120  0.05548865</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

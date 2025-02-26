@@ -48,7 +48,6 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/introduction.html">An introduction to SLOPE</a></li>
-    <li><a class="dropdown-item" href="../articles/prox-algs.html">Proximal Operator Algorithms</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -192,7 +191,6 @@ sequence using resampling. This package features the function
 <span>  <span class="va">y</span>,</span>
 <span>  q <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.2</span><span class="op">)</span>,</span>
 <span>  number <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>  solver <span class="op">=</span> <span class="st">"admm"</span>,</span>
 <span>  repeats <span class="op">=</span> <span class="fl">2</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>As before, the plot method offers the best summary.</p>
@@ -208,13 +206,12 @@ Model tuning results from Gaussian SLOPE on the bodyfat dataset.
 <code class="sourceCode R"><span><span class="va">tune</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Call:</span></span>
-<span><span class="co">#&gt; trainSLOPE(x = x, y = y, q = c(0.1, 0.2), number = 5, repeats = 2, </span></span>
-<span><span class="co">#&gt;     solver = "admm")</span></span>
+<span><span class="co">#&gt; trainSLOPE(x = x, y = y, q = c(0.1, 0.2), number = 5, repeats = 2)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Optimum values:</span></span>
-<span><span class="co">#&gt;     q       alpha measure      mean       se        lo        hi</span></span>
-<span><span class="co">#&gt; 1 0.1 0.001772065     mae  3.613638 0.131824  3.315431  3.911845</span></span>
-<span><span class="co">#&gt; 2 0.1 0.001772065     mse 19.536120 1.126976 16.986724 22.085515</span></span></code></pre></div>
+<span><span class="co">#&gt;     q       alpha measure      mean        se       lo        hi</span></span>
+<span><span class="co">#&gt; 1 0.1 0.001638533     mae  3.613648 0.1319619  3.31513  3.912167</span></span>
+<span><span class="co">#&gt; 2 0.1 0.002166044     mse 19.535785 1.1247587 16.99140 22.080166</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="false-discovery-rate">False discovery rate<a class="anchor" aria-label="anchor" href="#false-discovery-rate"></a>
@@ -252,12 +249,11 @@ which we set to 0.1 in this example.</p>
 <span>  <span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SLOPE.html">SLOPE</a></span><span class="op">(</span><span class="va">x</span>,</span>
 <span>    <span class="va">y</span>,</span>
 <span>    lambda <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
-<span>    solver <span class="op">=</span> <span class="st">"admm"</span>,</span>
 <span>    q <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>    alpha <span class="op">=</span> <span class="va">alpha</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
-<span>  <span class="va">selected_slope</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">nonzeros</span><span class="op">)</span></span>
+<span>  <span class="va">selected_slope</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">nonzeros</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="va">V</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="va">selected_slope</span>, <span class="va">signals</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="va">R</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">selected_slope</span><span class="op">)</span></span>
 <span>  <span class="va">fdr</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">V</span> <span class="op">/</span> <span class="va">R</span></span>

@@ -33,7 +33,6 @@ in decreasing order according  to its absolute values."><meta property="og:image
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/introduction.html">An introduction to SLOPE</a></li>
-    <li><a class="dropdown-item" href="../articles/prox-algs.html">Proximal Operator Algorithms</a></li>
   </ul></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
@@ -72,33 +71,31 @@ in decreasing order according  to its absolute values.</p>
 <span>  <span class="va">y</span>,</span>
 <span>  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gaussian"</span>, <span class="st">"binomial"</span>, <span class="st">"multinomial"</span>, <span class="st">"poisson"</span><span class="op">)</span>,</span>
 <span>  intercept <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  center <span class="op">=</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">inherits</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">"sparseMatrix"</span><span class="op">)</span>,</span>
-<span>  scale <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"l2"</span>, <span class="st">"l1"</span>, <span class="st">"sd"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
+<span>  center <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"min"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
+<span>  scale <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sd"</span>, <span class="st">"l1"</span>, <span class="st">"l2"</span>, <span class="st">"max_abs"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
 <span>  alpha <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"path"</span>, <span class="st">"estimate"</span><span class="op">)</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bh"</span>, <span class="st">"gaussian"</span>, <span class="st">"oscar"</span>, <span class="st">"lasso"</span><span class="op">)</span>,</span>
 <span>  alpha_min_ratio <span class="op">=</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NROW</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NCOL</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="fl">0.01</span> <span class="kw">else</span> <span class="fl">1e-04</span>,</span>
-<span>  path_length <span class="op">=</span> <span class="kw">if</span> <span class="op">(</span><span class="va">alpha</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">==</span> <span class="st">"estimate"</span><span class="op">)</span> <span class="fl">1</span> <span class="kw">else</span> <span class="fl">20</span>,</span>
-<span>  q <span class="op">=</span> <span class="fl">0.1</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NROW</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NCOL</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  path_length <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  q <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>  theta1 <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  theta2 <span class="op">=</span> <span class="fl">0.5</span>,</span>
-<span>  <span class="va">prox_method</span>,</span>
-<span>  screen <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  screen_alg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"strong"</span>, <span class="st">"previous"</span><span class="op">)</span>,</span>
 <span>  tol_dev_change <span class="op">=</span> <span class="fl">1e-05</span>,</span>
-<span>  tol_dev_ratio <span class="op">=</span> <span class="fl">0.995</span>,</span>
+<span>  tol_dev_ratio <span class="op">=</span> <span class="fl">0.999</span>,</span>
 <span>  max_variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NROW</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,</span>
-<span>  solver <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"fista"</span>, <span class="st">"admm"</span><span class="op">)</span>,</span>
+<span>  solver <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"hybrid"</span>, <span class="st">"pgd"</span>, <span class="st">"fista"</span>, <span class="st">"admm"</span><span class="op">)</span>,</span>
 <span>  max_passes <span class="op">=</span> <span class="fl">1e+06</span>,</span>
-<span>  tol_abs <span class="op">=</span> <span class="fl">1e-05</span>,</span>
-<span>  tol_rel <span class="op">=</span> <span class="fl">1e-04</span>,</span>
-<span>  tol_rel_gap <span class="op">=</span> <span class="fl">1e-05</span>,</span>
-<span>  tol_infeas <span class="op">=</span> <span class="fl">0.001</span>,</span>
-<span>  tol_rel_coef_change <span class="op">=</span> <span class="fl">0.001</span>,</span>
+<span>  tol <span class="op">=</span> <span class="fl">1e-04</span>,</span>
 <span>  diagnostics <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  verbosity <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  <span class="va">sigma</span>,</span>
-<span>  <span class="va">n_sigma</span>,</span>
-<span>  <span class="va">lambda_min_ratio</span></span>
+<span>  <span class="va">tol_abs</span>,</span>
+<span>  <span class="va">tol_rel</span>,</span>
+<span>  <span class="va">tol_rel_gap</span>,</span>
+<span>  <span class="va">tol_infeas</span>,</span>
+<span>  <span class="va">tol_rel_coef_change</span>,</span>
+<span>  <span class="va">prox_method</span>,</span>
+<span>  <span class="va">screen</span>,</span>
+<span>  <span class="va">verbosity</span>,</span>
+<span>  <span class="va">screen_alg</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -195,26 +192,6 @@ for the lambda sequence and is equivalent to \(\lambda_2\) in the
 original OSCAR formulation.</p></dd>
 
 
-<dt id="arg-prox-method">prox_method<a class="anchor" aria-label="anchor" href="#arg-prox-method"></a></dt>
-<dd><p>DEPRECATED</p></dd>
-
-
-<dt id="arg-screen">screen<a class="anchor" aria-label="anchor" href="#arg-screen"></a></dt>
-<dd><p>whether to use predictor screening rules (rules that allow
-some predictors to be discarded prior to fitting), which improve speed
-greatly when the number of predictors is larger than the number
-of observations.</p></dd>
-
-
-<dt id="arg-screen-alg">screen_alg<a class="anchor" aria-label="anchor" href="#arg-screen-alg"></a></dt>
-<dd><p>what type of screening algorithm to use.</p><ul><li><p><code>"strong"</code> uses the set from the strong screening rule and check
-against the full set</p></li>
-<li><p><code>"previous"</code> first fits with the previous active set, then checks
-against the strong set, and finally against the full set if there are
-no violations in the strong set</p></li>
-</ul></dd>
-
-
 <dt id="arg-tol-dev-change">tol_dev_change<a class="anchor" aria-label="anchor" href="#arg-tol-dev-change"></a></dt>
 <dd><p>the regularization path is stopped if the
 fractional change in deviance falls below this value; note that this is
@@ -235,43 +212,55 @@ the number of levels of the response minus one.</p></dd>
 
 
 <dt id="arg-solver">solver<a class="anchor" aria-label="anchor" href="#arg-solver"></a></dt>
-<dd><p>type of solver use, either <code>"fista"</code> or <code>"admm"</code>;
-all families currently support FISTA but only <code>family = "gaussian"</code>
-supports ADMM.</p></dd>
+<dd><p>type of solver use, either <code>"auto"</code>, <code>"hybrid"</code>, <code>"pgd"</code>, or
+<code>"fista"</code>; <code>"auto"</code> means that the solver is automatically selected,
+which currently means that <code>"hybrid"</code> is used for all objectives
+except multinomial ones, in which case FISTA (<code>"fista"</code>) is used.</p></dd>
 
 
 <dt id="arg-max-passes">max_passes<a class="anchor" aria-label="anchor" href="#arg-max-passes"></a></dt>
 <dd><p>maximum number of passes (outer iterations) for solver</p></dd>
 
 
-<dt id="arg-tol-abs">tol_abs<a class="anchor" aria-label="anchor" href="#arg-tol-abs"></a></dt>
-<dd><p>absolute tolerance criterion for ADMM solver</p></dd>
-
-
-<dt id="arg-tol-rel">tol_rel<a class="anchor" aria-label="anchor" href="#arg-tol-rel"></a></dt>
-<dd><p>relative tolerance criterion for ADMM solver</p></dd>
-
-
-<dt id="arg-tol-rel-gap">tol_rel_gap<a class="anchor" aria-label="anchor" href="#arg-tol-rel-gap"></a></dt>
-<dd><p>stopping criterion for the duality gap; used only with
-FISTA solver.</p></dd>
-
-
-<dt id="arg-tol-infeas">tol_infeas<a class="anchor" aria-label="anchor" href="#arg-tol-infeas"></a></dt>
-<dd><p>stopping criterion for the level of infeasibility; used
-with FISTA solver and KKT checks in screening algorithm.</p></dd>
-
-
-<dt id="arg-tol-rel-coef-change">tol_rel_coef_change<a class="anchor" aria-label="anchor" href="#arg-tol-rel-coef-change"></a></dt>
-<dd><p>relative tolerance criterion for change
-in coefficients between iterations, which is reached when
-the maximum absolute change in any coefficient divided by the maximum
-absolute coefficient size is less than this value.</p></dd>
+<dt id="arg-tol">tol<a class="anchor" aria-label="anchor" href="#arg-tol"></a></dt>
+<dd><p>stopping criterion for the solvers in terms of the relative
+duality gap</p></dd>
 
 
 <dt id="arg-diagnostics">diagnostics<a class="anchor" aria-label="anchor" href="#arg-diagnostics"></a></dt>
 <dd><p>whether to save diagnostics from the solver
 (timings and other values depending on type of solver)</p></dd>
+
+
+<dt id="arg-tol-abs">tol_abs<a class="anchor" aria-label="anchor" href="#arg-tol-abs"></a></dt>
+<dd><p>DEPRECATED</p></dd>
+
+
+<dt id="arg-tol-rel">tol_rel<a class="anchor" aria-label="anchor" href="#arg-tol-rel"></a></dt>
+<dd><p>relative DEPRECATED</p></dd>
+
+
+<dt id="arg-tol-rel-gap">tol_rel_gap<a class="anchor" aria-label="anchor" href="#arg-tol-rel-gap"></a></dt>
+<dd><p>DEPRECATED</p></dd>
+
+
+<dt id="arg-tol-infeas">tol_infeas<a class="anchor" aria-label="anchor" href="#arg-tol-infeas"></a></dt>
+<dd><p>DEPRECATED</p></dd>
+
+
+<dt id="arg-tol-rel-coef-change">tol_rel_coef_change<a class="anchor" aria-label="anchor" href="#arg-tol-rel-coef-change"></a></dt>
+<dd><p>DEPRECATED</p></dd>
+
+
+<dt id="arg-prox-method">prox_method<a class="anchor" aria-label="anchor" href="#arg-prox-method"></a></dt>
+<dd><p>DEPRECATED</p></dd>
+
+
+<dt id="arg-screen">screen<a class="anchor" aria-label="anchor" href="#arg-screen"></a></dt>
+<dd><p>whether to use predictor screening rules (rules that allow
+some predictors to be discarded prior to fitting), which improve speed
+greatly when the number of predictors is larger than the number
+of observations.</p></dd>
 
 
 <dt id="arg-verbosity">verbosity<a class="anchor" aria-label="anchor" href="#arg-verbosity"></a></dt>
@@ -281,27 +270,22 @@ program. Setting this to 1 displays basic information on the path level,
 information from the solver.</p></dd>
 
 
-<dt id="arg-sigma">sigma<a class="anchor" aria-label="anchor" href="#arg-sigma"></a></dt>
-<dd><p>deprecated; please use <code>alpha</code> instead</p></dd>
-
-
-<dt id="arg-n-sigma">n_sigma<a class="anchor" aria-label="anchor" href="#arg-n-sigma"></a></dt>
-<dd><p>deprecated; please use <code>path_length</code> instead</p></dd>
-
-
-<dt id="arg-lambda-min-ratio">lambda_min_ratio<a class="anchor" aria-label="anchor" href="#arg-lambda-min-ratio"></a></dt>
-<dd><p>deprecated; please use <code>alpha_min_ratio</code> instead</p></dd>
+<dt id="arg-screen-alg">screen_alg<a class="anchor" aria-label="anchor" href="#arg-screen-alg"></a></dt>
+<dd><p>what type of screening algorithm to use.</p><ul><li><p><code>"strong"</code> uses the set from the strong screening rule and check
+against the full set</p></li>
+<li><p><code>"previous"</code> first fits with the previous active set, then checks
+against the strong set, and finally against the full set if there are
+no violations in the strong set</p></li>
+</ul></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>An object of class <code>"SLOPE"</code> with the following slots:</p>
 <dl><dt>coefficients</dt>
-<dd><p>a three-dimensional array of the coefficients from the
-model fit, including the intercept if it was fit.
-There is one row for each coefficient, one column
-for each target (dependent variable), and
-one slice for each penalty.</p></dd>
+<dd><p>a list of the coefficients from the
+model fit, not including the intercept.
+The coefficients are stored as sparse matrices.</p></dd>
 
 <dt>nonzeros</dt>
 <dd><p>a three-dimensional logical array indicating whether a
@@ -477,6 +461,11 @@ families but ADMM is currently only available for <code>family = "gaussian"</cod
     <p>Bogdan, M., van den Berg, E., Sabatti, C., Su, W., &amp; Candès, E. J. (2015).
 SLOPE – adaptive variable selection via convex optimization. The Annals of
 Applied Statistics, 9(3), 1103–1140.</p>
+<p>Larsson, J., Klopfenstein, Q., Massias, M., &amp; Wallin, J. (2023). Coordinate
+descent for SLOPE. In F. Ruiz, J. Dy, &amp; J.-W. van de Meent (Eds.),
+Proceedings of the 26th international conference on artificial
+intelligence and statistics (Vol. 206, pp. 4802–4821). PMLR.
+https://proceedings.mlr.press/v206/larsson23a.html</p>
 <p>Bondell, H. D., &amp; Reich, B. J. (2008). Simultaneous Regression Shrinkage,
 Variable Selection, and Supervised Clustering of Predictors with OSCAR.
 Biometrics, 64(1), 115–123. JSTOR.</p>
@@ -512,7 +501,7 @@ Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Multinomial response, custom alpha and lambda</span></span></span>
-<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">wine</span><span class="op">$</span><span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">wine</span><span class="op">$</span><span class="va">y</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">wine</span><span class="op">$</span><span class="va">x</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.005</span></span></span>

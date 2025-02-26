@@ -27,7 +27,6 @@ model fit with SLOPE()."><meta property="og:image" content="https://jolars.githu
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/introduction.html">An introduction to SLOPE</a></li>
-    <li><a class="dropdown-item" href="../articles/prox-algs.html">Proximal Operator Algorithms</a></li>
   </ul></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
@@ -118,8 +117,8 @@ value in <code>measure</code>.#'</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="SLOPE.html">SLOPE</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, family <span class="op">=</span> <span class="st">"binomial"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">score</span><span class="op">(</span><span class="va">fit</span>, <span class="va">x</span>, <span class="va">y</span>, measure <span class="op">=</span> <span class="st">"auc"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        p1        p2        p3        p4        p5        p6 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.5150055 0.4921504 0.4952903 0.5025192 0.5090179 0.5101132 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 0.5150055 0.4921504 0.4952903 0.5150055 0.5142753 0.5269076 0.5020811</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8] 0.5042716 0.5048558 0.4689303</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
