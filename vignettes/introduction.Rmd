@@ -164,14 +164,19 @@ for (i in seq_along(q)) {
   fdr[i] <- V / R
 }
 
-library(ggplot2)
+# Create the plot
+plot(
+  q,
+  fdr,
+  type = "o",
+  xlab = "q",
+  ylab = "FDR",
+  pch = 16,
+  las = 1
+)
 
-ggplot(mapping = aes(q, fdr)) +
-  geom_hline(yintercept = 0.1, lty = 3) +
-  geom_line() +
-  geom_point() +
-  theme_minimal() +
-  labs(y = "False Discovery Rate")
+# Add horizontal line at 0.1
+abline(h = 0.1, lty = 3)
 ```
 
 SLOPE seems to control FDR at roughly the specified level.

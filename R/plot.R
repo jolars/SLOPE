@@ -8,13 +8,13 @@
 #' @param x_variable what to plot on the x axis. `"alpha"` plots
 #'   the scaling parameter for the sequence, `"deviance_ratio"` plots
 #'   the fraction of deviance explained, and `"step"` plots step number.
-#' @param ... further arguments passed to or from other methods.
+#' @param ... arguments passed to [graphics::matplot()]
 #'
 #' @seealso [SLOPE()], [plotDiagnostics()]
 #' @family SLOPE-methods
 #'
-#' @return An object of class `"ggplot"`, which will be plotted on the
-#'   current device unless stored in a variable.
+#' @return Invisibly returns NULL. The function is called for its
+#'   side effect of producing a plot.
 #' @export
 #'
 #' @examples
@@ -33,11 +33,9 @@ plot.SLOPE <- function(x,
   x_variable <- match.arg(x_variable)
 
   coefs <- getElement(object, "coefficients")
-  intercepts <- getElement(object, "intercepts")
 
   include_intercept <- intercept && object$has_intercept
 
-  p <- NROW(coefs[[1L]]) # number of features
   m <- NCOL(coefs[[1L]]) # number of responses
 
   x <- switch(x_variable,
@@ -53,64 +51,42 @@ plot.SLOPE <- function(x,
   )
 
   coefs <- stats::coef(object, simplify = TRUE, intercept = include_intercept)
+  xlim <- if (x_variable == "alpha") rev(range(x)) else range(x)
+  log_var <- if (x_variable == "alpha") "x" else ""
 
   if (m == 1) {
-    d <- data.frame(t(as.matrix(coefs)))
-    d_long <- utils::stack(d)
-    d_long[["x"]] <- rep(x, times = p + include_intercept)
-
-    plt <- ggplot2::ggplot(
-      d_long,
-      ggplot2::aes(
-        x = !!quote(x),
-        y = !!quote(values),
-        col = !!quote(ind)
-      )
-    ) +
-      ggplot2::labs(
-        x = xlab,
-        y = expression(hat(beta)),
-        color = NULL
-      )
+    xlim <- if (x_variable == "alpha") rev(range(x)) else range(x)
+    plot_coefs(x, coefs, xlab, xlim, log_var, ...)
   } else {
-    d_longs <- vector("list", m)
     for (k in seq_len(m)) {
-      d <- data.frame(t(as.matrix(coefs[[1]])))
-      d_long <- utils::stack(d)
-      d_long[["x"]] <- rep(x, times = p + include_intercept)
-      d_long[["response"]] <- rep_len(k, nrow(d_long))
-      d_longs[[k]] <- d_long
+      plot_coefs(
+        x,
+        coefs[[k]],
+        xlab,
+        xlim,
+        log_var,
+        main = paste0("Response: ", k),
+        ...
+      )
     }
-
-    d_long <- do.call(rbind, d_longs)
-
-    plt <- ggplot2::ggplot(
-      d_long,
-      ggplot2::aes(
-        x = !!quote(x),
-        y = !!quote(values),
-        col = !!quote(ind)
-      )
-    ) +
-      ggplot2::facet_wrap("response") +
-      ggplot2::labs(
-        x = xlab,
-        y = expression(hat(beta)),
-        color = NULL
-      )
   }
 
-  if (p == 1) {
-    plt <- plt + ggplot2::geom_point()
-  } else {
-    plt <- plt + ggplot2::geom_line()
-  }
+  invisible()
+}
 
-  if (x_variable == "alpha") {
-    plt <- plt + ggplot2::scale_x_log10()
-  }
 
-  plt
+plot_coefs <- function(x, coefs, xlab, xlim, log_var = "x", ...) {
+  graphics::matplot(
+    x,
+    t(coefs),
+    type = "l",
+    lty = 1,
+    xlab = xlab,
+    xlim = xlim,
+    ylab = expression(hat(beta)),
+    log = log_var,
+    ...
+  )
 }
 
 #' Plot results from cross-validation
@@ -127,13 +103,20 @@ plot.SLOPE <- function(x,
 #'   to the best prediction score
 #' @param ci_border color (or flag to turn off and on) the border of the
 #'   confidence limits
-#' @param ... words
+#' @param plot_args list of additional arguments to pass to [plot()],
+#'   which sets up the plot frame
+#' @param polygon_args list of additional arguments to pass to
+#'   [graphics::polygon()], which fills the confidence limits
+#' @param lines_args list of additional arguments to pass to
+#'  [graphics::lines()], which plots the mean
+#' @param abline_args list of additional arguments to pass to
+#'   [graphics::abline()], which plots the minimum
+#' @param ... ignored
 #'
 #' @seealso [trainSLOPE()]
 #' @family model-tuning
 #'
-#' @return An object of class `"ggplot"`, which will be plotted on the
-#'   current device unless stored in a variable.
+#' @return A plot for every value of `q` is produced on the current device.
 #'
 #' @export
 #'
@@ -157,21 +140,13 @@ plot.TrainedSLOPE <- function(x,
                               ),
                               plot_min = TRUE,
                               ci_alpha = 0.2,
-                              ci_border = FALSE,
+                              ci_border = NA,
                               ci_col = "salmon",
+                              plot_args = list(),
+                              polygon_args = list(),
+                              lines_args = list(),
+                              abline_args = list(),
                               ...) {
-  if (!(ci_col %in% grDevices::colors())) {
-    stop("ci_col", ci_col, "is not a valid color representation.")
-  }
-
-  if (!(ci_border %in% grDevices::colors() || is.logical(ci_border))) {
-    stop(
-      "ci_border is",
-      ci_border,
-      "when it should be logical or a validcolor representation."
-    )
-  }
-
   object <- x
   family <- object[["model"]][["family"]]
 
@@ -214,42 +189,74 @@ plot.TrainedSLOPE <- function(x,
 
   xlab <- expression(alpha)
 
-  border_col <-
-    c(
-      ci_border,
-      NA,
-      ci_col
-    )[is.character(ci_border) + 2 * isFALSE(ci_border) + 3 * isTRUE(ci_border)]
+  ci_col <- grDevices::adjustcolor(ci_col, alpha = ci_alpha)
 
-  p <- ggplot2::ggplot(
-    summary,
-    ggplot2::aes(x = !!quote(alpha), y = mean)
-  ) +
-    ggplot2::xlab(xlab) +
-    ggplot2::ylab(measure_label) +
-    ggplot2::scale_x_log10() +
-    ggplot2::geom_ribbon(
-      ggplot2::aes(ymin = !!quote(lo), ymax = !!quote(hi)),
-      fill = ci_col,
-      color = border_col,
-      alpha = ci_alpha
-    ) +
-    ggplot2::geom_line()
+  ylim <- range(c(summary[["lo"]], summary[["hi"]]))
 
-  if (length(q) > 1) {
-    p <- p + ggplot2::facet_wrap(
-      "q",
-      labeller = ggplot2::labeller(q = ggplot2::label_both)
+  plot_args <- utils::modifyList(
+    list(
+      xlab = xlab,
+      ylab = measure_label,
+      log = "x",
+      type = "n",
+      ylim = ylim
+    ),
+    plot_args
+  )
+
+  polygon_args <- utils::modifyList(
+    list(
+      col = ci_col,
+      border = ci_border
+    ),
+    polygon_args
+  )
+
+  lines_args <- utils::modifyList(list(), lines_args)
+
+  abline_args <- utils::modifyList(
+    list(
+      v = optimum[["alpha"]],
+      lty = 2
+    ),
+    abline_args
+  )
+
+  for (i in seq_along(q)) {
+    summary_i <- summary[summary[["q"]] == q[i], ]
+
+    # Plot frame
+    plot_args <- utils::modifyList(
+      plot_args,
+      list(
+        x = summary_i[["alpha"]],
+        y = summary_i[["mean"]]
+      )
     )
+    do.call(plot, plot_args)
+
+    polygon_args <- utils::modifyList(
+      polygon_args,
+      list(
+        y = c(summary_i[["hi"]], rev(summary_i[["lo"]])),
+        x = c(summary_i[["alpha"]], rev(summary_i[["alpha"]]))
+      )
+    )
+    do.call(graphics::polygon, polygon_args)
+
+    lines_args <- utils::modifyList(
+      lines_args,
+      list(
+        x = summary_i[["alpha"]],
+        y = summary_i[["mean"]]
+      )
+    )
+    do.call(graphics::lines, lines_args)
+
+    if (plot_min && optimum[["q"]] == q[i]) {
+      do.call(graphics::abline, abline_args)
+    }
   }
 
-  if (plot_min) {
-    p <- p + ggplot2::geom_vline(
-      data = optimum,
-      ggplot2::aes(xintercept = !!quote(alpha)),
-      linetype = "dotted"
-    )
-  }
-
-  p
+  invisible()
 }

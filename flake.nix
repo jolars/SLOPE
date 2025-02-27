@@ -28,7 +28,6 @@
                   src = ./.;
                   propagatedBuildInputs = with pkgs.rPackages; [
                     foreach
-                    ggplot2
                     Matrix
                     Rcpp
                     RcppEigen
@@ -53,6 +52,7 @@
               bashInteractive
               autoconf
               go-task
+              quarto
               (rWrapper.override {
                 packages = with rPackages; [
                   devtools

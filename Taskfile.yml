@@ -27,7 +27,7 @@ tasks:
   build:
     deps: [docs, compile-attributes]
     cmds:
-      - R CMD build . --no-manual --no-build-vignettes
+      - cd .. && R CMD build {{.PKGSRC}} --no-manual --no-build-vignettes
 
   build-cran:
     deps: [compile-attributes]
@@ -37,7 +37,7 @@ tasks:
   install:
     deps: [compile-attributes]
     cmds:
-      - R CMD INSTALL . --library=_libs --no-multiarch --with-keep.source
+      - R CMD INSTALL {{.PKGNAME}} --library=_libs --no-multiarch --with-keep.source
 
   clean-install:
     deps: [compile-attributes]

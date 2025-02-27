@@ -9,8 +9,12 @@
   measure = c("auto", "mse", "mae", "deviance", "auc", "misclass"),
   plot_min = TRUE,
   ci_alpha = 0.2,
-  ci_border = FALSE,
+  ci_border = NA,
   ci_col = "salmon",
+  plot_args = list(),
+  polygon_args = list(),
+  lines_args = list(),
+  abline_args = list(),
   ...
 )
 }
@@ -33,11 +37,22 @@ confidence limits}
 
 \item{ci_col}{color for border of confidence limits}
 
-\item{...}{words}
+\item{plot_args}{list of additional arguments to pass to \code{\link[=plot]{plot()}},
+which sets up the plot frame}
+
+\item{polygon_args}{list of additional arguments to pass to
+\code{\link[graphics:polygon]{graphics::polygon()}}, which fills the confidence limits}
+
+\item{lines_args}{list of additional arguments to pass to
+\code{\link[graphics:lines]{graphics::lines()}}, which plots the mean}
+
+\item{abline_args}{list of additional arguments to pass to
+\code{\link[graphics:abline]{graphics::abline()}}, which plots the minimum}
+
+\item{...}{ignored}
 }
 \value{
-An object of class \code{"ggplot"}, which will be plotted on the
-current device unless stored in a variable.
+A plot for every value of \code{q} is produced on the current device.
 }
 \description{
 Plot results from cross-validation

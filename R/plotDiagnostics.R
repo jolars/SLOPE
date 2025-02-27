@@ -9,19 +9,20 @@
 #' @param xvar what to place on the x axis. `iteration` plots each iteration,
 #'   `time` plots the wall-clock time.
 #'
-#' @return An object of class `"ggplot"`, which will be plotted on the
-#'   current device unless stored in a variable.
+#' @return Invisibly returns NULL. The function is called for its
+#'   side effect of producing a plot.
 #'
-#' @seealso [SLOPE()], [ggplot2::theme()]
+#' @seealso [SLOPE()]
 #'
 #' @export
 #'
 #' @examples
 #' x <- SLOPE(abalone$x, abalone$y, diagnostics = TRUE)
 #' plotDiagnostics(x)
-plotDiagnostics <- function(object,
-                            ind = max(object$diagnostics$penalty),
-                            xvar = c("time", "iteration")) {
+plotDiagnostics <- function(
+    object,
+    ind = max(object$diagnostics$penalty),
+    xvar = c("time", "iteration")) {
   stopifnot(
     inherits(object, "SLOPE"),
     is.numeric(ind),
@@ -38,50 +39,47 @@ plotDiagnostics <- function(object,
   }
 
   d <- object$diagnostics
-
   d <- subset(d, subset = d$penalty == ind)
 
-  d <- stats::reshape(
-    d,
-    direction = "long",
-    varying = c("primal", "dual"),
-    v.names = "Value",
-    idvar = c("iteration", "time", "penalty"),
-    timevar = "Variable",
-    times = c("primal", "dual")
-  )
+  primal <- d[["primal"]]
+  dual <- d[["dual"]]
 
+  primal_color <- "#0072B2" # Blue
+  dual_color <- "#D55E00" # Vermillion
+
+  # Set up the plot window
   if (xvar == "time") {
-    plt <- ggplot2::ggplot(
-      d, ggplot2::aes(
-        x = !!quote(time),
-        y = !!quote(Value),
-        col = !!quote(Variable)
-      )
-    ) +
-      ggplot2::xlab("Time (seconds)")
+    x_primal <- d$time
+    x_dual <- d$time
+    xlab <- "Time (seconds)"
   } else if (xvar == "iteration") {
-    plt <- ggplot2::ggplot(
-      d, ggplot2::aes(
-        x = !!quote(iteration),
-        y = !!quote(Value),
-        col = !!quote(Variable)
-      )
-    ) +
-      ggplot2::xlab("Iteration")
+    x_primal <- d$iteration
+    x_dual <- d$iteration
+    xlab <- "Iteration"
   }
 
-  if (nrow(d) <= 1) {
-    plt <- plt + ggplot2::theme(
-      panel.grid.major = ggplot2::element_blank(),
-      panel.grid.minor = ggplot2::element_blank()
+  # Create the plot
+  plot(
+    x_primal,
+    primal,
+    type = "n",
+    xlab = xlab,
+    ylab = "Objective",
+    ylim = range(c(primal, dual))
+  )
+
+  # Add lines for primal and dual
+  graphics::lines(x_primal, primal, col = primal_color)
+  graphics::lines(x_dual, dual, col = dual_color)
+
+  # Add legend
+  if (nrow(d) > 1) {
+    graphics::legend(
+      "topright",
+      legend = c("primal", "dual"),
+      col = c(primal_color, dual_color)
     )
   }
 
-  plt <- plt +
-    ggplot2::geom_line() +
-    ggplot2::ylab("Objective") +
-    ggplot2::theme(legend.title = ggplot2::element_blank())
-
-  plt
+  invisible()
 }
