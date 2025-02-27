@@ -68,18 +68,18 @@ plotDiagnostics <- function(
     ylim = range(c(primal, dual))
   )
 
-  # # Add lines for primal and dual
-  # graphics::lines(x_primal, primal, col = primal_color)
-  # graphics::lines(x_dual, dual, col = dual_color)
-  #
-  # # Add legend
-  # if (nrow(d) > 1) {
-  #   graphics::legend(
-  #     "topright",
-  #     legend = c("primal", "dual"),
-  #     col = c(primal_color, dual_color)
-  #   )
-  # }
+  # Add lines for primal and dual
+  graphics::lines(x_primal, primal, col = primal_color)
+  graphics::lines(x_dual, dual, col = dual_color)
+
+  # Add legend
+  if (nrow(d) > 1) {
+    graphics::legend(
+      "topright",
+      legend = c("primal", "dual"),
+      col = c(primal_color, dual_color)
+    )
+  }
 
   invisible()
 }
