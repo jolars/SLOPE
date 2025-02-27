@@ -95,7 +95,6 @@ Suggests:
     dplyr,
     knitr,
     rmarkdown,
-    scales,
     spelling,
     testthat (>= 2.1.0),
     tidyr
