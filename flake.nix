@@ -32,7 +32,6 @@
                     Rcpp
                     RcppEigen
                     covr
-                    dplyr
                     knitr
                     rmarkdown
                     scales
