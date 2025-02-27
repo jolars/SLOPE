@@ -90,6 +90,10 @@
 <code>scale</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> gains a new option <code>"max_abs"</code> which scales the columns of <code>x</code> by their maximum absolute value.</li>
 </ul></div>
 <div class="section level3">
+<h3 id="bug-fixes-0-5-2-9000">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-5-2-9000"></a></h3>
+<ul><li>Return correct model when training for AUC in <code><a href="../reference/trainSLOPE.html">trainSLOPE()</a></code>.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="performance-improvements-0-5-2-9000">Performance Improvements<a class="anchor" aria-label="anchor" href="#performance-improvements-0-5-2-9000"></a></h3>
 <p>The new hybrid algorithm that’s implemented in libslope and now used in the package constitutes a major upgrade in terms of performance.</p>
 <ul><li>The solver is now much more memory-efficient and can avoid copies of the design matrix entirely by normalizing the columns just-in-time. This is the standard behavior. Future versions of the package will allow the user to specify whether to copy (and modify) the design matrix or not.</li>
