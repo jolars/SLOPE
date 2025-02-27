@@ -1,4 +1,5 @@
 #include "slope.h"
+#include <RcppEigen.h>
 #include "clusters.h"
 #include "constants.h"
 #include "kkt_check.h"
@@ -178,6 +179,10 @@ Slope::path(T& x,
     int it = 0;
     for (; it < this->max_it; ++it) {
       assert(it < this->max_it - 1 && "Exceeded maximum number of iterations");
+
+      if (it % 10 == 0) {
+        Rcpp::checkUserInterrupt();
+      }
 
       // Compute primal, dual, and gap
       residual = loss->residual(eta, y);
