@@ -70,6 +70,7 @@
 <code>path_length</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> now defaults to 100 (previously 20).</li>
 <li>
 <code>tol_dev_ratio</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> now defaults to <code>0.999</code> (previously <code>0.995</code>).</li>
+<li>Plots from <code><a href="../reference/plot.SLOPE.html">plot.SLOPE()</a></code> now use base R graphics rather than ggplot2. This means that the plots are more difficult to customize but plot much more faster when there are many variables and significantly reduces the dependency load of the package. For plots of trained SLOPE objects, which used to be faceted on the <code>q</code> parameter, the user now needs to use the standard base R graphics API to facet plots via <code>par(mfrow = c(1, 2))</code> or similar.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="deprecated-functionality-0-5-2-9000">Deprecated Functionality<a class="anchor" aria-label="anchor" href="#deprecated-functionality-0-5-2-9000"></a></h3>
@@ -97,7 +98,8 @@
 <h3 id="dependencies-0-5-2-9000">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies-0-5-2-9000"></a></h3>
 <p>We have made an effort to reduce the footprint of the package and reduce the number of dependencies.</p>
 <ul><li>The package now relies on Eigen (through RcppEigen) rather than Armadillo, which means that there is no longer any reliance on BLAS and LAPACK libraries.</li>
-<li>The <code>vdiffr</code> and <code>glmnet</code> packages in the <code>Suggests</code> field that were used for testing are now removed.</li>
+<li>The dependency on <code>ggplot2</code> is removed.</li>
+<li>The <code>vdiffr</code>, <code>tidyr</code>, <code>dplyr</code>, <code>bench</code>, <code>scales</code>, and <code>glmnet</code> packages in the <code>Suggests</code> field that were used for testing are now removed.</li>
 </ul></div>
 </div>
     <div class="section level2">
