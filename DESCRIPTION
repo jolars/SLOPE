@@ -17,7 +17,12 @@ Authors@R:
         email = "jonas.wallin@stat.lu.se",
         comment = c(ORCID = "0000-0003-0381-6593")
       ),
-      person("Malgorzata", "Bogdan", role = "aut"),
+      person(
+        "Malgorzata",
+        "Bogdan",
+        role = "aut",
+        comment = c(ORCID = "0000-0002-0657-4342")
+      ),
       person("Ewout", "van den Berg", role = "aut"),
       person("Chiara", "Sabatti", role = "aut"),
       person("Emmanuel", "Candes", role = "aut"),
