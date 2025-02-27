@@ -684,7 +684,7 @@ SLOPE <- function(x,
     )
   }
 
-  diagnostics <- if (diagnostics) setupDiagnostics(fit) else NULL
+  diagnostics <- if (diagnostics) setup_diagnostics(fit) else NULL
 
   slope_class <- switch(family,
     gaussian = "GaussianSLOPE",

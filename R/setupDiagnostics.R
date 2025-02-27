@@ -6,7 +6,7 @@
 #' @return A data.frame
 #'
 #' @keywords internal
-setupDiagnostics <- function(res) {
+setup_diagnostics <- function(res) {
   time <- res$time
   primals <- res$primals
   duals <- res$duals
