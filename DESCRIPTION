@@ -96,7 +96,6 @@ LinkingTo:
     Rcpp,
     RcppEigen (>= 0.3.4.0.0)
 Suggests:
-    bench,
     covr,
     dplyr,
     knitr,

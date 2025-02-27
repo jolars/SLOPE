@@ -31,7 +31,6 @@
                     Matrix
                     Rcpp
                     RcppEigen
-                    bench
                     covr
                     dplyr
                     knitr
@@ -39,7 +38,6 @@
                     scales
                     spelling
                     testthat
-                    tidyr
                     SparseM
                     caret
                     e1071
