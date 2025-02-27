@@ -37,6 +37,12 @@ authors:
   - given-names: Michal
     family-names: Burdukiewicz
     orcid: 'https://orcid.org/0000-0001-8926-582X'
+  - given-names: Mathurin
+    family-names: Massias
+    orcid: 'https://orcid.org/0000-0002-8950-0356'
+  - given-names: Quentin
+    family-names: Klopfenstein
+    orcid: 'https://orcid.org/0000-0002-5771-6013'
 repository-code: 'https://github.com/jolars/SLOPE'
 url: 'https://jolars.github.io/SLOPE/'
 abstract: >-

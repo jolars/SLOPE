@@ -16,33 +16,4 @@ Useful links:
 }
 
 }
-\author{
-\strong{Maintainer}: Johan Larsson \email{johanlarsson@outlook.com} (\href{https://orcid.org/0000-0002-4029-5945}{ORCID})
-
-Authors:
-\itemize{
-  \item Jonas Wallin \email{jonas.wallin@stat.lu.se} (\href{https://orcid.org/0000-0003-0381-6593}{ORCID})
-  \item Malgorzata Bogdan
-  \item Ewout van den Berg
-  \item Chiara Sabatti
-  \item Emmanuel Candes
-  \item Evan Patterson
-  \item Weijie Su
-  \item Jakub Kała
-  \item Krystyna Grzesiak
-  \item Michal Burdukiewicz (\href{https://orcid.org/0000-0001-8926-582X}{ORCID})
-}
-
-Other contributors:
-\itemize{
-  \item Jerome Friedman (code adapted from 'glmnet') [contributor]
-  \item Trevor Hastie (code adapted from 'glmnet') [contributor]
-  \item Rob Tibshirani (code adapted from 'glmnet') [contributor]
-  \item Balasubramanian Narasimhan (code adapted from 'glmnet') [contributor]
-  \item Noah Simon (code adapted from 'glmnet') [contributor]
-  \item Junyang Qian (code adapted from 'glmnet') [contributor]
-  \item Akarsh Goyal [contributor]
-}
-
-}
 \keyword{internal}

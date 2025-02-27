@@ -25,6 +25,8 @@ Authors@R:
       person("Weijie", "Su", role = "aut"),
       person("Jakub", "Kała", role = "aut"),
       person("Krystyna", "Grzesiak", role = "aut"),
+      person("Mathurin", "Massias", role = "aut"),
+      person("Quentin", "Klopfenstein", role = "aut"),
       person(
         "Michal",
         "Burdukiewicz",
