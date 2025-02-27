@@ -5,6 +5,9 @@ test_that("diagnostics are working properly", {
   fit <- SLOPE(xy$x, xy$y, diagnostics = TRUE, alpha = 1)
 
   expect_is(fit$diagnostics, "data.frame")
-  p <- plotDiagnostics(fit, xvar = "iteration")
-  expect_s3_class(p, "ggplot")
+  tmp <- tempfile()
+  grDevices::png(tmp)
+  expect_silent(plotDiagnostics(fit, xvar = "iteration"))
+  grDevices::dev.off()
+  unlink(tmp)
 })

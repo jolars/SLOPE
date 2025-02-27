@@ -2,7 +2,7 @@
 dont_plot <- function(x, ...) {
   tmp <- tempfile()
   grDevices::png(tmp)
-  p <- graphics::plot(x, ...)
+  p <- plot(x, ...)
   grDevices::dev.off()
   unlink(tmp)
   invisible(p)

@@ -19,8 +19,8 @@ plotDiagnostics(
 \code{time} plots the wall-clock time.}
 }
 \value{
-An object of class \code{"ggplot"}, which will be plotted on the
-current device unless stored in a variable.
+Invisibly returns NULL. The function is called for its
+side effect of producing a plot.
 }
 \description{
 This function plots various diagnostics collected during
@@ -32,5 +32,5 @@ x <- SLOPE(abalone$x, abalone$y, diagnostics = TRUE)
 plotDiagnostics(x)
 }
 \seealso{
-\code{\link[=SLOPE]{SLOPE()}}, \code{\link[ggplot2:theme]{ggplot2::theme()}}
+\code{\link[=SLOPE]{SLOPE()}}
 }

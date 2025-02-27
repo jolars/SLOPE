@@ -83,7 +83,6 @@ Depends:
     R (>= 3.5.0)
 Imports:
     foreach,
-    ggplot2,
     Matrix,
     methods,
     Rcpp
