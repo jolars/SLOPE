@@ -79,6 +79,10 @@ patient with dealing with the large number of breaking changes.
 - `scale` in `SLOPE()` gains a new option `"max_abs"` which scales the columns
   of `x` by their maximum absolute value.
 
+## Bug Fixes
+
+- Return correct model when training for AUC in `trainSLOPE()`.
+
 ## Performance Improvements
 
 The new hybrid algorithm that's implemented in libslope and now used in the
