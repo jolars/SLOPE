@@ -187,7 +187,17 @@ trainSLOPE <- function(x,
 
   optima <- do.call(
     rbind,
-    by(summary, as.factor(summary$measure), function(x) x[which.min(x$mean), ])
+    by(
+      summary,
+      as.factor(summary$measure),
+      function(x) {
+        if (x$measure[1] == "auc") {
+          x[which.max(x$mean), ]
+        } else {
+          x[which.min(x$mean), ]
+        }
+      }
+    )
   )
 
   labels <- vapply(measure, function(m) {

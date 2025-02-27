@@ -47,7 +47,7 @@ test_that("trainSLOPE works properly for binomial family", {
   expect_equal(
     fit$optima$mean,
     c(
-      0.62651374254886, 0.361433768605148, 0.179544219401791, 0.07,
+      0.9811094, 0.361433768605148, 0.179544219401791, 0.07,
       0.112826460692166
     ),
     tolerance = 0.0001
@@ -161,5 +161,25 @@ test_that("trainSLOPE returns error in the case of invalid measures", {
       path_length = 20
     ),
     "For the given family: gaussian, measure needs to be one of: mse, mae"
+  )
+})
+
+test_that("Returned AUC from trainSLOPE is correct", {
+  set.seed(42)
+  xy <- SLOPE:::randomProblem(200, p = 100, q = 0.5, response = "binomial")
+  x <- xy$x
+  y <- xy$y
+
+  tuned <- trainSLOPE(
+    x,
+    y,
+    q = c(0.1, 0.2),
+    measure = "auc",
+    family = "binomial",
+  )
+
+  expect_equal(
+    tuned$optima$mean[1],
+    max(tuned$summary$mean)
   )
 })
