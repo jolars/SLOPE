@@ -1,0 +1,21 @@
+diff --git a/src/slope/slope.cpp b/src/slope/slope.cpp
+index e74d510..5483a04 100644
+--- a/src/slope/slope.cpp
++++ b/src/slope/slope.cpp
+@@ -1,4 +1,5 @@
+ #include "slope.h"
++#include <RcppEigen.h>
+ #include "clusters.h"
+ #include "constants.h"
+ #include "kkt_check.h"
+@@ -179,6 +180,10 @@ Slope::path(T& x,
+     for (; it < this->max_it; ++it) {
+       assert(it < this->max_it - 1 && "Exceeded maximum number of iterations");
+
++      if (it % 10 == 0) {
++        Rcpp::checkUserInterrupt();
++      }
++
+       // Compute primal, dual, and gap
+       residual = loss->residual(eta, y);
+       updateGradient(gradient,
