@@ -101,8 +101,7 @@ Suggests:
     knitr,
     rmarkdown,
     spelling,
-    testthat (>= 2.1.0),
-    tidyr
+    testthat (>= 2.1.0)
 SystemRequirements: C++17
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
