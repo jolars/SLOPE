@@ -43,6 +43,12 @@ patient with dealing with the large number of breaking changes.
   `prmals` and `duals` if `diagnostics = TRUE` are now scaled by `n`.
 - `path_length` in `SLOPE()` now defaults to 100 (previously 20).
 - `tol_dev_ratio` in `SLOPE()` now defaults to `0.999` (previously `0.995`).
+- Plots from `plot.SLOPE()` now use base R graphics rather than ggplot2. This
+  means that the plots are more difficult to customize but plot much more faster
+  when there are many variables and significantly reduces the dependency load of
+  the package. For plots of trained SLOPE objects, which used to be faceted on
+  the `q` parameter, the user now needs to use the standard base R graphics API
+  to facet plots via `par(mfrow = c(1, 2))` or similar.
 
 ## Deprecated Functionality
 
@@ -90,8 +96,9 @@ number of dependencies.
 
 - The package now relies on Eigen (through RcppEigen) rather than Armadillo,
   which means that there is no longer any reliance on BLAS and LAPACK libraries.
-- The `vdiffr` and `glmnet` packages in the `Suggests` field that were used for
-  testing are now removed.
+- The dependency on `ggplot2` is removed.
+- The `vdiffr`, `tidyr`, `dplyr`, `bench`, `scales`, and `glmnet` packages in
+  the `Suggests` field that were used for testing are now removed.
 
 # SLOPE 0.5.2
 
