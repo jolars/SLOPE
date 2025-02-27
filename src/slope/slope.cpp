@@ -137,7 +137,6 @@ Slope::path(T& x,
   }
 
   // Path variables
-  std::vector<double> duals, primals, time;
   double null_deviance = loss->nullDeviance(y, intercept);
 
   Timer timer;
@@ -157,6 +156,8 @@ Slope::path(T& x,
 
     Eigen::ArrayXd lambda_curr = alpha_curr * lambda;
     Eigen::ArrayXd lambda_prev = alpha_prev * lambda;
+
+    std::vector<double> duals, primals, time;
 
     if (screening_type == "strong") {
       // TODO: Only update for inactive set, making sure gradient
@@ -178,6 +179,7 @@ Slope::path(T& x,
 
     int it = 0;
     for (; it < this->max_it; ++it) {
+      // TODO: Return a warning code if the solver does not converge
       assert(it < this->max_it - 1 && "Exceeded maximum number of iterations");
 
       if (it % 10 == 0) {
@@ -240,7 +242,7 @@ Slope::path(T& x,
 
       double tol_scaled = (std::abs(primal) + constants::EPSILON) * this->tol;
 
-      if (std::max(dual_gap, 0.0) <= tol_scaled) {
+      if (dual_gap <= tol_scaled) {
         if (screening_type == "strong") {
           updateGradient(gradient,
                          x,

@@ -7,6 +7,7 @@
 #pragma once
 
 #include "slope/normalize.h"
+#include "threads.h"
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <numeric>
@@ -202,21 +203,6 @@ linearPredictor(const T& x,
     }
   }
 
-  // if (normalize_jit) {
-  //   for (int k = 0; k < m; ++k) {
-  //     for (const auto& j : active_set) {
-  //       eta.col(k) += x.col(j) * beta(j, k) / x_scales(j);
-  //       eta.col(k).array() -= beta(j, k) * x_centers(j) / x_scales(j);
-  //     }
-  //   }
-  // } else {
-  //   for (int k = 0; k < m; ++k) {
-  //     for (const auto& j : active_set) {
-  //       eta.col(k) += x.col(j) * beta(j, k);
-  //     }
-  //   }
-  // }
-
   if (intercept) {
     eta.rowwise() += beta0.transpose();
   }
@@ -263,7 +249,11 @@ updateGradient(Eigen::MatrixXd& gradient,
     weighted_residual.col(k) = residual.col(k).cwiseProduct(w);
     double wr_sum = weighted_residual.col(k).sum();
 
-    for (const auto& j : active_set) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(Threads::get())
+#endif
+    for (size_t i = 0; i < active_set.size(); ++i) {
+      const int j = active_set[i];
       switch (jit_normalization) {
         case JitNormalization::Both:
           gradient(j, k) =

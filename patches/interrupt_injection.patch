@@ -10,6 +10,7 @@ index e74d510..5483a04 100644
  #include "kkt_check.h"
 @@ -179,6 +180,10 @@ Slope::path(T& x,
      for (; it < this->max_it; ++it) {
+       // TODO: Return a warning code if the solver does not converge
        assert(it < this->max_it - 1 && "Exceeded maximum number of iterations");
 
 +      if (it % 10 == 0) {
