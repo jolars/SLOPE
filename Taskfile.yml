@@ -77,5 +77,5 @@ tasks:
       - echo "Applying patches..."
       - git apply patches/interrupt_injection.patch
       - git add src/slope
-      - 'git commit -m "feat: update libslope to {{.VERSION}}"'
+      - 'git commit -m "feat: update libslope to {{.VERSION}}" -m "Release: https://github.com/jolars/libslope/releases/tag/{{.VERSION}}"'
     silent: true
