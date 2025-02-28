@@ -1,5 +1,6 @@
 #include "regularization_sequence.h"
 #include "qnorm.h"
+#include "slope/math.h"
 #include "utils.h"
 #include <cassert>
 
@@ -61,7 +62,7 @@ lambdaSequence(const int p,
   }
 
   assert(lambda.minCoeff() > 0 && "lambda must be positive");
-  assert(!lambda.isNaN().any() && "lambda must be finite");
+  assert(lambda.allFinite() && "lambda must be finite");
   assert(lambda.size() == p && "lambda sequence is of right size");
 
   return lambda;
@@ -97,13 +98,8 @@ regularizationPath(const Eigen::ArrayXd& alpha_in,
     alpha_min_ratio = n > p * m ? 1e-4 : 1e-2;
   }
 
-  Eigen::ArrayXd alpha(path_length);
-
-  double div = std::max(path_length - 1, 1);
-
-  for (int i = 0; i < path_length; ++i) {
-    alpha(i) = alpha_max * std::pow(alpha_min_ratio, i / div);
-  }
+  Eigen::ArrayXd alpha =
+    geomSpace(alpha_max, alpha_max * alpha_min_ratio, path_length);
 
   return { alpha, alpha_max, path_length };
 }

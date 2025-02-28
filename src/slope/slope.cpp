@@ -146,8 +146,6 @@ Slope::path(T& x,
 
   double alpha_prev = std::max(alpha_max, alpha(0));
 
-  timer.start();
-
   // Regularization path loop
   for (int path_step = 0; path_step < this->path_length; ++path_step) {
     double alpha_curr = alpha(path_step);
@@ -158,6 +156,7 @@ Slope::path(T& x,
     Eigen::ArrayXd lambda_prev = alpha_prev * lambda;
 
     std::vector<double> duals, primals, time;
+    timer.start();
 
     if (screening_type == "strong") {
       // TODO: Only update for inactive set, making sure gradient

@@ -370,4 +370,21 @@ whichMax(const T& x)
   return std::distance(x.begin(), std::max_element(x.begin(), x.end()));
 }
 
+/**
+ * @brief Creates an array of n numbers in geometric progression from start to
+ * end.
+ *
+ * @param start The starting value of the sequence
+ * @param end The final value of the sequence
+ * @param n The number of points to generate
+ * @return Eigen::ArrayXd Array containing n points spaced geometrically between
+ * start and end
+ *
+ * @note Similar to numpy.geomspace, generates points that are evenly spaced on
+ * a log scale
+ * @throws std::invalid_argument If start or end is zero, or if n < 1
+ */
+Eigen::ArrayXd
+geomSpace(const double start, const double end, const int n);
+
 } // namespace slope

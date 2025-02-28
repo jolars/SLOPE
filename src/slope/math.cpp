@@ -42,4 +42,14 @@ setDiff(const std::vector<int>& a, const std::vector<int>& b)
   return out;
 }
 
+Eigen::ArrayXd
+geomSpace(const double start, const double end, const int n)
+{
+  if (n == 1) {
+    return Eigen::ArrayXd::Constant(1, std::log(start));
+  } else {
+    return Eigen::ArrayXd::LinSpaced(n, std::log(start), std::log(end)).exp();
+  }
+}
+
 } // namespace slope

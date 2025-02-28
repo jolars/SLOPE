@@ -60,6 +60,9 @@ tasks:
 
   update-libslope:
     desc: Fetch and update the latest libslope release
+    vars:
+      VERSION:
+        sh: gh release view --repo jolars/libslope --json tagName --jq .tagName
     cmds:
       - echo "Fetching latest libslope release..."
       - mkdir -p tmp
@@ -73,4 +76,6 @@ tasks:
       - rm -rf tmp
       - echo "Applying patches..."
       - git apply patches/interrupt_injection.patch
+      - git add src/slope
+      - 'git commit -m "feat: update libslope to {{.VERSION}}"'
     silent: true

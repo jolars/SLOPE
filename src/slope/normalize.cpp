@@ -139,6 +139,10 @@ normalize(Eigen::MatrixXd& x,
   computeCenters(x_centers, x, centering_type);
   computeScales(x_scales, x, scaling_type);
 
+  if ((x_scales.array().abs() == 0.0).any()) {
+    throw std::invalid_argument("One or more columns have zero variance");
+  }
+
   bool center = centering_type != "none";
   bool scale = scaling_type != "none";
   bool center_jit = center && !modify_x;
