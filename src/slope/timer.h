@@ -19,12 +19,24 @@ class Timer
 {
 private:
   std::chrono::time_point<std::chrono::high_resolution_clock> start_time;
+  std::chrono::microseconds accumulated_time;
+  bool is_running = false;
 
 public:
   /**
    * @brief Starts the timer by recording the current time point
    */
   void start();
+
+  /**
+   * @brief Pauses the timer
+   */
+  void pause();
+
+  /**
+   * @brief Resumes the timer after a pause
+   */
+  void resume();
 
   /**
    * @brief Returns the elapsed time in seconds since start() was called

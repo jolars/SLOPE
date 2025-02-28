@@ -1,7 +1,7 @@
 #include "slope.h"
-#include <RcppEigen.h>
 #include "clusters.h"
 #include "constants.h"
+#include "diagnostics.h"
 #include "kkt_check.h"
 #include "losses/loss.h"
 #include "losses/setup_loss.h"
@@ -15,6 +15,7 @@
 #include "utils.h"
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
+#include <RcppEigen.h>
 #include <memory>
 #include <numeric>
 #include <set>
@@ -181,7 +182,7 @@ Slope::path(T& x,
       // TODO: Return a warning code if the solver does not converge
       assert(it < this->max_it - 1 && "Exceeded maximum number of iterations");
 
-      if (it % 10 == 0) {
+      if (it % 100) {
         Rcpp::checkUserInterrupt();
       }
 
@@ -230,14 +231,28 @@ Slope::path(T& x,
       double dual = loss->dual(theta, y, Eigen::VectorXd::Ones(n));
 
       if (collect_diagnostics) {
-        primals.emplace_back(primal);
-        duals.emplace_back(dual);
+        timer.pause();
+        double true_dual = computeDual(beta,
+                                       residual,
+                                       loss,
+                                       sl1_norm,
+                                       lambda_curr,
+                                       x,
+                                       y,
+                                       this->x_centers,
+                                       this->x_scales,
+                                       jit_normalization,
+                                       this->intercept);
+        timer.resume();
+
         time.emplace_back(timer.elapsed());
+        primals.emplace_back(primal);
+        duals.emplace_back(true_dual);
       }
 
       double dual_gap = primal - dual;
 
-      assert(dual_gap > -1e-5 && "Dual gap should be positive");
+      assert(dual_gap > -1e-6 && "Dual gap should be positive");
 
       double tol_scaled = (std::abs(primal) + constants::EPSILON) * this->tol;
 
@@ -302,9 +317,9 @@ Slope::path(T& x,
     beta0s.emplace_back(beta0_out);
     betas.emplace_back(beta_out.sparseView());
 
-    primals_path.emplace_back(primals);
-    duals_path.emplace_back(duals);
-    time_path.emplace_back(time);
+    primals_path.emplace_back(std::move(primals));
+    duals_path.emplace_back(std::move(duals));
+    time_path.emplace_back(std::move(time));
 
     alpha_prev = alpha_curr;
 
