@@ -153,10 +153,10 @@ private:
       }
 
       this->t = 0.5 * (1.0 + std::sqrt(1.0 + 4.0 * t_old * t_old));
-      beta_prev(working_set, all) = beta(working_set, all);
+      Eigen::MatrixXd beta_current = beta(working_set, Eigen::all);
       beta(working_set, all) +=
-        (beta(working_set, all) - beta_prev(working_set, all)) * (t_old - 1.0) /
-        this->t;
+        (beta_current - beta_prev(working_set, all)) * (t_old - 1.0) / this->t;
+      beta_prev(working_set, all) = beta_current;
 
       eta = linearPredictor(x,
                             working_set,
