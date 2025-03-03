@@ -49,7 +49,7 @@
               bashInteractive
               autoconf
               go-task
-              quarto
+              quartoMinimal
               (rWrapper.override {
                 packages = with rPackages; [
                   devtools
