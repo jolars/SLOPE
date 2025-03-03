@@ -37,7 +37,7 @@ tasks:
   install:
     deps: [compile-attributes]
     cmds:
-      - R CMD INSTALL {{.PKGNAME}} --library=_libs --no-multiarch --with-keep.source
+      - R CMD INSTALL . --library=_libs --no-multiarch --with-keep.source
 
   clean-install:
     deps: [compile-attributes]
