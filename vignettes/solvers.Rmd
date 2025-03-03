@@ -52,7 +52,7 @@ library(SLOPE)
 
 response <- "binomial"
 
-data <- SLOPE:::randomProblem(n = 100, p = 10000, response = response)
+data <- SLOPE:::randomProblem(n = 100, p = 1000, response = response)
 
 solvers <- c("hybrid", "fista", "pgd")
 
