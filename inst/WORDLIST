@@ -20,17 +20,17 @@ FISTA
 FUBUTEC
 FUture
 Hochberg
+IRLS
 JSTOR
 Karra
-Klopfenstein
 Kwok
 Lifecycle
-Massias
 Meent
 Mousinho
 Nuno
 ORCID
 PAVA
+PGD
 PMLR
 Parikh
 Peleato
@@ -104,6 +104,7 @@ regularizations
 reimplemented
 rvert
 solaris
+suboptimality
 th
 tw
 unregularized
