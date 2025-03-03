@@ -25,6 +25,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/introduction.html">An introduction to SLOPE</a></li>
+    <li><a class="dropdown-item" href="../articles/solvers.html">Solvers in SLOPE</a></li>
   </ul></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
@@ -90,15 +91,15 @@ all other models, two times the negative loglikelihood is returned.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="SLOPE.html">SLOPE</a></span><span class="op">(</span><span class="va">abalone</span><span class="op">$</span><span class="va">x</span>, <span class="va">abalone</span><span class="op">$</span><span class="va">y</span>, family <span class="op">=</span> <span class="st">"poisson"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/deviance.html" class="external-link">deviance</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 4.914823 4.874177 4.829678 4.795267 4.764154 4.736838 4.713022 4.694936</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] 4.676820 4.659757 4.647684 4.637981 4.628802 4.620642 4.613184 4.606661</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [17] 4.601982 4.597521 4.594042 4.591120 4.588676 4.582680 4.568256 4.554518</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [25] 4.547740 4.539759 4.529503 4.521201 4.514540 4.509303 4.504517 4.500497</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [33] 4.497149 4.494215 4.491967 4.489970 4.487925 4.486201 4.484577 4.483184</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [41] 4.480574 4.478481 4.476062 4.474311 4.472423 4.470865 4.469014 4.467580</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [49] 4.466307 4.465494 4.464641 4.463847 4.463165 4.462608 4.462134 4.461753</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [57] 4.461421 4.461147 4.460919 4.460732 4.460574 4.460442 4.460331 4.460240</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [65] 4.460162 4.460099 4.460045 4.460001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 4.914823 4.874177 4.830478 4.793857 4.763937 4.736664 4.711057 4.692841</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] 4.676932 4.658443 4.648394 4.638549 4.627400 4.620148 4.611953 4.607039</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [17] 4.601861 4.597261 4.593919 4.591294 4.588536 4.585720 4.569978 4.554487</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [25] 4.546309 4.539369 4.529507 4.521608 4.514879 4.509123 4.504000 4.500071</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [33] 4.496575 4.493720 4.491380 4.489738 4.487619 4.485923 4.484345 4.481775</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [41] 4.478482 4.477123 4.474610 4.473180 4.471061 4.469744 4.467980 4.466524</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [49] 4.465993 4.465597 4.464144 4.463299 4.463069 4.462186 4.462071 4.461420</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [57] 4.461330 4.460991 4.460860 4.460774 4.460537 4.460339 4.460237 4.460143</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [65] 4.460147</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
