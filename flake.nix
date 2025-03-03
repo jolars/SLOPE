@@ -54,6 +54,7 @@
                 packages = with rPackages; [
                   devtools
                   languageserver
+                  glmnet
                   SLOPE
                   tidyverse
                   usethis
