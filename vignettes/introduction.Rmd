@@ -159,9 +159,9 @@ for (i in seq_along(q)) {
   )
 
   selected_slope <- which(as.matrix(fit$nonzeros[[1]]))
-  V <- length(setdiff(selected_slope, signals))
-  R <- length(selected_slope)
-  fdr[i] <- V / R
+  v <- length(setdiff(selected_slope, signals))
+  r <- length(selected_slope)
+  fdr[i] <- v / max(r, 1)
 }
 
 # Create the plot
