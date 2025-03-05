@@ -156,9 +156,12 @@
 #'
 #' @section Solvers:
 #'
-#' There are currently two solvers available for SLOPE: FISTA (Beck and
-#' Teboulle 2009) and ADMM (Boyd et al. 2008). FISTA is available for
-#' families but ADMM is currently only available for `family = "gaussian"`.
+#' There are currently three solvers available for SLOPE: Hybrid (Beck and
+#' Teboulle 2009), proximal gradient desent (PGD), and FISTA (Beck and
+#' Teboulle, 2009). The hybrid method is the preferred and generally
+#' fastest method and is therefore the default for the Gaussian and
+#' binomial families, but not currently available for multinomial and
+#' disabled for Poisson due to convergence issues.
 #'
 #' @param x the design matrix, which can be either a dense
 #'   matrix of the standard *matrix* class, or a sparse matrix
