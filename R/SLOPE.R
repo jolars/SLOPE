@@ -349,35 +349,37 @@
 #'   lambda = lambda,
 #'   alpha = alpha
 #' )
-SLOPE <- function(x,
-                  y,
-                  family = c("gaussian", "binomial", "multinomial", "poisson"),
-                  intercept = TRUE,
-                  center = c("mean", "min", "none"),
-                  scale = c("sd", "l1", "l2", "max_abs", "none"),
-                  alpha = c("path", "estimate"),
-                  lambda = c("bh", "gaussian", "oscar", "lasso"),
-                  alpha_min_ratio = if (NROW(x) < NCOL(x)) 1e-2 else 1e-4,
-                  path_length = 100,
-                  q = 0.1,
-                  theta1 = 1,
-                  theta2 = 0.5,
-                  tol_dev_change = 1e-5,
-                  tol_dev_ratio = 0.999,
-                  max_variables = NROW(x),
-                  solver = c("auto", "hybrid", "pgd", "fista", "admm"),
-                  max_passes = 1e6,
-                  tol = 1e-4,
-                  diagnostics = FALSE,
-                  tol_abs,
-                  tol_rel,
-                  tol_rel_gap,
-                  tol_infeas,
-                  tol_rel_coef_change,
-                  prox_method,
-                  screen,
-                  verbosity,
-                  screen_alg) {
+SLOPE <- function(
+  x,
+  y,
+  family = c("gaussian", "binomial", "multinomial", "poisson"),
+  intercept = TRUE,
+  center = c("mean", "min", "none"),
+  scale = c("sd", "l1", "l2", "max_abs", "none"),
+  alpha = c("path", "estimate"),
+  lambda = c("bh", "gaussian", "oscar", "lasso"),
+  alpha_min_ratio = if (NROW(x) < NCOL(x)) 1e-2 else 1e-4,
+  path_length = 100,
+  q = 0.1,
+  theta1 = 1,
+  theta2 = 0.5,
+  tol_dev_change = 1e-5,
+  tol_dev_ratio = 0.999,
+  max_variables = NROW(x),
+  solver = c("auto", "hybrid", "pgd", "fista", "admm"),
+  max_passes = 1e6,
+  tol = 1e-4,
+  diagnostics = FALSE,
+  tol_abs,
+  tol_rel,
+  tol_rel_gap,
+  tol_infeas,
+  tol_rel_coef_change,
+  prox_method,
+  screen,
+  verbosity,
+  screen_alg
+) {
   if (!missing(tol_abs)) {
     warning("`tol_abs` argument is deprecated and has no effect")
   }
@@ -680,13 +682,15 @@ SLOPE <- function(x,
     reached_max_passes_where <- which(reached_max_passes)
     warning(
       "maximum number of passes reached at steps ",
-      paste(reached_max_passes_where, collapse = ", "), "!"
+      paste(reached_max_passes_where, collapse = ", "),
+      "!"
     )
   }
 
   diagnostics <- if (diagnostics) setup_diagnostics(fit) else NULL
 
-  slope_class <- switch(family,
+  slope_class <- switch(
+    family,
     gaussian = "GaussianSLOPE",
     binomial = "BinomialSLOPE",
     poisson = "PoissonSLOPE",
