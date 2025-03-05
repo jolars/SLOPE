@@ -70,17 +70,14 @@ lambdaSequence(const int p,
 
 std::tuple<Eigen::ArrayXd, double, int>
 regularizationPath(const Eigen::ArrayXd& alpha_in,
-                   const Eigen::MatrixXd& gradient,
+                   const Eigen::VectorXd& gradient,
                    const SortedL1Norm& penalty,
                    const Eigen::ArrayXd& lambda,
                    const int n,
                    const int path_length,
                    double alpha_min_ratio)
 {
-  const int p = gradient.rows();
-  const int m = gradient.cols();
-
-  double alpha_max = penalty.dualNorm(gradient.reshaped(), lambda);
+  double alpha_max = penalty.dualNorm(gradient, lambda);
 
   if (alpha_in.size() != 0) {
     // User-supplied alpha sequence; just check it
@@ -95,7 +92,7 @@ regularizationPath(const Eigen::ArrayXd& alpha_in,
   }
 
   if (alpha_min_ratio < 0) {
-    alpha_min_ratio = n > p * m ? 1e-4 : 1e-2;
+    alpha_min_ratio = n > gradient.size() ? 1e-4 : 1e-2;
   }
 
   Eigen::ArrayXd alpha =

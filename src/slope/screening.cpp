@@ -8,23 +8,22 @@ typedef Eigen::Array<bool, Eigen::Dynamic, 1> ArrayXb;
 typedef Eigen::Array<bool, Eigen::Dynamic, Eigen::Dynamic> ArrayXXb;
 
 std::vector<int>
-activeSet(const Eigen::MatrixXd& beta)
+activeSet(const Eigen::VectorXd& beta)
 {
-  ArrayXb active = (beta.array() != 0.0).rowwise().any();
+  ArrayXb active = beta.array() != 0.0;
 
   return which(active);
 }
 
 std::vector<int>
-strongSet(const Eigen::MatrixXd& gradient_prev,
+strongSet(const Eigen::VectorXd& gradient_prev,
           const Eigen::ArrayXd& lambda,
           const Eigen::ArrayXd& lambda_prev)
 {
   using Eigen::VectorXd;
   using Eigen::VectorXi;
 
-  int p = gradient_prev.rows();
-  int m = gradient_prev.cols();
+  int pm = gradient_prev.size();
 
   assert(lambda_prev.size() == lambda.size() &&
          "lambda_prev and lambda must have the same length");
@@ -44,7 +43,7 @@ strongSet(const Eigen::MatrixXd& gradient_prev,
 
   double s = 0;
 
-  while (i + k < p * m) {
+  while (i + k < pm) {
     s += tmp(k + i);
 
     if (s >= 0) {
@@ -56,19 +55,13 @@ strongSet(const Eigen::MatrixXd& gradient_prev,
     }
   }
 
-  ArrayXXb active_set = ArrayXXb::Zero(p * m, 1);
+  ArrayXb active_set = ArrayXb::Zero(pm);
+  active_set.head(k).setOnes();
 
-  active_set.topRows(k).setOnes();
+  // restore order
+  inversePermute(active_set, ord);
 
-  // reset order
-  active_set(ord, 0) = active_set.col(0).eval();
-
-  active_set.resize(p, m);
-
-  // TODO: Don't use rowwise here. Coefficients should be screened elementwise.
-  ArrayXb active = active_set.array().rowwise().any();
-
-  return which(active);
+  return which(active_set);
 }
 
 } // namespace slope

@@ -254,6 +254,12 @@ public:
   void setScaling(const Eigen::VectorXd& x_scales);
 
   /**
+   * @brief Get currently defined loss type
+   * @return The loss type
+   */
+  const std::string& getLossType();
+
+  /**
    * @brief Computes SLOPE regression solution path for multiple alpha and
    * lambda values
    *
@@ -263,7 +269,7 @@ public:
    * @param alpha Sequence of mixing parameters for elastic net regularization
    * @param lambda Sequence of regularization parameters (if empty, computed
    * automatically)
-   * @return SlopePath Object containing full solution path and optimization
+   * @return SlopePath object containing full solution path and optimization
    * metrics
    *
    * Fits SLOPE models for each combination of alpha and lambda values, storing

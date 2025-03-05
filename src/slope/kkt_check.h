@@ -28,7 +28,7 @@ using ArrayXXb = Eigen::Array<bool, Eigen::Dynamic, Eigen::Dynamic>;
  * @brief Checks KKT conditions for SLOPE optimization
  *
  * @param gradient The gradient of the loss function
- * @param beta The current coefficient matrix
+ * @param beta The current coefficients
  * @param lambda Vector of regularization parameters
  * @param strong_set Vector of indices in the strong set
  * @return std::vector<int> Indices where KKT conditions are violated
@@ -37,8 +37,8 @@ using ArrayXXb = Eigen::Array<bool, Eigen::Dynamic, Eigen::Dynamic>;
  * for the SLOPE optimization problem. Returns indices where violations occur.
  */
 std::vector<int>
-kktCheck(const Eigen::MatrixXd& gradient,
-         const Eigen::MatrixXd& beta,
+kktCheck(const Eigen::VectorXd& gradient,
+         const Eigen::VectorXd& beta,
          const Eigen::ArrayXd& lambda,
          const std::vector<int>& strong_set);
 

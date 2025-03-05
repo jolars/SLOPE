@@ -103,10 +103,24 @@ public:
 
   /**
    * @brief The link function
-   * @param eta Linear predictor.
-   * @return The result of applying the link function.
+   * @param mu Mean.
+   * @return The identity function.
    */
   Eigen::MatrixXd link(const Eigen::MatrixXd& mu);
+
+  /**
+   * @brief The link function, also known as the mean function.
+   * @param eta Linear predictor.
+   * @return The identity function.
+   */
+  Eigen::MatrixXd inverseLink(const Eigen::MatrixXd& eta);
+
+  /**
+   * @brief Return predicted response, which is the same as the linear predictor
+   * @param eta The linear predictor
+   * @return The predicted response.
+   */
+  Eigen::MatrixXd predict(const Eigen::MatrixXd& eta);
 };
 
 } // namespace slope

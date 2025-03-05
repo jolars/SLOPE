@@ -79,6 +79,22 @@ public:
    * @return The result of applying the link function.
    */
   Eigen::MatrixXd link(const Eigen::MatrixXd& mu);
+
+  /**
+   * @brief The inverse link function, also known as the mean function.
+   * @param eta
+   * @return The softmax of the linear predictor: \f$
+   * \frac{e^{\eta}}{\sum_{j=1}^{k} e^{\eta_j}} \f$
+   */
+  Eigen::MatrixXd inverseLink(const Eigen::MatrixXd& eta);
+
+  /**
+   * @brief Return predicted response, which is an integer class label based on
+   *   the predicted probabilities.
+   * @param eta The linear predictor
+   * @return The predicted response
+   */
+  Eigen::MatrixXd predict(const Eigen::MatrixXd& eta);
 };
 
 } // namespace slope

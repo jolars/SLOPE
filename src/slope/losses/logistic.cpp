@@ -67,4 +67,18 @@ Logistic::link(const Eigen::MatrixXd& mu)
   });
 }
 
+Eigen::MatrixXd
+Logistic::inverseLink(const Eigen::MatrixXd& eta)
+{
+  return eta.unaryExpr(
+    [](const double& x) { return 1.0 / (1.0 + std::exp(-x)); });
+}
+
+Eigen::MatrixXd
+Logistic::predict(const Eigen::MatrixXd& eta)
+{
+  Eigen::MatrixXd prob = inverseLink(eta);
+  return prob.unaryExpr([](double pr) { return pr > 0.5 ? 1.0 : 0.0; });
+}
+
 } // namespace slope

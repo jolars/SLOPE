@@ -50,7 +50,7 @@ lambdaSequence(const int p,
  */
 std::tuple<Eigen::ArrayXd, double, int>
 regularizationPath(const Eigen::ArrayXd& alpha_in,
-                   const Eigen::MatrixXd& gradient,
+                   const Eigen::VectorXd& gradient,
                    const SortedL1Norm& penalty,
                    const Eigen::ArrayXd& lambda,
                    const int n,

@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "slope/slope_fit.h"
 #include <Eigen/Dense>
 #include <Eigen/SparseCore>
 
@@ -19,7 +20,7 @@ namespace slope {
  * @class SlopePath
  * @brief Container class for SLOPE regression solution paths
  *
- * Stores and provides access to:
+ * Stores a path of SlopeFit objects and provides convenience access to:
  * - Model coefficients (intercepts and sparse coefficient matrices)
  * - Regularization parameters (alpha and lambda sequences)
  * - Model fit statistics (deviance, null deviance)
@@ -29,16 +30,7 @@ namespace slope {
 class SlopePath
 {
 private:
-  std::vector<Eigen::VectorXd> intercepts;
-  std::vector<Eigen::SparseMatrix<double>> coefs;
-  Eigen::ArrayXd alpha;
-  Eigen::ArrayXd lambda;
-  std::vector<double> deviance;
-  double null_deviance;
-  std::vector<std::vector<double>> primals;
-  std::vector<std::vector<double>> duals;
-  std::vector<std::vector<double>> time;
-  std::vector<int> passes;
+  std::vector<SlopeFit> fits;
 
 public:
   /**
@@ -50,41 +42,24 @@ public:
    * @brief Constructs a SlopePath object containing SLOPE regression solution
    * path data
    *
-   * @param intercepts Vector of intercept terms for each solution
-   * @param coefs Vector of sparse coefficient matrices for each solution
-   * @param alpha Vector of mixing parameters (elastic net mixing parameter)
-   * @param lambda Vector of regularization parameters
-   * @param deviance Vector of model deviances for each solution
-   * @param null_deviance Null model deviance (deviance of intercept-only model)
-   * @param primals Vector of primal objective values during optimization
-   * @param duals Vector of dual objective values during optimization
-   * @param time Vector of computation times for each solution
-   * @param passes Vector of iteration counts for each solution
-   *
-   * @note All vectors should have consistent lengths corresponding to the
-   * number of solutions in the path
+   * @param fits Vector of SlopeFit objects for each solution in the path
    */
-  SlopePath(const std::vector<Eigen::VectorXd>& intercepts,
-            const std::vector<Eigen::SparseMatrix<double>>& coefs,
-            const Eigen::ArrayXd& alpha,
-            const Eigen::ArrayXd& lambda,
-            const std::vector<double>& deviance,
-            double null_deviance,
-            const std::vector<std::vector<double>>& primals,
-            const std::vector<std::vector<double>>& duals,
-            const std::vector<std::vector<double>>& time,
-            const std::vector<int>& passes)
-    : intercepts{ intercepts }
-    , coefs{ coefs }
-    , alpha{ alpha }
-    , lambda{ lambda }
-    , deviance{ deviance }
-    , null_deviance{ null_deviance }
-    , primals{ primals }
-    , duals{ duals }
-    , time{ time }
-    , passes{ passes }
+  SlopePath(const std::vector<SlopeFit>& fits)
+    : fits{ fits }
   {
+  }
+
+  /**
+   * @brief Get one of the coefficients along the path
+   *
+   * @param step the
+   * @return The fit at step `step` of the path. A SlopeFit object.
+   */
+  const SlopeFit& operator()(const size_t step)
+  {
+    assert(step < fits.size());
+
+    return fits[step];
   }
 
   /**
@@ -96,8 +71,14 @@ public:
    * Each element in the returned vector corresponds to the intercept term(s)
    * for a particular solution in the regularization path.
    */
-  const std::vector<Eigen::VectorXd>& getIntercepts() const
+  std::vector<Eigen::VectorXd> getIntercepts() const
   {
+    std::vector<Eigen::VectorXd> intercepts;
+
+    for (const auto& fit : fits) {
+      intercepts.emplace_back(fit.getIntercepts());
+    }
+
     return intercepts;
   }
 
@@ -111,8 +92,14 @@ public:
    * Each element in the returned vector is a sparse matrix containing the model
    * coefficients for a particular solution in the regularization path.
    */
-  const std::vector<Eigen::SparseMatrix<double>>& getCoefs() const
+  std::vector<Eigen::SparseMatrix<double>> getCoefs() const
   {
+    std::vector<Eigen::SparseMatrix<double>> coefs;
+
+    for (const auto& fit : fits) {
+      coefs.emplace_back(fit.getCoefs());
+    }
+
     return coefs;
   }
 
@@ -125,51 +112,107 @@ public:
    * matrix at index i
    * @throws std::runtime_error if index is out of bounds
    */
-  const Eigen::SparseMatrix<double>& getCoefs(const std::size_t i) const
+  Eigen::SparseMatrix<double> getCoefs(const std::size_t i) const
   {
-    assert(i < coefs.size() && "Index out of bounds");
-    return coefs[i];
+    assert(i < fits.size() && "Index out of bounds");
+
+    return fits[i].getCoefs();
   }
 
   /**
    * @brief Gets the alpha parameter sequence
    */
-  const Eigen::ArrayXd& getAlpha() const { return alpha; }
+  Eigen::ArrayXd getAlpha() const
+  {
+
+    Eigen::ArrayXd alphas(fits.size());
+
+    for (size_t i = 0; i < fits.size(); i++) {
+      alphas(i) = fits[i].getAlpha();
+    }
+
+    return alphas;
+  }
 
   /**
    * @brief Gets the lambda (regularization) weights
    */
-  const Eigen::ArrayXd& getLambda() const { return lambda; }
+  const Eigen::ArrayXd& getLambda() const { return fits.front().getLambda(); }
 
   /**
    * @brief Gets the deviance values for each solution
    */
-  const std::vector<double>& getDeviance() const { return deviance; }
+  std::vector<double> getDeviance() const
+  {
+    std::vector<double> deviances;
+
+    for (const auto& fit : fits) {
+      deviances.emplace_back(fit.getDeviance());
+    }
+
+    return deviances;
+  }
 
   /**
    * @brief Gets the null model deviance
    */
-  double getNullDeviance() const { return null_deviance; }
+  double getNullDeviance() const { return fits.front().getNullDeviance(); }
 
   /**
    * @brief Gets the primal objective values during optimization
    */
-  const std::vector<std::vector<double>>& getPrimals() const { return primals; }
+  std::vector<std::vector<double>> getPrimals() const
+  {
+    std::vector<std::vector<double>> primals;
+
+    for (const auto& fit : fits) {
+      primals.emplace_back(fit.getPrimals());
+    }
+
+    return primals;
+  }
 
   /**
    * @brief Gets the dual objective values during optimization
    */
-  const std::vector<std::vector<double>>& getDuals() const { return duals; }
+  std::vector<std::vector<double>> getDuals() const
+  {
+    std::vector<std::vector<double>> duals;
+
+    for (const auto& fit : fits) {
+      duals.emplace_back(fit.getDuals());
+    }
+
+    return duals;
+  }
 
   /**
    * @brief Gets the computation times for each solution
    */
-  const std::vector<std::vector<double>>& getTime() const { return time; }
+  std::vector<std::vector<double>> getTime() const
+  {
+    std::vector<std::vector<double>> time;
+
+    for (const auto& fit : fits) {
+      time.emplace_back(fit.getTime());
+    }
+
+    return time;
+  }
 
   /**
    * @brief Gets the number of iterations for each solution
    */
-  const std::vector<int>& getPasses() const { return passes; }
+  std::vector<int> getPasses() const
+  {
+    std::vector<int> passes;
+
+    for (const auto& fit : fits) {
+      passes.emplace_back(fit.getPasses());
+    }
+
+    return passes;
+  }
 
   /**
    * @brief Computes the deviance ratio (explained deviance) for each solution
@@ -178,10 +221,10 @@ public:
    */
   const std::vector<double> getDevianceRatios() const
   {
-    std::vector<double> ratios(deviance.size());
+    std::vector<double> ratios;
 
-    for (size_t i = 0; i < deviance.size(); i++) {
-      ratios[i] = 1.0 - deviance[i] / null_deviance;
+    for (const auto& fit : fits) {
+      ratios.emplace_back(fit.getDevianceRatio());
     }
 
     return ratios;
@@ -192,16 +235,12 @@ public:
    * solution
    * @return std::vector<std::vector<double>> Vector of duality gap sequences
    */
-  const std::vector<std::vector<double>> getGaps() const
+  std::vector<std::vector<double>> getGaps() const
   {
-    std::vector<std::vector<double>> gaps(primals.size());
+    std::vector<std::vector<double>> gaps;
 
-    for (size_t i = 0; i < primals.size(); i++) {
-      gaps[i].resize(primals[i].size());
-
-      for (size_t j = 0; j < primals[i].size(); j++) {
-        gaps[i][j] = primals[i][j] - duals[i][j];
-      }
+    for (const auto& fit : fits) {
+      gaps.emplace_back(fit.getGaps());
     }
 
     return gaps;

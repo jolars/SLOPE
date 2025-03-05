@@ -71,9 +71,24 @@ public:
   /**
    * @brief The link function
    * @param mu Mean
-   * @return The result of applying the link function.
+   * @return \f$ \log(\frac{\mu}{1 - \mu}) \f$
    */
   Eigen::MatrixXd link(const Eigen::MatrixXd& mu);
+
+  /**
+   * @brief The inverse link function, also known as the mean function.
+   * @param eta Mean
+   * @return \f$ \frac{1}{1 + \exp(-\eta)} \f$
+   */
+  Eigen::MatrixXd inverseLink(const Eigen::MatrixXd& eta);
+
+  /**
+   * @brief Return predicted response, that is 0 or 1 depending on
+   *   the predicted probabilities.
+   * @param eta The linear predictor
+   * @return The predicted response
+   */
+  Eigen::MatrixXd predict(const Eigen::MatrixXd& eta);
 };
 
 } // namespace slope

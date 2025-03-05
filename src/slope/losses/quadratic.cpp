@@ -46,15 +46,16 @@ Quadratic::link(const Eigen::MatrixXd& mu)
   return mu;
 }
 
-// double
-// Quadratic::nullDeviance(const Eigen::MatrixXd& y, const bool intercept)
-// {
-//   double beta0 = intercept ? y.mean() : 0.0;
-//
-//   Eigen::MatrixXd eta(y.rows(), y.cols());
-//   eta.setConstant(beta0);
-//
-//   return deviance(eta, y);
-// }
+Eigen::MatrixXd
+Quadratic::inverseLink(const Eigen::MatrixXd& eta)
+{
+  return eta;
+}
+
+Eigen::MatrixXd
+Quadratic::predict(const Eigen::MatrixXd& eta)
+{
+  return eta;
+}
 
 } // namespace slope

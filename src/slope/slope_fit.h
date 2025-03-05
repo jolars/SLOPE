@@ -1,7 +1,11 @@
 #pragma once
 
+#include "slope/losses/setup_loss.h"
+#include "slope/normalize.h"
+#include "slope/utils.h"
 #include <Eigen/Dense>
 #include <Eigen/SparseCore>
+#include <memory>
 
 namespace slope {
 
@@ -27,6 +31,9 @@ private:
     duals; ///< History of dual objective values during optimization
   std::vector<double> time; ///< Time points during optimization
   int passes; ///< Number of passes through the data during optimization
+  std::string centering_type; ///< Type of centering
+  std::string scaling_type;   ///< Type of scaling
+  std::string loss_type;      ///< Loss type
 
 public:
   /// Default constructor
@@ -45,17 +52,22 @@ public:
    * @param duals History of dual objectives
    * @param time Vector of optimization timestamps
    * @param passes Number of optimization passes
+   * @param centering_type Type of centering for the design matrix
+   * @param scaling_type Type of scaling for the design matrix
+   *
    */
   SlopeFit(const Eigen::VectorXd& intercepts,
            const Eigen::SparseMatrix<double>& coefs,
            const double alpha,
            const Eigen::ArrayXd& lambda,
-           double deviance,
-           double null_deviance,
+           const double deviance,
+           const double null_deviance,
            const std::vector<double>& primals,
            const std::vector<double>& duals,
            const std::vector<double>& time,
-           const int passes)
+           const int passes,
+           const std::string& centering_type,
+           const std::string& scaling_type)
     : intercepts{ intercepts }
     , coefs{ coefs }
     , alpha{ alpha }
@@ -66,6 +78,8 @@ public:
     , duals{ duals }
     , time{ time }
     , passes{ passes }
+    , centering_type{ centering_type }
+    , scaling_type{ scaling_type }
   {
   }
 
@@ -93,6 +107,11 @@ public:
    * @brief Gets the model deviance
    */
   double getDeviance() const { return deviance; }
+
+  /**
+   * @brief Gets the model's loss type
+   */
+  const std::string& getLossType() const { return loss_type; }
 
   /**
    * @brief Gets the null model deviance
@@ -125,7 +144,7 @@ public:
    * @return double The deviance ratio, a measure of model fit (higher is
    * better)
    */
-  double getDevianceRatios() const { return 1.0 - deviance / null_deviance; }
+  double getDevianceRatio() const { return 1.0 - deviance / null_deviance; }
 
   /**
    * @brief Calculate the duality gaps during optimization
@@ -140,6 +159,50 @@ public:
       gaps[i] = primals[i] - duals[i];
     }
     return gaps;
+  }
+
+  /**
+   * @brief Predict the response for a given input matrix
+   * @tparam T Type of input matrix (dense or sparse)
+   * @param x Input matrix of features
+   * @param type Type of prediction to return ("response" or "linear")
+   * @return Matrix of predicted responses
+   * @see Loss
+   */
+  template<typename T>
+  Eigen::MatrixXd predict(T& x, const std::string& type = "response") const
+  {
+    validateOption(type, { "response", "linear" }, "type");
+
+    int n = x.rows();
+    int m = coefs.cols();
+
+    std::unique_ptr<Loss> loss = setupLoss(this->loss_type);
+
+    Eigen::VectorXd x_centers;
+    Eigen::VectorXd x_scales;
+    normalize(
+      x, x_centers, x_scales, this->centering_type, this->scaling_type, false);
+
+    Eigen::MatrixXd eta = Eigen::MatrixXd::Zero(n, m);
+
+    for (int k = 0; k < m; ++k) {
+      for (typename Eigen::SparseMatrix<double>::InnerIterator it(coefs, k); it;
+           ++it) {
+        int j = it.row();
+        eta.col(k) += x.col(j) * (it.value() / x_scales(j));
+        eta.col(k).array() -= it.value() * x_centers(j) / x_scales(j);
+      }
+
+      eta.col(k).array() += intercepts(k);
+    }
+
+    if (type == "linear") {
+      return eta;
+    }
+
+    // Return predictions
+    return loss->predict(eta);
   }
 };
 

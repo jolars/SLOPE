@@ -29,7 +29,7 @@ public:
    * @param lambda The regulariation weights.
    * @return The proximal operator result.
    */
-  Eigen::MatrixXd prox(const Eigen::MatrixXd& beta,
+  Eigen::MatrixXd prox(const Eigen::VectorXd& beta,
                        const Eigen::ArrayXd& lambda) const;
 
   /**

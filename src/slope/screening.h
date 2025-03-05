@@ -20,7 +20,7 @@ namespace slope {
  * @return std::vector<int> Indices of variables with non-zero coefficients
  */
 std::vector<int>
-activeSet(const Eigen::MatrixXd& beta);
+activeSet(const Eigen::VectorXd& beta);
 
 /**
  * @brief Determines the strong set using sequential strong rules
@@ -31,7 +31,7 @@ activeSet(const Eigen::MatrixXd& beta);
  * @return std::vector<int> Indices of variables in the strong set
  */
 std::vector<int>
-strongSet(const Eigen::MatrixXd& gradient_prev,
+strongSet(const Eigen::VectorXd& gradient_prev,
           const Eigen::ArrayXd& lambda,
           const Eigen::ArrayXd& lambda_prev);
 

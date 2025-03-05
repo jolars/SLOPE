@@ -8,6 +8,8 @@ SOURCES = \
     r-exports.cpp \
     rcppSLOPE.cpp \
     slope/clusters.cpp \
+    slope/cv.cpp \
+    slope/folds.cpp \
     slope/kkt_check.cpp \
     slope/losses/logistic.cpp \
     slope/losses/multinomial.cpp \
@@ -18,6 +20,7 @@ SOURCES = \
     slope/normalize.cpp \
     slope/qnorm.cpp \
     slope/regularization_sequence.cpp \
+    slope/score.cpp \
     slope/screening.cpp \
     slope/slope.cpp \
     slope/solvers/hybrid.cpp \

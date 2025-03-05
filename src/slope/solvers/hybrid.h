@@ -55,13 +55,13 @@ public:
 
   /// @copydoc SolverBase::run
   void run(Eigen::VectorXd& beta0,
-           Eigen::MatrixXd& beta,
+           Eigen::VectorXd& beta,
            Eigen::MatrixXd& eta,
            Clusters& clusters,
            const Eigen::ArrayXd& lambda,
            const std::unique_ptr<Loss>& loss,
            const SortedL1Norm& penalty,
-           const Eigen::MatrixXd& gradient,
+           const Eigen::VectorXd& gradient,
            const std::vector<int>& working_set,
            const Eigen::MatrixXd& x,
            const Eigen::VectorXd& x_centers,
@@ -70,13 +70,13 @@ public:
 
   /// @copydoc SolverBase::run
   void run(Eigen::VectorXd& beta0,
-           Eigen::MatrixXd& beta,
+           Eigen::VectorXd& beta,
            Eigen::MatrixXd& eta,
            Clusters& clusters,
            const Eigen::ArrayXd& lambda,
            const std::unique_ptr<Loss>& loss,
            const SortedL1Norm& penalty,
-           const Eigen::MatrixXd& gradient,
+           const Eigen::VectorXd& gradient,
            const std::vector<int>& working_set,
            const Eigen::SparseMatrix<double>& x,
            const Eigen::VectorXd& x_centers,
@@ -89,7 +89,7 @@ private:
    *
    * @tparam MatrixType Type of the design matrix
    * @param beta0 Intercept term (scalar)
-   * @param beta Coefficient matrix
+   * @param beta Coefficients
    * @param eta Linear predictor
    * @param clusters Coefficient clustering information
    * @param loss Pointer to the loss function
@@ -101,13 +101,13 @@ private:
    */
   template<typename MatrixType>
   void runImpl(Eigen::VectorXd& beta0,
-               Eigen::MatrixXd& beta,
+               Eigen::VectorXd& beta,
                Eigen::MatrixXd& eta,
                Clusters& clusters,
                const Eigen::ArrayXd& lambda,
                const std::unique_ptr<Loss>& loss,
                const SortedL1Norm& penalty,
-               const Eigen::MatrixXd& gradient_in,
+               const Eigen::VectorXd& gradient_in,
                const std::vector<int>& working_set,
                const MatrixType& x,
                const Eigen::VectorXd& x_centers,

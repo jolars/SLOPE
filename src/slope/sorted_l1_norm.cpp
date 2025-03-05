@@ -17,7 +17,7 @@ SortedL1Norm::eval(const Eigen::VectorXd& beta,
 }
 
 Eigen::MatrixXd
-SortedL1Norm::prox(const Eigen::MatrixXd& beta,
+SortedL1Norm::prox(const Eigen::VectorXd& beta,
                    const Eigen::ArrayXd& lambda) const
 {
   // TODO: Avoid copying beta
@@ -26,8 +26,8 @@ SortedL1Norm::prox(const Eigen::MatrixXd& beta,
   assert(lambda.size() == beta.size() &&
          "Coefficient and lambda sizes must agree");
 
-  ArrayXd beta_sign = beta.reshaped().array().sign();
-  VectorXd beta_copy = beta.reshaped().array().abs();
+  ArrayXd beta_sign = beta.array().sign();
+  VectorXd beta_copy = beta.array().abs();
 
   auto ord = sortIndex(beta_copy, true);
   permute(beta_copy, ord);
@@ -67,7 +67,7 @@ SortedL1Norm::prox(const Eigen::MatrixXd& beta,
   inversePermute(beta_copy, ord);
   beta_copy.array() *= beta_sign;
 
-  return beta_copy.reshaped(beta.rows(), beta.cols());
+  return beta_copy;
 }
 
 double

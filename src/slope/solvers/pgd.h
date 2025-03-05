@@ -47,13 +47,13 @@ public:
 
   /// @copydoc SolverBase::run
   void run(Eigen::VectorXd& beta0,
-           Eigen::MatrixXd& beta,
+           Eigen::VectorXd& beta,
            Eigen::MatrixXd& eta,
            Clusters& clusters,
            const Eigen::ArrayXd& lambda,
            const std::unique_ptr<Loss>& loss,
            const SortedL1Norm& penalty,
-           const Eigen::MatrixXd& gradient,
+           const Eigen::VectorXd& gradient,
            const std::vector<int>& working_set,
            const Eigen::MatrixXd& x,
            const Eigen::VectorXd& x_centers,
@@ -62,13 +62,13 @@ public:
 
   /// @copydoc SolverBase::run
   void run(Eigen::VectorXd& beta0,
-           Eigen::MatrixXd& beta,
+           Eigen::VectorXd& beta,
            Eigen::MatrixXd& eta,
            Clusters& clusters,
            const Eigen::ArrayXd& lambda,
            const std::unique_ptr<Loss>& loss,
            const SortedL1Norm& penalty,
-           const Eigen::MatrixXd& gradient,
+           const Eigen::VectorXd& gradient,
            const std::vector<int>& working_set,
            const Eigen::SparseMatrix<double>& x,
            const Eigen::VectorXd& x_centers,
@@ -78,13 +78,13 @@ public:
 private:
   template<typename MatrixType>
   void runImpl(Eigen::VectorXd& beta0,
-               Eigen::MatrixXd& beta,
+               Eigen::VectorXd& beta,
                Eigen::MatrixXd& eta,
                Clusters&,
                const Eigen::ArrayXd& lambda,
                const std::unique_ptr<Loss>& loss,
                const SortedL1Norm& penalty,
-               const Eigen::MatrixXd& gradient,
+               const Eigen::VectorXd& gradient,
                const std::vector<int>& working_set,
                const MatrixType& x,
                const Eigen::VectorXd& x_centers,
@@ -95,29 +95,32 @@ private:
     using Eigen::MatrixXd;
     using Eigen::VectorXd;
 
-    Eigen::MatrixXd beta_old = beta(working_set, all);
+    int n_working = working_set.size();
+
+    Eigen::VectorXd beta_old = beta(working_set);
+    Eigen::VectorXd beta_diff(n_working);
     Eigen::VectorXd beta0_old = beta0;
 
     double g_old = loss->loss(eta, y);
     double t_old = t;
 
-    Eigen::MatrixXd beta_diff(beta_old.rows(), beta_old.cols());
-
     Eigen::MatrixXd residual = loss->residual(eta, y);
     Eigen::VectorXd intercept_grad = residual.colwise().mean();
+    Eigen::VectorXd grad_working = gradient(working_set);
 
     while (true) {
       if (intercept) {
         beta0 = beta0_old - this->learning_rate * intercept_grad;
       }
-      beta(working_set, all) = penalty.prox(
-        beta_old - this->learning_rate * gradient(working_set, all),
-        this->learning_rate * lambda.head(beta_old.size()));
 
-      beta_diff = beta(working_set, all) - beta_old;
+      beta(working_set) =
+        penalty.prox(beta_old - this->learning_rate * grad_working,
+                     this->learning_rate * lambda.head(n_working));
+
+      beta_diff = beta(working_set) - beta_old;
       double beta_diff_norm =
-        beta_diff.reshaped().dot(gradient(working_set, all).reshaped()) +
-        (1.0 / (2 * this->learning_rate)) * beta_diff.reshaped().squaredNorm();
+        beta_diff.dot(grad_working) +
+        (1.0 / (2 * this->learning_rate)) * beta_diff.squaredNorm();
 
       if (intercept) {
         Eigen::VectorXd beta0_diff = beta0 - beta0_old;
@@ -153,10 +156,11 @@ private:
       }
 
       this->t = 0.5 * (1.0 + std::sqrt(1.0 + 4.0 * t_old * t_old));
-      Eigen::MatrixXd beta_current = beta(working_set, Eigen::all);
-      beta(working_set, all) +=
-        (beta_current - beta_prev(working_set, all)) * (t_old - 1.0) / this->t;
-      beta_prev(working_set, all) = beta_current;
+      Eigen::VectorXd beta_current = beta(working_set);
+
+      beta(working_set) +=
+        (beta_current - beta_prev(working_set)) * (t_old - 1.0) / this->t;
+      beta_prev(working_set) = beta_current;
 
       eta = linearPredictor(x,
                             working_set,
@@ -173,7 +177,7 @@ private:
   double learning_rate_decr; ///< Learning rate decrease factor for line search
   std::string update_type;   ///< Update type for PGD
   double t;                  ///< FISTA step size
-  Eigen::MatrixXd beta_prev; ///< Old beta values
+  Eigen::VectorXd beta_prev; ///< Old beta values
 };
 
 } // namespace solvers

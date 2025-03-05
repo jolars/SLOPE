@@ -128,7 +128,7 @@ computeGradientAndHessian(const T& x,
 template<typename T>
 void
 coordinateDescent(Eigen::VectorXd& beta0,
-                  Eigen::MatrixXd& beta,
+                  Eigen::VectorXd& beta,
                   Eigen::VectorXd& residual,
                   Clusters& clusters,
                   const Eigen::ArrayXd& lambda,
@@ -163,7 +163,7 @@ coordinateDescent(Eigen::VectorXd& beta0,
 
     if (cluster_size == 1) {
       int k = *clusters.cbegin(j);
-      double s_k = sign(beta(k, 0));
+      double s_k = sign(beta(k));
       s.emplace_back(s_k);
 
       std::tie(gradient_j, hessian_j) = computeGradientAndHessian(
@@ -176,7 +176,7 @@ coordinateDescent(Eigen::VectorXd& beta0,
 
       for (auto c_it = clusters.cbegin(j); c_it != clusters.cend(j); ++c_it) {
         int k = *c_it;
-        double s_k = sign(beta(k, 0));
+        double s_k = sign(beta(k));
         s.emplace_back(s_k);
 
         switch (jit_normalization) {
@@ -210,7 +210,7 @@ coordinateDescent(Eigen::VectorXd& beta0,
     auto s_it = s.cbegin();
     auto c_it = clusters.cbegin(j);
     for (; c_it != clusters.cend(j); ++c_it, ++s_it) {
-      beta(*c_it, 0) = c_tilde * (*s_it);
+      beta(*c_it) = c_tilde * (*s_it);
     }
 
     double c_diff = c_old - c_tilde;

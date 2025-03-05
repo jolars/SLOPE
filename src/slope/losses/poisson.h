@@ -102,9 +102,25 @@ public:
   /**
    * @brief The link function
    * @param mu Mean.
-   * @return The result of applying the link function.
+   * @return \f$ \log(\mu) \f$
    */
   Eigen::MatrixXd link(const Eigen::MatrixXd& mu) override;
+
+  /**
+   * @brief The inverse link function, also known as the mean function.
+   * @param eta Linear predictor
+   * @return \f$ \exp(\eta) \f$
+   */
+  Eigen::MatrixXd inverseLink(const Eigen::MatrixXd& eta) override;
+
+  /**
+   * @brief Return predicted response, that is 0 or 1 depending on
+   *   the predicted probabilities.
+   * @param eta The linear predictor
+   * @return The predicted response, which is the same as the inverse link
+   *   in the case of the Poisson loss.
+   */
+  Eigen::MatrixXd predict(const Eigen::MatrixXd& eta) override;
 };
 
 } // namespace slope

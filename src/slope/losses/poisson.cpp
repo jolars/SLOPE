@@ -1,13 +1,12 @@
 #include "poisson.h"
-#include "../math.h"
+#include "slope/constants.h"
 
 namespace slope {
 
 double
 Poisson::loss(const Eigen::MatrixXd& eta, const Eigen::MatrixXd& y)
 {
-  return -(y.array() * eta.array() - eta.array().exp() - logFactorial(y))
-            .mean();
+  return -(y.array() * eta.array() - eta.array().exp()).mean();
 }
 
 double
@@ -18,10 +17,8 @@ Poisson::dual(const Eigen::MatrixXd& theta,
   const Eigen::ArrayXd e = theta + y;
 
   assert(theta.allFinite() && "theta is not finite");
-  assert((e >= 0).all() &&
-         "Dual function is not defined for negative residuals");
 
-  return (e * (1.0 - e.log()) + logFactorial(y)).mean();
+  return (e * (1.0 - e.max(constants::P_MIN).log())).mean();
 }
 
 Eigen::MatrixXd
@@ -65,7 +62,19 @@ Poisson::updateIntercept(Eigen::VectorXd& beta0,
 Eigen::MatrixXd
 Poisson::link(const Eigen::MatrixXd& mu)
 {
-  return mu.array().log();
+  return mu.array().max(constants::P_MIN).log();
+}
+
+Eigen::MatrixXd
+Poisson::inverseLink(const Eigen::MatrixXd& eta)
+{
+  return eta.array().exp();
+}
+
+Eigen::MatrixXd
+Poisson::predict(const Eigen::MatrixXd& eta)
+{
+  return inverseLink(eta);
 }
 
 } // namespace slope

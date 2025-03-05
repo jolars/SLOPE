@@ -51,7 +51,7 @@ public:
    * @brief Pure virtual function defining the solver's optimization routine
    *
    * @param beta0 Intercept terms for each response
-   * @param beta Coefficient matrix (p predictors x m responses)
+   * @param beta Coefficients (size p x m)
    * @param eta Linear predictor matrix (n samples x m responses)
    * @param clusters Coefficient clustering structure
    * @param lambda Vector of regularization parameters
@@ -65,13 +65,13 @@ public:
    * @param y Response matrix (n samples x m responses)
    */
   virtual void run(Eigen::VectorXd& beta0,
-                   Eigen::MatrixXd& beta,
+                   Eigen::VectorXd& beta,
                    Eigen::MatrixXd& eta,
                    Clusters& clusters,
                    const Eigen::ArrayXd& lambda,
                    const std::unique_ptr<Loss>& loss,
                    const SortedL1Norm& penalty,
-                   const Eigen::MatrixXd& gradient,
+                   const Eigen::VectorXd& gradient,
                    const std::vector<int>& working_set,
                    const Eigen::MatrixXd& x,
                    const Eigen::VectorXd& x_centers,
@@ -82,7 +82,7 @@ public:
    * @brief Pure virtual function defining the solver's optimization routine
    *
    * @param beta0 Intercept terms for each response
-   * @param beta Coefficient matrix (p predictors x m responses)
+   * @param beta Coefficient vecttor (size p x m)
    * @param eta Linear predictor matrix (n samples x m responses)
    * @param clusters Coefficient clustering structure
    * @param lambda Vector of regularization parameters
@@ -96,13 +96,13 @@ public:
    * @param y Response matrix (n samples x m responses)
    */
   virtual void run(Eigen::VectorXd& beta0,
-                   Eigen::MatrixXd& beta,
+                   Eigen::VectorXd& beta,
                    Eigen::MatrixXd& eta,
                    Clusters& clusters,
                    const Eigen::ArrayXd& lambda,
                    const std::unique_ptr<Loss>& loss,
                    const SortedL1Norm& penalty,
-                   const Eigen::MatrixXd& gradient,
+                   const Eigen::VectorXd& gradient,
                    const std::vector<int>& working_set,
                    const Eigen::SparseMatrix<double>& x,
                    const Eigen::VectorXd& x_centers,
