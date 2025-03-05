@@ -50,6 +50,7 @@
               autoconf
               go-task
               quartoMinimal
+              llvmPackages.openmp
               (rWrapper.override {
                 packages = with rPackages; [
                   devtools
