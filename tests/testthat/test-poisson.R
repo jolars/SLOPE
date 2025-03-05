@@ -57,7 +57,9 @@ test_that("SLOPE reproduces lasso fit when all lambda are equal", {
       0
     )
 
-  slope_fit <- SLOPE(x, y,
+  slope_fit <- SLOPE(
+    x,
+    y,
     family = "poisson",
     alpha = alpha,
     lambda = rep(1, p),
