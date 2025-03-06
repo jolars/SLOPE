@@ -71,7 +71,7 @@ randomProblem <- function(
       y <- apply(prob, 1, function(x) sample(1:m, 1, prob = x))
     },
     poisson = {
-      lambda <- as.double(exp(x %*% beta))
+      lambda <- as.double(exp(0.1 * x %*% beta))
       y <- stats::rpois(n, lambda)
     }
   )

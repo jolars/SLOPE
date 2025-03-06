@@ -4,7 +4,8 @@ test_that("model training works with trainSLOPE", {
   for (family in c("gaussian", "binomial")) {
     xy <- SLOPE:::randomProblem(1e2, 2, response = family)
 
-    fit <- trainSLOPE(xy$x,
+    fit <- trainSLOPE(
+      xy$x,
       xy$y,
       family = family,
       number = 2,
@@ -39,15 +40,21 @@ test_that("trainSLOPE works properly for binomial family", {
   expect_equal(
     fit$measure$label,
     c(
-      "Mean Squared Error", "Mean Absolute Error",
-      "Binomial Deviance", "Misclassification Rate", "AUC"
+      "Mean Squared Error",
+      "Mean Absolute Error",
+      "Binomial Deviance",
+      "Misclassification Rate",
+      "AUC"
     )
   )
 
   expect_equal(
     fit$optima$mean,
     c(
-      0.9811094, 0.361433768605148, 0.179544219401791, 0.07,
+      0.9811094,
+      0.361433768605148,
+      0.179544219401791,
+      0.07,
       0.112826460692166
     ),
     tolerance = 0.0001
@@ -109,7 +116,7 @@ test_that("trainSLOPE works properly for poisson family", {
 
   expect_equal(
     fit$optima$mean,
-    c(2.17204837325001, 31.7693800794981),
+    c(1.03890633008216, 2.01559686558066),
     tolerance = 0.001
   )
 })
@@ -131,12 +138,15 @@ test_that("trainSLOPE works properly for multinomial family", {
   )
 
   expect_equal(fit$measure$measure, c("mse", "mae", "deviance", "misclass"))
-  expect_equal(fit$measure$label, c(
-    "Mean Squared Error",
-    "Mean Absolute Error",
-    "Multinomial Deviance",
-    "Misclassification Rate"
-  ))
+  expect_equal(
+    fit$measure$label,
+    c(
+      "Mean Squared Error",
+      "Mean Absolute Error",
+      "Multinomial Deviance",
+      "Misclassification Rate"
+    )
+  )
 
   expect_equal(
     fit$optima$mean,
@@ -146,7 +156,6 @@ test_that("trainSLOPE works properly for multinomial family", {
 })
 
 
-
 test_that("trainSLOPE returns error in the case of invalid measures", {
   set.seed(42)
   xy <- SLOPE:::randomProblem(200, p = 100, q = 0.5, response = "gaussian")
@@ -154,7 +163,9 @@ test_that("trainSLOPE returns error in the case of invalid measures", {
   y <- xy$y
 
   expect_error(
-    trainSLOPE(x, y,
+    trainSLOPE(
+      x,
+      y,
       q = c(0.1, 0.2),
       measure = "misclass",
       family = "gaussian",

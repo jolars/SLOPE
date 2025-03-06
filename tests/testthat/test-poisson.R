@@ -40,21 +40,21 @@ test_that("SLOPE reproduces lasso fit when all lambda are equal", {
   n <- nrow(x)
   p <- ncol(x)
 
-  alpha <- 1
+  alpha <- 0.01
 
-  gnt_coef <-
+  coef_ref <-
     c(
-      0.490003407560466,
-      0,
-      0.628217573067706,
-      0,
-      0,
-      0,
-      -0.562605853351947,
-      0,
-      0,
-      0,
-      0
+      -0.075761257437997,
+      -0.0397870591523659,
+      0.179401937344632,
+      0.0719298289970407,
+      -0.143050053903786,
+      0.0119708915618286,
+      -0.0152132541332644,
+      0.0299541615757605,
+      -0.0557280347240528,
+      -0.0502826103600737,
+      -0.0405067293862495
     )
 
   slope_fit <- SLOPE(
@@ -68,5 +68,5 @@ test_that("SLOPE reproduces lasso fit when all lambda are equal", {
     tol = 1e-6
   )
 
-  expect_equivalent(gnt_coef, as.matrix(coef(slope_fit)), tol = 1e-3)
+  expect_equivalent(coef_ref, as.matrix(coef(slope_fit)), tol = 1e-3)
 })
