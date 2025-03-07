@@ -157,7 +157,7 @@
 #' @section Solvers:
 #'
 #' There are currently three solvers available for SLOPE: Hybrid (Beck and
-#' Teboulle 2009), proximal gradient desent (PGD), and FISTA (Beck and
+#' Teboulle 2009), proximal gradient descent (PGD), and FISTA (Beck and
 #' Teboulle, 2009). The hybrid method is the preferred and generally
 #' fastest method and is therefore the default for the Gaussian and
 #' binomial families, but not currently available for multinomial and
