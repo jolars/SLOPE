@@ -89,15 +89,19 @@ all other models, two times the negative loglikelihood is returned.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="SLOPE.html">SLOPE</a></span><span class="op">(</span><span class="va">abalone</span><span class="op">$</span><span class="va">x</span>, <span class="va">abalone</span><span class="op">$</span><span class="va">y</span>, family <span class="op">=</span> <span class="st">"poisson"</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="SLOPE.html">SLOPE</a></span><span class="op">(</span><span class="va">heart</span><span class="op">$</span><span class="va">x</span>, <span class="va">heart</span><span class="op">$</span><span class="va">y</span>, family <span class="op">=</span> <span class="st">"binomial"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/deviance.html" class="external-link">deviance</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 0.8114817 0.7708356 0.7146117 0.6919724 0.6607433 0.6342146 0.6106158</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [8] 0.5892248 0.5751061 0.5600101 0.5476655 0.5335659 0.5258797 0.5190416</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [15] 0.5105945 0.5046091 0.4990723 0.4958260 0.4927803 0.4888911 0.4849580</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [22] 0.4819710 0.4737473 0.4530588 0.4475855 0.4322345 0.4281944 0.4141592</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [29] 0.4133399 0.4067336 0.4002472 0.3970692 0.3918651 0.3916278 0.3877352</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [36] 0.3866022 0.3845367 0.3820713 0.3807078 0.3800808 0.3789252 0.3740575</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [43] 0.3709298 0.3693128 0.3684104 0.3677187 0.3669691 0.3634249 0.3634249</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 1.3739232 1.2937213 1.2251813 1.1670235 1.1161943 1.0717583 1.0275800</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8] 0.9889878 0.9549637 0.9250257 0.8985209 0.8753882 0.8552442 0.8353384</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [15] 0.8138016 0.7943370 0.7767139 0.7611075 0.7459662 0.7323982 0.7197063</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [22] 0.7083896 0.6986941 0.6897190 0.6822010 0.6752986 0.6691959 0.6637329</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [29] 0.6587841 0.6545033 0.6506909 0.6473870 0.6445433 0.6420809 0.6400310</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [36] 0.6381617 0.6365579 0.6350098 0.6336420 0.6324507 0.6314430 0.6305686</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [43] 0.6298191 0.6291761 0.6286302 0.6281726 0.6277802 0.6274314 0.6271386</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [50] 0.6268907 0.6266718 0.6264904 0.6263364 0.6262055 0.6260964 0.6260050</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [57] 0.6259285 0.6258651 0.6258111 0.6257663 0.6257289 0.6256976 0.6256715</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [64] 0.6256498 0.6256316 0.6256165 0.6256039 0.6255934 0.6255846 0.6255774</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [71] 0.6255713</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
