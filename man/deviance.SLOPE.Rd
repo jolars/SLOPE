@@ -19,7 +19,7 @@ all other models, two times the negative loglikelihood is returned.
 Model deviance
 }
 \examples{
-fit <- SLOPE(abalone$x, abalone$y, family = "poisson")
+fit <- SLOPE(heart$x, heart$y, family = "binomial")
 deviance(fit)
 }
 \seealso{

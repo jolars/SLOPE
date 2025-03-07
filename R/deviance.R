@@ -11,7 +11,7 @@
 #' @family SLOPE-methods
 #'
 #' @examples
-#' fit <- SLOPE(abalone$x, abalone$y, family = "poisson")
+#' fit <- SLOPE(heart$x, heart$y, family = "binomial")
 #' deviance(fit)
 deviance.SLOPE <- function(object, ...) {
   deviance_ratio <- object$deviance_ratio
