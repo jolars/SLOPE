@@ -328,14 +328,6 @@
 #' # Gaussian response, default lambda sequence
 #' fit <- SLOPE(bodyfat$x, bodyfat$y)
 #'
-#' # Poisson response, OSCAR-type lambda sequence
-#' fit <- SLOPE(
-#'   abalone$x,
-#'   abalone$y,
-#'   family = "poisson",
-#'   lambda = "bh"
-#' )
-#'
 #' # Multinomial response, custom alpha and lambda
 #' m <- length(unique(wine$y))
 #' p <- ncol(wine$x)
