@@ -384,9 +384,7 @@ fit <- SLOPE(
   abalone$x,
   abalone$y,
   family = "poisson",
-  lambda = "oscar",
-  theta1 = 1,
-  theta2 = 0.9
+  lambda = "bh"
 )
 
 # Multinomial response, custom alpha and lambda
