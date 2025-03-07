@@ -1,7 +1,7 @@
 #include "multinomial.h"
 #include "../constants.h"
 #include "../math.h"
-#include "slope/utils.h"
+#include "../utils.h"
 #include <unordered_set>
 
 namespace slope {

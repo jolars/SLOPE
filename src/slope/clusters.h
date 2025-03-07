@@ -29,6 +29,14 @@ public:
    * @param i The index of the cluster.
    * @return An iterator pointing to the beginning of the cluster.
    */
+  std::size_t size() { return c.size(); }
+
+  /**
+   * @brief Returns an iterator pointing to the beginning of the cluster with
+   * the given index.
+   * @param i The index of the cluster.
+   * @return An iterator pointing to the beginning of the cluster.
+   */
   std::vector<int>::iterator begin(const int i);
 
   /**
@@ -120,6 +128,12 @@ public:
    * @param beta The beta vector.
    */
   void update(const Eigen::VectorXd& beta);
+
+  /**
+   * @brief Returns the clusters as a vector of vectors.
+   * @return The clusters as a vector of vectors.
+   */
+  std::vector<std::vector<int>> getClusters() const;
 
 private:
   std::vector<double> c;  /**< The coefficients of the clusters. */

@@ -47,8 +47,7 @@ Eigen::ArrayXd
 cumSum(const T& x)
 {
   std::vector<double> cum_sum(x.size());
-  std::partial_sum(
-    x.data(), x.data() + x.size(), cum_sum.begin(), std::plus<double>());
+  std::partial_sum(x.begin(), x.end(), cum_sum.begin(), std::plus<double>());
 
   Eigen::Map<Eigen::ArrayXd> out(cum_sum.data(), cum_sum.size());
 

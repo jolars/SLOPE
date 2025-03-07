@@ -25,6 +25,18 @@ namespace slope {
  *
  * This struct contains evaluation scores, parameters, and statistics for a
  * single hyperparameter configuration across all cross-validation folds.
+ *
+ * @param score Matrix of evaluation scores indexed by (fold, alpha) where each
+ * row represents a fold and each column represents an alpha value
+ * (regularization weight)
+ * @param params Map of hyperparameter names to their values for this
+ * configuration
+ * @param alphas Array of regularization parameters used in the regularization
+ * path
+ * @param mean_scores Array of scores averaged across all folds for each alpha
+ * value
+ * @param std_errors Array of standard errors of the scores across folds for
+ * each alpha value, useful for estimating score variability
  */
 struct GridResult
 {
@@ -42,6 +54,17 @@ struct GridResult
  * This struct aggregates results from cross-validation across multiple
  * hyperparameter combinations, including information about the optimal
  * configuration.
+ *
+ * @param results Vector of GridResult objects containing performance metrics
+ * for each hyperparameter configuration evaluated
+ * @param best_params Map of hyperparameter names to their optimal values based
+ * on the cross-validation results
+ * @param best_score The score achieved by the optimal hyperparameter
+ * configuration
+ * @param best_ind Index of the best performing configuration in the results
+ * vector
+ * @param best_alpha_ind Index of the optimal alpha value within the
+ * regularization path for the best configuration
  */
 struct CvResult
 {
@@ -59,14 +82,25 @@ struct CvResult
  * This struct specifies the parameters used to control the cross-validation
  * process, including fold count, evaluation metric, random seed, and
  * hyperparameter grid.
+ *
+ * @param n_folds Number of folds for cross-validation (default: 10)
+ * @param n_repeats Number of times to repeat the cross-validation (default: 1)
+ * @param metric Evaluation metric used for model assessment (default: "mse")
+ * @param random_seed Seed for random number generator to ensure reproducibility
+ * (default: 42)
+ * @param hyperparams Map of hyperparameter names to vectors of values to
+ * evaluate (default: {"q", {0.1}})
+ * @param predefined_folds Optional user-defined fold assignments for custom
+ * cross-validation splits
  */
 struct CvConfig
 {
   int n_folds = 10;
+  int n_repeats = 1;
   std::string metric = "mse";
   uint64_t random_seed = 42;
   std::map<std::string, std::vector<double>> hyperparams = { { "q", { 0.1 } } };
-  std::optional<std::vector<std::vector<int>>> predefined_folds;
+  std::optional<std::vector<std::vector<std::vector<int>>>> predefined_folds;
 };
 
 /**
@@ -137,9 +171,13 @@ crossValidate(Slope model,
   auto scorer = Score::create(config.metric);
   auto grid = createGrid(config.hyperparams);
 
-  Folds folds = config.predefined_folds.has_value()
-                  ? Folds(config.predefined_folds.value())
-                  : Folds(n, config.n_folds, config.random_seed);
+  // Total number of evaluations (n_repeats * n_folds)
+  Folds folds =
+    config.predefined_folds.has_value()
+      ? Folds(config.predefined_folds.value())
+      : Folds(n, config.n_folds, config.n_repeats, config.random_seed);
+
+  int n_evals = folds.numEvals();
 
   for (const auto& params : grid) {
     GridResult result;
@@ -148,34 +186,63 @@ crossValidate(Slope model,
 
     auto initial_path = model.path(x, y);
     result.alphas = initial_path.getAlpha();
+    int n_alpha = result.alphas.size();
 
     assert((result.alphas > 0).all());
 
-    Eigen::MatrixXd scores =
-      Eigen::MatrixXd::Zero(config.n_folds, result.alphas.size());
+    Eigen::MatrixXd scores = Eigen::MatrixXd::Zero(n_evals, n_alpha);
 
     Eigen::setNbThreads(1);
 
+    // Thread-safety for exceptions
+    std::vector<std::string> thread_errors(n_evals);
+    bool had_exception = false;
+
 #ifdef _OPENMP
     omp_set_max_active_levels(1);
-#pragma omp parallel for num_threads(Threads::get()) shared(scores)
+#pragma omp parallel for num_threads(Threads::get())                           \
+  shared(scores, thread_errors, had_exception)
 #endif
-    for (int i = 0; i < config.n_folds; ++i) {
-      Slope thread_model = model;
-      thread_model.setModifyX(true);
+    for (int i = 0; i < n_evals; ++i) {
+      try {
+        auto [rep, fold] = std::div(i, folds.numFolds());
 
-      // TODO: Maybe consider not copying at all?
-      auto [x_train, y_train, x_test, y_test] = folds.split(x, y, i);
-      auto path = thread_model.path(x_train, y_train, result.alphas);
+        Slope thread_model = model;
+        thread_model.setModifyX(true);
 
-      for (int j = 0; j < result.alphas.size(); ++j) {
-        auto eta = path(j).predict(x_test, "linear");
-        scores(i, j) = scorer->eval(eta, y_test, loss);
+        // TODO: Maybe consider not copying at all?
+        auto [x_train, y_train, x_test, y_test] = folds.split(x, y, fold, rep);
+
+        auto path = thread_model.path(x_train, y_train, result.alphas);
+
+        for (int j = 0; j < n_alpha; ++j) {
+          auto eta = path(j).predict(x_test, "linear");
+          scores(i, j) = scorer->eval(eta, y_test, loss);
+        }
+      } catch (const std::exception& e) {
+        thread_errors[i] = e.what();
+#pragma omp atomic write
+        had_exception = true;
+      } catch (...) {
+        thread_errors[i] = "Unknown exception";
+#pragma omp atomic write
+        had_exception = true;
       }
     }
 
+    if (had_exception) {
+      std::string error_message = "Exception(s) during cross-validation:\n";
+      for (int i = 0; i < n_evals; ++i) {
+        if (!thread_errors[i].empty()) {
+          error_message +=
+            "Fold " + std::to_string(i) + ": " + thread_errors[i] + "\n";
+        }
+      }
+      throw std::runtime_error(error_message);
+    }
+
     result.mean_scores = scores.colwise().mean();
-    result.std_errors = stdDevs(scores).array() / std::sqrt(config.n_folds);
+    result.std_errors = stdDevs(scores).array() / std::sqrt(n_evals);
     result.score = std::move(scores);
     cv_result.results.push_back(result);
   }

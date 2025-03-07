@@ -1,6 +1,6 @@
 #include "sorted_l1_norm.h"
-#include "slope/math.h"
-#include "slope/utils.h"
+#include "math.h"
+#include "utils.h"
 
 namespace slope {
 

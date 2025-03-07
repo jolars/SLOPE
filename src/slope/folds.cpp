@@ -5,19 +5,19 @@
 namespace slope {
 
 const std::vector<int>&
-Folds::getTestIndices(size_t fold_idx) const
+Folds::getTestIndices(size_t fold_idx, size_t rep_idx) const
 {
-  return folds[fold_idx];
+  return folds[rep_idx][fold_idx];
 }
 
 std::vector<int>
-Folds::getTrainingIndices(size_t fold_idx) const
+Folds::getTrainingIndices(size_t fold_idx, size_t rep_idx) const
 {
   std::vector<int> train_indices;
-  for (size_t i = 0; i < folds.size(); ++i) {
+  for (size_t i = 0; i < n_folds; ++i) {
     if (i != fold_idx) {
-      train_indices.insert(
-        train_indices.end(), folds[i].begin(), folds[i].end());
+      const auto& fold = folds[rep_idx][i];
+      train_indices.insert(train_indices.end(), fold.begin(), fold.end());
     }
   }
   return train_indices;

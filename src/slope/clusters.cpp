@@ -1,5 +1,5 @@
 #include "clusters.h"
-#include "slope/utils.h"
+#include "utils.h"
 
 namespace slope {
 
@@ -120,17 +120,21 @@ Clusters::update(const Eigen::VectorXd& beta)
     c_ind.emplace_back(sorted_i.second);
   }
 
+  // Extract unique coefficients while preserving order
   std::vector<sort_pair> sorted_unique;
-  std::unique_copy(sorted.begin(),
-                   sorted.end(),
-                   std::back_inserter(sorted_unique),
-                   [](const sort_pair& a, const sort_pair& b) -> bool {
-                     return a.first == b.first;
-                   });
+  sorted_unique.reserve(sorted.size()); // At most, all values could be unique
+
+  for (auto it = sorted.begin(); it != sorted.end();) {
+    const double current_value = it->first;
+    sorted_unique.emplace_back(*it);
+    it = std::find_if(it, sorted.end(), [current_value](const sort_pair& elem) {
+      return elem.first != current_value;
+    });
+  }
 
   c.reserve(sorted_unique.size());
   for (const auto& sorted_unique_i : sorted_unique) {
-    c.emplace_back(std::move(sorted_unique_i.first));
+    c.emplace_back(sorted_unique_i.first);
   }
 
   c_ptr.reserve(c.size() + 1);
@@ -138,15 +142,13 @@ Clusters::update(const Eigen::VectorXd& beta)
 
   auto range_start = sorted.begin();
   for (const auto& c_i : c) {
-    auto range_end = std::find_if(
-      std::next(range_start), sorted.end(), [&c_i](const sort_pair& x) -> bool {
+    auto range_end =
+      std::find_if(range_start, sorted.end(), [&c_i](const sort_pair& x) {
         return x.first != c_i;
       });
-    c_ptr.emplace_back(std::distance(range_start, range_end));
+    c_ptr.emplace_back(std::distance(sorted.begin(), range_end));
     range_start = range_end;
   }
-
-  std::partial_sum(c_ptr.cbegin(), c_ptr.cend(), c_ptr.begin());
 }
 
 void
@@ -202,6 +204,19 @@ Clusters::merge(const int old_index, const int new_index)
   }
 
   c_ptr.erase(c_ptr.begin() + old_index + 1);
+}
+
+std::vector<std::vector<int>>
+Clusters::getClusters() const
+{
+  std::vector<std::vector<int>> clusters;
+  clusters.reserve(n_clusters());
+
+  for (int i = 0; i < n_clusters(); ++i) {
+    clusters.emplace_back(cbegin(i), cend(i));
+  }
+
+  return clusters;
 }
 
 } // namespace slope

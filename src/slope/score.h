@@ -1,6 +1,6 @@
 #pragma once
 
-#include "slope/losses/loss.h"
+#include "losses/loss.h"
 #include <Eigen/Core>
 #include <memory>
 

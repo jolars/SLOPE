@@ -5,11 +5,9 @@
 
 #pragma once
 
+#include "../losses/loss.h"
+#include "../math.h"
 #include "../sorted_l1_norm.h"
-#include "math.h"
-#include "slope/clusters.h"
-#include "slope/losses/loss.h"
-#include "slope/math.h"
 #include "solver.h"
 #include <Eigen/Dense>
 #include <Eigen/SparseCore>
@@ -49,7 +47,6 @@ public:
   void run(Eigen::VectorXd& beta0,
            Eigen::VectorXd& beta,
            Eigen::MatrixXd& eta,
-           Clusters& clusters,
            const Eigen::ArrayXd& lambda,
            const std::unique_ptr<Loss>& loss,
            const SortedL1Norm& penalty,
@@ -64,7 +61,6 @@ public:
   void run(Eigen::VectorXd& beta0,
            Eigen::VectorXd& beta,
            Eigen::MatrixXd& eta,
-           Clusters& clusters,
            const Eigen::ArrayXd& lambda,
            const std::unique_ptr<Loss>& loss,
            const SortedL1Norm& penalty,
@@ -80,7 +76,6 @@ private:
   void runImpl(Eigen::VectorXd& beta0,
                Eigen::VectorXd& beta,
                Eigen::MatrixXd& eta,
-               Clusters&,
                const Eigen::ArrayXd& lambda,
                const std::unique_ptr<Loss>& loss,
                const SortedL1Norm& penalty,
@@ -107,6 +102,9 @@ private:
     Eigen::MatrixXd residual = loss->residual(eta, y);
     Eigen::VectorXd intercept_grad = residual.colwise().mean();
     Eigen::VectorXd grad_working = gradient(working_set);
+
+    int line_search_iter = 0;
+    const int max_line_search_iter = 100; // maximum iterations before exit
 
     while (true) {
       if (intercept) {
@@ -142,11 +140,16 @@ private:
       double g = loss->loss(eta, y);
       double q = g_old + beta_diff_norm;
 
-      if (q >= g * (1 - 1e-12)) {
+      if (q >= g * (1 - 1e-12) || this->learning_rate < 1e-12) {
         this->learning_rate *= 1.1;
         break;
       } else {
         this->learning_rate *= this->learning_rate_decr;
+      }
+
+      line_search_iter++;
+      if (line_search_iter >= max_line_search_iter) {
+        break;
       }
     }
 

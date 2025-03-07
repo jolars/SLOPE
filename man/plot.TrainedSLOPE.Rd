@@ -71,6 +71,7 @@ plot(tune, ci_col = "salmon")
 \code{\link[=trainSLOPE]{trainSLOPE()}}
 
 Other model-tuning: 
+\code{\link{cvSLOPE}()},
 \code{\link{trainSLOPE}()}
 }
 \concept{model-tuning}
