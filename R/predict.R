@@ -29,13 +29,15 @@
 #' fit <- with(mtcars, SLOPE(cbind(mpg, hp), vs, family = "binomial"))
 #' predict(fit, with(mtcars, cbind(mpg, hp)), type = "class")
 #' @export
-predict.SLOPE <- function(object,
-                          x,
-                          alpha = NULL,
-                          type = "link",
-                          simplify = TRUE,
-                          sigma,
-                          ...) {
+predict.SLOPE <- function(
+  object,
+  x,
+  alpha = NULL,
+  type = "link",
+  simplify = TRUE,
+  sigma,
+  ...
+) {
   # This method (the base method) only generates linear predictors
 
   if (inherits(x, "sparseMatrix")) {
@@ -71,7 +73,7 @@ predict.SLOPE <- function(object,
 
   for (i in seq_len(n_penalties)) {
     lp <- as.matrix(x %*% beta[[i]])
-    lin_pred[, , i] <- sweep(lp, 2, intercepts[[i]], "+")
+    lin_pred[,, i] <- sweep(lp, 2, intercepts[[i]], "+")
   }
 
   lin_pred
@@ -79,12 +81,14 @@ predict.SLOPE <- function(object,
 
 #' @rdname predict.SLOPE
 #' @export
-predict.GaussianSLOPE <- function(object,
-                                  x,
-                                  sigma = NULL,
-                                  type = c("link", "response"),
-                                  simplify = TRUE,
-                                  ...) {
+predict.GaussianSLOPE <- function(
+  object,
+  x,
+  sigma = NULL,
+  type = c("link", "response"),
+  simplify = TRUE,
+  ...
+) {
   type <- match.arg(type)
 
   out <- NextMethod(object, type = type) # always linear predictors
@@ -98,17 +102,20 @@ predict.GaussianSLOPE <- function(object,
 
 #' @rdname predict.SLOPE
 #' @export
-predict.BinomialSLOPE <- function(object,
-                                  x,
-                                  sigma = NULL,
-                                  type = c("link", "response", "class"),
-                                  simplify = TRUE,
-                                  ...) {
+predict.BinomialSLOPE <- function(
+  object,
+  x,
+  sigma = NULL,
+  type = c("link", "response", "class"),
+  simplify = TRUE,
+  ...
+) {
   type <- match.arg(type)
 
   lin_pred <- NextMethod(object, type = type)
 
-  out <- switch(type,
+  out <- switch(
+    type,
     link = lin_pred,
     response = 1 / (1 + exp(-lin_pred)),
     class = {
@@ -132,21 +139,20 @@ predict.BinomialSLOPE <- function(object,
 
 #' @rdname predict.SLOPE
 #' @export
-predict.PoissonSLOPE <- function(object,
-                                 x,
-                                 sigma = NULL,
-                                 type = c("link", "response"),
-                                 exact = FALSE,
-                                 simplify = TRUE,
-                                 ...) {
+predict.PoissonSLOPE <- function(
+  object,
+  x,
+  sigma = NULL,
+  type = c("link", "response"),
+  exact = FALSE,
+  simplify = TRUE,
+  ...
+) {
   type <- match.arg(type)
 
   lin_pred <- NextMethod(object, type = type)
 
-  out <- switch(type,
-    link = lin_pred,
-    response = exp(lin_pred)
-  )
+  out <- switch(type, link = lin_pred, response = exp(lin_pred))
 
   if (simplify) {
     out <- drop(out)
@@ -157,19 +163,22 @@ predict.PoissonSLOPE <- function(object,
 
 #' @export
 #' @rdname predict.SLOPE
-predict.MultinomialSLOPE <- function(object,
-                                     x,
-                                     sigma = NULL,
-                                     type = c("link", "response", "class"),
-                                     exact = FALSE,
-                                     simplify = TRUE,
-                                     ...) {
+predict.MultinomialSLOPE <- function(
+  object,
+  x,
+  sigma = NULL,
+  type = c("link", "response", "class"),
+  exact = FALSE,
+  simplify = TRUE,
+  ...
+) {
   type <- match.arg(type)
 
   lin_pred <- NextMethod(object, type = type, simplify = FALSE)
   m <- NCOL(lin_pred)
 
-  out <- switch(type,
+  out <- switch(
+    type,
     response = {
       n <- nrow(lin_pred)
       m <- ncol(lin_pred)

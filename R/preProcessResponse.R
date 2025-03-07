@@ -1,5 +1,6 @@
 preprocessResponse <- function(family, y, fit_intercept) {
-  switch(family,
+  switch(
+    family,
     gaussian = {
       y <- as.numeric(y)
 
@@ -62,7 +63,9 @@ preprocessResponse <- function(family, y, fit_intercept) {
       y_out <- as.numeric(y) - 1 # In libslope, classes are 0-indexed
 
       if (n_classes == 2) {
-        stop("only two classes in response. Are you looking for family = 'binomial'?")
+        stop(
+          "only two classes in response. Are you looking for family = 'binomial'?"
+        )
       }
 
       if (n_classes == 1) {

@@ -49,19 +49,21 @@
 #'   repeats = 5,
 #'   measure = "mse"
 #' )
-trainSLOPE <- function(x,
-                       y,
-                       q = 0.2,
-                       number = 10,
-                       repeats = 1,
-                       measure = c(
-                         "mse",
-                         "mae",
-                         "deviance",
-                         "misclass",
-                         "auc"
-                       ),
-                       ...) {
+trainSLOPE <- function(
+  x,
+  y,
+  q = 0.2,
+  number = 10,
+  repeats = 1,
+  measure = c(
+    "mse",
+    "mae",
+    "deviance",
+    "misclass",
+    "auc"
+  ),
+  ...
+) {
   ocall <- match.call()
 
   if ("missclass" %in% measure) {
@@ -92,7 +94,8 @@ trainSLOPE <- function(x,
   # match measure against accepted measure for the given family
   family <- fit$family
 
-  ok <- switch(family,
+  ok <- switch(
+    family,
     gaussian = c("mse", "mae"),
     binomial = c("mse", "mae", "deviance", "misclass", "auc"),
     poisson = c("mse", "mae"),
@@ -103,7 +106,8 @@ trainSLOPE <- function(x,
 
   if (length(measure) == 0) {
     stop(paste0(
-      "For the given family: ", family,
+      "For the given family: ",
+      family,
       ", measure needs to be one of: ",
       paste0(ok, collapse = ", ")
     ))
@@ -116,13 +120,15 @@ trainSLOPE <- function(x,
 
   fold_size <- ceiling(n / number)
 
-
   # list of repeated folds
-  fold_id <- rep(list(matrix(
-    c(sample(n), rep(0, number * fold_size - n)),
-    fold_size,
-    byrow = TRUE
-  )), repeats)
+  fold_id <- rep(
+    list(matrix(
+      c(sample(n), rep(0, number * fold_size - n)),
+      fold_size,
+      byrow = TRUE
+    )),
+    repeats
+  )
 
   grid <- expand.grid(
     q = q,
@@ -137,35 +143,39 @@ trainSLOPE <- function(x,
 
   i <- 1 # fixes R CMD check NOTE
 
-  r <- foreach(i = seq_len(nrow(grid)), .packages = c("SLOPE")) %dopar% {
-    id <- grid[["fold"]][i]
-    repetition <- grid[["repetition"]][i]
-    q <- grid[["q"]][i]
+  r <- foreach(i = seq_len(nrow(grid)), .packages = c("SLOPE")) %dopar%
+    {
+      id <- grid[["fold"]][i]
+      repetition <- grid[["repetition"]][i]
+      q <- grid[["q"]][i]
 
-    test_ind <- fold_id[[repetition]][, id]
+      test_ind <- fold_id[[repetition]][, id]
 
-    x_train <- x[-test_ind, , drop = FALSE]
-    y_train <- y[-test_ind, , drop = FALSE]
-    x_test <- x[test_ind, , drop = FALSE]
-    y_test <- y[test_ind, , drop = FALSE]
+      x_train <- x[-test_ind, , drop = FALSE]
+      y_train <- y[-test_ind, , drop = FALSE]
+      x_test <- x[test_ind, , drop = FALSE]
+      y_test <- y[test_ind, , drop = FALSE]
 
-    # arguments for SLOPE
-    args <- utils::modifyList(list(
-      x = x_train,
-      y = y_train,
-      q = q,
-      alpha = alpha
-    ), list(...))
+      # arguments for SLOPE
+      args <- utils::modifyList(
+        list(
+          x = x_train,
+          y = y_train,
+          q = q,
+          alpha = alpha
+        ),
+        list(...)
+      )
 
-    # fitting model
-    fit_id <- do.call(SLOPE::SLOPE, args)
+      # fitting model
+      fit_id <- do.call(SLOPE::SLOPE, args)
 
-    s <- lapply(measure, function(m) {
-      SLOPE::score(fit_id, x_test, y_test, measure = m)
-    })
+      s <- lapply(measure, function(m) {
+        SLOPE::score(fit_id, x_test, y_test, measure = m)
+      })
 
-    unlist(s)
-  }
+      unlist(s)
+    }
   tmp <- array(unlist(r), c(path_length * n_q, n_measure, number * repeats))
   d <- matrix(tmp, c(path_length * n_q * n_measure, number * repeats))
 
@@ -200,26 +210,31 @@ trainSLOPE <- function(x,
     )
   )
 
-  labels <- vapply(measure, function(m) {
-    switch(m,
-      deviance = {
-        if (inherits(fit, "GaussianSLOPE")) {
-          "Mean-Squared Error"
-        } else if (inherits(fit, "BinomialSLOPE")) {
-          "Binomial Deviance"
-        } else if (inherits(fit, "PoissonSLOPE")) {
-          "Mean-Squared Error"
-        } else if (inherits(fit, "MultinomialSLOPE")) {
-          "Multinomial Deviance"
-        }
-      },
-      mse = "Mean Squared Error",
-      mae = "Mean Absolute Error",
-      accuracy = "Accuracy",
-      auc = "AUC",
-      misclass = "Misclassification Rate"
-    )
-  }, FUN.VALUE = character(1))
+  labels <- vapply(
+    measure,
+    function(m) {
+      switch(
+        m,
+        deviance = {
+          if (inherits(fit, "GaussianSLOPE")) {
+            "Mean-Squared Error"
+          } else if (inherits(fit, "BinomialSLOPE")) {
+            "Binomial Deviance"
+          } else if (inherits(fit, "PoissonSLOPE")) {
+            "Mean-Squared Error"
+          } else if (inherits(fit, "MultinomialSLOPE")) {
+            "Multinomial Deviance"
+          }
+        },
+        mse = "Mean Squared Error",
+        mae = "Mean Absolute Error",
+        accuracy = "Accuracy",
+        auc = "AUC",
+        misclass = "Misclassification Rate"
+      )
+    },
+    FUN.VALUE = character(1)
+  )
 
   rownames(summary) <- NULL
   rownames(optima) <- NULL

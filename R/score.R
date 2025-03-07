@@ -30,16 +30,14 @@ score <- function(object, x, y, measure) {
 
 #' @rdname score
 #' @export
-score.GaussianSLOPE <- function(object,
-                                x,
-                                y,
-                                measure = c("mse", "mae")) {
+score.GaussianSLOPE <- function(object, x, y, measure = c("mse", "mae")) {
   measure <- match.arg(measure)
 
   y <- as.vector(y)
   y_hat <- stats::predict(object, x, simplify = FALSE)
 
-  switch(measure,
+  switch(
+    measure,
     mse = apply((y_hat - y)^2, 3, mean),
     mae = apply(abs(y_hat - y), 3, mean)
   )
@@ -47,16 +45,18 @@ score.GaussianSLOPE <- function(object,
 
 #' @rdname score
 #' @export
-score.BinomialSLOPE <- function(object,
-                                x,
-                                y,
-                                measure = c(
-                                  "mse",
-                                  "mae",
-                                  "deviance",
-                                  "misclass",
-                                  "auc"
-                                )) {
+score.BinomialSLOPE <- function(
+  object,
+  x,
+  y,
+  measure = c(
+    "mse",
+    "mae",
+    "deviance",
+    "misclass",
+    "auc"
+  )
+) {
   measure <- match.arg(measure)
 
   prob_min <- 1e-05
@@ -67,7 +67,8 @@ score.BinomialSLOPE <- function(object,
 
   y_hat <- stats::predict(object, x, type = "response", simplify = FALSE)
 
-  switch(measure,
+  switch(
+    measure,
     auc = apply(y_hat, 3, function(y_hat_i) auc(y, y_hat_i)),
     mse = apply((y_hat + y[, 1] - 1)^2 + (y_hat - y[, 2])^2, 3, mean),
     mae = apply(abs(y_hat + y[, 1] - 1) + abs(y_hat - y[, 2]), 3, mean),
@@ -85,15 +86,17 @@ score.BinomialSLOPE <- function(object,
 
 #' @rdname score
 #' @export
-score.MultinomialSLOPE <- function(object,
-                                   x,
-                                   y,
-                                   measure = c(
-                                     "mse",
-                                     "mae",
-                                     "deviance",
-                                     "misclass"
-                                   )) {
+score.MultinomialSLOPE <- function(
+  object,
+  x,
+  y,
+  measure = c(
+    "mse",
+    "mae",
+    "deviance",
+    "misclass"
+  )
+) {
   measure <- match.arg(measure)
   prob_min <- 1e-05
   prob_max <- 1 - prob_min
@@ -107,7 +110,8 @@ score.MultinomialSLOPE <- function(object,
 
   y <- diag(n_levels)[as.numeric(y), ]
 
-  switch(measure,
+  switch(
+    measure,
     mse = apply(y_hat, 3, function(x) mean((x - y)^2)),
     mae = apply(y_hat, 3, function(x) mean(abs(x - y))),
     deviance = {
@@ -129,16 +133,14 @@ score.MultinomialSLOPE <- function(object,
 
 #' @rdname score
 #' @export
-score.PoissonSLOPE <- function(object,
-                               x,
-                               y,
-                               measure = c("mse", "mae")) {
+score.PoissonSLOPE <- function(object, x, y, measure = c("mse", "mae")) {
   measure <- match.arg(measure)
 
   y <- as.vector(y)
   y_hat <- stats::predict(object, x, simplify = FALSE)
 
-  switch(measure,
+  switch(
+    measure,
     mse = apply((y_hat - y)^2, 3, mean),
     mae = apply(abs(y_hat - y), 3, mean)
   )

@@ -20,14 +20,16 @@
 #' @examples
 #' fit <- SLOPE(heart$x, heart$y)
 #' plot(fit)
-plot.SLOPE <- function(x,
-                       intercept = FALSE,
-                       x_variable = c(
-                         "alpha",
-                         "deviance_ratio",
-                         "step"
-                       ),
-                       ...) {
+plot.SLOPE <- function(
+  x,
+  intercept = FALSE,
+  x_variable = c(
+    "alpha",
+    "deviance_ratio",
+    "step"
+  ),
+  ...
+) {
   object <- x
 
   x_variable <- match.arg(x_variable)
@@ -38,13 +40,15 @@ plot.SLOPE <- function(x,
 
   m <- NCOL(coefs[[1L]]) # number of responses
 
-  x <- switch(x_variable,
+  x <- switch(
+    x_variable,
     alpha = object[["alpha"]],
     deviance_ratio = object[["deviance_ratio"]],
     step = seq_along(object[["alpha"]])
   )
 
-  xlab <- switch(x_variable,
+  xlab <- switch(
+    x_variable,
     alpha = expression(alpha),
     deviance_ratio = "Fraction Deviance Explained",
     step = "Step"
@@ -129,31 +133,34 @@ plot_coefs <- function(x, coefs, xlab, xlim, log_var = "x", ...) {
 #'   number = 10
 #' )
 #' plot(tune, ci_col = "salmon")
-plot.TrainedSLOPE <- function(x,
-                              measure = c(
-                                "auto",
-                                "mse",
-                                "mae",
-                                "deviance",
-                                "auc",
-                                "misclass"
-                              ),
-                              plot_min = TRUE,
-                              ci_alpha = 0.2,
-                              ci_border = NA,
-                              ci_col = "salmon",
-                              plot_args = list(),
-                              polygon_args = list(),
-                              lines_args = list(),
-                              abline_args = list(),
-                              ...) {
+plot.TrainedSLOPE <- function(
+  x,
+  measure = c(
+    "auto",
+    "mse",
+    "mae",
+    "deviance",
+    "auc",
+    "misclass"
+  ),
+  plot_min = TRUE,
+  ci_alpha = 0.2,
+  ci_border = NA,
+  ci_col = "salmon",
+  plot_args = list(),
+  polygon_args = list(),
+  lines_args = list(),
+  abline_args = list(),
+  ...
+) {
   object <- x
   family <- object[["model"]][["family"]]
 
   measure <- match.arg(measure)
 
   if (measure == "auto") {
-    measure <- switch(family,
+    measure <- switch(
+      family,
       gaussian = "mse",
       binomial = "deviance",
       multinomial = "deviance",

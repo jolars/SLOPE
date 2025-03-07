@@ -25,13 +25,15 @@
 #' @examples
 #' fit <- SLOPE(mtcars$mpg, mtcars$vs, path_length = 10)
 #' coef(fit)
-coef.SLOPE <- function(object,
-                       alpha = NULL,
-                       exact = FALSE,
-                       simplify = TRUE,
-                       intercept = TRUE,
-                       sigma,
-                       ...) {
+coef.SLOPE <- function(
+  object,
+  alpha = NULL,
+  exact = FALSE,
+  simplify = TRUE,
+  intercept = TRUE,
+  sigma,
+  ...
+) {
   if (!missing(sigma)) {
     warning("`sigma` is deprecated. Please use `alpha` instead.")
     alpha <- sigma

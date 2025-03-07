@@ -7,9 +7,7 @@
 #' @return A matrix (or list of matrices) with new coefficients based
 #'   on linearly interpolating from new and old lambda values.
 #' @keywords internal
-interpolateCoefficients <- function(beta,
-                                    intercepts,
-                                    interpolation_list) {
+interpolateCoefficients <- function(beta, intercepts, interpolation_list) {
   d <- length(interpolation_list$frac)
 
   ip_beta <- vector("list", d)

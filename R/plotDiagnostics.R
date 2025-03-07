@@ -20,9 +20,10 @@
 #' x <- SLOPE(abalone$x, abalone$y, diagnostics = TRUE)
 #' plotDiagnostics(x)
 plotDiagnostics <- function(
-    object,
-    ind = max(object$diagnostics$penalty),
-    xvar = c("time", "iteration")) {
+  object,
+  ind = max(object$diagnostics$penalty),
+  xvar = c("time", "iteration")
+) {
   stopifnot(
     inherits(object, "SLOPE"),
     is.numeric(ind),

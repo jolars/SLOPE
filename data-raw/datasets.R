@@ -110,14 +110,16 @@ colnames(x) <- c(
 x2 <- x %>%
   mutate(
     sex = factor(sex, labels = c("male", "female")),
-    cp = factor(chest_pain,
+    cp = factor(
+      chest_pain,
       levels = c(4, 1, 2, 3),
       labels = c("asymtompatic", "typical", "atypical", "nonanginal")
     ),
     ecg = factor(ecg, labels = c("normal", "abnormal", "estes")),
     angina = as.factor(angina),
     glucose = factor(glucose, labels = c("low", "high")),
-    slope = factor(slope,
+    slope = factor(
+      slope,
       levels = c(1, 2, 3),
       labels = c("upsloping", "flat", "downsloping")
     ),
@@ -126,7 +128,8 @@ x2 <- x %>%
 
 x3 <- model.matrix(~., x2) %>%
   as.data.frame() %>%
-  select(age,
+  select(
+    age,
     bp,
     chol,
     hr,
@@ -193,7 +196,9 @@ d1 <-
   read.table(file.path(tmp_dir, "student-mat.csv"), sep = ";", header = TRUE)
 d2 <-
   read.table(file.path(tmp_dir, "student-por.csv"), sep = ";", header = TRUE)
-d3 <- merge(d1, d2,
+d3 <- merge(
+  d1,
+  d2,
   by = c(
     "school",
     "sex",
@@ -212,7 +217,8 @@ d3 <- merge(d1, d2,
   suffixes = c("_math", "_port")
 )
 y <- with(d3, cbind(G3_math, G3_port))
-x1 <- subset(d3,
+x1 <- subset(
+  d3,
   select = c(
     "school",
     "sex",

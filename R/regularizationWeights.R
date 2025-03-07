@@ -56,12 +56,14 @@
 #'   col = c("black", "dark orange", "navy", "red3"),
 #'   lty = 1
 #' )
-regularizationWeights <- function(n_lambda = 100,
-                                  type = c("bh", "gaussian", "oscar", "lasso"),
-                                  q = 0.2,
-                                  theta1 = 1,
-                                  theta2 = 0.5,
-                                  n = NULL) {
+regularizationWeights <- function(
+  n_lambda = 100,
+  type = c("bh", "gaussian", "oscar", "lasso"),
+  q = 0.2,
+  theta1 = 1,
+  theta2 = 0.5,
+  n = NULL
+) {
   stopifnot(
     is.numeric(n_lambda),
     is.numeric(q),
