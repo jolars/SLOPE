@@ -35,3 +35,4 @@
 ^Meta$
 ^_libs$
 ^patches$
+^air.toml$
