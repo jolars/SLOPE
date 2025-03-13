@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "slope/slope_fit.h"
+#include "slope_fit.h"
 #include <Eigen/Dense>
 #include <Eigen/SparseCore>
 
@@ -101,6 +101,26 @@ public:
     }
 
     return coefs;
+  }
+
+  /**
+   * @brief Returns the clusters for each solution in the path.
+   *
+   * @return std::vector<std::vector<std::vector<int>>> Reference to the
+   * vector of clusters
+   *
+   * Each element in the returned vector is a sparse matrix containing the model
+   * coefficients for a particular solution in the regularization path.
+   */
+  std::vector<std::vector<std::vector<int>>> getClusters() const
+  {
+    std::vector<std::vector<std::vector<int>>> clusters;
+
+    for (const auto& fit : fits) {
+      clusters.emplace_back(fit.getClusters());
+    }
+
+    return clusters;
   }
 
   /**

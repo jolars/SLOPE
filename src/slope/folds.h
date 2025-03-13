@@ -26,66 +26,108 @@ class Folds
 {
 public:
   /**
-   * @brief Constructor for generating random folds
+   * @brief Default constructor
+   *
+   * Creates an empty Folds object that can be assigned to later.
+   */
+  Folds()
+    : n_folds(0)
+    , n_repeats(0)
+  {
+  }
+
+  /**
+   * @brief Constructor for generating random folds with optional repetitions
    *
    * @param n_samples Total number of samples in the dataset
    * @param n_folds Number of folds to create
+   * @param n_repeats Number of repetitions (default: 1)
    * @param seed Random seed for reproducibility
    *
-   * Creates a k-fold partition by randomly assigning samples to folds.
+   * Creates k-fold partitions by randomly assigning samples to folds.
+   * When n_repeats > 1, multiple sets of folds are created with different
+   * random seeds.
    */
-  Folds(int n_samples, int n_folds, uint64_t seed = 42)
-    : folds(createFolds(n_samples, n_folds, seed))
-    , n_folds(n_folds)
+  Folds(int n_samples, int n_folds, int n_repeats = 1, uint64_t seed = 42)
+    : n_folds(n_folds)
+    , n_repeats(n_repeats)
   {
+    folds.resize(n_repeats);
+    for (int rep = 0; rep < n_repeats; ++rep) {
+      // Use a different seed for each repetition
+      uint64_t rep_seed = seed + rep;
+      folds[rep] = createFolds(n_samples, n_folds, rep_seed);
+    }
   }
 
   /**
    * @brief Constructor for user-provided folds
    *
-   * @param folds Vector of vectors containing indices for each fold
+   * @param user_folds Vector of vectors containing indices for each fold
    *
    * Uses the provided fold assignments instead of creating random folds.
    */
-  explicit Folds(std::vector<std::vector<int>> folds)
-    : folds(std::move(folds))
-    , n_folds(folds.size())
+  explicit Folds(const std::vector<std::vector<int>>& user_folds)
+    : n_folds(user_folds.size())
+    , n_repeats(1)
+  {
+    folds.emplace_back(user_folds);
+  }
+
+  /**
+   * @brief Constructor for user-provided repeated folds
+   *
+   * @param user_folds Vector of fold sets for multiple repetitions
+   */
+  explicit Folds(const std::vector<std::vector<std::vector<int>>>& user_folds)
+    : folds(user_folds)
+    , n_folds(user_folds[0].size())
+    , n_repeats(user_folds.size())
   {
   }
 
   /**
-   * @brief Get test indices for a specific fold
+   * @brief Get test indices for a specific fold and repetition
    *
    * @param fold_idx Index of the fold to use as test set
+   * @param rep_idx Index of the repetition (default: 0)
    * @return const std::vector<int>& Reference to the vector of test indices
    */
-  const std::vector<int>& getTestIndices(size_t fold_idx) const;
+  const std::vector<int>& getTestIndices(size_t fold_idx,
+                                         size_t rep_idx = 0) const;
 
   /**
-   * @brief Get training indices for a specific fold
+   * @brief Get training indices for a specific fold and repetition
    *
    * @param fold_idx Index of the fold to exclude from training
+   * @param rep_idx Index of the repetition (default: 0)
    * @return std::vector<int> Vector containing all indices except those in the
    * specified fold
    */
-  std::vector<int> getTrainingIndices(size_t fold_idx) const;
+  std::vector<int> getTrainingIndices(size_t fold_idx,
+                                      size_t rep_idx = 0) const;
 
   /**
-   * @brief Split data into training and test sets for a specific fold
+   * @brief Split data into training and test sets for a specific fold and
+   * repetition
    *
    * @tparam MatrixType Type of design matrix (supports both dense and sparse
    * matrices)
    * @param x Input feature matrix
    * @param y Response matrix
    * @param fold_idx Index of the fold to use as test set
+   * @param rep_idx Index of the repetition (default: 0)
    * @return std::tuple containing (x_train, y_train, x_test, y_test)
    */
   template<typename MatrixType>
-  std::tuple<MatrixType, Eigen::MatrixXd, MatrixType, Eigen::MatrixXd>
-  split(MatrixType& x, const Eigen::MatrixXd& y, size_t fold_idx) const
+  std::tuple<MatrixType, Eigen::MatrixXd, MatrixType, Eigen::MatrixXd> split(
+    MatrixType& x,
+    const Eigen::MatrixXd& y,
+    size_t fold_idx,
+    size_t rep_idx = 0) const
   {
-    auto test_idx = getTestIndices(fold_idx);
-    auto train_idx = getTrainingIndices(fold_idx);
+    auto test_idx = getTestIndices(fold_idx, rep_idx);
+    auto train_idx = getTrainingIndices(fold_idx, rep_idx);
 
     MatrixType x_test = subset(x, test_idx);
     Eigen::MatrixXd y_test = y(test_idx, Eigen::all);
@@ -103,11 +145,26 @@ public:
    */
   size_t numFolds() const { return n_folds; }
 
-private:
-  std::vector<std::vector<int>>
-    folds;             ///< Vector of vectors containing indices for each fold
-  std::size_t n_folds; ///< Number of folds
+  /**
+   * @brief Get the number of repetitions
+   *
+   * @return size_t Number of repetitions
+   */
+  size_t numRepetitions() const { return n_repeats; }
 
+  /**
+   * @brief Get the total number of folds (repetitions * folds)
+   *
+   * @return size_t Number of evaluations
+   */
+  size_t numEvals() const { return n_repeats * n_folds; }
+
+  std::vector<std::vector<std::vector<int>>>
+    folds;               ///< Indices for each fold in each repetition
+  std::size_t n_folds;   ///< Number of folds
+  std::size_t n_repeats; ///< Number of repetitions
+
+private:
   /**
    * @brief Create random folds for cross-validation
    *

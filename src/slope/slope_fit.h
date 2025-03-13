@@ -1,8 +1,8 @@
 #pragma once
 
-#include "slope/losses/setup_loss.h"
-#include "slope/normalize.h"
-#include "slope/utils.h"
+#include "losses/setup_loss.h"
+#include "normalize.h"
+#include "utils.h"
 #include <Eigen/Dense>
 #include <Eigen/SparseCore>
 #include <memory>
@@ -14,14 +14,17 @@ namespace slope {
  * Estimation) fitting.
  *
  * This class stores the results of a SLOPE regression, including coefficients,
- * intercepts, regularization parameters, and optimization metrics.
+ * intercepts, clusters (if required), regularization parameters, and
+ * optimization metrics.
  */
 class SlopeFit
 {
 private:
   Eigen::VectorXd intercepts;        ///< Vector of intercept terms
   Eigen::SparseMatrix<double> coefs; ///< Sparse matrix of fitted coefficients
-  double alpha;                      ///< Scaling of lambda sequence
+  std::vector<std::vector<int>>
+    clusters;            ///< Indices of coefficients in each cluster
+  double alpha;          ///< Scaling of lambda sequence
   Eigen::ArrayXd lambda; ///< Regularization weights for the sorted L1 norm
   double deviance;       ///< Final model deviance
   double null_deviance;  ///< Null (or intercept-only) model deviance
@@ -44,6 +47,7 @@ public:
    *
    * @param intercepts Vector of intercept terms
    * @param coefs Matrix of fitted coefficients
+   * @param clusters Clusters of coefficients
    * @param alpha Mixing parameter between L1 and SLOPE norms
    * @param lambda Sequence of decreasing weights
    * @param deviance Final model deviance
@@ -58,6 +62,7 @@ public:
    */
   SlopeFit(const Eigen::VectorXd& intercepts,
            const Eigen::SparseMatrix<double>& coefs,
+           const std::vector<std::vector<int>>& clusters,
            const double alpha,
            const Eigen::ArrayXd& lambda,
            const double deviance,
@@ -70,6 +75,7 @@ public:
            const std::string& scaling_type)
     : intercepts{ intercepts }
     , coefs{ coefs }
+    , clusters{ clusters }
     , alpha{ alpha }
     , lambda{ lambda }
     , deviance{ deviance }
@@ -92,6 +98,11 @@ public:
    * @brief Gets the sparse coefficient matrix for this fit
    */
   const Eigen::SparseMatrix<double>& getCoefs() const { return coefs; }
+
+  /**
+   * @brief Gets the clusters
+   */
+  const std::vector<std::vector<int>>& getClusters() const { return clusters; }
 
   /**
    * @brief Gets the lambda (regularization) parameter used

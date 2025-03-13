@@ -6,11 +6,11 @@
 
 #pragma once
 
+#include "../clusters.h"
+#include "../losses/loss.h"
+#include "../sorted_l1_norm.h"
 #include "hybrid_cd.h"
 #include "pgd.h"
-#include "slope/clusters.h"
-#include "slope/losses/loss.h"
-#include "slope/sorted_l1_norm.h"
 #include "solver.h"
 #include <memory>
 
@@ -57,7 +57,6 @@ public:
   void run(Eigen::VectorXd& beta0,
            Eigen::VectorXd& beta,
            Eigen::MatrixXd& eta,
-           Clusters& clusters,
            const Eigen::ArrayXd& lambda,
            const std::unique_ptr<Loss>& loss,
            const SortedL1Norm& penalty,
@@ -72,7 +71,6 @@ public:
   void run(Eigen::VectorXd& beta0,
            Eigen::VectorXd& beta,
            Eigen::MatrixXd& eta,
-           Clusters& clusters,
            const Eigen::ArrayXd& lambda,
            const std::unique_ptr<Loss>& loss,
            const SortedL1Norm& penalty,
@@ -91,7 +89,6 @@ private:
    * @param beta0 Intercept term (scalar)
    * @param beta Coefficients
    * @param eta Linear predictor
-   * @param clusters Coefficient clustering information
    * @param loss Pointer to the loss function
    * @param penalty SLOPE penalty object
    * @param x Design matrix
@@ -103,7 +100,6 @@ private:
   void runImpl(Eigen::VectorXd& beta0,
                Eigen::VectorXd& beta,
                Eigen::MatrixXd& eta,
-               Clusters& clusters,
                const Eigen::ArrayXd& lambda,
                const std::unique_ptr<Loss>& loss,
                const SortedL1Norm& penalty,
@@ -125,7 +121,6 @@ private:
     pgd_solver.run(beta0,
                    beta,
                    eta,
-                   clusters,
                    lambda,
                    loss,
                    penalty,
@@ -136,7 +131,7 @@ private:
                    x_scales,
                    y);
 
-    clusters.update(beta);
+    Clusters clusters(beta);
 
     VectorXd w = VectorXd::Ones(n);
     VectorXd z = y;

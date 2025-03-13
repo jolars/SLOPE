@@ -7,10 +7,13 @@ SOURCES = \
     RcppExports.cpp \
     r-exports.cpp \
     rcppSLOPE.cpp \
+    setup_model.cpp \
+    rcpp_cv.cpp \
     slope/clusters.cpp \
     slope/cv.cpp \
     slope/folds.cpp \
     slope/kkt_check.cpp \
+    slope/logger.cpp \
     slope/losses/logistic.cpp \
     slope/losses/multinomial.cpp \
     slope/losses/poisson.cpp \

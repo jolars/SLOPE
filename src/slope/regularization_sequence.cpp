@@ -1,6 +1,6 @@
 #include "regularization_sequence.h"
+#include "math.h"
 #include "qnorm.h"
-#include "slope/math.h"
 #include "utils.h"
 #include <cassert>
 

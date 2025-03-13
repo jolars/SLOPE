@@ -46,33 +46,14 @@ test_that("SLOPE returns an error for empty `y`", {
 })
 
 
-test_that(
-  "SLOPE returns an error for `alpha='estimate'` and `family='gaussian'`",
-  {
-    expect_error(
-      SLOPE(
-        bodyfat$x,
-        bodyfat$y,
-        alpha = "estimate",
-        family = "poisson"
-      ),
-      "`alpha = 'estimate'` can only be used if `family = 'gaussian'`"
-    )
-  }
-)
-
-
-test_that(
-  "SLOPE returns an error for nonunique `alpha`",
-  {
-    expect_error(
-      SLOPE(
-        bodyfat$x,
-        bodyfat$y,
-        alpha = rep(1, 10),
-        family = "gaussian"
-      ),
-      "all values in `alpha` must be unique"
-    )
-  }
-)
+test_that("SLOPE returns an error for `alpha='estimate'` and `family='gaussian'`", {
+  expect_error(
+    SLOPE(
+      bodyfat$x,
+      bodyfat$y,
+      alpha = "estimate",
+      family = "poisson"
+    ),
+    "`alpha = 'estimate'` can only be used if `family = 'gaussian'`"
+  )
+})

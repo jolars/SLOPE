@@ -5,6 +5,16 @@ estimateNoise <- function(x, y, intercept = TRUE) {
 
   stopifnot(n > p)
 
-  fit <- stats::lm.fit(x, y)
+  # TODO: Don't do this
+  if (intercept) {
+    x <- cbind(1, x)
+  }
+
+  if (intercept) {
+    fit <- stats::lm(y ~ x)
+  } else {
+    fit <- stats::lm(y ~ x - 1)
+  }
+
   sqrt(sum(fit$residuals^2) / (n - p + intercept))
 }

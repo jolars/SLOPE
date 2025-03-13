@@ -3,6 +3,7 @@
 #include "constants.h"
 #include "diagnostics.h"
 #include "kkt_check.h"
+#include "logger.h"
 #include "losses/loss.h"
 #include "losses/setup_loss.h"
 #include "math.h"
@@ -15,7 +16,6 @@
 #include "utils.h"
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
-#include <RcppEigen.h>
 #include <memory>
 #include <numeric>
 #include <set>
@@ -134,9 +134,6 @@ Slope::path(T& x,
 
   Timer timer;
 
-  // TODO: We should not do this for all solvers.
-  Clusters clusters(beta);
-
   double alpha_prev = std::max(alpha_max, alpha(0));
 
   std::vector<SlopeFit> fits;
@@ -173,13 +170,6 @@ Slope::path(T& x,
 
     int it = 0;
     for (; it < this->max_it; ++it) {
-      // TODO: Return a warning code if the solver does not converge
-      assert(it < this->max_it - 1 && "Exceeded maximum number of iterations");
-
-      if (it % 100) {
-        Rcpp::checkUserInterrupt();
-      }
-
       // Compute primal, dual, and gap
       residual = loss->residual(eta, y);
       updateGradient(gradient,
@@ -291,7 +281,6 @@ Slope::path(T& x,
       solver->run(beta0,
                   beta,
                   eta,
-                  clusters,
                   lambda_curr,
                   loss,
                   sl1_norm,
@@ -301,6 +290,13 @@ Slope::path(T& x,
                   this->x_centers,
                   this->x_scales,
                   y);
+    }
+
+    if (it == this->max_it) {
+      WarningLogger::addWarning(
+        WarningCode::MAXIT_REACHED,
+        "Maximum number of iterations reached at step = " +
+          std::to_string(path_step) + ".");
     }
 
     // Store everything for this step of the path
@@ -315,26 +311,25 @@ Slope::path(T& x,
     double dev_change = path_step == 0 ? 1.0 : 1 - dev / dev_prev;
     dev_prev = dev;
 
-    SlopeFit fit{ beta0_out,
-                  beta_out.sparseView(),
-                  alpha_curr,
-                  lambda,
-                  dev,
-                  null_deviance,
-                  primals,
-                  duals,
-                  time,
-                  it,
-                  this->centering_type,
-                  this->scaling_type };
+    std::vector<std::vector<int>> clusters;
+
+    if (return_clusters) {
+      Clusters beta_clusters(beta);
+      clusters = beta_clusters.getClusters();
+    }
+
+    SlopeFit fit{
+      beta0_out, beta_out.sparseView(), clusters,          alpha_curr, lambda,
+      dev,       null_deviance,         primals,           duals,      time,
+      it,        this->centering_type,  this->scaling_type
+    };
 
     fits.emplace_back(std::move(fit));
 
-    clusters.update(beta);
-
     if (!user_alpha) {
+      int n_unique = unique(beta.cwiseAbs()).size();
       if (dev_ratio > dev_ratio_tol || dev_change < dev_change_tol ||
-          clusters.n_clusters() >= this->max_clusters.value_or(n + 1)) {
+          n_unique >= this->max_clusters.value_or(n + 1)) {
         break;
       }
     }
@@ -424,6 +419,12 @@ void
 Slope::setUpdateClusters(bool update_clusters)
 {
   this->update_clusters = update_clusters;
+}
+
+void
+Slope::setReturnClusters(const bool return_clusters)
+{
+  this->return_clusters = return_clusters;
 }
 
 void

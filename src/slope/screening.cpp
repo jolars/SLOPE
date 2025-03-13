@@ -1,5 +1,5 @@
 #include "screening.h"
-#include "slope/utils.h"
+#include "utils.h"
 #include <Eigen/Core>
 
 namespace slope {

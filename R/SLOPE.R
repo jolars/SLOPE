@@ -412,206 +412,44 @@ SLOPE <- function(
     )
   }
 
-  ocall <- match.call()
-
-  family <- match.arg(family)
-  solver <- match.arg(solver)
-
-  if (solver == "admm") {
-    stop("The ADMM solver has been removed; setting `solver` to `'auto'`")
-    solver <- "auto"
-  }
-
   n <- NROW(x)
   p <- NCOL(x)
 
-  centers <- double(0)
-  scales <- double(0)
+  ocall <- match.call()
 
-  if (is.character(scale)) {
-    scale <- match.arg(scale)
-  } else if (is.logical(scale) && length(scale) == 1L) {
-    scale <- if (scale) "sd" else "none"
-  } else if (length(scale) == p && is.numeric(scale)) {
-    scales <- scale
-    scale <- "manual"
-  } else {
-    stop("`scale` must be logical, a character, or a numeric of length ncol(x)")
-  }
-
-  if (is.character(center)) {
-    center <- match.arg(center)
-  } else if (is.logical(center) && length(center) == 1L) {
-    center <- if (center) "mean" else "none"
-  } else if (length(center) == p && is.numeric(center)) {
-    centers <- center
-    center <- "manual"
-  } else {
-    stop(
-      "`center` must be logical, a character, or a numeric of length ncol(x)"
-    )
-  }
-
-  stopifnot(
-    is.null(alpha_min_ratio) ||
-      (alpha_min_ratio > 0 && alpha_min_ratio < 1),
-    max_passes > 0,
-    q > 1e-6,
-    q < 1,
-    length(path_length) == 1,
-    path_length >= 1,
-    is.null(lambda) || is.character(lambda) || is.numeric(lambda),
-    is.finite(max_passes),
-    is.logical(diagnostics),
-    is.logical(intercept),
-    tol >= 0,
-    is.finite(tol),
-    theta1 >= 0,
-    theta2 >= 0,
-    is.finite(theta1),
-    is.finite(theta2)
+  control <- processSlopeArgs(
+    x,
+    y,
+    family,
+    intercept,
+    center,
+    scale,
+    alpha,
+    lambda,
+    alpha_min_ratio,
+    path_length,
+    q,
+    theta1,
+    theta2,
+    tol_dev_change,
+    tol_dev_ratio,
+    max_variables,
+    solver,
+    max_passes,
+    tol,
+    diagnostics
   )
 
-  fit_intercept <- intercept
+  x <- control$x
+  y <- control$y
+  alpha <- control$alpha
 
-  # convert sparse x to dgCMatrix class from package Matrix.
   is_sparse <- inherits(x, "sparseMatrix")
-
-  if (NROW(y) != NROW(x)) {
-    stop("the number of samples in `x` and `y` must match")
-  }
-
-  if (NROW(y) == 0) {
-    stop("`y` is empty")
-  }
-
-  if (NROW(x) == 0) {
-    stop("`x` is empty")
-  }
-
-  if (anyNA(y) || anyNA(x)) {
-    stop("missing values are not allowed")
-  }
-
-  if (is_sparse) {
-    x <- as_dgCMatrix(x)
-  } else {
-    x <- as.matrix(x)
-  }
-
-  res <- preprocessResponse(family, y, fit_intercept)
-  y <- as.matrix(res$y)
-  class_names <- res$class_names
-  m <- res$n_targets
-  response_names <- res$response_names
-  variable_names <- colnames(x)
-  max_variables <- max_variables * m
-
-  if (is.null(variable_names)) {
-    variable_names <- paste0("V", seq_len(p))
-  }
-  if (is.null(response_names)) {
-    response_names <- paste0("y", seq_len(m))
-  }
-
-  if (is.character(alpha)) {
-    alpha <- match.arg(alpha)
-
-    if (alpha == "path") {
-      alpha_type <- "auto"
-      alpha <- double(0)
-    } else if (alpha == "estimate") {
-      if (family != "gaussian") {
-        stop("`alpha = 'estimate'` can only be used if `family = 'gaussian'`")
-      }
-
-      alpha_type <- "estimate"
-      alpha <- NULL
-
-      path_length <- 1
-    }
-  } else {
-    alpha <- as.double(alpha)
-    alpha_type <- "user"
-
-    alpha <- as.double(alpha)
-    path_length <- length(alpha)
-
-    stopifnot(path_length > 0)
-
-    if (any(alpha < 0)) {
-      stop("`alpha` cannot contain negative values")
-    }
-
-    if (is.unsorted(rev(alpha))) {
-      stop("`alpha` must be decreasing")
-    }
-
-    if (anyDuplicated(alpha) > 0) {
-      stop("all values in `alpha` must be unique")
-    }
-
-    # do not stop path early if user requests specific alpha
-    tol_dev_change <- 0
-    tol_dev_ratio <- 1
-    max_variables <- (NCOL(x) + intercept) * m
-  }
-
-  if (is.character(lambda)) {
-    lambda_type <- match.arg(lambda)
-
-    if (lambda_type == "bhq") {
-      warning(
-        "'bhq' option to argument lambda has been depracted and will",
-        "will be defunct in the next release; please use 'bh' instead"
-      )
-    }
-
-    lambda <- double(0)
-  } else {
-    lambda_type <- "user"
-    lambda <- as.double(lambda)
-
-    if (length(lambda) != m * p) {
-      stop("`lambda` must be as long as there are variables")
-    }
-
-    if (is.unsorted(rev(lambda))) {
-      stop("`lambda` must be non-increasing")
-    }
-
-    if (any(lambda < 0)) {
-      stop("`lambda` cannot contain negative values")
-    }
-  }
-
-  control <- list(
-    alpha = alpha,
-    alpha_min_ratio = alpha_min_ratio,
-    centering_type = center,
-    centers = centers,
-    diagnostics = diagnostics,
-    family = family,
-    fit_intercept = fit_intercept,
-    lambda = lambda,
-    lambda_type = lambda_type,
-    max_passes = max_passes,
-    max_variables = max_variables,
-    path_length = path_length,
-    q = q,
-    scales = scales,
-    scaling_type = scale,
-    solver = solver,
-    theta1 = theta1,
-    theta2 = theta2,
-    tol = tol,
-    tol_dev_change = tol_dev_change,
-    tol_dev_ratio = tol_dev_ratio
-  )
 
   fitSLOPE <- if (is_sparse) sparseSLOPE else denseSLOPE
 
-  if (alpha_type %in% c("path", "user")) {
+  # TODO: Port this to C++ too
+  if (control$alpha_type %in% c("path", "user")) {
     fit <- fitSLOPE(x, y, control)
   } else {
     # estimate the noise level, if possible
@@ -622,11 +460,7 @@ SLOPE <- function(
     # run the solver, iteratively if necessary.
     if (is.null(alpha)) {
       # Run Algorithm 5 of Section 3.2.3. (Bogdan et al.)
-      if (intercept) {
-        selected <- 1
-      } else {
-        selected <- integer(0)
-      }
+      selected <- integer(0)
 
       repeat {
         selected_prev <- selected
@@ -638,7 +472,7 @@ SLOPE <- function(
 
         selected <- which(abs(drop(fit$betas[[1]])) > 0)
 
-        if (fit_intercept) {
+        if (control$fit_intercept) {
           selected <- union(1, selected)
         }
 
@@ -683,7 +517,7 @@ SLOPE <- function(
   diagnostics <- if (diagnostics) setup_diagnostics(fit) else NULL
 
   slope_class <- switch(
-    family,
+    control$family,
     gaussian = "GaussianSLOPE",
     binomial = "BinomialSLOPE",
     poisson = "PoissonSLOPE",
@@ -697,16 +531,202 @@ SLOPE <- function(
       nonzeros = nonzeros,
       lambda = lambda,
       alpha = alpha[seq_along(beta)],
-      variable_names = variable_names,
-      class_names = class_names,
+      variable_names = control$variable_names,
+      class_names = control$class_names,
       passes = passes,
       deviance_ratio = drop(fit$deviance_ratio),
       null_deviance = fit$null_deviance,
-      family = family,
+      family = control$family,
       diagnostics = diagnostics,
-      has_intercept = fit_intercept,
+      has_intercept = control$fit_intercept,
       call = ocall
     ),
     class = c(slope_class, "SLOPE")
   )
+}
+
+processSlopeArgs <- function(
+  x,
+  y,
+  family = c("gaussian", "binomial", "multinomial", "poisson"),
+  intercept = TRUE,
+  center = c("mean", "min", "none"),
+  scale = c("sd", "l1", "l2", "max_abs", "none"),
+  alpha = c("path", "estimate"),
+  lambda = c("bh", "gaussian", "oscar", "lasso"),
+  alpha_min_ratio = if (NROW(x) < NCOL(x)) 1e-2 else 1e-4,
+  path_length = 100,
+  q = 0.1,
+  theta1 = 1,
+  theta2 = 0.5,
+  tol_dev_change = 1e-5,
+  tol_dev_ratio = 0.999,
+  max_variables = NROW(x),
+  solver = c("auto", "hybrid", "pgd", "fista", "admm"),
+  max_passes = 1e6,
+  tol = 1e-4,
+  diagnostics = FALSE
+) {
+  family <- match.arg(family)
+  solver <- match.arg(solver)
+
+  n <- NROW(x)
+  p <- NCOL(x)
+
+  stopifnot(
+    is.null(alpha_min_ratio) ||
+      (alpha_min_ratio > 0 && alpha_min_ratio < 1),
+    max_passes > 0,
+    q > 1e-6,
+    q < 1,
+    length(path_length) == 1,
+    path_length >= 1,
+    is.null(lambda) || is.character(lambda) || is.numeric(lambda),
+    is.finite(max_passes),
+    is.logical(diagnostics),
+    is.logical(intercept),
+    tol >= 0,
+    is.finite(tol),
+    theta1 >= 0,
+    theta2 >= 0,
+    is.finite(theta1),
+    is.finite(theta2)
+  )
+
+  if (solver == "admm") {
+    stop("The ADMM solver has been removed; setting `solver` to `'auto'`")
+    solver <- "auto"
+  }
+
+  centers <- double(0)
+  scales <- double(0)
+
+  if (is.character(center)) {
+    center <- match.arg(center)
+  } else if (is.logical(center) && length(center) == 1L) {
+    center <- if (center) "mean" else "none"
+  } else if (is.numeric(center)) {
+    centers <- center
+    center <- "manual"
+  } else {
+    stop(
+      "`center` must be logical, a character, or a numeric of length ncol(x)"
+    )
+  }
+
+  if (is.character(scale)) {
+    scale <- match.arg(scale)
+  } else if (is.logical(scale) && length(scale) == 1L) {
+    scale <- if (scale) "sd" else "none"
+  } else if (is.numeric(scale)) {
+    scales <- scale
+    scale <- "manual"
+  } else {
+    stop("`scale` must be logical, a character, or a numeric of length ncol(x)")
+  }
+
+  fit_intercept <- intercept
+
+  # convert sparse x to dgCMatrix class from package Matrix.
+  is_sparse <- inherits(x, "sparseMatrix")
+
+  if (NROW(y) == 0) {
+    stop("`y` is empty")
+  }
+
+  if (NROW(x) == 0) {
+    stop("`x` is empty")
+  }
+
+  if (is_sparse) {
+    x <- as_dgCMatrix(x)
+  } else {
+    x <- as.matrix(x)
+  }
+
+  res <- preprocessResponse(family, y, fit_intercept)
+  y <- as.matrix(res$y)
+  class_names <- res$class_names
+  m <- res$n_targets
+  response_names <- res$response_names
+  variable_names <- colnames(x)
+
+  if (is.null(variable_names)) {
+    variable_names <- paste0("V", seq_len(p))
+  }
+  if (is.null(response_names)) {
+    response_names <- paste0("y", seq_len(m))
+  }
+
+  if (is.character(alpha)) {
+    alpha <- match.arg(alpha)
+
+    if (alpha == "path") {
+      alpha_type <- "auto"
+      alpha <- double(0)
+    } else if (alpha == "estimate") {
+      if (family != "gaussian") {
+        stop("`alpha = 'estimate'` can only be used if `family = 'gaussian'`")
+      }
+
+      alpha_type <- "estimate"
+      alpha <- NULL
+
+      path_length <- 1
+    }
+  } else {
+    alpha <- as.double(alpha)
+    alpha_type <- "user"
+
+    alpha <- as.double(alpha)
+    path_length <- length(alpha)
+  }
+
+  if (is.character(lambda)) {
+    lambda_type <- match.arg(lambda)
+
+    if (lambda_type == "bhq") {
+      warning(
+        "'bhq' option to argument lambda has been depracted and will",
+        "will be defunct in the next release; please use 'bh' instead"
+      )
+    }
+
+    lambda <- double(0)
+  } else {
+    lambda_type <- "user"
+    lambda <- as.double(lambda)
+  }
+
+  control <- list(
+    x = x,
+    y = as.matrix(y),
+    alpha = alpha,
+    alpha_min_ratio = alpha_min_ratio,
+    alpha_type = alpha_type,
+    centering_type = center,
+    centers = centers,
+    class_names = class_names,
+    diagnostics = diagnostics,
+    family = family,
+    fit_intercept = fit_intercept,
+    lambda = lambda,
+    lambda_type = lambda_type,
+    max_passes = max_passes,
+    max_variables = max_variables,
+    path_length = path_length,
+    q = q,
+    response_names = response_names,
+    scales = scales,
+    scaling_type = scale,
+    solver = solver,
+    theta1 = theta1,
+    theta2 = theta2,
+    tol = tol,
+    tol_dev_change = tol_dev_change,
+    tol_dev_ratio = tol_dev_ratio,
+    variable_names = variable_names
+  )
+
+  control
 }

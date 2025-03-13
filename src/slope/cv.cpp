@@ -38,7 +38,7 @@ createGrid(const std::map<std::string, std::vector<double>>& param_values)
 void
 findBestParameters(CvResult& cv_result, const std::unique_ptr<Score>& scorer)
 {
-  double best_score = scorer->initValue();
+  cv_result.best_score = scorer->initValue();
   auto comp = scorer->getComparator();
 
   for (size_t i = 0; i < cv_result.results.size(); ++i) {
@@ -48,7 +48,7 @@ findBestParameters(CvResult& cv_result, const std::unique_ptr<Score>& scorer)
 
     assert(result.alphas(best_alpha_ind) > 0);
 
-    if (scorer->isWorse(best_score, current_score)) {
+    if (scorer->isWorse(cv_result.best_score, current_score)) {
       cv_result.best_ind = i;
       cv_result.best_score = current_score;
       cv_result.best_params = result.params;

@@ -1,5 +1,6 @@
 #include "slope_threshold.h"
 #include "../math.h"
+#include <algorithm>
 
 namespace slope {
 
@@ -9,35 +10,48 @@ slopeThreshold(const double x,
                const Eigen::ArrayXd lambdas,
                const Clusters& clusters)
 {
-  const Eigen::Index cluster_size = clusters.cluster_size(j);
+  using std::size_t;
+
+  const size_t cluster_size = clusters.cluster_size(j);
   const double abs_x = std::abs(x);
   const int sign_x = sign(x);
+  const size_t n_lambda = lambdas.size();
 
+  // Prepare a lazy cumulative sum of lambdas.
+  // cum[i] holds sum_{k=0}^{i-1} lambdas(k) with cum[0] = 0.
+  std::vector<double> cum(n_lambda + 1, 0.0);
+  size_t computed = 0; // Last index for which cum has been computed.
+
+  // getCum(i) computes and returns cum[i] on demand.
+  auto getCumSum = [&](size_t i) -> double {
+    while (computed < i) {
+      computed++;
+      cum[computed] = cum[computed - 1] + lambdas(computed - 1);
+    }
+    return cum[i];
+  };
+
+  // Determine whether the update moves upward.
+  int ptr_j = clusters.pointer(j);
+  size_t len_j = std::min(n_lambda - ptr_j, static_cast<size_t>(cluster_size));
   const bool direction_up =
-    abs_x - lambdas.segment(clusters.pointer(j), cluster_size).sum() >
-    clusters.coeff(j);
-
-  // TODO: These partial lambda sums may actually overlap, which
-  // means that we are doing a lot of redundant computations in the case when
-  // the cluster is large. We could do better here.
+    abs_x - (getCumSum(ptr_j + len_j) - getCumSum(ptr_j)) > clusters.coeff(j);
 
   if (direction_up) {
-    int start = clusters.pointer(j + 1);
-    int end = std::min(lambdas.size() - start, cluster_size);
+    size_t start = clusters.pointer(j + 1);
+    size_t len = std::min(n_lambda - start, static_cast<size_t>(cluster_size));
     double lo =
-      start < lambdas.size() ? lambdas.segment(start, end).sum() : 0.0;
+      (start < n_lambda ? getCumSum(start + len) - getCumSum(start) : 0.0);
 
-    for (int k = j; k >= 0; k--) {
+    for (int k = j; k >= 0; --k) {
       start = clusters.pointer(k);
-      Eigen::Index end = std::min(lambdas.size() - start, cluster_size);
-      double hi = lambdas.segment(start, end).sum();
+      len = std::min(n_lambda - start, static_cast<size_t>(cluster_size));
+      double hi = getCumSum(start + len) - getCumSum(start);
       double c_k = clusters.coeff(k);
 
       if (abs_x < lo + c_k) {
-        // We are in-between clusters.
         return { x - sign_x * lo, k + 1 };
       } else if (abs_x <= hi + c_k) {
-        // We are in a cluster.
         return { sign_x * c_k, k };
       }
       lo = hi;
@@ -46,18 +60,17 @@ slopeThreshold(const double x,
     return { x - sign_x * lo, 0 };
   } else {
     int end = clusters.pointer(j + 1);
-    double hi = lambdas.segment(end - cluster_size, cluster_size).sum();
+    // Assumes (end - cluster_size) is valid.
+    double hi = getCumSum(end) - getCumSum(end - cluster_size);
 
     for (int k = j + 1; k < clusters.n_clusters(); ++k) {
       end = clusters.pointer(k + 1);
-      double lo = lambdas.segment(end - cluster_size, cluster_size).sum();
+      double lo = getCumSum(end) - getCumSum(end - cluster_size);
       double c_k = clusters.coeff(k);
 
       if (abs_x > hi + c_k) {
-        // We are in-between clusters.
         return { x - sign_x * hi, k - 1 };
       } else if (abs_x >= lo + c_k) {
-        // We are in a cluster.
         return { sign_x * c_k, k };
       }
       hi = lo;
