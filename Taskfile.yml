@@ -74,8 +74,6 @@ tasks:
       - echo "# WARNING! DO NOT MODIFY FILES IN THIS DIRECTORY" >> src/slope/DO_NOT_MODIFY
       - echo "# These files are automatically updated from https://github.com/jolars/libslope" >> src/slope/DO_NOT_MODIFY
       - rm -rf tmp
-      - echo "Applying patches..."
-      - git apply patches/interrupt_injection.patch
       - git add src/slope
       - 'git commit -m "feat: update libslope to {{.VERSION}}" -m "Release: https://github.com/jolars/libslope/releases/tag/{{.VERSION}}"'
     silent: true
