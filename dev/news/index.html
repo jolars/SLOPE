@@ -89,6 +89,7 @@
 <li>The returned duality gaps when <code>diagnostics = TRUE</code> are now <em>true</em> duality gaps, computed by guaranteeing that the dual variable is feasible (which was not the case previously).</li>
 <li>
 <code>scale</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> gains a new option <code>"max_abs"</code> which scales the columns of <code>x</code> by their maximum absolute value.</li>
+<li>When <code>alpha = "estimate"</code>, there is a now an iteration limit in case the algorithm does not converge to one set of features. Thanks <a href="https://github.com/RomanParzer" class="external-link">@RomanParzer</a>.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-0-5-2-9000">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-5-2-9000"></a></h3>
