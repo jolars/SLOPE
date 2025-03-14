@@ -78,6 +78,8 @@ patient with dealing with the large number of breaking changes.
   not the case previously).
 - `scale` in `SLOPE()` gains a new option `"max_abs"` which scales the columns
   of `x` by their maximum absolute value.
+- When `alpha = "estimate"`, there is a now an iteration limit in case the
+  algorithm does not converge to one set of features. Thanks @RomanParzer.
 
 ## Bug Fixes
 
