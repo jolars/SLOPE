@@ -8,7 +8,6 @@
 #' @useDynLib SLOPE, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 #' @import Matrix
-#' @import foreach
 ## usethis namespace: end
 
 NULL

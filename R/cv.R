@@ -22,7 +22,7 @@
 #'
 #' @export
 #'
-#' @seealso [foreach::foreach()], [plot.TrainedSLOPE()]
+#' @seealso [plot.TrainedSLOPE()]
 #' @family model-tuning
 #'
 #' @examples
