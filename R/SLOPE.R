@@ -457,12 +457,15 @@ SLOPE <- function(
       alpha <- estimateNoise(x, y)
     }
 
+    # TODO: Let this be configurable
+    alpha_est_maxit <- 1000
+
     # run the solver, iteratively if necessary.
     if (is.null(alpha)) {
       # Run Algorithm 5 of Section 3.2.3. (Bogdan et al.)
       selected <- integer(0)
 
-      repeat {
+      for (i in seq_along(alpha_est_maxit)) {
         selected_prev <- selected
 
         alpha <- estimateNoise(x[, selected, drop = FALSE], y, intercept)
@@ -482,6 +485,10 @@ SLOPE <- function(
 
         if (length(selected) + 1 >= n) {
           stop("selected >= n-1 variables; cannot estimate variance")
+        }
+
+        if (i == alpha_est_maxit) {
+          warning("maximum iterations reached in alpha estimation")
         }
       }
     } else {
