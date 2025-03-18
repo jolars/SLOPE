@@ -24,10 +24,8 @@ public:
   Clusters(const Eigen::VectorXd& beta);
 
   /**
-   * @brief Returns an iterator pointing to the beginning of the cluster with
-   * the given index.
-   * @param i The index of the cluster.
-   * @return An iterator pointing to the beginning of the cluster.
+   * @brief Returns the number of clusters.
+   * @return The size of the cluster.
    */
   std::size_t size() { return c.size(); }
 

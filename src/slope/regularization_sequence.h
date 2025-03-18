@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "sorted_l1_norm.h"
 #include <Eigen/SparseCore>
 #include <string>
 
@@ -39,22 +38,16 @@ lambdaSequence(const int p,
  * Computes a sequence of regularization weights for the SLOPE path.
  *
  * @param alpha_in Alpha sequence, of length zero if automatic.
- * @param gradient The gradient
- * @param penalty Penalty object.
- * @param lambda Regularization weights.
- * @param n Number of observations.
  * @param path_length Length of path.
  * @param alpha_min_ratio Ratio of minimum to maximum alpha
+ * @param alpha_max Value of alpha as which the model is completely sparse
  * @return Eigen::ArrayXd containing the sequence of regularization parameters
  * from strongest (alpha_max) to weakest (alpha_max * alpha_min_ratio)
  */
-std::tuple<Eigen::ArrayXd, double, int>
+Eigen::ArrayXd
 regularizationPath(const Eigen::ArrayXd& alpha_in,
-                   const Eigen::VectorXd& gradient,
-                   const SortedL1Norm& penalty,
-                   const Eigen::ArrayXd& lambda,
-                   const int n,
                    const int path_length,
-                   double alpha_min_ratio);
+                   double alpha_min_ratio,
+                   const double alpha_max);
 
 } // namespace slope

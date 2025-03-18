@@ -11,7 +11,6 @@
 #include <memory>
 
 namespace slope {
-namespace solvers {
 
 // Override for dense matrices
 void
@@ -71,5 +70,4 @@ Hybrid::run(Eigen::VectorXd& beta0,
           y);
 }
 
-} // namespace solvers
 } // namespace slope

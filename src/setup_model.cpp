@@ -9,6 +9,7 @@ setupModel(const Rcpp::List& control)
 
   auto alpha = as<ArrayXd>(control["alpha"]);
   auto alpha_min_ratio = as<double>(control["alpha_min_ratio"]);
+  auto alpha_type = as<std::string>(control["alpha_type"]);
   auto centering_type = as<std::string>(control["centering_type"]);
   auto centers = as<VectorXd>(control["centers"]);
   auto diagnostics = as<bool>(control["diagnostics"]);
@@ -48,6 +49,7 @@ setupModel(const Rcpp::List& control)
   }
 
   model.setAlphaMinRatio(alpha_min_ratio);
+  model.setAlphaType(alpha_type);
   model.setDevChangeTol(tol_dev_change);
   model.setDevRatioTol(tol_dev_ratio);
   model.setIntercept(intercept);

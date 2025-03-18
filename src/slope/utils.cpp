@@ -50,4 +50,29 @@ subset(const Eigen::SparseMatrix<double>& x, const std::vector<int>& indices)
   return out;
 }
 
+Eigen::MatrixXd
+subsetCols(const Eigen::MatrixXd& x, const std::vector<int>& indices)
+{
+  return x(Eigen::all, indices);
+}
+
+Eigen::SparseMatrix<double>
+subsetCols(const Eigen::SparseMatrix<double>& x,
+           const std::vector<int>& indices)
+{
+  std::vector<Eigen::Triplet<double>> triplets;
+  triplets.reserve(x.nonZeros());
+
+  for (size_t j_idx = 0; j_idx < indices.size(); ++j_idx) {
+    int j = indices[j_idx];
+    for (Eigen::SparseMatrix<double>::InnerIterator it(x, j); it; ++it) {
+      triplets.emplace_back(it.row(), j_idx, it.value());
+    }
+  }
+  Eigen::SparseMatrix<double> out(x.rows(), indices.size());
+  out.setFromTriplets(triplets.begin(), triplets.end());
+
+  return out;
+}
+
 } // namespace slope

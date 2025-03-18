@@ -158,7 +158,6 @@ public:
    * Evaluates the MSE between predictions and true responses.
    * @param eta Matrix of model predictions
    * @param y Matrix of true responses
-   * @param loss Unused for MSE calculation
    * @return Computed MSE value
    */
   double eval(const Eigen::MatrixXd& eta,
@@ -189,7 +188,6 @@ public:
    * Evaluates the MAE between predictions and true responses.
    * @param eta Matrix of model predictions
    * @param y Matrix of true responses
-   * @param loss Unused for MAE calculation
    * @return Computed MAE value
    */
   double eval(const Eigen::MatrixXd& eta,

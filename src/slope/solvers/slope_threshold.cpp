@@ -23,7 +23,8 @@ slopeThreshold(const double x,
   size_t computed = 0; // Last index for which cum has been computed.
 
   // getCum(i) computes and returns cum[i] on demand.
-  auto getCumSum = [&](size_t i) -> double {
+  auto getCum = [&](size_t i) -> double {
+    i = std::min(i, n_lambda); // Prevent out-of-bounds access
     while (computed < i) {
       computed++;
       cum[computed] = cum[computed - 1] + lambdas(computed - 1);
@@ -31,22 +32,27 @@ slopeThreshold(const double x,
     return cum[i];
   };
 
+  // getLambdaSum(start, len) returns sum of lambdas from start to start+len-1
+  auto getLambdaSum = [&](size_t start, size_t len) -> double {
+    return getCum(start + len) - getCum(start);
+  };
+
   // Determine whether the update moves upward.
   int ptr_j = clusters.pointer(j);
-  size_t len_j = std::min(n_lambda - ptr_j, static_cast<size_t>(cluster_size));
+  size_t len_j = std::min(n_lambda - ptr_j, cluster_size);
   const bool direction_up =
-    abs_x - (getCumSum(ptr_j + len_j) - getCumSum(ptr_j)) > clusters.coeff(j);
+    abs_x - getLambdaSum(ptr_j, len_j) > clusters.coeff(j);
 
   if (direction_up) {
+    // Moving up in the cluster ordering
     size_t start = clusters.pointer(j + 1);
-    size_t len = std::min(n_lambda - start, static_cast<size_t>(cluster_size));
-    double lo =
-      (start < n_lambda ? getCumSum(start + len) - getCumSum(start) : 0.0);
+    size_t len = std::min(n_lambda - start, cluster_size);
+    double lo = start < n_lambda ? getLambdaSum(start, len) : 0.0;
 
     for (int k = j; k >= 0; --k) {
       start = clusters.pointer(k);
-      len = std::min(n_lambda - start, static_cast<size_t>(cluster_size));
-      double hi = getCumSum(start + len) - getCumSum(start);
+      len = std::min(n_lambda - start, cluster_size);
+      double hi = getLambdaSum(start, len);
       double c_k = clusters.coeff(k);
 
       if (abs_x < lo + c_k) {
@@ -59,13 +65,13 @@ slopeThreshold(const double x,
 
     return { x - sign_x * lo, 0 };
   } else {
+    // Moving down in the cluster ordering
     int end = clusters.pointer(j + 1);
-    // Assumes (end - cluster_size) is valid.
-    double hi = getCumSum(end) - getCumSum(end - cluster_size);
+    double hi = getLambdaSum(end - cluster_size, cluster_size);
 
     for (int k = j + 1; k < clusters.n_clusters(); ++k) {
       end = clusters.pointer(k + 1);
-      double lo = getCumSum(end) - getCumSum(end - cluster_size);
+      double lo = getLambdaSum(end - cluster_size, cluster_size);
       double c_k = clusters.coeff(k);
 
       if (abs_x > hi + c_k) {

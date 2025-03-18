@@ -68,17 +68,12 @@ lambdaSequence(const int p,
   return lambda;
 }
 
-std::tuple<Eigen::ArrayXd, double, int>
+Eigen::ArrayXd
 regularizationPath(const Eigen::ArrayXd& alpha_in,
-                   const Eigen::VectorXd& gradient,
-                   const SortedL1Norm& penalty,
-                   const Eigen::ArrayXd& lambda,
-                   const int n,
                    const int path_length,
-                   double alpha_min_ratio)
+                   double alpha_min_ratio,
+                   double alpha_max)
 {
-  double alpha_max = penalty.dualNorm(gradient, lambda);
-
   if (alpha_in.size() != 0) {
     // User-supplied alpha sequence; just check it
     if (alpha_in.minCoeff() < 0) {
@@ -88,17 +83,13 @@ regularizationPath(const Eigen::ArrayXd& alpha_in,
       throw std::invalid_argument("alpha must be finite");
     }
 
-    return { alpha_in, alpha_max, alpha_in.size() };
-  }
-
-  if (alpha_min_ratio < 0) {
-    alpha_min_ratio = n > gradient.size() ? 1e-4 : 1e-2;
+    return alpha_in;
   }
 
   Eigen::ArrayXd alpha =
     geomSpace(alpha_max, alpha_max * alpha_min_ratio, path_length);
 
-  return { alpha, alpha_max, path_length };
+  return alpha;
 }
 
 } // namespace slope

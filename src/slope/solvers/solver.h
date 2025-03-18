@@ -13,7 +13,6 @@
 #include <memory>
 
 namespace slope {
-namespace solvers {
 
 /**
  * @class SolverBase
@@ -24,8 +23,8 @@ namespace solvers {
  * implement specific optimization strategies like coordinate descent or
  * proximal gradient descent.
  *
- * @see slope::solvers::PGD
- * @see slope::solvers::CD
+ * @see slope::PGD
+ * @see slope::CD
  */
 class SolverBase
 {
@@ -109,5 +108,4 @@ protected:
   bool intercept;                     ///< If true, fits intercept term
 };
 
-} // namespace solvers
 } // namespace slope

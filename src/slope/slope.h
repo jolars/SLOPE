@@ -49,6 +49,7 @@ public:
     , path_length(100)
     , cd_iterations(10)
     , max_clusters(std::optional<int>())
+    , alpha_type("path")
     , lambda_type("bh")
     , centering_type("mean")
     , scaling_type("sd")
@@ -108,6 +109,22 @@ public:
    * observations is larger than the number of features and 1e-2 otherwise.
    */
   void setAlphaMinRatio(double alpha_min_ratio);
+
+  /**
+   * @brief Sets the alpha type
+   * @details If `"path"`, values of `"alpha"` are automatically selected to
+   * span a range from completele penalization to the almost-unpenalized
+   * case: the SLOPE path. If `"estimate"`, which is only available for
+   * the quadratic loss, the alpha value is estimated by using the
+   * scaled L2 norm of the residuals vector from an OLS fit. In case
+   * the number of features exceeds the number of observations plus 30,
+   * then this is done iteratively starting at the null (or intercept-only)
+   * models, and proceeding by refitting slope with these estimations
+   * until the set of selected features no longer changes.
+   *
+   * @param alpha_type The type of alpha, one of `"path"` and `"estimate"`.
+   */
+  void setAlphaType(const std::string& alpha_type);
 
   /**
    * @brief Sets the learning rate decrement.
@@ -263,6 +280,29 @@ public:
   void setScaling(const Eigen::VectorXd& x_scales);
 
   /**
+   * @brief Sets the maximum number of iterations for the
+   * alpha estimation procedure
+   * @details The current stopping criterion for this solver is that the
+   * sets of selected features between two consecutive iterations is
+   * identical, but users have experienced instances where these sets
+   * will cycle back on forth between two sets, which would make the
+   * algorithm fail to converge.
+   * @param alpha_est_maxit The maximum number of allowed iterations
+   */
+  void setAlphaEstimationMaxIterations(const int alpha_est_maxit);
+
+  /**
+   * @brief Gets the maximum number of iterations allowed for the
+   * alpha estimation procedure
+   */
+  int getAlphaEstimationMaxIterations() const;
+
+  /**
+   * @brief Returns the intercept flag
+   */
+  bool getFitIntercept() const;
+
+  /**
    * @brief Get currently defined loss type
    * @return The loss type
    */
@@ -326,10 +366,12 @@ private:
   double theta1;
   double theta2;
   double tol;
+  int alpha_est_maxit;
   int max_it;
   int path_length;
   int cd_iterations;
   std::optional<int> max_clusters;
+  std::string alpha_type;
   std::string lambda_type;
   std::string centering_type;
   std::string scaling_type;

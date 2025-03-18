@@ -25,26 +25,25 @@ namespace slope {
  *
  * This struct contains evaluation scores, parameters, and statistics for a
  * single hyperparameter configuration across all cross-validation folds.
- *
- * @param score Matrix of evaluation scores indexed by (fold, alpha) where each
- * row represents a fold and each column represents an alpha value
- * (regularization weight)
- * @param params Map of hyperparameter names to their values for this
- * configuration
- * @param alphas Array of regularization parameters used in the regularization
- * path
- * @param mean_scores Array of scores averaged across all folds for each alpha
- * value
- * @param std_errors Array of standard errors of the scores across folds for
- * each alpha value, useful for estimating score variability
  */
 struct GridResult
 {
-  Eigen::MatrixXd score;                // indexed by (fold, alpha)
-  std::map<std::string, double> params; // hyperparams (q, etc.)
-  Eigen::ArrayXd alphas;                // the sequence of alphas from the path
-  Eigen::ArrayXd
-    mean_scores; // averaged over folds for each (param,alpha) combo
+  /// Matrix of evaluation scores indexed by (fold, alpha) where each row
+  /// represents a fold and each column represents an alpha value
+  /// (regularization weight)
+  Eigen::MatrixXd score;
+
+  /// Map of hyperparameter names to their values for the configuration
+  std::map<std::string, double> params;
+
+  /// Array of regularization parameters used in the regularization path
+  Eigen::ArrayXd alphas;
+
+  /// Array of scores averaged across all folds for each alpha value
+  Eigen::ArrayXd mean_scores;
+
+  /// Array of standard errors of the scores across folds for each alpha value,
+  /// useful for estimating score variability
   Eigen::ArrayXd std_errors;
 };
 
@@ -54,25 +53,25 @@ struct GridResult
  * This struct aggregates results from cross-validation across multiple
  * hyperparameter combinations, including information about the optimal
  * configuration.
- *
- * @param results Vector of GridResult objects containing performance metrics
- * for each hyperparameter configuration evaluated
- * @param best_params Map of hyperparameter names to their optimal values based
- * on the cross-validation results
- * @param best_score The score achieved by the optimal hyperparameter
- * configuration
- * @param best_ind Index of the best performing configuration in the results
- * vector
- * @param best_alpha_ind Index of the optimal alpha value within the
- * regularization path for the best configuration
  */
 struct CvResult
 {
+  /// Vector of GridResult objects containing performance metrics for each
+  /// hyperparameter configuration evaluated
   std::vector<GridResult> results;
 
+  /// Map of hyperparameter names to their optimal values based on the
+  /// cross-validation results
   std::map<std::string, double> best_params;
+
+  /// The score achieved by the optimal hyperparameter configuration
   double best_score;
+
+  /// Index of the best performing configuration in the results vector
   int best_ind;
+
+  /// Index of the optimal alpha value within the regularization path for the
+  /// best configuration
   int best_alpha_ind;
 };
 
@@ -82,24 +81,26 @@ struct CvResult
  * This struct specifies the parameters used to control the cross-validation
  * process, including fold count, evaluation metric, random seed, and
  * hyperparameter grid.
- *
- * @param n_folds Number of folds for cross-validation (default: 10)
- * @param n_repeats Number of times to repeat the cross-validation (default: 1)
- * @param metric Evaluation metric used for model assessment (default: "mse")
- * @param random_seed Seed for random number generator to ensure reproducibility
- * (default: 42)
- * @param hyperparams Map of hyperparameter names to vectors of values to
- * evaluate (default: {"q", {0.1}})
- * @param predefined_folds Optional user-defined fold assignments for custom
- * cross-validation splits
  */
 struct CvConfig
 {
+  /// Number of folds for cross-validation (default: 10)
   int n_folds = 10;
+
+  /// Number of times to repeat the cross-validation (default: 1)
   int n_repeats = 1;
+
+  /// Evaluation metric used for model assessment (default: "mse")
   std::string metric = "mse";
+
+  /// Seed for random number generator to ensure reproducibility (default: 42)
   uint64_t random_seed = 42;
+
+  /// Map of hyperparameter names to vectors of values to evaluate (default:
+  /// {"q", {0.1}})
   std::map<std::string, std::vector<double>> hyperparams = { { "q", { 0.1 } } };
+
+  /// Optional user-defined fold assignments for custom cross-validation splits
   std::optional<std::vector<std::vector<std::vector<int>>>> predefined_folds;
 };
 

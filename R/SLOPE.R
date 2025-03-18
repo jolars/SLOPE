@@ -447,55 +447,7 @@ SLOPE <- function(
   is_sparse <- inherits(x, "sparseMatrix")
 
   fitSLOPE <- if (is_sparse) sparseSLOPE else denseSLOPE
-
-  # TODO: Port this to C++ too
-  if (control$alpha_type %in% c("path", "user")) {
-    fit <- fitSLOPE(x, y, control)
-  } else {
-    # estimate the noise level, if possible
-    if (is.null(alpha) && n >= p + 30) {
-      alpha <- estimateNoise(x, y)
-    }
-
-    # TODO: Let this be configurable
-    alpha_est_maxit <- 1000
-
-    # run the solver, iteratively if necessary.
-    if (is.null(alpha)) {
-      # Run Algorithm 5 of Section 3.2.3. (Bogdan et al.)
-      selected <- integer(0)
-
-      for (i in seq_along(alpha_est_maxit)) {
-        selected_prev <- selected
-
-        alpha <- estimateNoise(x[, selected, drop = FALSE], y, intercept)
-        control$alpha <- alpha
-
-        fit <- fitSLOPE(x, y, control)
-
-        selected <- which(abs(drop(fit$betas[[1]])) > 0)
-
-        if (control$fit_intercept) {
-          selected <- union(1, selected)
-        }
-
-        if (identical(selected, selected_prev)) {
-          break
-        }
-
-        if (length(selected) + 1 >= n) {
-          stop("selected >= n-1 variables; cannot estimate variance")
-        }
-
-        if (i == alpha_est_maxit) {
-          warning("maximum iterations reached in alpha estimation")
-        }
-      }
-    } else {
-      control$alpha <- alpha
-      fit <- fitSLOPE(x, y, control)
-    }
-  }
+  fit <- fitSLOPE(x, y, control)
 
   lambda <- fit$lambda
   alpha <- fit$alpha
@@ -669,7 +621,7 @@ processSlopeArgs <- function(
     alpha <- match.arg(alpha)
 
     if (alpha == "path") {
-      alpha_type <- "auto"
+      alpha_type <- "path"
       alpha <- double(0)
     } else if (alpha == "estimate") {
       if (family != "gaussian") {
@@ -677,13 +629,12 @@ processSlopeArgs <- function(
       }
 
       alpha_type <- "estimate"
-      alpha <- NULL
-
+      alpha <- 0
       path_length <- 1
     }
   } else {
     alpha <- as.double(alpha)
-    alpha_type <- "user"
+    alpha_type <- "path"
 
     alpha <- as.double(alpha)
     path_length <- length(alpha)

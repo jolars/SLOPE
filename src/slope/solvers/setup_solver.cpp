@@ -6,7 +6,7 @@
 
 namespace slope {
 
-std::unique_ptr<solvers::SolverBase>
+std::unique_ptr<SolverBase>
 setupSolver(const std::string& solver_type,
             const std::string& loss,
             JitNormalization jit_normalization,
@@ -28,12 +28,11 @@ setupSolver(const std::string& solver_type,
   }
 
   if (solver_choice == "pgd") {
-    return std::make_unique<solvers::PGD>(jit_normalization, intercept, "pgd");
+    return std::make_unique<PGD>(jit_normalization, intercept, "pgd");
   } else if (solver_choice == "fista") {
-    return std::make_unique<solvers::PGD>(
-      jit_normalization, intercept, "fista");
+    return std::make_unique<PGD>(jit_normalization, intercept, "fista");
   } else if (solver_choice == "hybrid") {
-    return std::make_unique<solvers::Hybrid>(
+    return std::make_unique<Hybrid>(
       jit_normalization, intercept, update_clusters, cd_iterations);
   } else {
     throw std::invalid_argument("solver type not recognized");

@@ -14,7 +14,6 @@
 #include <memory>
 
 namespace slope {
-namespace solvers {
 
 /**
  * @brief Proximal Gradient Descent solver for SLOPE optimization
@@ -183,5 +182,4 @@ private:
   Eigen::VectorXd beta_prev; ///< Old beta values
 };
 
-} // namespace solvers
 } // namespace slope

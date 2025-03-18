@@ -2,6 +2,7 @@
 #include "clusters.h"
 #include "constants.h"
 #include "diagnostics.h"
+#include "estimate_alpha.h"
 #include "kkt_check.h"
 #include "logger.h"
 #include "losses/loss.h"
@@ -109,16 +110,23 @@ Slope::path(T& x,
                  jit_normalization);
 
   int alpha_max_ind = whichMax(gradient.cwiseAbs());
+  double alpha_max = sl1_norm.dualNorm(gradient, lambda);
 
-  double alpha_max;
-  std::tie(alpha, alpha_max, this->path_length) =
-    regularizationPath(alpha,
-                       gradient,
-                       sl1_norm,
-                       lambda,
-                       n,
-                       this->path_length,
-                       this->alpha_min_ratio);
+  if (alpha_type == "path") {
+    if (alpha_min_ratio < 0) {
+      alpha_min_ratio = n > gradient.size() ? 1e-4 : 1e-2;
+    }
+
+    alpha = regularizationPath(alpha, path_length, alpha_min_ratio, alpha_max);
+    path_length = alpha.size();
+  } else {
+    if (loss_type != "quadratic") {
+      throw std::invalid_argument(
+        "Automatic alpha estimation is only available for the quadratic loss");
+    }
+    Slope model = *this;
+    return estimateAlpha(x, y, model);
+  }
 
   // Screening stuff
   std::vector<int> strong_set, previous_set, working_set, inactive_set;
@@ -428,6 +436,13 @@ Slope::setReturnClusters(const bool return_clusters)
 }
 
 void
+Slope::setAlphaType(const std::string& alpha_type)
+{
+  validateOption(alpha_type, { "path", "estimate" }, "alpha_type");
+  this->alpha_type = alpha_type;
+}
+
+void
 Slope::setAlphaMinRatio(double alpha_min_ratio)
 {
   if (alpha_min_ratio <= 0 || alpha_min_ratio >= 1) {
@@ -570,6 +585,24 @@ void
 Slope::setDiagnostics(const bool collect_diagnostics)
 {
   this->collect_diagnostics = collect_diagnostics;
+}
+
+void
+Slope::setAlphaEstimationMaxIterations(const int alpha_est_maxit)
+{
+  this->alpha_est_maxit = alpha_est_maxit;
+}
+
+int
+Slope::getAlphaEstimationMaxIterations() const
+{
+  return alpha_est_maxit;
+}
+
+bool
+Slope::getFitIntercept() const
+{
+  return intercept;
 }
 
 const std::string&

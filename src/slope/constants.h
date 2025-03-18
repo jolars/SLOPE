@@ -8,6 +8,14 @@
 
 #include <limits>
 namespace slope {
+
+/**
+ * @brief Namespace containing constants used in the slope library
+ *
+ * This namespace contains various constants used in the slope library, such as
+ * machine epsilon, minimum and maximum probabilities, and positive and negative
+ * infinity.
+ */
 namespace constants {
 
 constexpr double EPSILON = 1e-10;

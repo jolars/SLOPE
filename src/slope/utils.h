@@ -229,6 +229,35 @@ Eigen::SparseMatrix<double>
 subset(const Eigen::SparseMatrix<double>& x, const std::vector<int>& indices);
 
 /**
+ * @brief Extract specified columns from a dense matrix
+ *
+ * Creates a new matrix containing only the columns specified in the indices
+ * vector.
+ *
+ * @param x Input matrix
+ * @param indices Vector of column indices to extract (0-based)
+ * @return Eigen::MatrixXd New matrix with only the selected columns
+ */
+Eigen::MatrixXd
+subsetCols(const Eigen::MatrixXd& x, const std::vector<int>& indices);
+
+/**
+ * @brief Extract specified columns from a sparse matrix
+ *
+ * Creates a new sparse matrix containing only the columns specified in the
+ * indices vector. The column ordering in the output matches the order of
+ * indices.
+ *
+ * @param x Input sparse matrix
+ * @param indices Vector of column indices to extract (0-based)
+ * @return Eigen::SparseMatrix<double> New sparse matrix with only the selected
+ * columns
+ */
+Eigen::SparseMatrix<double>
+subsetCols(const Eigen::SparseMatrix<double>& x,
+           const std::vector<int>& indices);
+
+/**
  * @brief Create a set of unique values from an Eigen matrix
  *
  * @param x The input matrix to extract unique values from

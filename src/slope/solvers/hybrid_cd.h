@@ -13,7 +13,6 @@
 #include <vector>
 
 namespace slope {
-namespace solvers {
 
 /**
  * Computes the gradient and Hessian for coordinate descent optimization with
@@ -257,5 +256,4 @@ coordinateDescent(Eigen::VectorXd& beta0,
   }
 }
 
-} // namespace solvers
 } // namespace slope

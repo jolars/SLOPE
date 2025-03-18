@@ -15,7 +15,6 @@
 #include <memory>
 
 namespace slope {
-namespace solvers {
 
 /**
  * @brief Hybrid CD-PGD solver for SLOPE
@@ -115,7 +114,7 @@ private:
 
     const int n = x.rows();
 
-    solvers::PGD pgd_solver(jit_normalization, intercept, "pgd");
+    PGD pgd_solver(jit_normalization, intercept, "pgd");
 
     // Run proximal gradient descent
     pgd_solver.run(beta0,
@@ -168,5 +167,4 @@ private:
   int cd_iterations = 10;       ///< Number of CD iterations per hybrid step
 };
 
-} // namespace solvers
 } // namespace slope
