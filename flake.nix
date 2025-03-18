@@ -27,7 +27,6 @@
                   name = "SLOPE";
                   src = ./.;
                   propagatedBuildInputs = with pkgs.rPackages; [
-                    foreach
                     Matrix
                     Rcpp
                     RcppEigen

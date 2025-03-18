@@ -60,7 +60,7 @@ tune <- cvSLOPE(
 )
 }
 \seealso{
-\code{\link[foreach:foreach]{foreach::foreach()}}, \code{\link[=plot.TrainedSLOPE]{plot.TrainedSLOPE()}}
+\code{\link[=plot.TrainedSLOPE]{plot.TrainedSLOPE()}}
 
 Other model-tuning: 
 \code{\link{plot.TrainedSLOPE}()},

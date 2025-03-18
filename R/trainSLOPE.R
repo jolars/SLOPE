@@ -37,7 +37,7 @@
 #'
 #' @export
 #'
-#' @seealso [foreach::foreach()], [plot.TrainedSLOPE()]
+#' @seealso [plot.TrainedSLOPE()]
 #' @family model-tuning
 #'
 #' @examples
@@ -136,46 +136,43 @@ trainSLOPE <- function(
     repetition = seq_len(repeats)
   )
 
-  # prevent warnings if no backend registered
-  if (!foreach::getDoParRegistered()) {
-    foreach::registerDoSEQ()
+  # Initialize list to store results
+  r <- vector("list", nrow(grid))
+
+  # Loop through grid rows instead of using foreach
+  for (i in seq_len(nrow(grid))) {
+    id <- grid[["fold"]][i]
+    repetition <- grid[["repetition"]][i]
+    q <- grid[["q"]][i]
+
+    test_ind <- fold_id[[repetition]][, id]
+
+    x_train <- x[-test_ind, , drop = FALSE]
+    y_train <- y[-test_ind, , drop = FALSE]
+    x_test <- x[test_ind, , drop = FALSE]
+    y_test <- y[test_ind, , drop = FALSE]
+
+    # arguments for SLOPE
+    args <- utils::modifyList(
+      list(
+        x = x_train,
+        y = y_train,
+        q = q,
+        alpha = alpha
+      ),
+      list(...)
+    )
+
+    # fitting model
+    fit_id <- do.call(SLOPE::SLOPE, args)
+
+    s <- lapply(measure, function(m) {
+      SLOPE::score(fit_id, x_test, y_test, measure = m)
+    })
+
+    r[[i]] <- unlist(s)
   }
 
-  i <- 1 # fixes R CMD check NOTE
-
-  r <- foreach(i = seq_len(nrow(grid)), .packages = c("SLOPE")) %dopar%
-    {
-      id <- grid[["fold"]][i]
-      repetition <- grid[["repetition"]][i]
-      q <- grid[["q"]][i]
-
-      test_ind <- fold_id[[repetition]][, id]
-
-      x_train <- x[-test_ind, , drop = FALSE]
-      y_train <- y[-test_ind, , drop = FALSE]
-      x_test <- x[test_ind, , drop = FALSE]
-      y_test <- y[test_ind, , drop = FALSE]
-
-      # arguments for SLOPE
-      args <- utils::modifyList(
-        list(
-          x = x_train,
-          y = y_train,
-          q = q,
-          alpha = alpha
-        ),
-        list(...)
-      )
-
-      # fitting model
-      fit_id <- do.call(SLOPE::SLOPE, args)
-
-      s <- lapply(measure, function(m) {
-        SLOPE::score(fit_id, x_test, y_test, measure = m)
-      })
-
-      unlist(s)
-    }
   tmp <- array(unlist(r), c(path_length * n_q, n_measure, number * repeats))
   d <- matrix(tmp, c(path_length * n_q * n_measure, number * repeats))
 
