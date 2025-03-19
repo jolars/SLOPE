@@ -245,6 +245,8 @@
 #'   the number of levels of the response minus one.
 #' @param tol stopping criterion for the solvers in terms of the relative
 #'   duality gap
+#' @param threads number of threads to use in the solver; if `NULL`, half
+#'   of the available (logical) threads will be used
 #' @param tol_rel_gap DEPRECATED
 #' @param tol_infeas DEPRECATED
 #' @param tol_abs DEPRECATED
@@ -362,6 +364,7 @@ SLOPE <- function(
   solver = c("auto", "hybrid", "pgd", "fista", "admm"),
   max_passes = 1e6,
   tol = 1e-4,
+  threads = NULL,
   diagnostics = FALSE,
   tol_abs,
   tol_rel,
@@ -437,7 +440,8 @@ SLOPE <- function(
     solver,
     max_passes,
     tol,
-    diagnostics
+    diagnostics,
+    threads
   )
 
   x <- control$x
@@ -524,7 +528,8 @@ processSlopeArgs <- function(
   solver = c("auto", "hybrid", "pgd", "fista", "admm"),
   max_passes = 1e6,
   tol = 1e-4,
-  diagnostics = FALSE
+  diagnostics = FALSE,
+  threads = NULL
 ) {
   family <- match.arg(family)
   solver <- match.arg(solver)
@@ -601,6 +606,15 @@ processSlopeArgs <- function(
     x <- as_dgCMatrix(x)
   } else {
     x <- as.matrix(x)
+  }
+
+  if (is.null(threads)) {
+    threads <- -1
+  } else {
+    if (!is.numeric(threads) || length(threads) != 1L) {
+      stop("`threads` must be a single numeric value")
+    }
+    threads <- as.integer(threads)
   }
 
   res <- preprocessResponse(family, y, fit_intercept)
@@ -683,7 +697,8 @@ processSlopeArgs <- function(
     tol = tol,
     tol_dev_change = tol_dev_change,
     tol_dev_ratio = tol_dev_ratio,
-    variable_names = variable_names
+    variable_names = variable_names,
+    threads = threads
   )
 
   control

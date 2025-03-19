@@ -24,6 +24,7 @@ SLOPE(
   solver = c("auto", "hybrid", "pgd", "fista", "admm"),
   max_passes = 1e+06,
   tol = 1e-04,
+  threads = NULL,
   diagnostics = FALSE,
   tol_abs,
   tol_rel,
@@ -128,6 +129,9 @@ except multinomial ones, in which case FISTA (\code{"fista"}) is used.}
 
 \item{tol}{stopping criterion for the solvers in terms of the relative
 duality gap}
+
+\item{threads}{number of threads to use in the solver; if \code{NULL}, half
+of the available (logical) threads will be used}
 
 \item{diagnostics}{whether to save diagnostics from the solver
 (timings and other values depending on type of solver)}
