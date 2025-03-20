@@ -1,3 +1,8 @@
+/**
+ * @file
+ * @brief Logistic loss function implementation for SLOPE algorithm
+ */
+
 #pragma once
 
 #include "loss.h"

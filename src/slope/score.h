@@ -1,3 +1,8 @@
+/**
+ * @file
+ * @brief Scoring metrics for model evaluation
+ */
+
 #pragma once
 
 #include "losses/loss.h"
@@ -37,7 +42,7 @@ double
 rocAuc(const Eigen::MatrixXd& scores, const Eigen::MatrixXd& labels);
 
 /**
- * Base class for scoring metrics used in regularized generalized linear
+ * @brief Base class for scoring metrics used in regularized generalized linear
  * regression.
  *
  * This abstract class defines the interface for computing various performance
@@ -89,7 +94,7 @@ public:
 };
 
 /**
- * Scoring metric that aims to minimize the score value.
+ * @brief Scoring metric that aims to minimize the score value.
  *
  * This class implements a scoring metric where lower values indicate better
  * performance (e.g., MSE, MAE, deviance). It overrides the base Score class
@@ -114,7 +119,7 @@ public:
 };
 
 /**
- * Scoring metric that aims to maximize the score value.
+ * @brief Scoring metric that aims to maximize the score value.
  *
  * This class implements a scoring metric where higher values indicate better
  * performance (e.g., R², AUC-ROC, accuracy). It overrides the base Score class
@@ -139,7 +144,7 @@ public:
 };
 
 /**
- * Mean Squared Error (MSE) scoring metric.
+ * @brief Mean Squared Error (MSE) scoring metric.
  *
  * Computes the average squared difference between predictions and true
  * responses. Inherits from MinimizeScore since lower MSE values indicate better
@@ -166,7 +171,7 @@ public:
 };
 
 /**
- * Mean Absolute Error (MAE) scoring metric.
+ * @brief Mean Absolute Error (MAE) scoring metric.
  *
  * Computes the average absolute difference between predictions and true
  * responses. Inherits from MinimizeScore since lower MAE values indicate better
@@ -196,7 +201,7 @@ public:
 };
 
 /**
- * Classification Accuracy scoring metric.
+ * @brief Classification Accuracy scoring metric.
  *
  * Computes the proportion of correct predictions in classification problems.
  * Inherits from MaximizeScore since higher accuracy values indicate better
@@ -224,7 +229,7 @@ public:
 };
 
 /**
- * Misclassification Rate scoring metric.
+ * @brief Misclassification Rate scoring metric.
  *
  * Computes the proportion of incorrect predictions in classification problems.
  * Inherits from MinimizeScore since lower misclassification rates indicate
@@ -254,7 +259,7 @@ public:
 };
 
 /**
- * Deviance scoring metric.
+ * @brief Deviance scoring metric.
  *
  * Computes the statistical deviance, which is -2 times the log-likelihood
  * of the predictions under the specified loss function. Inherits from
@@ -280,7 +285,7 @@ public:
 };
 
 /**
- * Area Under the ROC Curve (AUC-ROC) scoring metric.
+ * @brief Area Under the ROC Curve (AUC-ROC) scoring metric.
  *
  * Computes the area under the Receiver Operating Characteristic curve,
  * which plots the true positive rate against false positive rate at

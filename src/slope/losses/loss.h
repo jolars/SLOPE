@@ -11,7 +11,7 @@
 namespace slope {
 
 /**
- * Loss function interface
+ * @brief Loss function interface
  *
  * This class defines the interface for an loss function, which is used in
  * optimization algorithms. The loss function calculates the loss, dual,

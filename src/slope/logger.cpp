@@ -1,4 +1,5 @@
 #include "logger.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -6,7 +7,7 @@
 namespace slope {
 
 // Define static member variables
-std::map<int, std::map<WarningCode, std::string>> WarningLogger::warnings;
+std::map<int, std::vector<Warning>> WarningLogger::warnings;
 std::mutex WarningLogger::warnings_mutex;
 
 std::string
@@ -35,16 +36,17 @@ WarningLogger::addWarning(WarningCode code, const std::string& message)
 #endif
 
   std::lock_guard<std::mutex> lock(warnings_mutex);
-  warnings[threadId][code] = message;
+  warnings[threadId].emplace_back(code, message);
 }
 
-std::map<WarningCode, std::string>
+std::vector<Warning>
 WarningLogger::getWarnings()
 {
   std::lock_guard<std::mutex> lock(warnings_mutex);
-  std::map<WarningCode, std::string> allWarnings;
+  std::vector<Warning> allWarnings;
   for (const auto& threadWarnings : warnings) {
-    allWarnings.insert(threadWarnings.second.begin(),
+    allWarnings.insert(allWarnings.end(),
+                       threadWarnings.second.begin(),
                        threadWarnings.second.end());
   }
   return allWarnings;
@@ -66,17 +68,17 @@ WarningLogger::hasWarnings()
       return true;
     }
   }
+
   return false;
 }
-
-std::map<WarningCode, std::string>
+std::vector<Warning>
 WarningLogger::getThreadWarnings(int threadId)
 {
   std::lock_guard<std::mutex> lock(warnings_mutex);
   if (warnings.find(threadId) != warnings.end()) {
     return warnings[threadId];
   }
-  return std::map<WarningCode, std::string>();
+  return std::vector<Warning>();
 }
 
 } // namespace slope

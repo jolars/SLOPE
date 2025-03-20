@@ -28,6 +28,7 @@ SOURCES = \
     slope/screening.cpp \
     slope/slope.cpp \
     slope/solvers/hybrid.cpp \
+    slope/solvers/hybrid_cd.cpp \
     slope/solvers/pgd.cpp \
     slope/solvers/setup_solver.cpp \
     slope/solvers/slope_threshold.cpp \

@@ -12,6 +12,7 @@
 #include <map>
 #include <mutex>
 #include <string>
+#include <vector>
 
 namespace slope {
 
@@ -39,6 +40,21 @@ std::string
 warningCodeToString(WarningCode code);
 
 /**
+ * @brief Structure representing a warning with its code and message
+ */
+struct Warning
+{
+  WarningCode code;    ///< The type of warning
+  std::string message; ///< Descriptive message for the warning
+
+  Warning(WarningCode code, const std::string& message)
+    : code(code)
+    , message(message)
+  {
+  }
+};
+
+/**
  * @brief Thread-safe warning logger for tracking runtime warnings
  *
  * WarningLogger provides facilities for logging, retrieving, and managing
@@ -51,8 +67,9 @@ warningCodeToString(WarningCode code);
 class WarningLogger
 {
 private:
-  /// Collection of warnings, organized by thread ID and warning code
-  static std::map<int, std::map<WarningCode, std::string>> warnings;
+  /// Collection of warnings, organized by thread ID and stored as vectors of
+  /// warnings
+  static std::map<int, std::vector<Warning>> warnings;
 
   /// Mutex to protect concurrent access to the warnings collection
   static std::mutex warnings_mutex;
@@ -74,14 +91,11 @@ public:
   /**
    * @brief Retrieve all warnings from all threads
    *
-   * Combines warnings from all threads into a single map. If multiple threads
-   * logged warnings with the same code, the latest warning will be present
-   * in the result.
+   * Combines warnings from all threads into a single collection.
    *
-   * @return std::map<WarningCode, std::string> Map of all warning codes and
-   * messages
+   * @return std::vector<Warning> Vector of all warnings
    */
-  static std::map<WarningCode, std::string> getWarnings();
+  static std::vector<Warning> getWarnings();
 
   /**
    * @brief Clear all warnings
@@ -103,10 +117,9 @@ public:
    * Retrieves all warnings that were logged by a particular thread.
    *
    * @param threadId The ID of the thread whose warnings should be retrieved
-   * @return std::map<WarningCode, std::string> Map of warning codes and
-   * messages for the specified thread
+   * @return std::vector<Warning> Vector of warnings for the specified thread
    */
-  static std::map<WarningCode, std::string> getThreadWarnings(int threadId);
+  static std::vector<Warning> getThreadWarnings(int threadId);
 };
 
 } // namespace slope

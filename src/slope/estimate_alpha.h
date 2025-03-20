@@ -1,6 +1,13 @@
+/**
+ * @file
+ * @brief Functions for estimating noise level and regularization parameter
+ * alpha
+ */
+
 #pragma once
 
 #include "slope.h"
+#include "slope/logger.h"
 #include "slope/ols.h"
 #include "utils.h"
 
@@ -105,7 +112,7 @@ estimateAlpha(MatrixType& x, Eigen::MatrixXd& y, Slope& model)
 
   // Estimate the noise level, if possible
   if (n >= p + 30) {
-    alpha = estimateNoise(x, y, model.getFitIntercept()) / n;
+    alpha(0) = estimateNoise(x, y, model.getFitIntercept()) / n;
     result = model.path(x, y, alpha);
   } else {
     for (int it = 0; it < alpha_est_maxit; ++it) {
@@ -137,7 +144,9 @@ estimateAlpha(MatrixType& x, Eigen::MatrixXd& y, Slope& model)
       }
     }
 
-    throw std::runtime_error("maximum iterations reached in alpha estimation");
+    slope::WarningLogger::addWarning(
+      slope::WarningCode::MAXIT_REACHED,
+      "Maximum iterations reached in alpha estimation");
   }
 
   return result;

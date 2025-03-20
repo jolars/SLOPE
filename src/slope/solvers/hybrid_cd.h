@@ -35,15 +35,6 @@ namespace slope {
  * @return std::pair<double, double> containing:
  *         - first: gradient of the loss function
  *         - second: diagonal Hessian element
- *
- * The function handles four different normalization cases:
- * - Both: Applies both centering and scaling
- * - Center: Applies only centering
- * - Scale: Applies only scaling
- * - None: No normalization
- *
- * Each case computes the gradient and Hessian differently based on the
- * normalization strategy.
  */
 template<typename T>
 std::pair<double, double>
@@ -99,6 +90,73 @@ computeGradientAndHessian(const T& x,
 }
 
 /**
+ * Computes the gradient and Hessian for a cluster of variables in coordinate
+ * descent.
+ *
+ * This function handles the case when multiple variables are in the same
+ * cluster (have the same coefficient magnitude), calculating the combined
+ * gradient and Hessian needed for the coordinate descent update.
+ *
+ * @param x Input matrix
+ * @param j Cluster index
+ * @param s Vector of signs for each variable in the cluster
+ * @param clusters The cluster information object
+ * @param w Vector of weights
+ * @param residual Residual vector
+ * @param x_centers Vector of feature centers (means)
+ * @param x_scales Vector of feature scales (standard deviations)
+ * @param jit_normalization Normalization strategy (Both, Center, Scale, or
+ * None)
+ *
+ * @return std::pair<double, double> containing:
+ *         - first: Hessian of the loss function for the cluster
+ *         - second: gradient of the loss function for the cluster
+ */
+std::pair<double, double>
+computeClusterGradientAndHessian(const Eigen::MatrixXd& x,
+                                 const int j,
+                                 const std::vector<int>& s,
+                                 const Clusters& clusters,
+                                 const Eigen::VectorXd& w,
+                                 const Eigen::VectorXd& residual,
+                                 const Eigen::VectorXd& x_centers,
+                                 const Eigen::VectorXd& x_scales,
+                                 const JitNormalization jit_normalization);
+
+/**
+ * Computes the gradient and Hessian for a cluster of variables in coordinate
+ * descent (sparse matrix version).
+ *
+ * This overloaded version handles sparse input matrices, optimizing the
+ * computation for this data structure.
+ *
+ * @param x Input sparse matrix
+ * @param j Cluster index
+ * @param s Vector of signs for each variable in the cluster
+ * @param clusters The cluster information object
+ * @param w Vector of weights
+ * @param residual Residual vector
+ * @param x_centers Vector of feature centers (means)
+ * @param x_scales Vector of feature scales (standard deviations)
+ * @param jit_normalization Normalization strategy (Both, Center, Scale, or
+ * None)
+ *
+ * @return std::pair<double, double> containing:
+ *         - first: Hessian of the loss function for the cluster
+ *         - second: gradient of the loss function for the cluster
+ */
+std::pair<double, double>
+computeClusterGradientAndHessian(const Eigen::SparseMatrix<double>& x,
+                                 const int j,
+                                 const std::vector<int>& s,
+                                 const Clusters& clusters,
+                                 const Eigen::VectorXd& w,
+                                 const Eigen::VectorXd& residual,
+                                 const Eigen::VectorXd& x_centers,
+                                 const Eigen::VectorXd& x_scales,
+                                 const JitNormalization jit_normalization);
+
+/**
  * Coordinate Descent Step
  *
  * This function takes a coordinate descent step in the hybrid CD/PGD algorithm
@@ -152,9 +210,14 @@ coordinateDescent(Eigen::VectorXd& beta0,
       continue;
     }
 
-    std::vector<int> s;
     int cluster_size = clusters.cluster_size(j);
+    std::vector<int> s;
     s.reserve(cluster_size);
+
+    for (auto c_it = clusters.cbegin(j); c_it != clusters.cend(j); ++c_it) {
+      double s_k = sign(beta(*c_it));
+      s.emplace_back(s_k);
+    }
 
     double hessian_j = 1;
     double gradient_j = 0;
@@ -162,83 +225,48 @@ coordinateDescent(Eigen::VectorXd& beta0,
 
     if (cluster_size == 1) {
       int k = *clusters.cbegin(j);
-      double s_k = sign(beta(k));
-      s.emplace_back(s_k);
-
       std::tie(gradient_j, hessian_j) = computeGradientAndHessian(
-        x, k, w, residual, x_centers, x_scales, s_k, jit_normalization, n);
+        x, k, w, residual, x_centers, x_scales, s[0], jit_normalization, n);
     } else {
-      // There's no reasonable just-in-time standardization approach for sparse
-      // design matrices when there are clusters in the data, so we need to
-      // reduce to a dense column vector.
-      x_s.setZero();
-
-      for (auto c_it = clusters.cbegin(j); c_it != clusters.cend(j); ++c_it) {
-        int k = *c_it;
-        double s_k = sign(beta(k));
-        s.emplace_back(s_k);
-
-        switch (jit_normalization) {
-          case JitNormalization::Both:
-            x_s += x.col(k) * (s_k / x_scales(k));
-            x_s.array() -= x_centers(k) * s_k / x_scales(k);
-            break;
-
-          case JitNormalization::Center:
-            x_s += x.col(k) * s_k;
-            x_s.array() -= x_centers(k) * s_k;
-            break;
-
-          case JitNormalization::Scale:
-            x_s += x.col(k) * (s_k / x_scales(k));
-            break;
-
-          case JitNormalization::None:
-            x_s += x.col(k) * s_k;
-            break;
-        }
-      }
-
-      hessian_j = x_s.cwiseAbs2().dot(w) / n;
-      gradient_j = x_s.cwiseProduct(w).dot(residual) / n;
+      std::tie(hessian_j, gradient_j) = computeClusterGradientAndHessian(
+        x, j, s, clusters, w, residual, x_centers, x_scales, jit_normalization);
     }
 
     auto [c_tilde, new_index] = slopeThreshold(
       c_old - gradient_j / hessian_j, j, lambda / hessian_j, clusters);
 
-    auto s_it = s.cbegin();
-    auto c_it = clusters.cbegin(j);
-    for (; c_it != clusters.cend(j); ++c_it, ++s_it) {
-      beta(*c_it) = c_tilde * (*s_it);
-    }
-
     double c_diff = c_old - c_tilde;
 
     if (c_diff != 0) {
-      if (cluster_size == 1) {
-        int k = *clusters.cbegin(j);
+      auto s_it = s.cbegin();
+      auto c_it = clusters.cbegin(j);
+      for (; c_it != clusters.cend(j); ++c_it, ++s_it) {
+        int k = *c_it;
+        double s_k = *s_it;
 
+        // Update coefficient
+        beta(k) = c_tilde * s_k;
+
+        // Update residual
         switch (jit_normalization) {
           case JitNormalization::Both:
-            residual -= x.col(k) * (s[0] * c_diff / x_scales(k));
-            residual.array() += x_centers(k) * s[0] * c_diff / x_scales(k);
+            residual -= x.col(k) * (s_k * c_diff / x_scales(k));
+            residual.array() += x_centers(k) * s_k * c_diff / x_scales(k);
             break;
 
           case JitNormalization::Center:
-            residual -= x.col(k) * (s[0] * c_diff);
-            residual.array() += x_centers(k) * s[0] * c_diff;
+            residual -= x.col(k) * (s_k * c_diff);
+            residual.array() += x_centers(k) * s_k * c_diff;
             break;
 
           case JitNormalization::Scale:
-            residual -= x.col(k) * (s[0] * c_diff / x_scales(k));
+            residual -= x.col(k) * (s_k * c_diff / x_scales(k));
             break;
 
           case JitNormalization::None:
-            residual -= x.col(k) * (s[0] * c_diff);
+            residual -= x.col(k) * (s_k * c_diff);
             break;
         }
-      } else {
-        residual -= x_s * c_diff;
       }
     }
 

@@ -1,3 +1,8 @@
+/**
+ * @file
+ * @brief Enums to control predictor standardization behavior
+ */
+
 #pragma once
 
 namespace slope {

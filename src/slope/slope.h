@@ -1,6 +1,6 @@
-/*
+/**
  * @file
- * @brief The actual function that fits SLOPE
+ * @brief SLOPE (Sorted L-One Penalized Estimation) optimization
  */
 
 #pragma once
@@ -18,7 +18,7 @@
 namespace slope {
 
 /**
- * Class representing SLOPE (Sorted L-One Penalized Estimation) optimization.
+ * @brief The SLOPE model.
  *
  * This class implements the SLOPE algorithm for regularized regression
  * problems. It supports different loss functions (quadratic, logistic, poisson)
@@ -45,6 +45,7 @@ public:
     , learning_rate_decr(0.5)
     , q(0.1)
     , tol(1e-4)
+    , alpha_est_maxit(1000)
     , max_it(1e4)
     , path_length(100)
     , cd_iterations(10)

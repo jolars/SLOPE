@@ -1,6 +1,14 @@
+/**
+ * @file
+ * @brief Implementation of screening rules for SLOPE regression optimization
+ */
+
 #include "screening.h"
+#include "kkt_check.h"
+#include "slope/math.h"
 #include "utils.h"
 #include <Eigen/Core>
+#include <stdexcept>
 
 namespace slope {
 
@@ -62,6 +70,136 @@ strongSet(const Eigen::VectorXd& gradient_prev,
   inversePermute(active_set, ord);
 
   return which(active_set);
+}
+
+// NoScreening implementation
+std::vector<int>
+NoScreening::initialize(const std::vector<int>& full_set, int)
+{
+  return full_set;
+}
+
+std::vector<int>
+NoScreening::screen(Eigen::VectorXd&,
+                    const Eigen::ArrayXd&,
+                    const Eigen::ArrayXd&,
+                    const Eigen::VectorXd&,
+                    const std::vector<int>& full_set)
+{
+  // No screening - use all variables
+  return full_set;
+}
+
+bool
+NoScreening::checkKktViolations(Eigen::VectorXd&,
+                                const Eigen::VectorXd&,
+                                const Eigen::ArrayXd&,
+                                std::vector<int>&,
+                                const Eigen::MatrixXd&,
+                                const Eigen::MatrixXd&,
+                                const Eigen::VectorXd&,
+                                const Eigen::VectorXd&,
+                                JitNormalization,
+                                const std::vector<int>&)
+{
+  // No screening, so no violations to check
+  return true;
+}
+
+std::string
+NoScreening::toString() const
+{
+  return "none";
+}
+
+// StrongScreening implementation
+std::vector<int>
+StrongScreening::initialize(const std::vector<int>&, int alpha_max_ind)
+{
+  return { alpha_max_ind };
+}
+
+std::vector<int>
+StrongScreening::screen(Eigen::VectorXd& gradient,
+                        const Eigen::ArrayXd& lambda_curr,
+                        const Eigen::ArrayXd& lambda_prev,
+                        const Eigen::VectorXd& beta,
+                        const std::vector<int>&)
+{
+  std::vector<int> active_set = activeSet(beta);
+  strong_set = strongSet(gradient, lambda_curr, lambda_prev);
+  strong_set = setUnion(strong_set, active_set);
+
+  // Return working set based on active set and maximum gradient
+  return setUnion(active_set, { whichMax(gradient.cwiseAbs()) });
+}
+
+bool
+StrongScreening::checkKktViolations(Eigen::VectorXd& gradient,
+                                    const Eigen::VectorXd& beta,
+                                    const Eigen::ArrayXd& lambda_curr,
+                                    std::vector<int>& working_set,
+                                    const Eigen::MatrixXd& x,
+                                    const Eigen::MatrixXd& residual,
+                                    const Eigen::VectorXd& x_centers,
+                                    const Eigen::VectorXd& x_scales,
+                                    JitNormalization jit_normalization,
+                                    const std::vector<int>& full_set)
+{
+  // First check for violations in the strong set
+  updateGradient(gradient,
+                 x,
+                 residual,
+                 strong_set,
+                 x_centers,
+                 x_scales,
+                 Eigen::VectorXd::Ones(x.rows()),
+                 jit_normalization);
+
+  auto violations =
+    setDiff(kktCheck(gradient, beta, lambda_curr, strong_set), working_set);
+
+  if (violations.empty()) {
+    // Now check for violations in the full set
+    updateGradient(gradient,
+                   x,
+                   residual,
+                   full_set,
+                   x_centers,
+                   x_scales,
+                   Eigen::VectorXd::Ones(x.rows()),
+                   jit_normalization);
+
+    violations =
+      setDiff(kktCheck(gradient, beta, lambda_curr, full_set), working_set);
+
+    if (violations.empty()) {
+      return true; // No violations found
+    }
+  }
+
+  // If we found violations, update the working set
+  working_set = setUnion(working_set, violations);
+  return false; // Violations found
+}
+
+std::string
+StrongScreening::toString() const
+{
+  return "strong";
+}
+
+// Factory function to create appropriate screening rule
+std::unique_ptr<ScreeningRule>
+createScreeningRule(const std::string& screening_type)
+{
+  if (screening_type == "none") {
+    return std::make_unique<NoScreening>();
+  } else if (screening_type == "strong") {
+    return std::make_unique<StrongScreening>();
+  } else {
+    throw std::invalid_argument("Unknown screening type: " + screening_type);
+  }
 }
 
 } // namespace slope

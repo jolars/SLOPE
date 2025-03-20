@@ -1,3 +1,8 @@
+/**
+ * @file
+ * @brief Factory function to create the appropriate loss function based on
+ */
+
 #pragma once
 
 #include "loss.h"

@@ -1,3 +1,8 @@
+/**
+ * @file
+ * @brief SLOPE (Sorted L-One Penalized Estimation) fitting results
+ */
+
 #pragma once
 
 #include "losses/setup_loss.h"

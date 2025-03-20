@@ -1,3 +1,8 @@
+/**
+ * @file
+ * @brief Diagnostics for SLOPE optimization
+ */
+
 #pragma once
 
 #include "jit_normalization.h"

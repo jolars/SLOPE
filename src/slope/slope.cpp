@@ -3,7 +3,6 @@
 #include "constants.h"
 #include "diagnostics.h"
 #include "estimate_alpha.h"
-#include "kkt_check.h"
 #include "logger.h"
 #include "losses/loss.h"
 #include "losses/setup_loss.h"
@@ -128,13 +127,11 @@ Slope::path(T& x,
     return estimateAlpha(x, y, model);
   }
 
-  // Screening stuff
-  std::vector<int> strong_set, previous_set, working_set, inactive_set;
-  if (this->screening_type == "none") {
-    working_set = full_set;
-  } else {
-    working_set = { alpha_max_ind };
-  }
+  // Screening setup
+  std::unique_ptr<ScreeningRule> screening_rule =
+    createScreeningRule(this->screening_type);
+  std::vector<int> working_set =
+    screening_rule->initialize(full_set, alpha_max_ind);
 
   // Path variables
   double null_deviance = loss->deviance(eta, y);
@@ -158,23 +155,20 @@ Slope::path(T& x,
     std::vector<double> duals, primals, time;
     timer.start();
 
-    if (screening_type == "strong") {
-      // TODO: Only update for inactive set, making sure gradient
-      // is updated for the active set
-      updateGradient(gradient,
-                     x,
-                     residual,
-                     full_set,
-                     this->x_centers,
-                     this->x_scales,
-                     Eigen::VectorXd::Ones(n),
-                     jit_normalization);
+    // Update gradient for the full set
+    // TODO: Only update for non-working set since gradient is updated before
+    // the convergence check in the inner loop for the working set
+    updateGradient(gradient,
+                   x,
+                   residual,
+                   full_set,
+                   x_centers,
+                   x_scales,
+                   Eigen::VectorXd::Ones(x.rows()),
+                   jit_normalization);
 
-      previous_set = activeSet(beta);
-      strong_set = strongSet(gradient, lambda_curr, lambda_prev);
-      strong_set = setUnion(strong_set, previous_set);
-      working_set = setUnion(previous_set, { alpha_max_ind });
-    }
+    working_set = screening_rule->screen(
+      gradient, lambda_curr, lambda_prev, beta, full_set);
 
     int it = 0;
     for (; it < this->max_it; ++it) {
@@ -248,40 +242,19 @@ Slope::path(T& x,
       double tol_scaled = (std::abs(primal) + constants::EPSILON) * this->tol;
 
       if (dual_gap <= tol_scaled) {
-        if (screening_type == "strong") {
-          updateGradient(gradient,
-                         x,
-                         residual,
-                         strong_set,
-                         this->x_centers,
-                         this->x_scales,
-                         Eigen::VectorXd::Ones(n),
-                         jit_normalization);
+        bool no_violations =
+          screening_rule->checkKktViolations(gradient,
+                                             beta,
+                                             lambda_curr,
+                                             working_set,
+                                             x,
+                                             residual,
+                                             this->x_centers,
+                                             this->x_scales,
+                                             jit_normalization,
+                                             full_set);
 
-          auto violations = setDiff(
-            kktCheck(gradient, beta, lambda_curr, strong_set), working_set);
-
-          if (violations.empty()) {
-            updateGradient(gradient,
-                           x,
-                           residual,
-                           full_set,
-                           this->x_centers,
-                           this->x_scales,
-                           Eigen::VectorXd::Ones(n),
-                           jit_normalization);
-
-            violations = setDiff(
-              kktCheck(gradient, beta, lambda_curr, full_set), working_set);
-            if (violations.empty()) {
-              break;
-            } else {
-              working_set = setUnion(working_set, violations);
-            }
-          } else {
-            working_set = setUnion(working_set, violations);
-          }
-        } else {
+        if (no_violations) {
           break;
         }
       }

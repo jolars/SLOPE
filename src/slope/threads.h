@@ -1,3 +1,8 @@
+/**
+ * @file
+ * @brief Thread management for parallel computations
+ */
+
 #pragma once
 
 #include <algorithm>

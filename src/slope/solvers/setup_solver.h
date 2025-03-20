@@ -1,4 +1,8 @@
-#include "../normalize.h"
+/**
+ * @file
+ * @brief Factory function to create and configure a SLOPE solver
+ */
+
 #include "solver.h"
 #include <memory>
 #include <string>

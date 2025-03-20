@@ -39,4 +39,56 @@ kktCheck(const Eigen::VectorXd& gradient,
   return out;
 }
 
+bool
+checkKktViolations(Eigen::VectorXd& gradient,
+                   const Eigen::VectorXd& beta,
+                   const Eigen::ArrayXd& lambda_curr,
+                   std::vector<int>& working_set,
+                   const std::vector<int>& strong_set,
+                   const std::vector<int>& full_set,
+                   const Eigen::MatrixXd& x,
+                   const Eigen::MatrixXd& residual,
+                   const Eigen::VectorXd& x_centers,
+                   const Eigen::VectorXd& x_scales,
+                   JitNormalization jit_normalization)
+{
+  // Check for violations in the strong set first
+  updateGradient(gradient,
+                 x,
+                 residual,
+                 strong_set,
+                 x_centers,
+                 x_scales,
+                 Eigen::VectorXd::Ones(x.rows()),
+                 jit_normalization);
+
+  auto violations =
+    setDiff(kktCheck(gradient, beta, lambda_curr, strong_set), working_set);
+
+  if (violations.empty()) {
+    // Now check for violations in the full set
+    updateGradient(gradient,
+                   x,
+                   residual,
+                   full_set,
+                   x_centers,
+                   x_scales,
+                   Eigen::VectorXd::Ones(x.rows()),
+                   jit_normalization);
+
+    violations =
+      setDiff(kktCheck(gradient, beta, lambda_curr, full_set), working_set);
+
+    if (violations.empty()) {
+      return true; // No violations found
+    } else {
+      working_set = setUnion(working_set, violations);
+      return false; // Violations found and working set updated
+    }
+  } else {
+    working_set = setUnion(working_set, violations);
+    return false; // Violations found and working set updated
+  }
 }
+
+} // namespace slope
