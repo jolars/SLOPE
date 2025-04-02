@@ -87,6 +87,7 @@ in decreasing order according  to its absolute values.</p>
 <span>  solver <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"hybrid"</span>, <span class="st">"pgd"</span>, <span class="st">"fista"</span>, <span class="st">"admm"</span><span class="op">)</span>,</span>
 <span>  max_passes <span class="op">=</span> <span class="fl">1e+06</span>,</span>
 <span>  tol <span class="op">=</span> <span class="fl">1e-04</span>,</span>
+<span>  threads <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  diagnostics <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">tol_abs</span>,</span>
 <span>  <span class="va">tol_rel</span>,</span>
@@ -226,6 +227,11 @@ except multinomial ones, in which case FISTA (<code>"fista"</code>) is used.</p>
 <dt id="arg-tol">tol<a class="anchor" aria-label="anchor" href="#arg-tol"></a></dt>
 <dd><p>stopping criterion for the solvers in terms of the relative
 duality gap</p></dd>
+
+
+<dt id="arg-threads">threads<a class="anchor" aria-label="anchor" href="#arg-threads"></a></dt>
+<dd><p>number of threads to use in the solver; if <code>NULL</code>, half
+of the available (logical) threads will be used</p></dd>
 
 
 <dt id="arg-diagnostics">diagnostics<a class="anchor" aria-label="anchor" href="#arg-diagnostics"></a></dt>
