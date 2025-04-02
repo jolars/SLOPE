@@ -10,13 +10,11 @@ test_that("sparse and dense implementations give equivalent results", {
     y <- d$y
     beta <- d$beta
 
-    sparse_fit <- SLOPE(sparse_x, y, family = family, center = FALSE)
+    sparse_fit <- SLOPE(sparse_x, y, family = family, tol = 1e-8)
+    dense_fit <- SLOPE(dense_x, y, family = family, tol = 1e-8)
 
-    sparse_coefs <- coef(sparse_fit)
-
-    dense_fit <- SLOPE(dense_x, y, family = family, center = FALSE)
-
-    dense_coefs <- coef(dense_fit)
+    sparse_coefs <- as.matrix(coef(sparse_fit))
+    dense_coefs <- as.matrix(coef(dense_fit))
 
     expect_equal(sparse_coefs, dense_coefs, tol = 1e-4)
   }

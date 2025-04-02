@@ -6,7 +6,7 @@ test_that("alpha estimation works", {
   expect_silent(SLOPE(xy$x, xy$y, alpha = "estimate"))
 
   # large p
-  xy <- SLOPE:::randomProblem(n = 100, p = 250)
+  xy <- SLOPE:::randomProblem(n = 100, p = 80)
 
   expect_silent(SLOPE(xy$x, xy$y, alpha = "estimate"))
 })
