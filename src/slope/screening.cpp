@@ -102,7 +102,21 @@ NoScreening::checkKktViolations(Eigen::VectorXd&,
                                 JitNormalization,
                                 const std::vector<int>&)
 {
-  // No screening, so no violations to check
+  return true;
+}
+
+bool
+NoScreening::checkKktViolations(Eigen::VectorXd&,
+                                const Eigen::VectorXd&,
+                                const Eigen::ArrayXd&,
+                                std::vector<int>&,
+                                const Eigen::SparseMatrix<double>&,
+                                const Eigen::MatrixXd&,
+                                const Eigen::VectorXd&,
+                                const Eigen::VectorXd&,
+                                JitNormalization,
+                                const std::vector<int>&)
+{
   return true;
 }
 
@@ -134,17 +148,18 @@ StrongScreening::screen(Eigen::VectorXd& gradient,
   return setUnion(active_set, { whichMax(gradient.cwiseAbs()) });
 }
 
+template<typename MatrixType>
 bool
-StrongScreening::checkKktViolations(Eigen::VectorXd& gradient,
-                                    const Eigen::VectorXd& beta,
-                                    const Eigen::ArrayXd& lambda_curr,
-                                    std::vector<int>& working_set,
-                                    const Eigen::MatrixXd& x,
-                                    const Eigen::MatrixXd& residual,
-                                    const Eigen::VectorXd& x_centers,
-                                    const Eigen::VectorXd& x_scales,
-                                    JitNormalization jit_normalization,
-                                    const std::vector<int>& full_set)
+StrongScreening::checkKktViolationsImpl(Eigen::VectorXd& gradient,
+                                        const Eigen::VectorXd& beta,
+                                        const Eigen::ArrayXd& lambda_curr,
+                                        std::vector<int>& working_set,
+                                        const MatrixType& x,
+                                        const Eigen::MatrixXd& residual,
+                                        const Eigen::VectorXd& x_centers,
+                                        const Eigen::VectorXd& x_scales,
+                                        JitNormalization jit_normalization,
+                                        const std::vector<int>& full_set)
 {
   // First check for violations in the strong set
   updateGradient(gradient,
@@ -181,6 +196,54 @@ StrongScreening::checkKktViolations(Eigen::VectorXd& gradient,
   // If we found violations, update the working set
   working_set = setUnion(working_set, violations);
   return false; // Violations found
+}
+
+bool
+StrongScreening::checkKktViolations(Eigen::VectorXd& gradient,
+                                    const Eigen::VectorXd& beta,
+                                    const Eigen::ArrayXd& lambda_curr,
+                                    std::vector<int>& working_set,
+                                    const Eigen::MatrixXd& x,
+                                    const Eigen::MatrixXd& residual,
+                                    const Eigen::VectorXd& x_centers,
+                                    const Eigen::VectorXd& x_scales,
+                                    JitNormalization jit_normalization,
+                                    const std::vector<int>& full_set)
+{
+  return checkKktViolationsImpl(gradient,
+                                beta,
+                                lambda_curr,
+                                working_set,
+                                x,
+                                residual,
+                                x_centers,
+                                x_scales,
+                                jit_normalization,
+                                full_set);
+}
+
+bool
+StrongScreening::checkKktViolations(Eigen::VectorXd& gradient,
+                                    const Eigen::VectorXd& beta,
+                                    const Eigen::ArrayXd& lambda_curr,
+                                    std::vector<int>& working_set,
+                                    const Eigen::SparseMatrix<double>& x,
+                                    const Eigen::MatrixXd& residual,
+                                    const Eigen::VectorXd& x_centers,
+                                    const Eigen::VectorXd& x_scales,
+                                    JitNormalization jit_normalization,
+                                    const std::vector<int>& full_set)
+{
+  return checkKktViolationsImpl(gradient,
+                                beta,
+                                lambda_curr,
+                                working_set,
+                                x,
+                                residual,
+                                x_centers,
+                                x_scales,
+                                jit_normalization,
+                                full_set);
 }
 
 std::string

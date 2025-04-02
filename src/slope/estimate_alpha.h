@@ -39,15 +39,12 @@ estimateNoise(MatrixType& x, Eigen::MatrixXd& y, const bool fit_intercept)
 
   if (p == 0) {
     // Handle the case when X has zero columns
+    residuals = y;
+    df = n - 1;
+
     if (fit_intercept) {
-      // Only intercept model
-      double intercept = y.mean();
-      residuals = y.array() - intercept;
-      df = n - 1;
-    } else {
-      // Empty model (predicting with zeros)
-      residuals = y;
-      df = n;
+      y.array() -= y.mean();
+      df -= 1;
     }
   } else {
     // Normal case with predictors
@@ -58,11 +55,12 @@ estimateNoise(MatrixType& x, Eigen::MatrixXd& y, const bool fit_intercept)
       residuals.array() -= ols_intercept;
     }
 
-    df = n - p - static_cast<int>(fit_intercept);
-    assert(df > 0);
+    df = n - p - static_cast<int>(fit_intercept) - 1;
   }
 
-  return std::sqrt(residuals.squaredNorm() / df);
+  assert(df > 0);
+
+  return residuals.norm() / std::sqrt(df);
 }
 
 /**
@@ -91,7 +89,7 @@ estimateNoise(MatrixType& x, Eigen::MatrixXd& y, const bool fit_intercept)
  */
 template<typename MatrixType>
 SlopePath
-estimateAlpha(MatrixType& x, Eigen::MatrixXd& y, Slope& model)
+estimateAlpha(MatrixType& x, Eigen::MatrixXd& y, const Slope& model)
 {
   int n = x.rows();
   int p = x.cols();
@@ -106,14 +104,16 @@ estimateAlpha(MatrixType& x, Eigen::MatrixXd& y, Slope& model)
 
   Eigen::ArrayXd alpha(1);
 
-  model.setAlphaType("path"); // Otherwise we would be in an infinite loop
+  Slope model_copy = model;
+
+  model_copy.setAlphaType("path"); // Otherwise we would be in an infinite loop
 
   SlopePath result;
 
   // Estimate the noise level, if possible
   if (n >= p + 30) {
-    alpha(0) = estimateNoise(x, y, model.getFitIntercept()) / n;
-    result = model.path(x, y, alpha);
+    alpha(0) = estimateNoise(x, y, model_copy.getFitIntercept()) / n;
+    result = model_copy.path(x, y, alpha);
   } else {
     for (int it = 0; it < alpha_est_maxit; ++it) {
 
@@ -122,11 +122,11 @@ estimateAlpha(MatrixType& x, Eigen::MatrixXd& y, Slope& model)
       std::vector<int> selected_prev = selected;
       selected.clear();
 
-      alpha(0) = estimateNoise(x_selected, y, model.getFitIntercept()) / n;
+      alpha(0) = estimateNoise(x_selected, y, model_copy.getFitIntercept()) / n;
 
       // TODO: If changes in alpha are small between two steps, then it should
       // be easy to screen, but we are not using that possibility here.
-      result = model.path(x, y, alpha);
+      result = model_copy.path(x, y, alpha);
       auto coefs = result.getCoefs().back();
 
       for (typename Eigen::SparseMatrix<double>::InnerIterator it(coefs, 0); it;
@@ -138,7 +138,8 @@ estimateAlpha(MatrixType& x, Eigen::MatrixXd& y, Slope& model)
         return result;
       }
 
-      if (static_cast<int>(selected.size()) >= n + model.getFitIntercept()) {
+      if (static_cast<int>(selected.size()) >=
+          n + model_copy.getFitIntercept()) {
         throw std::runtime_error(
           "selected >= n - 1 variables, cannot estimate variance");
       }

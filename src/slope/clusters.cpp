@@ -1,4 +1,5 @@
 #include "clusters.h"
+#include "math.h"
 #include "utils.h"
 
 namespace slope {
@@ -101,6 +102,8 @@ void
 Clusters::update(const Eigen::VectorXd& beta)
 {
   using sort_pair = std::pair<double, int>;
+
+  this->p = beta.size();
 
   c.clear();
   c_ind.clear();
@@ -217,6 +220,44 @@ Clusters::getClusters() const
   }
 
   return clusters;
+}
+
+Eigen::SparseMatrix<int>
+Clusters::patternMatrix(const Eigen::VectorXd& beta) const
+{
+  int p = beta.size();
+
+  std::vector<Eigen::Triplet<int>> triplets;
+  triplets.reserve(p);
+
+  int n_cols = 0;
+
+  for (int k = 0; k < n_clusters(); ++k) {
+    if (coeff(k) == 0) {
+      // Skip the zero cluster
+      break;
+    }
+
+    n_cols++;
+
+    for (auto it = cbegin(k); it != cend(k); ++it) {
+      int ind = *it;
+      int s = sign(beta(ind));
+      triplets.emplace_back(ind, k, s);
+    }
+  }
+
+  Eigen::SparseMatrix<int> out(p, n_cols);
+  out.setFromTriplets(triplets.begin(), triplets.end());
+
+  return out;
+}
+
+Eigen::SparseMatrix<int>
+patternMatrix(const Eigen::VectorXd& beta)
+{
+  Clusters clusters(beta);
+  return clusters.patternMatrix(beta);
 }
 
 } // namespace slope

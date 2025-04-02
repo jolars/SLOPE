@@ -9,7 +9,7 @@
 #pragma once
 
 #include "jit_normalization.h"
-#include <Eigen/Core>
+#include <Eigen/SparseCore>
 #include <memory>
 #include <vector>
 
@@ -107,6 +107,23 @@ public:
                                   const std::vector<int>& full_set) = 0;
 
   /**
+   * @copydoc checkKktViolations(Eigen::VectorXd&,const Eigen::VectorXd&,const
+   * Eigen::ArrayXd&,std::vector<int>&,const Eigen::MatrixXd&,const
+   * Eigen::MatrixXd&,const Eigen::VectorXd&,const
+   * Eigen::VectorXd&,JitNormalization,const std::vector<int>&)
+   */
+  virtual bool checkKktViolations(Eigen::VectorXd& gradient,
+                                  const Eigen::VectorXd& beta,
+                                  const Eigen::ArrayXd& lambda_curr,
+                                  std::vector<int>& working_set,
+                                  const Eigen::SparseMatrix<double>& x,
+                                  const Eigen::MatrixXd& residual,
+                                  const Eigen::VectorXd& x_centers,
+                                  const Eigen::VectorXd& x_scales,
+                                  JitNormalization jit_normalization,
+                                  const std::vector<int>& full_set) = 0;
+
+  /**
    * @brief Get string representation of the screening rule
    * @return Name of the screening rule
    */
@@ -125,13 +142,13 @@ class NoScreening : public ScreeningRule
 {
 public:
   std::vector<int> initialize(const std::vector<int>& full_set,
-                              int alpha_max_ind);
+                              int alpha_max_ind) override;
 
   std::vector<int> screen(Eigen::VectorXd& gradient,
                           const Eigen::ArrayXd& lambda_curr,
                           const Eigen::ArrayXd& lambda_prev,
                           const Eigen::VectorXd& beta,
-                          const std::vector<int>& full_set);
+                          const std::vector<int>& full_set) override;
 
   bool checkKktViolations(Eigen::VectorXd& gradient,
                           const Eigen::VectorXd& beta,
@@ -142,9 +159,20 @@ public:
                           const Eigen::VectorXd& x_centers,
                           const Eigen::VectorXd& x_scales,
                           JitNormalization jit_normalization,
-                          const std::vector<int>& full_set);
+                          const std::vector<int>& full_set) override;
 
-  std::string toString() const;
+  bool checkKktViolations(Eigen::VectorXd& gradient,
+                          const Eigen::VectorXd& beta,
+                          const Eigen::ArrayXd& lambda_curr,
+                          std::vector<int>& working_set,
+                          const Eigen::SparseMatrix<double>& x,
+                          const Eigen::MatrixXd& residual,
+                          const Eigen::VectorXd& x_centers,
+                          const Eigen::VectorXd& x_scales,
+                          JitNormalization jit_normalization,
+                          const std::vector<int>& full_set) override;
+
+  std::string toString() const override;
 };
 
 /**
@@ -155,13 +183,13 @@ class StrongScreening : public ScreeningRule
 {
 public:
   std::vector<int> initialize(const std::vector<int>& full_set,
-                              int alpha_max_ind);
+                              int alpha_max_ind) override;
 
   std::vector<int> screen(Eigen::VectorXd& gradient,
                           const Eigen::ArrayXd& lambda_curr,
                           const Eigen::ArrayXd& lambda_prev,
                           const Eigen::VectorXd& beta,
-                          const std::vector<int>& full_set);
+                          const std::vector<int>& full_set) override;
 
   bool checkKktViolations(Eigen::VectorXd& gradient,
                           const Eigen::VectorXd& beta,
@@ -172,9 +200,33 @@ public:
                           const Eigen::VectorXd& x_centers,
                           const Eigen::VectorXd& x_scales,
                           JitNormalization jit_normalization,
-                          const std::vector<int>& full_set);
+                          const std::vector<int>& full_set) override;
 
-  std::string toString() const;
+  bool checkKktViolations(Eigen::VectorXd& gradient,
+                          const Eigen::VectorXd& beta,
+                          const Eigen::ArrayXd& lambda_curr,
+                          std::vector<int>& working_set,
+                          const Eigen::SparseMatrix<double>& x,
+                          const Eigen::MatrixXd& residual,
+                          const Eigen::VectorXd& x_centers,
+                          const Eigen::VectorXd& x_scales,
+                          JitNormalization jit_normalization,
+                          const std::vector<int>& full_set) override;
+
+  std::string toString() const override;
+
+private:
+  template<typename MatrixType>
+  bool checkKktViolationsImpl(Eigen::VectorXd& gradient,
+                              const Eigen::VectorXd& beta,
+                              const Eigen::ArrayXd& lambda_curr,
+                              std::vector<int>& working_set,
+                              const MatrixType& x,
+                              const Eigen::MatrixXd& residual,
+                              const Eigen::VectorXd& x_centers,
+                              const Eigen::VectorXd& x_scales,
+                              JitNormalization jit_normalization,
+                              const std::vector<int>& full_set);
 };
 
 /**

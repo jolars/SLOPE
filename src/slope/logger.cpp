@@ -30,26 +30,26 @@ warningCodeToString(WarningCode code)
 void
 WarningLogger::addWarning(WarningCode code, const std::string& message)
 {
-  int threadId = 0;
+  int thread_id = 0;
 #ifdef _OPENMP
-  threadId = omp_get_thread_num();
+  thread_id = omp_get_thread_num();
 #endif
 
   std::lock_guard<std::mutex> lock(warnings_mutex);
-  warnings[threadId].emplace_back(code, message);
+  warnings[thread_id].emplace_back(code, message);
 }
 
 std::vector<Warning>
 WarningLogger::getWarnings()
 {
   std::lock_guard<std::mutex> lock(warnings_mutex);
-  std::vector<Warning> allWarnings;
-  for (const auto& threadWarnings : warnings) {
-    allWarnings.insert(allWarnings.end(),
-                       threadWarnings.second.begin(),
-                       threadWarnings.second.end());
+  std::vector<Warning> all_warnings;
+  for (const auto& thread_warnings : warnings) {
+    all_warnings.insert(all_warnings.end(),
+                        thread_warnings.second.begin(),
+                        thread_warnings.second.end());
   }
-  return allWarnings;
+  return all_warnings;
 }
 
 void
@@ -63,8 +63,8 @@ bool
 WarningLogger::hasWarnings()
 {
   std::lock_guard<std::mutex> lock(warnings_mutex);
-  for (const auto& threadWarnings : warnings) {
-    if (!threadWarnings.second.empty()) {
+  for (const auto& thread_warnings : warnings) {
+    if (!thread_warnings.second.empty()) {
       return true;
     }
   }
@@ -72,11 +72,11 @@ WarningLogger::hasWarnings()
   return false;
 }
 std::vector<Warning>
-WarningLogger::getThreadWarnings(int threadId)
+WarningLogger::getThreadWarnings(int thread_id)
 {
   std::lock_guard<std::mutex> lock(warnings_mutex);
-  if (warnings.find(threadId) != warnings.end()) {
-    return warnings[threadId];
+  if (warnings.find(thread_id) != warnings.end()) {
+    return warnings[thread_id];
   }
   return std::vector<Warning>();
 }

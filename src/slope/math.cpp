@@ -176,4 +176,54 @@ mins(const Eigen::MatrixXd& x)
   return x.colwise().minCoeff();
 }
 
+Eigen::VectorXd
+stdDevs(const Eigen::SparseMatrix<double>& x)
+{
+  const int n = x.rows();
+  const int p = x.cols();
+
+  Eigen::VectorXd x_means = means(x);
+  Eigen::VectorXd out(p);
+
+  for (int j = 0; j < p; ++j) {
+    double sum_sq_diff = 0.0;
+    const double mean = x_means(j);
+
+    // Process non-zero elements
+    for (Eigen::SparseMatrix<double>::InnerIterator it(x, j); it; ++it) {
+      double diff = it.value() - mean;
+      sum_sq_diff += diff * diff;
+    }
+
+    // Account for zeros
+    int nz_count = x.col(j).nonZeros();
+    if (nz_count < n) {
+      sum_sq_diff += (n - nz_count) * mean * mean;
+    }
+
+    // Standard deviation is sqrt of the average of squared differences
+    out(j) = std::sqrt(sum_sq_diff / n);
+  }
+
+  return out;
+}
+
+Eigen::VectorXd
+stdDevs(const Eigen::MatrixXd& x)
+{
+  int n = x.rows();
+  int p = x.cols();
+
+  Eigen::VectorXd x_means = means(x);
+  Eigen::VectorXd out(p);
+
+  for (int j = 0; j < p; ++j) {
+    out(j) = (x.col(j).array() - x_means(j)).matrix().norm();
+  }
+
+  out.array() /= std::sqrt(n);
+
+  return out;
+}
+
 } // namespace slope
