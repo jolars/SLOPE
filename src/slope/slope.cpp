@@ -290,11 +290,10 @@ Slope::path(T& x,
     double dev_change = path_step == 0 ? 1.0 : 1 - dev / dev_prev;
     dev_prev = dev;
 
-    std::vector<std::vector<int>> clusters;
+    Clusters clusters;
 
     if (return_clusters) {
-      Clusters beta_clusters(beta);
-      clusters = beta_clusters.getClusters();
+      clusters.update(beta);
     }
 
     SlopeFit fit{

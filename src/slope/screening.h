@@ -105,12 +105,20 @@ public:
                                   const Eigen::VectorXd& x_scales,
                                   JitNormalization jit_normalization,
                                   const std::vector<int>& full_set) = 0;
-
   /**
-   * @copydoc checkKktViolations(Eigen::VectorXd&,const Eigen::VectorXd&,const
-   * Eigen::ArrayXd&,std::vector<int>&,const Eigen::MatrixXd&,const
-   * Eigen::MatrixXd&,const Eigen::VectorXd&,const
-   * Eigen::VectorXd&,JitNormalization,const std::vector<int>&)
+   * @brief Check for KKT violations with sparse matrix input
+   * @param gradient The gradient vector
+   * @param beta Current beta coefficients
+   * @param lambda_curr Current lambda values
+   * @param working_set Current working set (will be updated if violations
+   * found)
+   * @param x Design matrix (sparse format)
+   * @param residual Current residuals
+   * @param x_centers Centers for normalization
+   * @param x_scales Scales for normalization
+   * @param jit_normalization Whether to use JIT normalization
+   * @param full_set Full set of features
+   * @return True if no violations found, false otherwise
    */
   virtual bool checkKktViolations(Eigen::VectorXd& gradient,
                                   const Eigen::VectorXd& beta,

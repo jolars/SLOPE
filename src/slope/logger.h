@@ -47,6 +47,12 @@ struct Warning
   WarningCode code;    ///< The type of warning
   std::string message; ///< Descriptive message for the warning
 
+  /**
+   * @brief Constructs a new Warning object
+   *
+   * @param code The warning code categorizing this warning
+   * @param message Descriptive message for the warning
+   */
   Warning(WarningCode code, const std::string& message)
     : code(code)
     , message(message)
