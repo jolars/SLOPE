@@ -30,6 +30,20 @@ callSLOPE(T& x, const Eigen::MatrixXd& y, const Rcpp::List& control)
 
   slope::SlopePath fit = model.path(x, y, alpha, lambda);
 
+  std::vector<Eigen::SparseMatrix<double>> patterns;
+
+  bool return_patterns = Rcpp::as<bool>(control["patterns"]);
+
+  if (return_patterns) {
+    auto clusters = fit.getClusters();
+
+    for (auto cluster : clusters) {
+      patterns.push_back(cluster.patternMatrix().cast<double>());
+    }
+  }
+
+  Eigen::SparseMatrix<double> pattern_matrix;
+
   return Rcpp::List::create(
     Named("intercepts") = wrap(fit.getIntercepts()),
     Named("betas") = wrap(fit.getCoefs()),
@@ -40,7 +54,8 @@ callSLOPE(T& x, const Eigen::MatrixXd& y, const Rcpp::List& control)
     Named("deviance_ratio") = wrap(fit.getDevianceRatios()),
     Named("null_deviance") = wrap(fit.getNullDeviance()),
     Named("alpha") = wrap(fit.getAlpha()),
-    Named("lambda") = wrap(fit.getLambda()));
+    Named("lambda") = wrap(fit.getLambda()),
+    Named("patterns") = wrap(patterns));
 }
 
 // [[Rcpp::export]]

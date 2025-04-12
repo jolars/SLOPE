@@ -35,7 +35,6 @@ test_that("wide and tall inputs work correctly", {
   }
 })
 
-
 test_that("diagonal X, known solution", {
   n <- p <- 4
 
