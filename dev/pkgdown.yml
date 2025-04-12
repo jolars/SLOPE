@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   introduction: introduction.html
   solvers: solvers.html
-last_built: 2025-04-12T18:49Z
+last_built: 2025-04-12T20:10Z
 urls:
   reference: https://jolars.github.io/SLOPE/reference
   article: https://jolars.github.io/SLOPE/articles

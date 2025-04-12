@@ -89,6 +89,7 @@ in decreasing order according  to its absolute values.</p>
 <span>  tol <span class="op">=</span> <span class="fl">1e-04</span>,</span>
 <span>  threads <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  diagnostics <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  patterns <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">tol_abs</span>,</span>
 <span>  <span class="va">tol_rel</span>,</span>
 <span>  <span class="va">tol_rel_gap</span>,</span>
@@ -237,6 +238,12 @@ of the available (logical) threads will be used</p></dd>
 <dt id="arg-diagnostics">diagnostics<a class="anchor" aria-label="anchor" href="#arg-diagnostics"></a></dt>
 <dd><p>whether to save diagnostics from the solver
 (timings and other values depending on type of solver)</p></dd>
+
+
+<dt id="arg-patterns">patterns<a class="anchor" aria-label="anchor" href="#arg-patterns"></a></dt>
+<dd><p>whether to return the SLOPE pattern
+(cluster, ordering, and sign information) as a list of sparse
+matrices, one for each step on the path.</p></dd>
 
 
 <dt id="arg-tol-abs">tol_abs<a class="anchor" aria-label="anchor" href="#arg-tol-abs"></a></dt>
