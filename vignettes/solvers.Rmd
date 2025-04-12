@@ -93,7 +93,7 @@ collect the gaps at step 40 for each solver.
 res <- lapply(seq_along(fits), function(i) {
   fit <- fits[[i]]
   solver <- solvers[[i]]
-  d <- fit$diagnostics[fit$diagnostics$penalty == 40, ]
+  d <- fit$diagnostics[fit$diagnostics$penalty == 35, ]
   data.frame(
     solver = solver,
     time = d$time,
