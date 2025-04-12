@@ -41,12 +41,12 @@ hybrid method isn't available (or for the Poisson regression problem).
 
 ## Example
 
-Here we show a simple example of how the solvers compare for a 
+Here we show a simple example of how the solvers compare for a
 logistic regression problem with 100 observations and 10000 predictors.
 We iterate over the solvers and fit a full SLOPE path using the default
 settings in the package, setting `diagnostics = TRUE` to collect
 primal and dual values in order to compute duality gaps (upper bounds
-on suboptimality) for the different solvers. 
+on suboptimality) for the different solvers.
 
 ```{r}
 library(SLOPE)
@@ -83,10 +83,10 @@ names(total_time) <- solvers
 barplot(total_time, ylab = "Time (s)")
 ```
 
-Here is is clear that the hybrid method performs best followed by FISTA and 
+Here is is clear that the hybrid method performs best followed by FISTA and
 PGD.
 
-To see how the solvers compare for a single objective along the path, we 
+To see how the solvers compare for a single objective along the path, we
 collect the gaps at step 40 for each solver.
 
 ```{r collect-gaps}
@@ -128,6 +128,5 @@ for (i in seq_along(solvers)) {
 
 legend("topright", legend = solvers, col = colors, lty = 1)
 ```
-
 
 ## References
