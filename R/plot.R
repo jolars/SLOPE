@@ -267,3 +267,103 @@ plot.TrainedSLOPE <- function(
 
   invisible()
 }
+
+
+
+#' Plot cluster structure
+#'
+#' @param x an object of class `'SLOPE'`
+#' @param plot_signs logical, indicating whether to plot signs of estimated
+#' coefficients on the plot
+#' @param color_clusters logical, indicating whether the clusters should have
+#' different colors
+#' @param include_zeroes logical, indicating whether zero variables should be
+#' plotted. Default to TRUE
+#' @param show_alpha logical, indicatiung whether labels with alpha values or
+#' steos in path should be plotted. Default TRUE
+#'
+#' @seealso [SLOPE()]
+#'
+#' @return
+#'
+#' @export
+#'
+#' @examples
+#' set.seed(10)
+#' X <- matrix(rnorm(10000), ncol = 10)
+#' colnames(X) <- paste0("X", 1:10)
+#' beta <- c(rep(10, 3), rep(-20, 2), rep(20, 2), rep(0, 3))
+#' Y <- X %*% beta + rnorm(1000)
+#' fit <- SLOPE(X, Y, patterns = TRUE)
+#'
+#' plot_clusers(fit)
+
+plot_clusers <- function(x, plot_signs = FALSE, color_clusters = TRUE,
+                         include_zeroes = TRUE, show_alpha = TRUE) {
+  object <- x
+
+  pat <- object$patterns
+  pat[[1]] <- as.matrix(numeric(ncol(X)), ncol = 1)
+
+  mat <- sapply(pat, function(m) {
+    rowSums(t(t(as.matrix(m)) * 1:ncol(as.matrix(m))))
+  })
+
+  rownames(mat) <- 1:nrow(mat)
+
+  if(!include_zeroes) mat <- mat[rowSums(mat) != 0, ]
+
+  abs_mat <- abs(mat)
+
+  abs_vals <- sort(unique(as.vector(abs_mat)))
+
+  if(color_clusters){
+    my_colors <- c("white", rainbow(length(abs_vals) - 1, alpha = 0.7))
+  } else {
+    my_colors <- c("white", rep("grey", length(abs_vals) - 1))
+  }
+
+  if(show_alpha) {
+    step <- round(object$alpha, 3)
+    xlabel <- "alpha"
+  } else {
+    step <- 1:ncol(mat)
+    xlabel <- "path step"
+  }
+
+  breaks <- c(-1, abs_vals)
+
+  graphics::image(t(abs_mat),
+                  col = my_colors,
+                  breaks = breaks,
+                  axes = FALSE,
+                  xlab = xlabel, ylab = "variable")
+
+  box(col = "black", lwd = 1.5)
+  axis(1, at = seq(0, 1, length.out = ncol(mat)), labels = step, las = 2)
+  axis(2, at = seq(0, 1, length.out = nrow(mat)), labels = rownames(mat), las = 1)
+
+  if(plot_signs) {
+    for (i in 1:nrow(mat)) {
+      for (j in 1:ncol(mat)) {
+        val <- mat[nrow(mat):1, ][i, j]
+        sign_char <- ifelse(val > 0, "+", ifelse(val < 0, "-", ""))
+
+        x <- (j - 1) / (ncol(mat) - 1)
+        y <- 1 - (i - 1) / (nrow(mat) - 1)
+
+        text(x, y, labels = sign_char)
+      }
+    }
+  }
+
+  x_coords <- seq(0, 1, length.out = ncol(mat))
+  x_coords <- x_coords + mean(x_coords[1:2])
+
+  y_coords <- seq(0, 1, length.out = nrow(mat))
+  y_coords <- y_coords + mean(y_coords[1:2])
+
+  abline(v = x_coords, col = adjustcolor("black", alpha = 0.5), lwd = 0.5)
+  abline(h = y_coords, col = adjustcolor("black", alpha = 0.5), lwd = 0.5)
+
+}
