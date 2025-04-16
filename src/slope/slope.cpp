@@ -123,8 +123,7 @@ Slope::path(T& x,
       throw std::invalid_argument(
         "Automatic alpha estimation is only available for the quadratic loss");
     }
-    Slope model = *this;
-    return estimateAlpha(x, y, model);
+    return estimateAlpha(x, y, *this);
   }
 
   // Screening setup
@@ -253,7 +252,6 @@ Slope::path(T& x,
                                              this->x_scales,
                                              jit_normalization,
                                              full_set);
-
         if (no_violations) {
           break;
         }
@@ -292,11 +290,10 @@ Slope::path(T& x,
     double dev_change = path_step == 0 ? 1.0 : 1 - dev / dev_prev;
     dev_prev = dev;
 
-    std::vector<std::vector<int>> clusters;
+    Clusters clusters;
 
     if (return_clusters) {
-      Clusters beta_clusters(beta);
-      clusters = beta_clusters.getClusters();
+      clusters.update(beta);
     }
 
     SlopeFit fit{

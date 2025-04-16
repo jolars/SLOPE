@@ -13,6 +13,7 @@ setupModel(const Rcpp::List& control)
   auto centering_type = as<std::string>(control["centering_type"]);
   auto centers = as<VectorXd>(control["centers"]);
   auto diagnostics = as<bool>(control["diagnostics"]);
+  auto patterns = as<bool>(control["patterns"]);
   auto intercept = as<bool>(control["fit_intercept"]);
   auto lambda = as<ArrayXd>(control["lambda"]);
   auto lambda_type = as<std::string>(control["lambda_type"]);
@@ -62,6 +63,7 @@ setupModel(const Rcpp::List& control)
   model.setSolver(solver_type);
   model.setTol(tol);
   model.setDiagnostics(diagnostics);
+  model.setReturnClusters(patterns);
 
   if (centering_type == "manual") {
     model.setCentering(centers);

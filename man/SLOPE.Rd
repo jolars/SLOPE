@@ -26,6 +26,7 @@ SLOPE(
   tol = 1e-04,
   threads = NULL,
   diagnostics = FALSE,
+  patterns = FALSE,
   tol_abs,
   tol_rel,
   tol_rel_gap,
@@ -135,6 +136,10 @@ of the available (logical) threads will be used}
 
 \item{diagnostics}{whether to save diagnostics from the solver
 (timings and other values depending on type of solver)}
+
+\item{patterns}{whether to return the SLOPE pattern
+(cluster, ordering, and sign information) as a list of sparse
+matrices, one for each step on the path.}
 
 \item{tol_abs}{DEPRECATED}
 

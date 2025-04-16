@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <Eigen/Core>
+#include <Eigen/SparseCore>
 #include <vector>
 
 namespace slope {
@@ -17,6 +17,11 @@ namespace slope {
 class Clusters
 {
 public:
+  /**
+   * @brief Constructs an Clusters object.
+   */
+  Clusters() = default;
+
   /**
    * @brief Constructs a Clusters object with the given beta vector.
    * @param beta The beta vector.
@@ -133,11 +138,34 @@ public:
    */
   std::vector<std::vector<int>> getClusters() const;
 
+  /**
+   * @brief Returns the cluster pattern as a sparse matrix
+   * @return A sparse matrix, where the indices of column j
+   *   are the indices of the features in cluster j.
+   *   The matrix is of size \f$p \times (m - 1)\f$, where \f$p\f$ is the number
+   *   of features and \f$m\f$ is the number of clusters. The features
+   *   of the zero cluster are not included.
+   */
+  Eigen::SparseMatrix<int> patternMatrix() const;
+
 private:
   std::vector<double> c;  /**< The coefficients of the clusters. */
   std::vector<int> c_ind; /**< The indices of the clusters. */
+  std::vector<int> signs; /**< The signs of the coefficients. */
   std::vector<int>
     c_ptr; /**< Pointers to the start of each of the clusters' indices. */
+  int p;   /**< The number of features. */
+
+  /**
+   * @brief Mutable vector to store zero indices when needed
+   * This is mutable to allow const methods to modify it
+   */
+  mutable std::vector<int> zero_indices;
+
+  /**
+   * @brief Flag to track if zero_indices are up to date
+   */
+  mutable bool zero_indices_valid = false;
 
   /**
    * @brief Reorders the cluster structure when an index is changed.
@@ -152,6 +180,30 @@ private:
    * @param new_index The index of the cluster to merge into.
    */
   void merge(const int old_index, const int new_index);
+
+  /**
+   * @brief Helper function to compute zero cluster indices
+   * @return Reference to vector containing zero cluster indices
+   */
+  std::vector<int>& getZeroIndices() const;
+
+  /**
+   * @brief Checks if this represents an all-zeros vector
+   * @return true if the cluster contains only zeros
+   */
+  bool hasAllZeros() const;
 };
+
+/**
+ * @brief Returns the cluster pattern as a sparse matrix
+ * @param beta The beta vector used to create the clusters
+ * @return A sparse matrix, where the indices of column j
+ *   are the indices of the features in cluster j.
+ *   The matrix is of size \f$p \times (m - 1)\f$, where \f$p\f$ is the number
+ *   of features and \f$m\f$ is the number of clusters. The features
+ *   of the zero cluster are not included.
+ */
+Eigen::SparseMatrix<int>
+patternMatrix(const Eigen::VectorXd& beta);
 
 } // namespace slope

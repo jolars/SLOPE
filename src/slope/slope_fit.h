@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "clusters.h"
 #include "losses/setup_loss.h"
 #include "normalize.h"
 #include "utils.h"
@@ -27,9 +28,8 @@ class SlopeFit
 private:
   Eigen::VectorXd intercepts;        ///< Vector of intercept terms
   Eigen::SparseMatrix<double> coefs; ///< Sparse matrix of fitted coefficients
-  std::vector<std::vector<int>>
-    clusters;            ///< Indices of coefficients in each cluster
-  double alpha;          ///< Scaling of lambda sequence
+  Clusters clusters;                 ///< Clusters
+  double alpha;                      ///< Scaling of lambda sequence
   Eigen::ArrayXd lambda; ///< Regularization weights for the sorted L1 norm
   double deviance;       ///< Final model deviance
   double null_deviance;  ///< Null (or intercept-only) model deviance
@@ -44,7 +44,6 @@ private:
   std::string loss_type;      ///< Loss type
 
 public:
-  /// Default constructor
   SlopeFit() = default;
 
   /**
@@ -67,7 +66,7 @@ public:
    */
   SlopeFit(const Eigen::VectorXd& intercepts,
            const Eigen::SparseMatrix<double>& coefs,
-           const std::vector<std::vector<int>>& clusters,
+           const Clusters& clusters,
            const double alpha,
            const Eigen::ArrayXd& lambda,
            const double deviance,
@@ -107,7 +106,7 @@ public:
   /**
    * @brief Gets the clusters
    */
-  const std::vector<std::vector<int>>& getClusters() const { return clusters; }
+  const Clusters& getClusters() const { return clusters; }
 
   /**
    * @brief Gets the lambda (regularization) parameter used

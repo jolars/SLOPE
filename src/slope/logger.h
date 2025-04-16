@@ -47,6 +47,12 @@ struct Warning
   WarningCode code;    ///< The type of warning
   std::string message; ///< Descriptive message for the warning
 
+  /**
+   * @brief Constructs a new Warning object
+   *
+   * @param code The warning code categorizing this warning
+   * @param message Descriptive message for the warning
+   */
   Warning(WarningCode code, const std::string& message)
     : code(code)
     , message(message)
@@ -116,10 +122,10 @@ public:
    *
    * Retrieves all warnings that were logged by a particular thread.
    *
-   * @param threadId The ID of the thread whose warnings should be retrieved
+   * @param thread_id The ID of the thread whose warnings should be retrieved
    * @return std::vector<Warning> Vector of warnings for the specified thread
    */
-  static std::vector<Warning> getThreadWarnings(int threadId);
+  static std::vector<Warning> getThreadWarnings(int thread_id);
 };
 
 } // namespace slope

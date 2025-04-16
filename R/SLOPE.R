@@ -219,6 +219,9 @@
 #' @param max_passes maximum number of passes (outer iterations) for solver
 #' @param diagnostics whether to save diagnostics from the solver
 #'   (timings and other values depending on type of solver)
+#' @param patterns whether to return the SLOPE pattern
+#'   (cluster, ordering, and sign information) as a list of sparse
+#'   matrices, one for each step on the path.
 #' @param screen whether to use predictor screening rules (rules that allow
 #'   some predictors to be discarded prior to fitting), which improve speed
 #'   greatly when the number of predictors is larger than the number
@@ -366,6 +369,7 @@ SLOPE <- function(
   tol = 1e-4,
   threads = NULL,
   diagnostics = FALSE,
+  patterns = FALSE,
   tol_abs,
   tol_rel,
   tol_rel_gap,
@@ -441,6 +445,7 @@ SLOPE <- function(
     max_passes,
     tol,
     diagnostics,
+    patterns,
     threads
   )
 
@@ -479,6 +484,12 @@ SLOPE <- function(
 
   diagnostics <- if (diagnostics) setup_diagnostics(fit) else NULL
 
+  patterns <- if (control$patterns) {
+    fit$patterns
+  } else {
+    NULL
+  }
+
   slope_class <- switch(
     control$family,
     gaussian = "GaussianSLOPE",
@@ -501,6 +512,7 @@ SLOPE <- function(
       null_deviance = fit$null_deviance,
       family = control$family,
       diagnostics = diagnostics,
+      patterns = patterns,
       has_intercept = control$fit_intercept,
       call = ocall
     ),
@@ -529,6 +541,7 @@ processSlopeArgs <- function(
   max_passes = 1e6,
   tol = 1e-4,
   diagnostics = FALSE,
+  patterns = TRUE,
   threads = NULL
 ) {
   family <- match.arg(family)
@@ -680,6 +693,7 @@ processSlopeArgs <- function(
     centers = centers,
     class_names = class_names,
     diagnostics = diagnostics,
+    patterns = patterns,
     family = family,
     fit_intercept = fit_intercept,
     lambda = lambda,
@@ -699,6 +713,7 @@ processSlopeArgs <- function(
     tol_dev_ratio = tol_dev_ratio,
     variable_names = variable_names,
     threads = threads
+
   )
 
   control

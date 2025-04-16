@@ -535,7 +535,6 @@ means(const Eigen::MatrixXd& x);
 /**
  * @brief Computes the standard deviation for each column of a matrix
  *
- * @tparam T Matrix type (must support sparse matrix operations)
  * @param x Input matrix whose column standard deviations are to be computed
  * @return Eigen::VectorXd Vector containing the standard deviation of each
  * column
@@ -544,40 +543,24 @@ means(const Eigen::MatrixXd& x);
  * \f[ \sigma_j = \sqrt{\frac{1}{n}\sum_{i} (x_{ij} - \bar{x}_j)^2} \f]
  * where n is the number of rows, x_{ij} represents the i-th element of the j-th
  * column, and \f$\bar{x}_j\f$ is the mean of column j.
- *
- * This function uses Welford's algorithm.
  */
-template<typename T>
 Eigen::VectorXd
-stdDevs(const T& x)
-{
-  const int n = x.rows();
-  const int p = x.cols();
+stdDevs(const Eigen::SparseMatrix<double>& x);
 
-  Eigen::VectorXd x_means = means(x);
-  Eigen::VectorXd out(p);
-
-  for (int j = 0; j < p; ++j) {
-    double m2 = 0.0;
-    const double mean = x_means(j);
-
-    // Process non-zero elements
-    for (typename T::InnerIterator it(x, j); it; ++it) {
-      double delta = it.value() - mean;
-      m2 += delta * delta;
-    }
-
-    // Account for zeros
-    int nz_count = x.col(j).nonZeros();
-    if (nz_count < n) {
-      m2 += (n - nz_count) * mean * mean;
-    }
-
-    out(j) = std::sqrt(m2 / n);
-  }
-
-  return out;
-}
+/**
+ * @brief Computes the standard deviation for each column of a matrix
+ *
+ * @param x Input matrix whose column standard deviations are to be computed
+ * @return Eigen::VectorXd Vector containing the standard deviation of each
+ * column
+ *
+ * For each column j in matrix x, computes the standard deviation:
+ * \f[ \sigma_j = \sqrt{\frac{1}{n}\sum_{i} (x_{ij} - \bar{x}_j)^2} \f]
+ * where n is the number of rows, x_{ij} represents the i-th element of the j-th
+ * column, and \f$\bar{x}_j\f$ is the mean of column j.
+ */
+Eigen::VectorXd
+stdDevs(const Eigen::MatrixXd& x);
 
 /**
  * @brief Computes the range (max - min) for each column of a matrix

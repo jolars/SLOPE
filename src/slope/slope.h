@@ -38,7 +38,7 @@ public:
     , modify_x(false)
     , update_clusters(false)
     , collect_diagnostics(false)
-    , return_clusters(false)
+    , return_clusters(true)
     , alpha_min_ratio(-1) // TODO: Use std::optional for alpha_min_ratio
     , dev_change_tol(1e-5)
     , dev_ratio_tol(0.999)
