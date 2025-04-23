@@ -713,7 +713,6 @@ processSlopeArgs <- function(
     tol_dev_ratio = tol_dev_ratio,
     variable_names = variable_names,
     threads = threads
-
   )
 
   control
