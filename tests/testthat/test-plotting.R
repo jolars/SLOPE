@@ -35,7 +35,8 @@ test_that("plot.trainedSLOPE works as expected", {
   )
   expect_silent(dont_plot(tune, ci_col = "salmon"))
 
-  tune <- trainSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
+  tune <- trainSLOPE(
+    subset(mtcars, select = c("mpg", "drat", "wt")),
     mtcars$hp,
     q = 0.4,
     number = 10
