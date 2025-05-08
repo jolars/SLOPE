@@ -296,9 +296,9 @@ plot.TrainedSLOPE <- function(
 #' Y <- X %*% beta + rnorm(1000)
 #' fit <- SLOPE(X, Y, patterns = TRUE)
 #'
-#' plot_clusers(fit)
+#' plot_clusters(fit)
 
-plot_clusers <- function(x, plot_signs = FALSE, color_clusters = TRUE,
+plot_clusters <- function(x, plot_signs = FALSE, color_clusters = TRUE,
                          include_zeroes = TRUE, show_alpha = TRUE) {
   object <- x
 
