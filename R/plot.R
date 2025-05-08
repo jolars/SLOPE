@@ -280,7 +280,7 @@ plot.TrainedSLOPE <- function(
 #' @param include_zeroes logical, indicating whether zero variables should be
 #' plotted. Default to TRUE
 #' @param show_alpha logical, indicatiung whether labels with alpha values or
-#' steos in path should be plotted. Default TRUE
+#' steps in the path should be plotted. Default FALSE.
 #'
 #' @seealso [SLOPE()]
 #'
@@ -300,7 +300,7 @@ plot.TrainedSLOPE <- function(
 #' plot_clusters(fit)
 
 plot_clusters <- function(x, plot_signs = FALSE, color_clusters = TRUE,
-                         include_zeroes = TRUE, show_alpha = TRUE) {
+                         include_zeroes = TRUE, show_alpha = FALSE) {
   object <- x
 
   pat <- object$patterns
