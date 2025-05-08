@@ -311,19 +311,19 @@ plot_clusters <- function(x, plot_signs = FALSE, color_clusters = TRUE,
 
   rownames(mat) <- 1:nrow(mat)
 
-  if(!include_zeroes) mat <- mat[rowSums(mat) != 0, ]
+  if (!include_zeroes) mat <- mat[rowSums(mat) != 0, ]
 
   abs_mat <- abs(mat)
 
   abs_vals <- sort(unique(as.vector(abs_mat)))
 
-  if(color_clusters){
+  if (color_clusters){
     my_colors <- c("white", rainbow(length(abs_vals) - 1, alpha = 0.7))
   } else {
     my_colors <- c("white", rep("grey", length(abs_vals) - 1))
   }
 
-  if(show_alpha) {
+  if (show_alpha) {
     step <- round(object$alpha, 3)
     xlabel <- "alpha"
   } else {
