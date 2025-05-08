@@ -27,6 +27,10 @@ plotted. Default to TRUE}
 \item{show_alpha}{logical, indicatiung whether labels with alpha values or
 steos in path should be plotted. Default TRUE}
 }
+\value{
+Invisibly returns NULL. The function is called for its
+side effect of producing a plot.
+}
 \description{
 Plot cluster structure
 }
