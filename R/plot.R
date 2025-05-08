@@ -284,7 +284,8 @@ plot.TrainedSLOPE <- function(
 #'
 #' @seealso [SLOPE()]
 #'
-#' @return
+#' @return Invisibly returns NULL. The function is called for its
+#'   side effect of producing a plot.
 #'
 #' @export
 #'
@@ -366,4 +367,5 @@ plot_clusters <- function(x, plot_signs = FALSE, color_clusters = TRUE,
   abline(v = x_coords, col = adjustcolor("black", alpha = 0.5), lwd = 0.5)
   abline(h = y_coords, col = adjustcolor("black", alpha = 0.5), lwd = 0.5)
 
+  invisible()
 }
