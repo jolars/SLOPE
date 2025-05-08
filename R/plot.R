@@ -319,7 +319,7 @@ plot_clusters <- function(x, plot_signs = FALSE, color_clusters = TRUE,
   abs_vals <- sort(unique(as.vector(abs_mat)))
 
   if (color_clusters){
-    my_colors <- c("white", rainbow(length(abs_vals) - 1, alpha = 0.7))
+    my_colors <- c("white", grDevices::rainbow(length(abs_vals) - 1, alpha = 0.7))
   } else {
     my_colors <- c("white", rep("grey", length(abs_vals) - 1))
   }
@@ -340,9 +340,15 @@ plot_clusters <- function(x, plot_signs = FALSE, color_clusters = TRUE,
                   axes = FALSE,
                   xlab = xlabel, ylab = "variable")
 
-  box(col = "black", lwd = 1.5)
-  axis(1, at = seq(0, 1, length.out = ncol(mat)), labels = step, las = 2)
-  axis(2, at = seq(0, 1, length.out = nrow(mat)), labels = rownames(mat), las = 1)
+  graphics::box(col = "black", lwd = 1.5)
+  graphics::axis(1,
+                 at = seq(0, 1, length.out = ncol(mat)),
+                 labels = step,
+                 las = 2)
+  graphics::axis(2,
+                 at = seq(0, 1, length.out = nrow(mat)),
+                 labels = rownames(mat),
+                 las = 1)
 
   if (plot_signs) {
     for (i in 1:nrow(mat)) {
@@ -353,7 +359,7 @@ plot_clusters <- function(x, plot_signs = FALSE, color_clusters = TRUE,
         x <- (j - 1) / (ncol(mat) - 1)
         y <- 1 - (i - 1) / (nrow(mat) - 1)
 
-        text(x, y, labels = sign_char)
+        graphics::text(x, y, labels = sign_char)
       }
     }
   }
@@ -364,8 +370,8 @@ plot_clusters <- function(x, plot_signs = FALSE, color_clusters = TRUE,
   y_coords <- seq(0, 1, length.out = nrow(mat))
   y_coords <- y_coords + mean(y_coords[1:2])
 
-  abline(v = x_coords, col = adjustcolor("black", alpha = 0.5), lwd = 0.5)
-  abline(h = y_coords, col = adjustcolor("black", alpha = 0.5), lwd = 0.5)
+  graphics::abline(v = x_coords, col = grDevices::adjustcolor("black", alpha = 0.5), lwd = 0.5)
+  graphics::abline(h = y_coords, col = grDevices::adjustcolor("black", alpha = 0.5), lwd = 0.5)
 
   invisible()
 }
