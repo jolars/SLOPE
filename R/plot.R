@@ -343,7 +343,7 @@ plot_clusers <- function(x, plot_signs = FALSE, color_clusters = TRUE,
   axis(1, at = seq(0, 1, length.out = ncol(mat)), labels = step, las = 2)
   axis(2, at = seq(0, 1, length.out = nrow(mat)), labels = rownames(mat), las = 1)
 
-  if(plot_signs) {
+  if (plot_signs) {
     for (i in 1:nrow(mat)) {
       for (j in 1:ncol(mat)) {
         val <- mat[nrow(mat):1, ][i, j]
