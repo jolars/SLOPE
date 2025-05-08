@@ -9,7 +9,7 @@ plot_clusters(
   plot_signs = FALSE,
   color_clusters = TRUE,
   include_zeroes = TRUE,
-  show_alpha = TRUE
+  show_alpha = FALSE
 )
 }
 \arguments{
@@ -25,7 +25,7 @@ different colors}
 plotted. Default to TRUE}
 
 \item{show_alpha}{logical, indicatiung whether labels with alpha values or
-steos in path should be plotted. Default TRUE}
+steps in the path should be plotted. Default FALSE.}
 }
 \value{
 Invisibly returns NULL. The function is called for its
