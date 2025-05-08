@@ -9,7 +9,8 @@ plot_clusters(
   plot_signs = FALSE,
   color_clusters = TRUE,
   include_zeroes = TRUE,
-  show_alpha = FALSE
+  show_alpha = FALSE,
+  alpha_steps = NULL
 )
 }
 \arguments{
@@ -26,6 +27,9 @@ plotted. Default to TRUE}
 
 \item{show_alpha}{logical, indicatiung whether labels with alpha values or
 steps in the path should be plotted. Default FALSE.}
+
+\item{alpha_steps}{a vector of integer alpha steps to plot. If NULL, all the steps
+are plotted. Default to NULL.}
 }
 \value{
 Invisibly returns NULL. The function is called for its
@@ -43,6 +47,7 @@ Y <- X \%*\% beta + rnorm(1000)
 fit <- SLOPE(X, Y, patterns = TRUE)
 
 plot_clusters(fit)
+plot_clusters(fit, alpha_steps = 1:10)
 }
 \seealso{
 \code{\link[=SLOPE]{SLOPE()}}

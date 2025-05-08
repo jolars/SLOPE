@@ -281,6 +281,8 @@ plot.TrainedSLOPE <- function(
 #' plotted. Default to TRUE
 #' @param show_alpha logical, indicatiung whether labels with alpha values or
 #' steps in the path should be plotted. Default FALSE.
+#' @param alpha_steps a vector of integer alpha steps to plot. If NULL, all the steps
+#' are plotted. Default to NULL.
 #'
 #' @seealso [SLOPE()]
 #'
@@ -298,15 +300,31 @@ plot.TrainedSLOPE <- function(
 #' fit <- SLOPE(X, Y, patterns = TRUE)
 #'
 #' plot_clusters(fit)
+#' plot_clusters(fit, alpha_steps = 1:10)
 
-plot_clusters <- function(x, plot_signs = FALSE, color_clusters = TRUE,
-                         include_zeroes = TRUE, show_alpha = FALSE) {
+plot_clusters <- function(
+    x, plot_signs = FALSE,
+    color_clusters = TRUE,
+    include_zeroes = TRUE,
+    show_alpha = FALSE,
+    alpha_steps = NULL
+) {
   object <- x
 
   pat <- object$patterns
   pat[[1]] <- as.matrix(numeric(length(object$lambda)), ncol = 1)
 
-  mat <- sapply(pat, function(m) {
+  if (is.null(alpha_steps)) {
+    alpha_steps <- 1:length(pat)
+  } else {
+    alpha_steps <- unique(alpha_steps)
+    stopifnot(is.numeric(alpha_steps),
+              all(alpha_steps %% 1 == 0),
+              all(alpha_steps >= 1),
+              all(alpha_steps <= length(pat)))
+  }
+
+  mat <- sapply(pat[alpha_steps], function(m) {
     rowSums(t(t(as.matrix(m)) * 1:ncol(as.matrix(m))))
   })
 
