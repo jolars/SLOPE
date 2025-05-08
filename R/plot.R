@@ -304,7 +304,7 @@ plot_clusters <- function(x, plot_signs = FALSE, color_clusters = TRUE,
   object <- x
 
   pat <- object$patterns
-  pat[[1]] <- as.matrix(numeric(ncol(X)), ncol = 1)
+  pat[[1]] <- as.matrix(numeric(length(object$lambda)), ncol = 1)
 
   mat <- sapply(pat, function(m) {
     rowSums(t(t(as.matrix(m)) * 1:ncol(as.matrix(m))))
