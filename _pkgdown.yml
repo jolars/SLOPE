@@ -28,6 +28,9 @@ reference:
               - coef.SLOPE
               - deviance.SLOPE
               - score
+      - title: Clusters
+      - contents:
+              - plot_clusters
       - title: Model Tuning
       - contents:
               - cvSLOPE
