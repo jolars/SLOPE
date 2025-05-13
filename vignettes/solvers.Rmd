@@ -90,10 +90,16 @@ To see how the solvers compare for a single objective along the path, we
 collect the gaps at step 40 for each solver.
 
 ```{r collect-gaps}
+pen_minmax <- min(
+  vapply(fits, function(fit) {
+    max(fit$diagnostics$penalty)
+  }, FUN.VALUE = numeric(1))
+)
+
 res <- lapply(seq_along(fits), function(i) {
   fit <- fits[[i]]
   solver <- solvers[[i]]
-  d <- fit$diagnostics[fit$diagnostics$penalty == 35, ]
+  d <- fit$diagnostics[fit$diagnostics$penalty == pen_minmax, ]
   data.frame(
     solver = solver,
     time = d$time,
