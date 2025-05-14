@@ -64,7 +64,8 @@ preprocessResponse <- function(family, y, fit_intercept) {
 
       if (n_classes == 2) {
         stop(
-          "only two classes in response. Are you looking for family = 'binomial'?"
+          "only two classes in response. ",
+          "Are you looking for family = 'binomial'?"
         )
       }
 
