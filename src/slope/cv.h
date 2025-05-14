@@ -14,6 +14,7 @@
 #include "score.h"
 #include "slope.h"
 #include <vector>
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -96,9 +97,14 @@ struct CvConfig
   /// Seed for random number generator to ensure reproducibility (default: 42)
   uint64_t random_seed = 42;
 
-  /// Map of hyperparameter names to vectors of values to evaluate (default:
-  /// {"q", {0.1}})
-  std::map<std::string, std::vector<double>> hyperparams = { { "q", { 0.1 } } };
+  /// Map of hyperparameter names to vectors of values to evaluate
+  std::map<std::string, std::vector<double>> hyperparams;
+
+  /// Map of hyperparameter names to vectors of values to evaluate
+  std::map<std::string, std::vector<double>> default_hyperparams = {
+    { "q", { 0.1 } },
+    { "gamma", { 0.0 } },
+  };
 
   /// Optional user-defined fold assignments for custom cross-validation splits
   std::optional<std::vector<std::vector<std::vector<int>>>> predefined_folds;
@@ -170,7 +176,15 @@ crossValidate(Slope model,
 
   auto y = loss->preprocessResponse(y_in);
   auto scorer = Score::create(config.metric);
-  auto grid = createGrid(config.hyperparams);
+
+  auto hyperparams = config.default_hyperparams;
+
+  // Override with user-specified parameters
+  for (const auto& [key, values] : config.hyperparams) {
+    hyperparams[key] = values;
+  }
+
+  auto grid = createGrid(hyperparams);
 
   // Total number of evaluations (n_repeats * n_folds)
   Folds folds =
@@ -183,9 +197,14 @@ crossValidate(Slope model,
   for (const auto& params : grid) {
     GridResult result;
     result.params = params;
-    model.setQ(params.at("q"));
+
+    double q = params.at("q");
+    double gamma = params.at("gamma");
+
+    model.setQ(q);
 
     auto initial_path = model.path(x, y);
+
     result.alphas = initial_path.getAlpha();
     int n_alpha = result.alphas.size();
 
@@ -216,17 +235,25 @@ crossValidate(Slope model,
 
         auto path = thread_model.path(x_train, y_train, result.alphas);
 
+        if (gamma > 0) {
+          path = thread_model.relax(path, x_train, y_train, gamma);
+        }
+
         for (int j = 0; j < n_alpha; ++j) {
           auto eta = path(j).predict(x_test, "linear");
           scores(i, j) = scorer->eval(eta, y_test, loss);
         }
       } catch (const std::exception& e) {
         thread_errors[i] = e.what();
+#ifdef _OPENMP
 #pragma omp atomic write
+#endif
         had_exception = true;
       } catch (...) {
         thread_errors[i] = "Unknown exception";
+#ifdef _OPENMP
 #pragma omp atomic write
+#endif
         had_exception = true;
       }
     }

@@ -98,6 +98,50 @@ computeScales(Eigen::VectorXd& x_scales, const T& x, const std::string& type)
 }
 
 /**
+ * Normalize a mapped dense matrix by centering and scaling.
+ *
+ * Since Eigen::Map cannot be modified in-place (it's a view of external
+ * memory), this overload ignores the modify_x parameter and always returns the
+ * appropriate JitNormalization enum for deferred normalization.
+ *
+ * @param x The mapped dense input matrix.
+ * @param x_centers A vector that will hold the column centers.
+ * @param x_scales A vector that will hold the column scaling factors.
+ * @param centering_type A string specifying the centering type.
+ * @param scaling_type A string specifying the scaling type.
+ * @param modify_x Ignored for mapped matrices (normalization is always
+ * deferred).
+ *
+ * @return JitNormalization enum indicating what normalization should be
+ * applied.
+ */
+template<typename Derived>
+JitNormalization
+normalize(Eigen::Map<Derived>& x,
+          Eigen::VectorXd& x_centers,
+          Eigen::VectorXd& x_scales,
+          const std::string& centering_type,
+          const std::string& scaling_type,
+          const bool)
+{
+  computeCenters(x_centers, x, centering_type);
+  computeScales(x_scales, x, scaling_type);
+
+  bool center = centering_type != "none";
+  bool scale = scaling_type != "none";
+
+  if (center && scale) {
+    return JitNormalization::Both;
+  } else if (center) {
+    return JitNormalization::Center;
+  } else if (scale) {
+    return JitNormalization::Scale;
+  } else {
+    return JitNormalization::None;
+  }
+}
+
+/**
  * Normalize a dense matrix by centering and scaling.
  *
  * The function computes column centers and scaling factors based on the
@@ -179,7 +223,7 @@ normalize(Eigen::SparseMatrix<double>& x,
  */
 std::tuple<Eigen::VectorXd, Eigen::MatrixXd>
 rescaleCoefficients(const Eigen::VectorXd& beta0,
-                    const Eigen::VectorXd& beta,
+                    const Eigen::SparseMatrix<double>& beta,
                     const Eigen::VectorXd& x_centers,
                     const Eigen::VectorXd& x_scales,
                     const bool intercept);

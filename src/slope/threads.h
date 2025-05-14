@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include <algorithm>
 #include <stdexcept>
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif

@@ -27,9 +27,10 @@ Logistic::dual(const Eigen::MatrixXd& theta,
 }
 
 Eigen::MatrixXd
-Logistic::residual(const Eigen::MatrixXd& eta, const Eigen::MatrixXd& y)
+Logistic::hessianDiagonal(const Eigen::MatrixXd& eta)
 {
-  return 1.0 / (1.0 + (-eta).array().exp()) - y.array();
+  const auto pr = inverseLink(eta);
+  return pr.array() * (1.0 - pr.array());
 }
 
 Eigen::MatrixXd
@@ -44,19 +45,6 @@ Logistic::preprocessResponse(const Eigen::MatrixXd& y)
   }
 
   return y_clamped;
-}
-
-void
-Logistic::updateWeightsAndWorkingResponse(Eigen::VectorXd& w,
-                                          Eigen::VectorXd& z,
-                                          const Eigen::VectorXd& eta,
-                                          const Eigen::VectorXd& y)
-{
-  Eigen::ArrayXd pr = (1.0 / (1.0 + (-eta.array()).exp()))
-                        .min(constants::P_MAX)
-                        .max(constants::P_MIN);
-  w = pr * (1.0 - pr);
-  z = eta.array() + (y.array() - pr) / w.array();
 }
 
 Eigen::MatrixXd

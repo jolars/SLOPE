@@ -19,12 +19,8 @@ setupSolver(const std::string& solver_type,
   if (solver_type == "auto") {
     // TODO: Make this more sophisticated, e.g. define in solver class
     // and check if compatible with the loss function.
-    solver_choice = loss == "multinomial" ? "fista" : "hybrid";
-  }
-
-  if (loss == "multinomial" && solver_choice == "hybrid") {
-    throw std::invalid_argument("multinomial loss is currently not "
-                                "supported with the hybrid solver");
+    // solver_choice = loss == "multinomial" ? "fista" : "hybrid";
+    solver_choice = "hybrid";
   }
 
   if (solver_choice == "pgd") {

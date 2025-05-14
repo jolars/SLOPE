@@ -25,30 +25,30 @@ Multinomial::dual(const Eigen::MatrixXd& theta,
                   const Eigen::MatrixXd& y,
                   const Eigen::VectorXd&)
 {
-  const Eigen::MatrixXd r = theta + y;
+  int n = y.rows();
+  int p = y.cols();
 
-  return -(r.array() * r.array().max(constants::P_MIN).log()).sum() / y.rows();
-}
+  Eigen::ArrayXXd eta = link(theta + y);
 
-Eigen::MatrixXd
-Multinomial::residual(const Eigen::MatrixXd& eta, const Eigen::MatrixXd& y)
-{
-  return softmax(eta) - y;
+  // TODO: Find out if this formulation can be improved numerically
+  double out = logSumExp(eta).mean() - (y.array() * eta).sum() / n -
+               (theta.array() * eta).sum() / n;
+
+  return out;
 }
 
 Eigen::MatrixXd
 Multinomial::preprocessResponse(const Eigen::MatrixXd& y)
 {
   const int n = y.rows();
-  int m = y.cols();
 
   Eigen::MatrixXd result;
 
-  if (m == 1) {
-    // Y is a column vector, expect integers representing classes
-    m = y.array().maxCoeff() + 1; // Assuming classes are 0-based
+  if (y.cols() == 1) {
+    // y is a column vector, expect integers representing classes
+    int m = y.array().maxCoeff(); // Assuming classes are 0-based
 
-    if (m == 1) {
+    if (m == 0) {
       throw std::invalid_argument("Only one class found in response");
     }
 
@@ -61,7 +61,9 @@ Multinomial::preprocessResponse(const Eigen::MatrixXd& y)
           "Class labels must be consecutive integers starting from 0");
       }
 
-      result(i, class_label) = 1.0;
+      if (class_label < m) {
+        result(i, class_label) = 1.0;
+      }
     }
   } else {
     // Y is a matrix, expect one-hot encoding
@@ -79,27 +81,39 @@ Multinomial::preprocessResponse(const Eigen::MatrixXd& y)
       }
     }
 
-    result = y;
+    return y;
   }
 
   return result;
 }
 
-void
-Multinomial::updateWeightsAndWorkingResponse(Eigen::VectorXd&,
-                                             Eigen::VectorXd&,
-                                             const Eigen::VectorXd&,
-                                             const Eigen::VectorXd&)
+Eigen::MatrixXd
+Multinomial::hessianDiagonal(const Eigen::MatrixXd& eta)
 {
-  throw std::runtime_error("Multinomial loss does not currently support IRLS");
+  Eigen::MatrixXd pr = inverseLink(eta);
+
+  return pr.array() * (1.0 - pr.array());
 }
 
 Eigen::MatrixXd
 Multinomial::link(const Eigen::MatrixXd& mu)
 {
-  return mu.unaryExpr([](const double& x) {
-    return logit(std::clamp(x, constants::P_MIN, constants::P_MAX));
-  });
+  Eigen::MatrixXd out(mu.rows(), mu.cols());
+
+  for (int i = 0; i < mu.rows(); i++) {
+    double row_sum = mu.row(i).sum();
+    double ref_val = 1.0 - row_sum;
+
+    for (int j = 0; j < mu.cols(); j++) {
+      double numerator =
+        std::clamp(mu(i, j), constants::P_MIN, constants::P_MAX);
+      double denominator =
+        std::clamp(ref_val, constants::P_MIN, constants::P_MAX);
+      out(i, j) = std::log(numerator) - std::log(denominator);
+    }
+  }
+
+  return out;
 }
 
 Eigen::MatrixXd
@@ -111,13 +125,20 @@ Multinomial::inverseLink(const Eigen::MatrixXd& eta)
 Eigen::MatrixXd
 Multinomial::predict(const Eigen::MatrixXd& eta)
 {
-  Eigen::MatrixXd prob = inverseLink(eta);
+  int n = eta.rows();
+  int m = eta.cols();
+
+  // Directly compute probabilities with the last column as reference class
+  Eigen::MatrixXd prob = softmax(eta);
 
   // Find the class with the highest probability
-  Eigen::VectorXd out(eta.rows());
+  Eigen::VectorXd out(n);
+  for (int i = 0; i < n; i++) {
+    double sum_prob = prob.row(i).sum();
+    double best_prob = prob.row(i).maxCoeff();
+    double ref_prob = 1.0 - sum_prob;
 
-  for (int i = 0; i < eta.rows(); i++) {
-    out(i) = whichMax(prob.row(i));
+    out(i) = best_prob > ref_prob ? whichMax(prob.row(i)) : m;
   }
 
   return out;

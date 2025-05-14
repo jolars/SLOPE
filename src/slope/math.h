@@ -5,12 +5,16 @@
 
 #pragma once
 
+#include "clusters.h"
 #include "jit_normalization.h"
-#include "threads.h"
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <numeric>
 #include <vector>
+
+#ifdef _OPENMP
+#include "threads.h"
+#endif
 
 namespace slope {
 
@@ -164,7 +168,7 @@ linearPredictor(const T& x,
 #ifdef _OPENMP
 #pragma omp for nowait
 #endif
-    for (size_t i = 0; i < active_set.size(); ++i) {
+    for (int i = 0; i < static_cast<int>(active_set.size()); ++i) {
       int ind = active_set[i];
       auto [k, j] = std::div(ind, p);
 
@@ -251,7 +255,7 @@ updateGradient(Eigen::VectorXd& gradient,
 #ifdef _OPENMP
 #pragma omp parallel for num_threads(Threads::get()) if (large_problem)
 #endif
-  for (size_t i = 0; i < active_set.size(); ++i) {
+  for (int i = 0; i < static_cast<int>(active_set.size()); ++i) {
     int ind = active_set[i];
     auto [k, j] = std::div(ind, p);
 
@@ -619,5 +623,60 @@ mins(const Eigen::SparseMatrix<double>& x);
  */
 Eigen::VectorXd
 mins(const Eigen::MatrixXd& x);
+
+template<typename T>
+Eigen::VectorXd
+clusterGradient(Eigen::VectorXd& beta,
+                Eigen::MatrixXd& residual,
+                Clusters& clusters,
+                const T& x,
+                const Eigen::MatrixXd& w,
+                const Eigen::VectorXd& x_centers,
+                const Eigen::VectorXd& x_scales,
+                const JitNormalization jit_normalization)
+{
+  using namespace Eigen;
+
+  const int n = x.rows();
+  const int p = x.cols();
+  const int n_clusters = clusters.n_clusters();
+
+  Eigen::VectorXd gradient = Eigen::VectorXd::Zero(n_clusters);
+
+  for (int j = 0; j < n_clusters; ++j) {
+    double c_old = clusters.coeff(j);
+
+    if (c_old == 0) {
+      gradient(j) = 0;
+      continue;
+    }
+
+    int cluster_size = clusters.cluster_size(j);
+    std::vector<int> s;
+    s.reserve(cluster_size);
+
+    for (auto c_it = clusters.cbegin(j); c_it != clusters.cend(j); ++c_it) {
+      int ind = *c_it;
+      double s_k = sign(beta(ind));
+      s.emplace_back(s_k);
+    }
+
+    double hess = 1;
+    double grad = 0;
+
+    if (cluster_size == 1) {
+      int k = *clusters.cbegin(j);
+      std::tie(grad, hess) = computeGradientAndHessian(
+        x, k, w, residual, x_centers, x_scales, s[0], jit_normalization, n);
+    } else {
+      std::tie(hess, grad) = computeClusterGradientAndHessian(
+        x, j, s, clusters, w, residual, x_centers, x_scales, jit_normalization);
+    }
+
+    gradient(j) = grad;
+  }
+
+  return gradient;
+}
 
 } // namespace slope

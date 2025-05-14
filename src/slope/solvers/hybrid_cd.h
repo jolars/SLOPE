@@ -39,9 +39,9 @@ namespace slope {
 template<typename T>
 std::pair<double, double>
 computeGradientAndHessian(const T& x,
-                          const int k,
-                          const Eigen::VectorXd& w,
-                          const Eigen::VectorXd& residual,
+                          const int ind,
+                          const Eigen::MatrixXd& w,
+                          const Eigen::MatrixXd& residual,
                           const Eigen::VectorXd& x_centers,
                           const Eigen::VectorXd& x_scales,
                           const double s,
@@ -51,38 +51,46 @@ computeGradientAndHessian(const T& x,
   double gradient = 0.0;
   double hessian = 0.0;
 
+  int p = x.cols();
+
+  auto [k, j] = std::div(ind, p);
+
+  // TODO: Avoid these copies
+  Eigen::VectorXd residual_v = residual.col(k);
+  Eigen::VectorXd w_v = w.col(k);
+
   switch (jit_normalization) {
     case JitNormalization::Both:
       gradient = s *
-                 (x.col(k).cwiseProduct(w).dot(residual) -
-                  w.dot(residual) * x_centers(k)) /
-                 (n * x_scales(k));
+                 (x.col(j).cwiseProduct(w_v).dot(residual_v) -
+                  w_v.dot(residual_v) * x_centers(j)) /
+                 (n * x_scales(j));
       hessian =
-        (x.col(k).cwiseAbs2().dot(w) - 2 * x_centers(k) * x.col(k).dot(w) +
-         std::pow(x_centers(k), 2) * w.sum()) /
-        (std::pow(x_scales(k), 2) * n);
+        (x.col(j).cwiseAbs2().dot(w_v) - 2 * x_centers(j) * x.col(j).dot(w_v) +
+         std::pow(x_centers(j), 2) * w_v.sum()) /
+        (std::pow(x_scales(j), 2) * n);
       break;
 
     case JitNormalization::Center:
       gradient = s *
-                 (x.col(k).cwiseProduct(w).dot(residual) -
-                  w.dot(residual) * x_centers(k)) /
+                 (x.col(j).cwiseProduct(w_v).dot(residual_v) -
+                  w_v.dot(residual_v) * x_centers(j)) /
                  n;
       hessian =
-        (x.col(k).cwiseAbs2().dot(w) - 2 * x_centers(k) * x.col(k).dot(w) +
-         std::pow(x_centers(k), 2) * w.sum()) /
+        (x.col(j).cwiseAbs2().dot(w_v) - 2 * x_centers(j) * x.col(j).dot(w_v) +
+         std::pow(x_centers(j), 2) * w_v.sum()) /
         n;
       break;
 
     case JitNormalization::Scale:
       gradient =
-        s * (x.col(k).cwiseProduct(w).dot(residual)) / (n * x_scales(k));
-      hessian = x.col(k).cwiseAbs2().dot(w) / (std::pow(x_scales(k), 2) * n);
+        s * (x.col(j).cwiseProduct(w_v).dot(residual_v)) / (n * x_scales(j));
+      hessian = x.col(j).cwiseAbs2().dot(w_v) / (std::pow(x_scales(j), 2) * n);
       break;
 
     case JitNormalization::None:
-      gradient = s * (x.col(k).cwiseProduct(w).dot(residual)) / n;
-      hessian = x.col(k).cwiseAbs2().dot(w) / n;
+      gradient = s * (x.col(j).cwiseProduct(w_v).dot(residual_v)) / n;
+      hessian = x.col(j).cwiseAbs2().dot(w_v) / n;
       break;
   }
 
@@ -101,7 +109,7 @@ computeGradientAndHessian(const T& x,
  * @param j Cluster index
  * @param s Vector of signs for each variable in the cluster
  * @param clusters The cluster information object
- * @param w Vector of weights
+ * @param w Weights
  * @param residual Residual vector
  * @param x_centers Vector of feature centers (means)
  * @param x_scales Vector of feature scales (standard deviations)
@@ -117,8 +125,8 @@ computeClusterGradientAndHessian(const Eigen::MatrixXd& x,
                                  const int j,
                                  const std::vector<int>& s,
                                  const Clusters& clusters,
-                                 const Eigen::VectorXd& w,
-                                 const Eigen::VectorXd& residual,
+                                 const Eigen::MatrixXd& w,
+                                 const Eigen::MatrixXd& residual,
                                  const Eigen::VectorXd& x_centers,
                                  const Eigen::VectorXd& x_scales,
                                  const JitNormalization jit_normalization);
@@ -150,8 +158,8 @@ computeClusterGradientAndHessian(const Eigen::SparseMatrix<double>& x,
                                  const int j,
                                  const std::vector<int>& s,
                                  const Clusters& clusters,
-                                 const Eigen::VectorXd& w,
-                                 const Eigen::VectorXd& residual,
+                                 const Eigen::MatrixXd& w,
+                                 const Eigen::MatrixXd& residual,
                                  const Eigen::VectorXd& x_centers,
                                  const Eigen::VectorXd& x_scales,
                                  const JitNormalization jit_normalization);
@@ -170,7 +178,7 @@ computeClusterGradientAndHessian(const Eigen::SparseMatrix<double>& x,
  * @param clusters The cluster information, stored in a Cluster object.
  * @param lambda Regularization weights
  * @param x The design matrix
- * @param w The weight vector
+ * @param w Working weights
  * @param x_centers The center values of the data matrix columns
  * @param x_scales The scale values of the data matrix columns
  * @param intercept Shuold an intervept be fit?
@@ -183,14 +191,14 @@ computeClusterGradientAndHessian(const Eigen::SparseMatrix<double>& x,
  * @see JitNormalization
  */
 template<typename T>
-void
+double
 coordinateDescent(Eigen::VectorXd& beta0,
                   Eigen::VectorXd& beta,
-                  Eigen::VectorXd& residual,
+                  Eigen::MatrixXd& residual,
                   Clusters& clusters,
                   const Eigen::ArrayXd& lambda,
                   const T& x,
-                  const Eigen::VectorXd& w,
+                  const Eigen::MatrixXd& w,
                   const Eigen::VectorXd& x_centers,
                   const Eigen::VectorXd& x_scales,
                   const bool intercept,
@@ -200,9 +208,13 @@ coordinateDescent(Eigen::VectorXd& beta0,
   using namespace Eigen;
 
   const int n = x.rows();
+  const int p = x.cols();
+  const int m = residual.cols();
 
-  for (int j = 0; j < clusters.n_clusters(); ++j) {
-    double c_old = clusters.coeff(j);
+  double max_abs_gradient = 0;
+
+  for (int c_ind = 0; c_ind < clusters.n_clusters(); ++c_ind) {
+    double c_old = clusters.coeff(c_ind);
 
     if (c_old == 0) {
       // We do not update the zero cluster because it can be very large, but
@@ -210,78 +222,104 @@ coordinateDescent(Eigen::VectorXd& beta0,
       continue;
     }
 
-    int cluster_size = clusters.cluster_size(j);
+    int cluster_size = clusters.cluster_size(c_ind);
     std::vector<int> s;
     s.reserve(cluster_size);
 
-    for (auto c_it = clusters.cbegin(j); c_it != clusters.cend(j); ++c_it) {
-      double s_k = sign(beta(*c_it));
-      s.emplace_back(s_k);
+    for (auto c_it = clusters.cbegin(c_ind); c_it != clusters.cend(c_ind);
+         ++c_it) {
+      double s_ind = sign(beta(*c_it));
+      s.emplace_back(s_ind);
     }
 
-    double hessian_j = 1;
-    double gradient_j = 0;
+    double hess = 1;
+    double grad = 0;
     VectorXd x_s(n);
 
     if (cluster_size == 1) {
-      int k = *clusters.cbegin(j);
-      std::tie(gradient_j, hessian_j) = computeGradientAndHessian(
-        x, k, w, residual, x_centers, x_scales, s[0], jit_normalization, n);
+      int ind = *clusters.cbegin(c_ind);
+      std::tie(grad, hess) = computeGradientAndHessian(
+        x, ind, w, residual, x_centers, x_scales, s[0], jit_normalization, n);
     } else {
-      std::tie(hessian_j, gradient_j) = computeClusterGradientAndHessian(
-        x, j, s, clusters, w, residual, x_centers, x_scales, jit_normalization);
+      std::tie(hess, grad) =
+        computeClusterGradientAndHessian(x,
+                                         c_ind,
+                                         s,
+                                         clusters,
+                                         w,
+                                         residual,
+                                         x_centers,
+                                         x_scales,
+                                         jit_normalization);
     }
 
-    auto [c_tilde, new_index] = slopeThreshold(
-      c_old - gradient_j / hessian_j, j, lambda / hessian_j, clusters);
+    max_abs_gradient = std::max(max_abs_gradient, std::abs(grad));
+
+    double c_tilde;
+    int new_index;
+
+    if (lambda(0) == 0) {
+      // No regularization
+      c_tilde = c_old - grad / hess;
+      new_index = c_ind;
+    } else {
+      std::tie(c_tilde, new_index) =
+        slopeThreshold(c_old - grad / hess, c_ind, lambda / hess, clusters);
+    }
 
     double c_diff = c_old - c_tilde;
 
     if (c_diff != 0) {
       auto s_it = s.cbegin();
-      auto c_it = clusters.cbegin(j);
-      for (; c_it != clusters.cend(j); ++c_it, ++s_it) {
-        int k = *c_it;
-        double s_k = *s_it;
+      auto c_it = clusters.cbegin(c_ind);
+      for (; c_it != clusters.cend(c_ind); ++c_it, ++s_it) {
+        int ind = *c_it;
+        auto [k, j] = std::div(ind, p);
+        double s_ind = *s_it;
 
         // Update coefficient
-        beta(k) = c_tilde * s_k;
+        beta(ind) = c_tilde * s_ind;
 
         // Update residual
         switch (jit_normalization) {
           case JitNormalization::Both:
-            residual -= x.col(k) * (s_k * c_diff / x_scales(k));
-            residual.array() += x_centers(k) * s_k * c_diff / x_scales(k);
+            residual.col(k) -= x.col(j) * (s_ind * c_diff / x_scales(j));
+            residual.col(k).array() +=
+              x_centers(j) * s_ind * c_diff / x_scales(j);
             break;
 
           case JitNormalization::Center:
-            residual -= x.col(k) * (s_k * c_diff);
-            residual.array() += x_centers(k) * s_k * c_diff;
+            residual.col(k) -= x.col(j) * (s_ind * c_diff);
+            residual.col(k).array() += x_centers(j) * s_ind * c_diff;
             break;
 
           case JitNormalization::Scale:
-            residual -= x.col(k) * (s_k * c_diff / x_scales(k));
+            residual.col(k) -= x.col(j) * (s_ind * c_diff / x_scales(j));
             break;
 
           case JitNormalization::None:
-            residual -= x.col(k) * (s_k * c_diff);
+            residual.col(k) -= x.col(j) * (s_ind * c_diff);
             break;
         }
       }
     }
 
     if (update_clusters) {
-      clusters.update(j, new_index, std::abs(c_tilde));
+      clusters.update(c_ind, new_index, std::abs(c_tilde));
     } else {
-      clusters.setCoeff(j, std::abs(c_tilde));
+      clusters.setCoeff(c_ind, std::abs(c_tilde));
     }
   }
 
   if (intercept) {
-    double beta0_update = residual.dot(w) / n;
-    residual.array() -= beta0_update;
-    beta0(0) -= beta0_update;
+    for (int k = 0; k < residual.cols(); ++k) {
+      double beta0_update = residual.col(k).dot(w.col(k)) / n;
+      residual.col(k).array() -= beta0_update;
+      beta0(k) -= beta0_update;
+    }
   }
+
+  return max_abs_gradient;
 }
 
 } // namespace slope

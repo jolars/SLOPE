@@ -61,17 +61,13 @@ public:
               const Eigen::VectorXd& w);
 
   /**
-   * @brief Calculates residuals for the quadratic model
-   * @details Computes the difference between observed and predicted values
+   * @brief Calculates hessian diagonal
    *
-   * @param eta Predicted values vector (n x 1)
-   * @param y Actual values vector (n x 1)
-   * @return Vector of residuals (n x 1)
-   *
-   * @note Residuals are calculated as: \f$ r_i = \eta_i - y_i \f$
+   * @param eta Linear predictor
+   * @param y Response
+   * @return A matrix of ones (n x m)
    */
-  Eigen::MatrixXd residual(const Eigen::MatrixXd& eta,
-                           const Eigen::MatrixXd& y);
+  Eigen::MatrixXd hessianDiagonal(const Eigen::MatrixXd& eta);
 
   /**
    * @brief Preprocesses the response for the quadratic model
@@ -96,14 +92,14 @@ public:
    * @note For quadratic regression, this is particularly simple as weights
    * remain constant and working response equals the original response
    */
-  void updateWeightsAndWorkingResponse(Eigen::VectorXd& w,
-                                       Eigen::VectorXd& z,
-                                       const Eigen::VectorXd& eta,
-                                       const Eigen::VectorXd& y);
+  void updateWeightsAndWorkingResponse(Eigen::MatrixXd& w,
+                                       Eigen::MatrixXd& z,
+                                       const Eigen::MatrixXd& eta,
+                                       const Eigen::MatrixXd& y);
 
   /**
    * @brief The link function
-   * @param mu Mean.
+   * @param mu Mean of the distribution.
    * @return The identity function.
    */
   Eigen::MatrixXd link(const Eigen::MatrixXd& mu);

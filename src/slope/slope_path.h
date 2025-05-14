@@ -55,7 +55,7 @@ public:
    * @param step the
    * @return The fit at step `step` of the path. A SlopeFit object.
    */
-  const SlopeFit& operator()(const size_t step)
+  const SlopeFit& operator()(const size_t step) const
   {
     assert(step < fits.size());
 
@@ -71,12 +71,13 @@ public:
    * Each element in the returned vector corresponds to the intercept term(s)
    * for a particular solution in the regularization path.
    */
-  std::vector<Eigen::VectorXd> getIntercepts() const
+  std::vector<Eigen::VectorXd> getIntercepts(
+    const bool original_scale = true) const
   {
     std::vector<Eigen::VectorXd> intercepts;
 
     for (const auto& fit : fits) {
-      intercepts.emplace_back(fit.getIntercepts());
+      intercepts.emplace_back(fit.getIntercepts(original_scale));
     }
 
     return intercepts;
@@ -92,12 +93,13 @@ public:
    * Each element in the returned vector is a sparse matrix containing the model
    * coefficients for a particular solution in the regularization path.
    */
-  std::vector<Eigen::SparseMatrix<double>> getCoefs() const
+  std::vector<Eigen::SparseMatrix<double>> getCoefs(
+    const bool original_scale = true) const
   {
     std::vector<Eigen::SparseMatrix<double>> coefs;
 
     for (const auto& fit : fits) {
-      coefs.emplace_back(fit.getCoefs());
+      coefs.emplace_back(fit.getCoefs(original_scale));
     }
 
     return coefs;
@@ -117,22 +119,6 @@ public:
     }
 
     return clusters;
-  }
-
-  /**
-   * @brief Gets the sparse coefficient matrix for a specific solution in the
-   * path
-   *
-   * @param i Index of the solution
-   * @return const Eigen::SparseMatrix<double>& Reference to the coefficient
-   * matrix at index i
-   * @throws std::runtime_error if index is out of bounds
-   */
-  Eigen::SparseMatrix<double> getCoefs(const std::size_t i) const
-  {
-    assert(i < fits.size() && "Index out of bounds");
-
-    return fits[i].getCoefs();
   }
 
   /**
@@ -261,6 +247,12 @@ public:
 
     return gaps;
   }
+
+  /**
+   * @brief Gets the number of solutions in the path
+   * @return Size of the path (number of SlopeFit objects)
+   */
+  std::size_t size() const { return fits.size(); }
 };
 
 } // namespace slope

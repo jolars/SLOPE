@@ -107,12 +107,13 @@ private:
                const MatrixType& x,
                const Eigen::VectorXd& x_centers,
                const Eigen::VectorXd& x_scales,
-               const Eigen::VectorXd& y)
+               const Eigen::MatrixXd& y)
   {
     using Eigen::MatrixXd;
     using Eigen::VectorXd;
 
     const int n = x.rows();
+    const int m = eta.cols();
 
     PGD pgd_solver(jit_normalization, intercept, "pgd");
 
@@ -132,13 +133,22 @@ private:
 
     Clusters clusters(beta);
 
-    VectorXd w = VectorXd::Ones(n);
-    VectorXd z = y;
+    // TODO: Make these parameters and initialize once
+    MatrixXd w = MatrixXd::Ones(n, m);
+    MatrixXd z = y;
+
     loss->updateWeightsAndWorkingResponse(w, z, eta, y);
 
-    VectorXd residual = eta - z;
+    MatrixXd residual = eta - z;
 
     for (int it = 0; it < this->cd_iterations; ++it) {
+      Clusters old_clusters = clusters;
+      Eigen::MatrixXd old_residual = residual;
+      Eigen::VectorXd old_beta = beta;
+      Eigen::VectorXd old_beta0 = beta0;
+
+      double old_loss = residual.cwiseProduct(w).norm();
+
       coordinateDescent(beta0,
                         beta,
                         residual,
@@ -151,6 +161,18 @@ private:
                         this->intercept,
                         this->jit_normalization,
                         this->update_clusters);
+
+      double loss = residual.cwiseProduct(w).norm();
+
+      if (loss >= old_loss) {
+        // No progress, revert to previous state
+        residual = old_residual;
+        clusters = old_clusters;
+        beta = old_beta;
+        beta0 = old_beta0;
+
+        break;
+      }
     }
 
     // The residual is kept up to date, but not eta. So we need to compute
@@ -159,10 +181,13 @@ private:
     // TODO: register convergence status
   }
 
+  // TODO: These should be used in the PGD solver and taken as arguments to the
+  // Hybrid solver and not just set and ignored here.
   double pgd_learning_rate =
     1.0; ///< Learning rate for proximal gradient descent steps
   double pgd_learning_rate_decr =
     0.5; ///< Learning rate decrease factor on failed PGD steps
+
   bool update_clusters = false; ///< If true, updates clusters during CD steps
   int cd_iterations = 10;       ///< Number of CD iterations per hybrid step
 };

@@ -5,7 +5,7 @@
 
 #include "screening.h"
 #include "kkt_check.h"
-#include "slope/math.h"
+#include "math.h"
 #include "utils.h"
 #include <Eigen/Core>
 #include <stdexcept>

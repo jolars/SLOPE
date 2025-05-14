@@ -16,6 +16,7 @@
 #include "utils.h"
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
+#include <iostream>
 #include <memory>
 #include <numeric>
 #include <set>
@@ -236,6 +237,8 @@ Slope::path(T& x,
 
       double dual_gap = primal - dual;
 
+      // std::cout << "gap: " << dual_gap << std::endl;
+
       assert(dual_gap > -1e-6 && "Dual gap should be positive");
 
       double tol_scaled = (std::abs(primal) + constants::EPSILON) * this->tol;
@@ -278,10 +281,6 @@ Slope::path(T& x,
           std::to_string(path_step) + ".");
     }
 
-    // Store everything for this step of the path
-    auto [beta0_out, beta_out] = rescaleCoefficients(
-      beta0, beta, this->x_centers, this->x_scales, this->intercept);
-
     alpha_prev = alpha_curr;
 
     // Compute early stopping criteria
@@ -296,11 +295,22 @@ Slope::path(T& x,
       clusters.update(beta);
     }
 
-    SlopeFit fit{
-      beta0_out, beta_out.sparseView(), clusters,          alpha_curr, lambda,
-      dev,       null_deviance,         primals,           duals,      time,
-      it,        this->centering_type,  this->scaling_type
-    };
+    SlopeFit fit{ beta0,
+                  beta.reshaped(p, m).sparseView(),
+                  clusters,
+                  alpha_curr,
+                  lambda,
+                  dev,
+                  null_deviance,
+                  primals,
+                  duals,
+                  time,
+                  it,
+                  this->centering_type,
+                  this->scaling_type,
+                  this->intercept,
+                  this->x_centers,
+                  this->x_scales };
 
     fits.emplace_back(std::move(fit));
 
@@ -464,10 +474,38 @@ Slope::setTol(double tol)
 }
 
 void
-Slope::setMaxIterations(int max_it)
+Slope::setRelaxTol(double tol)
+{
+  if (tol < 0) {
+    throw std::invalid_argument("tol must be non-negative");
+  }
+
+  this->tol_relax = tol;
+}
+
+void
+Slope::setRelaxMaxOuterIterations(int max_it)
+{
+  if (max_it < 1) {
+    throw std::invalid_argument("max_it must be >= 1");
+  }
+  this->max_it_outer_relax = max_it;
+}
+
+void
+Slope::setRelaxMaxInnerIterations(int max_it)
 {
   if (max_it < 1) {
     throw std::invalid_argument("max_it_outer must be >= 1");
+  }
+  this->max_it_inner_relax = max_it;
+}
+
+void
+Slope::setMaxIterations(int max_it)
+{
+  if (max_it < 1) {
+    throw std::invalid_argument("max_it must be >= 1");
   }
   this->max_it = max_it;
 }
@@ -606,6 +644,19 @@ Slope::fit<Eigen::SparseMatrix<double>>(Eigen::SparseMatrix<double>&,
                                         const Eigen::MatrixXd&,
                                         const double,
                                         Eigen::ArrayXd);
+
+template SlopePath
+Slope::path<Eigen::Map<Eigen::MatrixXd>>(Eigen::Map<Eigen::MatrixXd>&,
+                                         const Eigen::MatrixXd&,
+                                         Eigen::ArrayXd,
+                                         Eigen::ArrayXd);
+
+template SlopeFit
+Slope::fit<Eigen::Map<Eigen::MatrixXd>>(Eigen::Map<Eigen::MatrixXd>&,
+                                        const Eigen::MatrixXd&,
+                                        const double,
+                                        Eigen::ArrayXd);
+
 /// @endcond
 
 } // namespace slope

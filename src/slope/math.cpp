@@ -6,11 +6,12 @@ namespace slope {
 Eigen::VectorXd
 logSumExp(const Eigen::MatrixXd& a)
 {
-  Eigen::VectorXd max_vals = a.rowwise().maxCoeff();
+  Eigen::ArrayXd max_vals = a.rowwise().maxCoeff();
   Eigen::ArrayXd sum_exp =
-    (a.colwise() - max_vals).array().exp().rowwise().sum();
+    (-max_vals).exp() +
+    (a.colwise() - max_vals.matrix()).array().exp().rowwise().sum();
 
-  return max_vals.array() + sum_exp.max(constants::P_MIN).log();
+  return max_vals + sum_exp.max(constants::P_MIN).log();
 }
 
 Eigen::MatrixXd
@@ -19,7 +20,8 @@ softmax(const Eigen::MatrixXd& a)
   Eigen::VectorXd shift = a.rowwise().maxCoeff();
   Eigen::MatrixXd exp_a = (a.colwise() - shift).array().exp();
   Eigen::ArrayXd row_sums = exp_a.rowwise().sum();
-  return exp_a.array().colwise() / row_sums;
+
+  return exp_a.array().colwise() / ((-shift).array().exp() + row_sums);
 }
 
 std::vector<int>

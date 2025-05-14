@@ -19,9 +19,9 @@ Quadratic::dual(const Eigen::MatrixXd& theta,
 }
 
 Eigen::MatrixXd
-Quadratic::residual(const Eigen::MatrixXd& eta, const Eigen::MatrixXd& y)
+Quadratic::hessianDiagonal(const Eigen::MatrixXd& eta)
 {
-  return eta - y;
+  return Eigen::MatrixXd::Ones(eta.rows(), eta.cols());
 }
 
 Eigen::MatrixXd
@@ -31,13 +31,12 @@ Quadratic::preprocessResponse(const Eigen::MatrixXd& y)
 }
 
 void
-Quadratic::updateWeightsAndWorkingResponse(Eigen::VectorXd& w,
-                                           Eigen::VectorXd& z,
-                                           const Eigen::VectorXd&,
-                                           const Eigen::VectorXd& y)
+Quadratic::updateWeightsAndWorkingResponse(Eigen::MatrixXd& w,
+                                           Eigen::MatrixXd& z,
+                                           const Eigen::MatrixXd&,
+                                           const Eigen::MatrixXd& y)
 {
-  w.setOnes();
-  z = y;
+  // Do nothing since weights are already one and working response is y.
 }
 
 Eigen::MatrixXd

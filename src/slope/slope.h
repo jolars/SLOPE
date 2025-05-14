@@ -5,8 +5,12 @@
 
 #pragma once
 
+#include "logger.h"
+#include "screening.h"
 #include "slope_fit.h"
 #include "slope_path.h"
+#include "solvers/hybrid_cd.h"
+#include "timer.h"
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <cassert>
@@ -33,32 +37,7 @@ public:
    *
    * Initializes the Slope object with default parameter values.
    */
-  Slope()
-    : intercept(true)
-    , modify_x(false)
-    , update_clusters(false)
-    , collect_diagnostics(false)
-    , return_clusters(true)
-    , alpha_min_ratio(-1) // TODO: Use std::optional for alpha_min_ratio
-    , dev_change_tol(1e-5)
-    , dev_ratio_tol(0.999)
-    , learning_rate_decr(0.5)
-    , q(0.1)
-    , tol(1e-4)
-    , alpha_est_maxit(1000)
-    , max_it(1e4)
-    , path_length(100)
-    , cd_iterations(10)
-    , max_clusters(std::optional<int>())
-    , alpha_type("path")
-    , lambda_type("bh")
-    , centering_type("mean")
-    , scaling_type("sd")
-    , loss_type("quadratic")
-    , screening_type("strong")
-    , solver_type("auto")
-  {
-  }
+  Slope() = default;
 
   /**
    * @brief Sets the numerical solver used to fit the model.
@@ -95,7 +74,7 @@ public:
   void setUpdateClusters(bool update_clusters);
 
   /**
-   * @brief Sets the update clusters flag.
+   * @brief Sets the return clusters flag.
    *
    * @param return_clusters Selects whether the fitted model should return
    * cluster information.
@@ -157,6 +136,30 @@ public:
    * @param tol The value to set for the tolerance value. Must be positive.
    */
   void setTol(double tol);
+
+  /**
+   * @brief Sets the tolerance value for the relaxed SLOPE solver.
+   *
+   * @param tol The value to set for the tolerance value. Must be positive.
+   */
+  void setRelaxTol(double tol);
+
+  /**
+   * @brief Sets the maximum number of outer (IRLS) iterations for the relaxed
+   * solver.
+   *
+   * @param max_it The value to set for the maximum number of iterations. Must
+   * be positive.
+   */
+  void setRelaxMaxOuterIterations(int max_it);
+
+  /**
+   * @brief Sets the maximum number of inner iterations for the relaxed solver.
+   *
+   * @param max_it The value to set for the maximum number of iterations. Must
+   * be positive.
+   */
+  void setRelaxMaxInnerIterations(int max_it);
 
   /**
    * @brief Sets the maximum number of iterations.
@@ -238,9 +241,9 @@ public:
   void setDevRatioTol(const double dev_ratio_tol);
 
   /**
-   * @brief Sets tolerance in deviance change for early stopping.
+   * @brief Sets the maximum number of clusters.
    * @param max_clusters The maximum number of clusters. SLOPE
-   * can (theoretically) select at most select min(n, p) clusters (unique
+   * can (theoretically) select at most min(n, p) clusters (unique
    * non-zero betas). By default, this is set to -1, which means that the number
    * of clusters will be automatically set to the number of observations + 1.
    */
@@ -305,7 +308,7 @@ public:
 
   /**
    * @brief Get currently defined loss type
-   * @return The loss type
+   * @return The loss type as a string
    */
   const std::string& getLossType();
 
@@ -352,33 +355,237 @@ public:
                const double alpha = 1.0,
                Eigen::ArrayXd lambda = Eigen::ArrayXd::Zero(0));
 
+  /**
+   * @brief Relaxes a fitted SLOPE model
+   *
+   * @tparam T Matrix type for feature input (supports dense or sparse matrices)
+   * @param fit Previously fitted SLOPE model containing coefficient estimates
+   * @param x Feature matrix of size n x p
+   * @param y_in Response vector of size n
+   * @param gamma Relaxation parameter, proportion of SLOPE-penalized fit. Must
+   * be between 0 and 1. Default is 0.0 which means fully relaxed.
+   * @param beta0 Warm start intercept values (optional)
+   * @param beta Warm start coefficient values (optional)
+   * @return SlopeFit Object containing the relaxed model with unpenalized
+   * coefficients
+   */
+  template<typename T>
+  SlopeFit relax(const SlopeFit& fit,
+                 T& x,
+                 const Eigen::VectorXd& y_in,
+                 const double gamma = 0.0,
+                 Eigen::VectorXd beta0 = Eigen::VectorXd(0),
+                 Eigen::VectorXd beta = Eigen::VectorXd(0))
+  {
+    using Eigen::MatrixXd;
+    using Eigen::VectorXd;
+
+    int n = x.rows();
+    int p = x.cols();
+
+    if (beta0.size() == 0) {
+      beta0 = fit.getIntercepts(false);
+    }
+
+    if (beta.size() == 0) {
+      beta = fit.getCoefs(false);
+    }
+
+    double alpha = 0;
+
+    Timer timer;
+
+    std::vector<double> primals, duals, time;
+    timer.start();
+
+    auto jit_normalization =
+      normalize(x, x_centers, x_scales, centering_type, scaling_type, modify_x);
+
+    bool update_clusters = false;
+
+    std::unique_ptr<Loss> loss = setupLoss(this->loss_type);
+
+    MatrixXd y = loss->preprocessResponse(y_in);
+
+    int m = y.cols();
+
+    Eigen::ArrayXd lambda_relax = Eigen::ArrayXd::Zero(p * m);
+
+    auto working_set = activeSet(beta);
+
+    Eigen::MatrixXd eta = linearPredictor(x,
+                                          working_set,
+                                          beta0,
+                                          beta,
+                                          x_centers,
+                                          x_scales,
+                                          jit_normalization,
+                                          intercept);
+    VectorXd gradient = VectorXd::Zero(p * m);
+    MatrixXd residual(n, m);
+    MatrixXd working_residual(n, m);
+
+    MatrixXd w = MatrixXd::Ones(n, m);
+    MatrixXd w_ones = MatrixXd::Ones(n, m);
+    MatrixXd z = y;
+
+    Clusters clusters = fit.getClusters();
+
+    int passes = 0;
+
+    for (int irls_it = 0; irls_it < max_it_outer_relax; irls_it++) {
+      residual = loss->residual(eta, y);
+
+      if (collect_diagnostics) {
+        primals.push_back(loss->loss(eta, y));
+        duals.push_back(0.0);
+        time.push_back(timer.elapsed());
+      }
+
+      Eigen::VectorXd cluster_gradient = clusterGradient(beta,
+                                                         residual,
+                                                         clusters,
+                                                         x,
+                                                         w_ones,
+                                                         x_centers,
+                                                         x_scales,
+                                                         jit_normalization);
+
+      double norm_grad = cluster_gradient.lpNorm<Eigen::Infinity>();
+
+      if (norm_grad < tol_relax) {
+        break;
+      }
+
+      loss->updateWeightsAndWorkingResponse(w, z, eta, y);
+      working_residual = eta - z;
+
+      for (int inner_it = 0; inner_it < max_it_inner_relax; ++inner_it) {
+        passes++;
+
+        double max_abs_gradient = coordinateDescent(beta0,
+                                                    beta,
+                                                    working_residual,
+                                                    clusters,
+                                                    lambda_relax,
+                                                    x,
+                                                    w,
+                                                    x_centers,
+                                                    x_scales,
+                                                    intercept,
+                                                    jit_normalization,
+                                                    update_clusters);
+
+        if (max_abs_gradient < tol_relax) {
+          break;
+        }
+      }
+
+      eta = working_residual + z;
+
+      if (irls_it == max_it_outer_relax) {
+        WarningLogger::addWarning(WarningCode::MAXIT_REACHED,
+                                  "Maximum number of IRLS iterations reached.");
+      }
+    }
+
+    double dev = loss->deviance(eta, y);
+
+    if (gamma > 0) {
+      Eigen::VectorXd old_coefs = fit.getCoefs(false);
+      Eigen::VectorXd old_intercept = fit.getIntercepts(false);
+      beta = (1 - gamma) * beta + gamma * old_coefs;
+    }
+
+    SlopeFit fit_out{ beta0,
+                      beta.reshaped(p, m).sparseView(),
+                      clusters,
+                      alpha,
+                      lambda_relax,
+                      dev,
+                      fit.getNullDeviance(),
+                      primals,
+                      duals,
+                      time,
+                      passes,
+                      centering_type,
+                      scaling_type,
+                      intercept,
+                      x_centers,
+                      x_scales };
+
+    return fit_out;
+  }
+
+  /**
+   * @brief Relaxes a fitted SLOPE path
+   *
+   * @tparam T Matrix type for feature input (supports dense or sparse matrices)
+   * @param path Previously fitted SLOPE path
+   * @param x Feature matrix of size n x p
+   * @param y Response vector of size n
+   * @param gamma Relaxation parameter, proportion of SLOPE-penalized fit. Must
+   * be between 0 and 1. Default is 0.0 which means fully relaxed.
+   * @return SlopePath Object containing the relaxed model with unpenalized
+   * coefficients
+   */
+  template<typename T>
+  SlopePath relax(const SlopePath& path,
+                  T& x,
+                  const Eigen::VectorXd& y,
+                  const double gamma = 0.0)
+  {
+    std::vector<SlopeFit> fits;
+
+    Eigen::VectorXd beta0 = path(0).getIntercepts(false);
+    Eigen::VectorXd beta = path(0).getCoefs(false);
+
+    for (size_t i = 0; i < path.size(); i++) {
+      auto relaxed_fit = relax(path(i), x, y, gamma, beta0, beta);
+
+      fits.emplace_back(relaxed_fit);
+
+      // Update warm starts
+      // TODO: Maybe be more clever about whether to use the
+      // previous values or the regularized estimates and warm starts.
+      // Maybe just pick the solution with larger coefficients?
+      beta0 = relaxed_fit.getIntercepts(false);
+      beta = relaxed_fit.getCoefs(false);
+    }
+
+    return fits;
+  }
+
 private:
   // Parameters
-  bool intercept;
-  bool modify_x;
-  bool update_clusters;
-  bool collect_diagnostics;
-  bool return_clusters;
-  double alpha_min_ratio;
-  double dev_change_tol;
-  double dev_ratio_tol;
-  double learning_rate_decr;
-  double q;
-  double theta1;
-  double theta2;
-  double tol;
-  int alpha_est_maxit;
-  int max_it;
-  int path_length;
-  int cd_iterations;
-  std::optional<int> max_clusters;
-  std::string alpha_type;
-  std::string lambda_type;
-  std::string centering_type;
-  std::string scaling_type;
-  std::string loss_type;
-  std::string screening_type;
-  std::string solver_type;
+  bool collect_diagnostics = false;
+  bool intercept = true;
+  bool modify_x = false;
+  bool return_clusters = true;
+  bool update_clusters = false;
+  double alpha_min_ratio = -1;
+  double dev_change_tol = 1e-5;
+  double dev_ratio_tol = 0.999;
+  double learning_rate_decr = 0.5;
+  double q = 0.1;
+  double theta1 = 1.0;
+  double theta2 = 0.5;
+  double tol = 1e-4;
+  double tol_relax = 1e-4;
+  int alpha_est_maxit = 1000;
+  int cd_iterations = 10;
+  int max_it = 1e5;
+  int max_it_inner_relax = 1e5;
+  int max_it_outer_relax = 50;
+  int path_length = 100;
+  std::optional<int> max_clusters = std::nullopt;
+  std::string alpha_type = "path";
+  std::string centering_type = "mean";
+  std::string lambda_type = "bh";
+  std::string loss_type = "quadratic";
+  std::string scaling_type = "sd";
+  std::string screening_type = "strong";
+  std::string solver_type = "auto";
 
   // Data
   Eigen::VectorXd x_centers;

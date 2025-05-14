@@ -53,33 +53,49 @@ public:
                       const Eigen::VectorXd& w) = 0;
 
   /**
-   * @brief Calculates the residual
+   * @brief Calculates the generalized residual
    *
-   * This function calculates the residual given the predicted values (eta) and
-   * the true values (y).
+   * This function calculates the generalized residual given the linear
+   * predictor (eta) and the true values (y). The generalized residual is the
+   * same as the gradient of the loss function with respect to the linear
+   * predictor (eta).
    *
-   * @param eta The predicted values.
-   * @param y The true values.
-   * @return The residual vector.
+   * @param eta Linear predictor.
+   * @param y Response.
+   * @return Residual.
    */
-  virtual Eigen::MatrixXd residual(const Eigen::MatrixXd& eta,
-                                   const Eigen::MatrixXd& y) = 0;
+  Eigen::MatrixXd residual(const Eigen::MatrixXd& eta,
+                           const Eigen::MatrixXd& y);
+  // TODO: This function could be removed since it is just
+  // g^{-1}(eta) - y for all families
 
   /**
-   * @brief Updates the weights and working response
+   * @brief Calculates the hessian diagonal of the loss function
    *
-   * This function updates the weights and working response given the predicted
-   * values (eta) and the true values (y).
+   * This function calculates the hessian diagonal, with respect to
+   * the linear predictor eta. \f(\frac{\partial^2 L}{\partial \eta^2}\f)
    *
-   * @param w The weights to be updated.
-   * @param z The working response to be updated.
-   * @param eta The predicted values.
-   * @param y The true values.
+   * @param eta Linear predictor.
+   * @param y Response.
+   * @return The residual.
    */
-  virtual void updateWeightsAndWorkingResponse(Eigen::VectorXd& w,
-                                               Eigen::VectorXd& z,
-                                               const Eigen::VectorXd& eta,
-                                               const Eigen::VectorXd& y) = 0;
+  virtual Eigen::MatrixXd hessianDiagonal(const Eigen::MatrixXd& eta) = 0;
+
+  /**
+   * @brief Updates weights and working response
+   *
+   * This function updates the weights and working response of the
+   * quadratic expansion of the loss function.
+   *
+   * @param w Working weights.
+   * @param z Working response.
+   * @param eta Linear predictor.
+   * @param y Response.
+   */
+  virtual void updateWeightsAndWorkingResponse(Eigen::MatrixXd& w,
+                                               Eigen::MatrixXd& z,
+                                               const Eigen::MatrixXd& eta,
+                                               const Eigen::MatrixXd& y);
 
   /**
    * @brief Preprocess response
@@ -90,11 +106,11 @@ public:
 
   /**
    * @brief Updates the intercept with a
-   * gradient descent update. Also updates the linear predictor (but not the
-   * residual).
-   * @param beta0 The current intercept
-   * @param eta The current linear predictor
-   * @param y The observed counts vector
+   * gradient descent update.
+   *
+   * @param beta0 The current intercept.
+   * @param eta The current linear predictor.
+   * @param y The observed counts vector.
    */
   virtual void updateIntercept(Eigen::VectorXd& beta0,
                                const Eigen::MatrixXd& eta,
@@ -103,6 +119,8 @@ public:
     Eigen::MatrixXd residual = this->residual(eta, y);
     beta0 -= residual.colwise().mean() / this->lipschitz_constant;
   };
+  // TODO: This function is not currently used anywhere and could
+  // probably be removed.
 
   /**
    * @brief The link function.
@@ -122,7 +140,7 @@ public:
 
   /**
    * @brief Return predicted response
-   * @param eta The linear predictor
+   * @param eta The linear predictor.
    * @return The predicted response.
    */
   virtual Eigen::MatrixXd predict(const Eigen::MatrixXd& eta) = 0;

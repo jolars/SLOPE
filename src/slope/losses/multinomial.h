@@ -14,8 +14,9 @@ namespace slope {
  * loss function.
  * @details The multinomial loss function is used for multi-class
  * classification problems. It calculates the loss, dual, residual, and updates
- * weights and working response. Assumes the response y is a one-hot encoded
- * matrix where each row sums to 1.
+ * weights and working response. It uses the non-redundant formulation
+ * of the loss with \f( K - 1\f) columns in the resulting
+ * response matrix.
  */
 class Multinomial : public Loss
 {
@@ -26,8 +27,8 @@ public:
   }
   /**
    * @brief Calculates the loss for the multinomial loss function.
-   * @param eta The predicted values (n x k matrix of linear predictors).
-   * @param y The true labels (n x k matrix of one-hot encoded class
+   * @param eta The predicted values (n x m matrix of linear predictors).
+   * @param y The true labels (n x m matrix of one-hot encoded class
    * memberships).
    * @return The loss value.
    */
@@ -35,9 +36,8 @@ public:
 
   /**
    * @brief Calculates the dual for the multinomial loss function.
-   * @param theta The dual variables (n x k matrix).
-   * @param y The true labels (n x k matrix of one-hot encoded class
-   * memberships).
+   * @param theta The dual variables (n x m matrix).
+   * @param y The true labels (n x m matrix).
    * @param w The weights vector.
    * @return The dual value.
    */
@@ -46,37 +46,21 @@ public:
               const Eigen::VectorXd& w);
 
   /**
-   * @brief Calculates the residual for the multinomial loss function.
-   * @param eta The predicted values (n x k matrix of linear predictors).
-   * @param y The true labels (n x k matrix of one-hot encoded class
-   * memberships).
-   * @return The residual matrix (n x k).
-   */
-  Eigen::MatrixXd residual(const Eigen::MatrixXd& eta,
-                           const Eigen::MatrixXd& y);
-
-  /**
    * @brief Preprocesses the response for the Multinomial model
-   * @param y Predicted values vector (n x 1) of integer class labels
-   * @return Matrix of response (n x 1)
+   * @param y Vector of class labels (n x 1). Each entry is an integer
+   * representing the class label from 0 to m.
+   * @return Matrix of response (n x m)
    */
   Eigen::MatrixXd preprocessResponse(const Eigen::MatrixXd& y);
 
   /**
-   * @brief Updates the weights and working response for the multinomial
-   * loss function. Currently not implemented since there is
-   * no coordinate descent solver for the multinomial logistic regression
-   * loss.
-   * @param w The weights vector.
-   * @param z The working response vector.
-   * @param eta The predicted values (n x k matrix of linear predictors).
-   * @param y The true labels (n x k matrix of one-hot encoded class
-   * memberships).
+   * @brief Calculates the hessian diagonal
+   *
+   * @param eta Linear predictor
+   * @param y Response
+   * @return The hessian diagonal, a matrix of size (n x m)
    */
-  void updateWeightsAndWorkingResponse(Eigen::VectorXd& w,
-                                       Eigen::VectorXd& z,
-                                       const Eigen::VectorXd& eta,
-                                       const Eigen::VectorXd& y);
+  Eigen::MatrixXd hessianDiagonal(const Eigen::MatrixXd& eta);
 
   /**
    * @brief The link function
@@ -86,10 +70,10 @@ public:
   Eigen::MatrixXd link(const Eigen::MatrixXd& mu);
 
   /**
-   * @brief The inverse link function, also known as the mean function.
+   * @brief The inverse link function
    * @param eta
-   * @return The softmax of the linear predictor: \f$
-   * \frac{e^{\eta}}{\sum_{j=1}^{k} e^{\eta_j}} \f$
+   * @return The modified softmax of the linear predictor: \f$
+   * \frac{e^{\eta}}{1 + \sum_{j=1}^{k} e^{\eta_j}} \f$
    */
   Eigen::MatrixXd inverseLink(const Eigen::MatrixXd& eta);
 

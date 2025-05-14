@@ -43,13 +43,13 @@ public:
               const Eigen::VectorXd& w);
 
   /**
-   * @brief Calculates the residual for the logistic loss function.
-   * @param eta The predicted values.
-   * @param y The true labels.
-   * @return The residual vector.
+   * @brief Calculates hessian diagonal
+   *
+   * @param eta Linear predictor
+   * @param y Response
+   * @return A matrix of ones (n x m)
    */
-  Eigen::MatrixXd residual(const Eigen::MatrixXd& eta,
-                           const Eigen::MatrixXd& y);
+  Eigen::MatrixXd hessianDiagonal(const Eigen::MatrixXd& eta);
 
   /**
    * @brief Preprocesses the response for the quadratic model
@@ -59,19 +59,6 @@ public:
    * @return Modified response.
    */
   Eigen::MatrixXd preprocessResponse(const Eigen::MatrixXd& y);
-
-  /**
-   * @brief Updates the weights and working response for the logistic loss
-   * function.
-   * @param w The weights.
-   * @param z The working response.
-   * @param eta The predicted values.
-   * @param y The true labels.
-   */
-  void updateWeightsAndWorkingResponse(Eigen::VectorXd& w,
-                                       Eigen::VectorXd& z,
-                                       const Eigen::VectorXd& eta,
-                                       const Eigen::VectorXd& y);
 
   /**
    * @brief The link function

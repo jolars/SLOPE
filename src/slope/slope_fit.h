@@ -42,6 +42,9 @@ private:
   std::string centering_type; ///< Type of centering
   std::string scaling_type;   ///< Type of scaling
   std::string loss_type;      ///< Loss type
+  bool has_intercept;         ///< Indicates if the model has an intercept term
+  Eigen::VectorXd x_centers;  ///< Centers for the design matrix
+  Eigen::VectorXd x_scales;   ///< Scales for the design matrix
 
 public:
   SlopeFit() = default;
@@ -62,6 +65,9 @@ public:
    * @param passes Number of optimization passes
    * @param centering_type Type of centering for the design matrix
    * @param scaling_type Type of scaling for the design matrix
+   * @param has_intercept Whether the model has an intercept term
+   * @param x_centers Centers for the design matrix
+   * @param x_scales Scales for the design matrix
    *
    */
   SlopeFit(const Eigen::VectorXd& intercepts,
@@ -76,7 +82,10 @@ public:
            const std::vector<double>& time,
            const int passes,
            const std::string& centering_type,
-           const std::string& scaling_type)
+           const std::string& scaling_type,
+           const bool has_intercept,
+           const Eigen::VectorXd& x_centers,
+           const Eigen::VectorXd& x_scales)
     : intercepts{ intercepts }
     , coefs{ coefs }
     , clusters{ clusters }
@@ -90,18 +99,51 @@ public:
     , passes{ passes }
     , centering_type{ centering_type }
     , scaling_type{ scaling_type }
+    , has_intercept{ has_intercept }
+    , x_centers{ x_centers }
+    , x_scales{ x_scales }
   {
   }
 
   /**
    * @brief Gets the intercept terms for this SLOPE fit
+   * @param original_scale Whether to return the intercept on the
+   * original scale or not
    */
-  const Eigen::VectorXd& getIntercepts() const { return intercepts; }
+  Eigen::VectorXd getIntercepts(const bool original_scale = true) const
+  {
+    // TODO: Scale intercepts independently of coefficients
+    if (original_scale) {
+      auto [beta0_out, beta_out] = rescaleCoefficients(intercepts,
+                                                       coefs,
+                                                       this->x_centers,
+                                                       this->x_scales,
+                                                       this->has_intercept);
+      return beta0_out;
+    }
+
+    return intercepts;
+  }
 
   /**
    * @brief Gets the sparse coefficient matrix for this fit
+   * @param original_scale Whether to return the intercept on the
+   * original scale or not
    */
-  const Eigen::SparseMatrix<double>& getCoefs() const { return coefs; }
+  Eigen::SparseMatrix<double> getCoefs(const bool original_scale = true) const
+  {
+    if (original_scale) {
+      // TODO: Scale coefficients independently of intercepts
+      auto [beta0_out, beta_out] = rescaleCoefficients(intercepts,
+                                                       coefs,
+                                                       this->x_centers,
+                                                       this->x_scales,
+                                                       this->has_intercept);
+      return beta_out.sparseView();
+    }
+
+    return coefs;
+  }
 
   /**
    * @brief Gets the clusters
@@ -177,6 +219,13 @@ public:
   }
 
   /**
+   * @brief Checks if model has intercept
+   *
+   * @return bool True if model has intercept, false otherwise
+   */
+  bool hasIntercept() const { return has_intercept; }
+
+  /**
    * @brief Predict the response for a given input matrix
    * @tparam T Type of input matrix (dense or sparse)
    * @param x Input matrix of features
@@ -189,27 +238,10 @@ public:
   {
     validateOption(type, { "response", "linear" }, "type");
 
-    int n = x.rows();
-    int m = coefs.cols();
+    Eigen::MatrixXd eta = x * getCoefs();
 
-    std::unique_ptr<Loss> loss = setupLoss(this->loss_type);
-
-    Eigen::VectorXd x_centers;
-    Eigen::VectorXd x_scales;
-    normalize(
-      x, x_centers, x_scales, this->centering_type, this->scaling_type, false);
-
-    Eigen::MatrixXd eta = Eigen::MatrixXd::Zero(n, m);
-
-    for (int k = 0; k < m; ++k) {
-      for (typename Eigen::SparseMatrix<double>::InnerIterator it(coefs, k); it;
-           ++it) {
-        int j = it.row();
-        eta.col(k) += x.col(j) * (it.value() / x_scales(j));
-        eta.col(k).array() -= it.value() * x_centers(j) / x_scales(j);
-      }
-
-      eta.col(k).array() += intercepts(k);
+    if (has_intercept) {
+      eta.rowwise() += getIntercepts().transpose();
     }
 
     if (type == "linear") {
@@ -217,6 +249,8 @@ public:
     }
 
     // Return predictions
+    std::unique_ptr<Loss> loss = setupLoss(this->loss_type);
+
     return loss->predict(eta);
   }
 };

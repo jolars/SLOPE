@@ -52,28 +52,13 @@ public:
               const Eigen::VectorXd& w) override;
 
   /**
-   * @brief Calculates the residual (negative gradient) for the Poisson
-   * regression.
-   * @param eta The linear predictor vector \f$\eta\f$
-   * @param y The observed counts vector \f$y\f$
-   * @return The residual vector: \f$e^{\eta} - y\f$
+   * @brief Calculates hessian diagonal
+   *
+   * @param eta Linear predictor
+   * @param y Response
+   * @return A matrix of ones (n x m)
    */
-  Eigen::MatrixXd residual(const Eigen::MatrixXd& eta,
-                           const Eigen::MatrixXd& y) override;
-
-  /**
-   * @brief Updates the weights and working response for IRLS (Iteratively
-   * Reweighted Least Squares).
-   * @param w The weights vector: \f$w = e^{\eta}\f$
-   * @param z The working response vector: \f$z = \eta + (y -
-   * e^{\eta})/e^{\eta}\f$
-   * @param eta The current linear predictor
-   * @param y The observed counts vector
-   */
-  void updateWeightsAndWorkingResponse(Eigen::VectorXd& w,
-                                       Eigen::VectorXd& z,
-                                       const Eigen::VectorXd& eta,
-                                       const Eigen::VectorXd& y) override;
+  Eigen::MatrixXd hessianDiagonal(const Eigen::MatrixXd& eta) override;
 
   /**
    * @brief Preprocesses the response for the Poisson model
