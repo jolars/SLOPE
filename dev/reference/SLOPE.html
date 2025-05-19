@@ -508,7 +508,7 @@ Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">SLOPE</span><span class="op">(</span><span class="va">bodyfat</span><span class="op">$</span><span class="va">x</span>, <span class="va">bodyfat</span><span class="op">$</span><span class="va">y</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Multinomial response, custom alpha and lambda</span></span></span>
-<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">wine</span><span class="op">$</span><span class="va">y</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">wine</span><span class="op">$</span><span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span></span></span>
 <span class="r-in"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">wine</span><span class="op">$</span><span class="va">x</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.005</span></span></span>
@@ -521,7 +521,6 @@ Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
 <span class="r-in"><span>  lambda <span class="op">=</span> <span class="va">lambda</span>,</span></span>
 <span class="r-in"><span>  alpha <span class="op">=</span> <span class="va">alpha</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> lambda must be the same length as the number of coefficients</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
