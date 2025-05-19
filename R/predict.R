@@ -187,7 +187,14 @@ predict.MultinomialSLOPE <- function(
       tmp <- array(0, c(n, m, path_length))
       tmp[, 1:m, ] <- lin_pred
 
-      aperm(apply(tmp, c(1, 3), function(x) exp(x) / sum(exp(x))), c(2, 1, 3))
+      aperm(
+        apply(
+          tmp,
+          c(1, 3),
+          function(x) exp(x) / sum(1 + exp(x))
+        ),
+        c(2, 1, 3)
+      )
     },
     link = lin_pred,
     class = {
@@ -199,7 +206,7 @@ predict.MultinomialSLOPE <- function(
         apply(
           tmp,
           2,
-          function(a) factor(a, levels = 1:m, labels = class_names)
+          function(a) factor(a, levels = 1:(m + 1), labels = class_names)
         )
       colnames(predicted_classes) <- dimnames(lin_pred)[[3]]
       predicted_classes
