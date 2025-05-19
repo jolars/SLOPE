@@ -38,5 +38,8 @@ constexpr double POS_INF = std::numeric_limits<double>::max();
 /// @brief Representation of negative infinity using lowest double value
 constexpr double NEG_INF = std::numeric_limits<double>::lowest();
 
+/// @brief Maximum allowed exponent
+constexpr double MAX_EXP = 250;
+
 } // namespace constants
 } // namespace slope

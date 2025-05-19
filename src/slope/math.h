@@ -463,8 +463,20 @@ l1Norms(const T& x)
  * \f[ \|x_j\|_2 = \sqrt{\sum_{i} x_{ij}^2} \f]
  * where x_{ij} represents the i-th element of the j-th column.
  */
+template<typename T>
 Eigen::VectorXd
-l2Norms(const Eigen::SparseMatrix<double>& x);
+l2Norms(const Eigen::SparseMatrixBase<T>& x)
+{
+  const int p = x.cols();
+
+  Eigen::VectorXd out(p);
+
+  for (int j = 0; j < p; ++j) {
+    out(j) = x.col(j).norm();
+  }
+
+  return out;
+}
 
 /**
  * @brief Computes the L2 (Euclidean) norms for each column of a dense matrix
@@ -476,8 +488,12 @@ l2Norms(const Eigen::SparseMatrix<double>& x);
  * \f[ \|x_j\|_2 = \sqrt{\sum_{i} x_{ij}^2} \f]
  * where x_{ij} represents the i-th element of the j-th column.
  */
+template<typename T>
 Eigen::VectorXd
-l2Norms(const Eigen::MatrixXd& x);
+l2Norms(const Eigen::MatrixBase<T>& x)
+{
+  return x.colwise().norm();
+}
 
 /**
  * @brief Computes the maximum absolute value for each column of a matrix
@@ -490,8 +506,26 @@ l2Norms(const Eigen::MatrixXd& x);
  * \f[ \max_{i} |x_{ij}| \f]
  * where x_{ij} represents the i-th element of the j-th column.
  */
+template<typename T>
 Eigen::VectorXd
-maxAbs(const Eigen::SparseMatrix<double>& x);
+maxAbs(const Eigen::SparseMatrixBase<T>& x)
+{
+  const int p = x.cols();
+
+  Eigen::VectorXd out(p);
+
+  for (int j = 0; j < p; ++j) {
+    double x_j_maxabs = 0.0;
+
+    for (typename T::InnerIterator it(x.derived(), j); it; ++it) {
+      x_j_maxabs = std::max(x_j_maxabs, std::abs(it.value()));
+    }
+
+    out(j) = x_j_maxabs;
+  }
+
+  return out;
+}
 
 /**
  * @brief Computes the maximum absolute value for each column of a dense matrix
@@ -505,8 +539,12 @@ maxAbs(const Eigen::SparseMatrix<double>& x);
  * \f[ \max_{i} |x_{ij}| \f]
  * where x_{ij} represents the i-th element of the j-th column.
  */
+template<typename T>
 Eigen::VectorXd
-maxAbs(const Eigen::MatrixXd& x);
+maxAbs(const Eigen::MatrixBase<T>& x)
+{
+  return x.cwiseAbs().colwise().maxCoeff();
+}
 
 /**
  * @brief Computes the arithmetic mean for each column of a sparse matrix
@@ -519,8 +557,21 @@ maxAbs(const Eigen::MatrixXd& x);
  * where n is the number of rows in the matrix and x_{ij} represents
  * the i-th element of the j-th column.
  */
+template<typename T>
 Eigen::VectorXd
-means(const Eigen::SparseMatrix<double>& x);
+means(const Eigen::SparseMatrixBase<T>& x)
+{
+  const int n = x.rows();
+  const int p = x.cols();
+
+  Eigen::VectorXd out(p);
+
+  for (int j = 0; j < p; ++j) {
+    out(j) = x.col(j).sum() / n;
+  }
+
+  return out;
+}
 
 /**
  * @brief Computes the arithmetic mean for each column of a dense matrix
@@ -533,8 +584,12 @@ means(const Eigen::SparseMatrix<double>& x);
  * where n is the number of rows in the matrix and x_{ij} represents
  * the i-th element of the j-th column.
  */
+template<typename T>
 Eigen::VectorXd
-means(const Eigen::MatrixXd& x);
+means(const Eigen::MatrixBase<T>& x)
+{
+  return x.colwise().mean();
+}
 
 /**
  * @brief Computes the standard deviation for each column of a matrix
@@ -548,8 +603,38 @@ means(const Eigen::MatrixXd& x);
  * where n is the number of rows, x_{ij} represents the i-th element of the j-th
  * column, and \f$\bar{x}_j\f$ is the mean of column j.
  */
+template<typename T>
 Eigen::VectorXd
-stdDevs(const Eigen::SparseMatrix<double>& x);
+stdDevs(const Eigen::SparseMatrixBase<T>& x)
+{
+  const int n = x.rows();
+  const int p = x.cols();
+
+  Eigen::VectorXd x_means = means(x);
+  Eigen::VectorXd out(p);
+
+  for (int j = 0; j < p; ++j) {
+    double sum_sq_diff = 0.0;
+    const double mean = x_means(j);
+
+    // Process non-zero elements
+    for (typename T::InnerIterator it(x.derived(), j); it; ++it) {
+      double diff = it.value() - mean;
+      sum_sq_diff += diff * diff;
+    }
+
+    // Account for zeros
+    int nz_count = x.col(j).nonZeros();
+    if (nz_count < n) {
+      sum_sq_diff += (n - nz_count) * mean * mean;
+    }
+
+    // Standard deviation is sqrt of the average of squared differences
+    out(j) = std::sqrt(sum_sq_diff / n);
+  }
+
+  return out;
+}
 
 /**
  * @brief Computes the standard deviation for each column of a matrix
@@ -563,8 +648,24 @@ stdDevs(const Eigen::SparseMatrix<double>& x);
  * where n is the number of rows, x_{ij} represents the i-th element of the j-th
  * column, and \f$\bar{x}_j\f$ is the mean of column j.
  */
+template<typename T>
 Eigen::VectorXd
-stdDevs(const Eigen::MatrixXd& x);
+stdDevs(const Eigen::MatrixBase<T>& x)
+{
+  int n = x.rows();
+  int p = x.cols();
+
+  Eigen::VectorXd x_means = means(x);
+  Eigen::VectorXd out(p);
+
+  for (int j = 0; j < p; ++j) {
+    out(j) = (x.col(j).array() - x_means(j)).matrix().norm();
+  }
+
+  out.array() /= std::sqrt(n);
+
+  return out;
+}
 
 /**
  * @brief Computes the range (max - min) for each column of a matrix
@@ -576,8 +677,28 @@ stdDevs(const Eigen::MatrixXd& x);
  * \f[ range_j = \max_{i}(x_{ij}) - \min_{i}(x_{ij}) \f]
  * where x_{ij} represents the i-th element of the j-th column.
  */
+template<typename T>
 Eigen::VectorXd
-ranges(const Eigen::SparseMatrix<double>& x);
+ranges(const Eigen::SparseMatrixBase<T>& x)
+{
+  const int p = x.cols();
+
+  Eigen::VectorXd out(p);
+
+  for (int j = 0; j < p; ++j) {
+    double x_j_max = 0.0;
+    double x_j_min = 0.0;
+
+    for (typename T::InnerIterator it(x.derived(), j); it; ++it) {
+      x_j_max = std::max(x_j_max, it.value());
+      x_j_min = std::min(x_j_min, it.value());
+    }
+
+    out(j) = x_j_max - x_j_min;
+  }
+
+  return out;
+}
 
 /**
  * @brief Computes the range (max - min) for each column of a dense matrix
@@ -592,8 +713,12 @@ ranges(const Eigen::SparseMatrix<double>& x);
  * Uses Eigen's efficient colwise() operations to compute
  * maximum and minimum values for each column simultaneously.
  */
+template<typename T>
 Eigen::VectorXd
-ranges(const Eigen::MatrixXd& x);
+ranges(const Eigen::MatrixBase<T>& x)
+{
+  return x.colwise().maxCoeff() - x.colwise().minCoeff();
+}
 
 /**
  * @brief Computes the minimum value for each column of a sparse matrix
@@ -605,8 +730,26 @@ ranges(const Eigen::MatrixXd& x);
  * \f[ \min_{i}(x_{ij}) \f]
  * where x_{ij} represents the i-th element of the j-th column.
  */
+template<typename T>
 Eigen::VectorXd
-mins(const Eigen::SparseMatrix<double>& x);
+mins(const Eigen::SparseMatrixBase<T>& x)
+{
+  const int p = x.cols();
+
+  Eigen::VectorXd out(p);
+
+  for (int j = 0; j < p; ++j) {
+    double x_j_min = 0.0;
+
+    for (typename T::InnerIterator it(x.derived(), j); it; ++it) {
+      x_j_min = std::min(x_j_min, it.value());
+    }
+
+    out(j) = x_j_min;
+  }
+
+  return out;
+}
 
 /**
  * @brief Computes the minimum value for each column of a dense matrix
@@ -621,8 +764,12 @@ mins(const Eigen::SparseMatrix<double>& x);
  * Uses Eigen's built-in column-wise operations for efficient computation
  * on dense matrices.
  */
+template<typename T>
 Eigen::VectorXd
-mins(const Eigen::MatrixXd& x);
+mins(const Eigen::MatrixBase<T>& x)
+{
+  return x.colwise().minCoeff();
+}
 
 template<typename T>
 Eigen::VectorXd

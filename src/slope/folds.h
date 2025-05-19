@@ -111,17 +111,21 @@ public:
    * @brief Split data into training and test sets for a specific fold and
    * repetition
    *
-   * @tparam MatrixType Type of design matrix (supports both dense and sparse
-   * matrices)
+   * @tparam T Type of design matrix (supports both dense and sparse matrices)
    * @param x Input feature matrix
    * @param y Response matrix
    * @param fold_idx Index of the fold to use as test set
    * @param rep_idx Index of the repetition (default: 0)
    * @return std::tuple containing (x_train, y_train, x_test, y_test)
+   *
+   * This method creates training and test datasets by subsetting the original
+   * data according to the specified fold indices. For dense matrices, it
+   * creates copies of the data. For sparse matrices, it creates efficiently
+   * constructed sparse matrix subsets.
    */
-  template<typename MatrixType>
-  std::tuple<MatrixType, Eigen::MatrixXd, MatrixType, Eigen::MatrixXd> split(
-    MatrixType& x,
+  template<typename T>
+  std::tuple<T, Eigen::MatrixXd, T, Eigen::MatrixXd> split(
+    Eigen::EigenBase<T>& x,
     const Eigen::MatrixXd& y,
     size_t fold_idx,
     size_t rep_idx = 0) const
@@ -129,10 +133,10 @@ public:
     auto test_idx = getTestIndices(fold_idx, rep_idx);
     auto train_idx = getTrainingIndices(fold_idx, rep_idx);
 
-    MatrixType x_test = subset(x, test_idx);
+    T x_test = subset(x.derived(), test_idx);
     Eigen::MatrixXd y_test = y(test_idx, Eigen::all);
 
-    MatrixType x_train = subset(x, train_idx);
+    T x_train = subset(x.derived(), train_idx);
     Eigen::MatrixXd y_train = y(train_idx, Eigen::all);
 
     return { x_train, y_train, x_test, y_test };

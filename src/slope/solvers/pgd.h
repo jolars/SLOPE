@@ -70,6 +70,34 @@ public:
            const Eigen::VectorXd& x_scales,
            const Eigen::MatrixXd& y) override;
 
+  /// @copydoc SolverBase::run
+  void run(Eigen::VectorXd& beta0,
+           Eigen::VectorXd& beta,
+           Eigen::MatrixXd& eta,
+           const Eigen::ArrayXd& lambda,
+           const std::unique_ptr<Loss>& loss,
+           const SortedL1Norm& penalty,
+           const Eigen::VectorXd& gradient,
+           const std::vector<int>& working_set,
+           const Eigen::Map<Eigen::MatrixXd>& x,
+           const Eigen::VectorXd& x_centers,
+           const Eigen::VectorXd& x_scales,
+           const Eigen::MatrixXd& y) override;
+
+  /// @copydoc SolverBase::run
+  void run(Eigen::VectorXd& beta0,
+           Eigen::VectorXd& beta,
+           Eigen::MatrixXd& eta,
+           const Eigen::ArrayXd& lambda,
+           const std::unique_ptr<Loss>& loss,
+           const SortedL1Norm& penalty,
+           const Eigen::VectorXd& gradient,
+           const std::vector<int>& working_set,
+           const Eigen::Map<Eigen::SparseMatrix<double>>& x,
+           const Eigen::VectorXd& x_centers,
+           const Eigen::VectorXd& x_scales,
+           const Eigen::MatrixXd& y) override;
+
 private:
   template<typename MatrixType>
   void runImpl(Eigen::VectorXd& beta0,

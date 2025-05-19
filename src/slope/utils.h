@@ -210,8 +210,30 @@ validateOption(const std::string& value,
  * indices vector, preserving their order. The number of columns remains the
  * same.
  */
-Eigen::MatrixXd
-subset(const Eigen::MatrixXd& x, const std::vector<int>& indices);
+template<typename T>
+T
+subset(const Eigen::EigenBase<T>& x, const std::vector<int>& indices)
+{
+  return subset(x.derived(), indices);
+}
+
+/**
+ * @brief Extract a subset of rows from an Eigen matrix
+ *
+ * @param x The input matrix to extract rows from
+ * @param indices A vector of row indices to extract
+ * @return Eigen::MatrixXd A new matrix containing only the specified rows
+ *
+ * This function creates a new matrix containing only the rows specified in the
+ * indices vector, preserving their order. The number of columns remains the
+ * same.
+ */
+template<typename T>
+T
+subset(const Eigen::DenseBase<T>& x, const std::vector<int>& indices)
+{
+  return x.derived()(indices, Eigen::all);
+}
 
 /**
  * @brief Extract a subset of rows from a sparse Eigen matrix
@@ -225,8 +247,29 @@ subset(const Eigen::MatrixXd& x, const std::vector<int>& indices);
  * in the indices vector, preserving their order. The number of columns remains
  * the same. The sparsity structure is maintained in the extracted rows.
  */
-Eigen::SparseMatrix<double>
-subset(const Eigen::SparseMatrix<double>& x, const std::vector<int>& indices);
+template<typename T>
+T
+subset(const Eigen::SparseMatrixBase<T>& x, const std::vector<int>& indices)
+{
+  std::vector<Eigen::Triplet<double>> triplets;
+  triplets.reserve(x.derived().nonZeros());
+
+  for (int j = 0; j < x.cols(); ++j) {
+    for (typename T::InnerIterator it(x.derived(), j); it; ++it) {
+      auto it_idx = std::find(indices.begin(), indices.end(), it.row());
+
+      if (it_idx != indices.end()) {
+        int new_row = std::distance(indices.begin(), it_idx);
+        triplets.emplace_back(new_row, j, it.value());
+      }
+    }
+  }
+
+  T out(indices.size(), x.cols());
+  out.setFromTriplets(triplets.begin(), triplets.end());
+
+  return out;
+}
 
 /**
  * @brief Extract specified columns from a dense matrix
@@ -240,19 +283,31 @@ subset(const Eigen::SparseMatrix<double>& x, const std::vector<int>& indices);
  * @param indices Vector of column indices to extract (0-based)
  * @return Eigen::MatrixXd New matrix with only the selected columns
  */
-template<typename MatrixType>
-Eigen::MatrixXd
-subsetCols(const MatrixType& x, const std::vector<int>& indices)
+template<typename T>
+T
+subsetCols(const Eigen::MatrixBase<T>& x, const std::vector<int>& indices)
 {
-  if (indices.empty()) {
-    return Eigen::MatrixXd(x.rows(), 0);
+  return x.derived()(Eigen::all, indices);
+}
+
+template<typename T>
+T
+subsetCols(const Eigen::SparseMatrixBase<T>& x, const std::vector<int>& indices)
+{
+  std::vector<Eigen::Triplet<double>> triplets;
+  triplets.reserve(x.derived().nonZeros());
+
+  for (size_t j_idx = 0; j_idx < indices.size(); ++j_idx) {
+    int j = indices[j_idx];
+    for (typename T::InnerIterator it(x.derived(), j); it; ++it) {
+      triplets.emplace_back(it.row(), j_idx, it.value());
+    }
   }
 
-  Eigen::MatrixXd result(x.rows(), indices.size());
-  for (size_t i = 0; i < indices.size(); ++i) {
-    result.col(i) = x.col(indices[i]);
-  }
-  return result;
+  T out(x.rows(), indices.size());
+  out.setFromTriplets(triplets.begin(), triplets.end());
+
+  return out;
 }
 
 /**

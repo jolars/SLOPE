@@ -80,6 +80,34 @@ public:
            const Eigen::VectorXd& x_scales,
            const Eigen::MatrixXd& y) override;
 
+  /// @copydoc SolverBase::run
+  void run(Eigen::VectorXd& beta0,
+           Eigen::VectorXd& beta,
+           Eigen::MatrixXd& eta,
+           const Eigen::ArrayXd& lambda,
+           const std::unique_ptr<Loss>& loss,
+           const SortedL1Norm& penalty,
+           const Eigen::VectorXd& gradient,
+           const std::vector<int>& working_set,
+           const Eigen::Map<Eigen::MatrixXd>& x,
+           const Eigen::VectorXd& x_centers,
+           const Eigen::VectorXd& x_scales,
+           const Eigen::MatrixXd& y) override;
+
+  /// @copydoc SolverBase::run
+  void run(Eigen::VectorXd& beta0,
+           Eigen::VectorXd& beta,
+           Eigen::MatrixXd& eta,
+           const Eigen::ArrayXd& lambda,
+           const std::unique_ptr<Loss>& loss,
+           const SortedL1Norm& penalty,
+           const Eigen::VectorXd& gradient,
+           const std::vector<int>& working_set,
+           const Eigen::Map<Eigen::SparseMatrix<double>>& x,
+           const Eigen::VectorXd& x_centers,
+           const Eigen::VectorXd& x_scales,
+           const Eigen::MatrixXd& y) override;
+
 private:
   /**
    * @brief Implementation of the hybrid solver algorithm
@@ -142,12 +170,14 @@ private:
     MatrixXd residual = eta - z;
 
     for (int it = 0; it < this->cd_iterations; ++it) {
+      double old_obj =
+        computeObjective(penalty, beta, residual, w, lambda, working_set);
+
+      // Store old values to revert if no progress is made
       Clusters old_clusters = clusters;
       Eigen::MatrixXd old_residual = residual;
       Eigen::VectorXd old_beta = beta;
       Eigen::VectorXd old_beta0 = beta0;
-
-      double old_loss = residual.cwiseProduct(w).norm();
 
       coordinateDescent(beta0,
                         beta,
@@ -162,12 +192,13 @@ private:
                         this->jit_normalization,
                         this->update_clusters);
 
-      double loss = residual.cwiseProduct(w).norm();
+      double new_obj =
+        computeObjective(penalty, beta, residual, w, lambda, working_set);
 
-      if (loss >= old_loss) {
+      if (!std::isfinite(new_obj) || new_obj > old_obj) {
         // No progress, revert to previous state
-        residual = old_residual;
         clusters = old_clusters;
+        residual = old_residual;
         beta = old_beta;
         beta0 = old_beta0;
 
@@ -179,6 +210,20 @@ private:
     // it here.
     eta = residual + z;
     // TODO: register convergence status
+  }
+
+  double computeObjective(const SortedL1Norm& penalty,
+                          const Eigen::VectorXd& beta,
+                          const Eigen::MatrixXd& residual,
+                          const Eigen::MatrixXd& w,
+                          const Eigen::ArrayXd& lambda,
+                          const std::vector<int>& working_set)
+  {
+    double val =
+      0.5 * (residual.array().square() * w.array()).sum() / residual.rows() +
+      penalty.eval(beta(working_set), lambda.head(working_set.size()));
+
+    return val;
   }
 
   // TODO: These should be used in the PGD solver and taken as arguments to the

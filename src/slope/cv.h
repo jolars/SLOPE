@@ -97,6 +97,9 @@ struct CvConfig
   /// Seed for random number generator to ensure reproducibility (default: 42)
   uint64_t random_seed = 42;
 
+  /// Whether to copy the design matrix for each fold (default: true)
+  bool copy_x = true;
+
   /// Map of hyperparameter names to vectors of values to evaluate
   std::map<std::string, std::vector<double>> hyperparams;
 
@@ -138,11 +141,153 @@ void
 findBestParameters(CvResult& cv_result, const std::unique_ptr<Score>& scorer);
 
 /**
+ * @brief Fits a SLOPE model on a single cross-validation fold for dense
+ * matrices
+ *
+ * @tparam T The type of the design matrix (must be a dense matrix type)
+ * @param x The design matrix containing predictors
+ * @param y The response matrix
+ * @param folds Cross-validation folds object containing train/test split
+ * indices
+ * @param loss Loss function object for the model
+ * @param scorer Scoring metric to evaluate model performance
+ * @param alphas Regularization parameter values to evaluate
+ * @param thread_model SLOPE model instance used for fitting (thread-local copy)
+ * @param fold Index of the fold to use as test set
+ * @param rep Index of the repetition
+ * @param gamma Relaxation parameter for post-fitting relaxation (default: 0.0)
+ * @param copy_x Whether to copy the design matrix for each fold (default: true)
+ * @return Eigen::ArrayXd Array of scores for each alpha value on this fold
+ *
+ * This function fits a SLOPE model on the training data for a specific fold and
+ * evaluates performance on the test data. It supports both copying data or
+ * using views depending on the copy_x parameter, and handles relaxation if
+ * requested.
+ */
+template<typename T>
+Eigen::ArrayXd
+fitToFold(Eigen::MatrixBase<T>& x,
+          const Eigen::MatrixXd& y,
+          const Folds& folds,
+          const std::unique_ptr<Loss>& loss,
+          const std::unique_ptr<Score>& scorer,
+          const Eigen::ArrayXd& alphas,
+          Slope& thread_model,
+          const int fold,
+          const int rep,
+          const double gamma = 0.0,
+          const bool copy_x = true)
+{
+  Eigen::ArrayXd scores = Eigen::ArrayXd::Zero(alphas.size());
+
+  if (copy_x) {
+    thread_model.setModifyX(true);
+
+    auto [x_train, y_train, x_test, y_test] = folds.split(x, y, fold, rep);
+
+    auto path = thread_model.path(x_train, y_train, alphas);
+
+    if (gamma > 0) {
+      path = thread_model.relax(path, x_train, y_train, gamma);
+    }
+
+    for (int j = 0; j < path.size(); ++j) {
+      auto eta = path(j).predict(x_test, "linear");
+      scores(j) = scorer->eval(eta, y_test, loss);
+    }
+
+  } else {
+    thread_model.setModifyX(false);
+
+    auto train_idx = folds.getTrainingIndices(fold, rep);
+    auto test_idx = folds.getTestIndices(fold, rep);
+
+    // Create views
+    auto x_train = x(train_idx, Eigen::all);
+    auto x_test = x(test_idx, Eigen::all);
+
+    Eigen::MatrixXd y_train = y(train_idx, Eigen::all);
+    Eigen::MatrixXd y_test = y(test_idx, Eigen::all);
+
+    auto path = thread_model.path(x_train, y_train, alphas);
+
+    if (gamma > 0) {
+      path = thread_model.relax(path, x_train, y_train, gamma);
+    }
+
+    for (int j = 0; j < path.size(); ++j) {
+      auto eta = path(j).predict(x_test, "linear");
+      scores(j) = scorer->eval(eta, y_test, loss);
+    }
+  }
+
+  return scores;
+}
+
+/**
+ * @brief Fits a SLOPE model on a single cross-validation fold for sparse
+ * matrices
+ *
+ * @tparam T The type of the design matrix (must be a sparse matrix type)
+ * @param x The sparse design matrix containing predictors
+ * @param y The response matrix
+ * @param folds Cross-validation folds object containing train/test split
+ * indices
+ * @param loss Loss function object for the model
+ * @param scorer Scoring metric to evaluate model performance
+ * @param alphas Regularization parameter values to evaluate
+ * @param thread_model SLOPE model instance used for fitting (thread-local copy)
+ * @param fold Index of the fold to use as test set
+ * @param rep Index of the repetition
+ * @param gamma Relaxation parameter for post-fitting relaxation (default: 0.0)
+ * @param copy_x Whether to copy the design matrix for each fold (default: true,
+ *        but ignored for sparse matrices which are always copied)
+ * @return Eigen::ArrayXd Array of scores for each alpha value on this fold
+ *
+ * This function is a specialization for sparse matrices that fits a SLOPE model
+ * on the training data for a specific fold and evaluates performance on the
+ * test data. For sparse matrices, the design matrix is always copied regardless
+ * of the copy_x parameter.
+ */
+template<typename T>
+Eigen::ArrayXd
+fitToFold(Eigen::SparseMatrixBase<T>& x,
+          const Eigen::MatrixXd& y,
+          const Folds& folds,
+          const std::unique_ptr<Loss>& loss,
+          const std::unique_ptr<Score>& scorer,
+          const Eigen::ArrayXd& alphas,
+          Slope& thread_model,
+          const int fold,
+          const int rep,
+          const double gamma = 0.0,
+          const bool copy_x = true)
+{
+  thread_model.setModifyX(true);
+
+  auto [x_train, y_train, x_test, y_test] = folds.split(x, y, fold, rep);
+
+  auto path = thread_model.path(x_train, y_train, alphas);
+
+  if (gamma > 0) {
+    path = thread_model.relax(path, x_train, y_train, gamma);
+  }
+
+  Eigen::ArrayXd scores = Eigen::ArrayXd::Zero(path.size());
+
+  for (int j = 0; j < path.size(); ++j) {
+    auto eta = path(j).predict(x_test, "linear");
+    scores(j) = scorer->eval(eta, y_test, loss);
+  }
+
+  return scores;
+}
+
+/**
  * @brief Performs cross-validation on a SLOPE model to select optimal
  * hyperparameters
  *
- * @tparam MatrixType Type of design matrix (supports both dense and sparse
- * matrices)
+ * @tparam T Type of design matrix (supports both dense and sparse matrices)
  * @param model The SLOPE model to be cross-validated
  * @param x The design matrix containing predictors
  * @param y_in The response matrix
@@ -161,10 +306,10 @@ findBestParameters(CvResult& cv_result, const std::unique_ptr<Score>& scorer);
  *
  * The function supports parallel processing with OpenMP when available.
  */
-template<typename MatrixType>
+template<typename T>
 CvResult
 crossValidate(Slope model,
-              MatrixType& x,
+              Eigen::EigenBase<T>& x,
               const Eigen::MatrixXd& y_in,
               const CvConfig& config = CvConfig())
 {
@@ -228,21 +373,19 @@ crossValidate(Slope model,
         auto [rep, fold] = std::div(i, folds.numFolds());
 
         Slope thread_model = model;
-        thread_model.setModifyX(true);
 
-        // TODO: Maybe consider not copying at all?
-        auto [x_train, y_train, x_test, y_test] = folds.split(x, y, fold, rep);
+        scores.row(i) = fitToFold(x.derived(),
+                                  y,
+                                  folds,
+                                  loss,
+                                  scorer,
+                                  result.alphas,
+                                  thread_model,
+                                  fold,
+                                  rep,
+                                  gamma,
+                                  config.copy_x);
 
-        auto path = thread_model.path(x_train, y_train, result.alphas);
-
-        if (gamma > 0) {
-          path = thread_model.relax(path, x_train, y_train, gamma);
-        }
-
-        for (int j = 0; j < n_alpha; ++j) {
-          auto eta = path(j).predict(x_test, "linear");
-          scores(i, j) = scorer->eval(eta, y_test, loss);
-        }
       } catch (const std::exception& e) {
         thread_errors[i] = e.what();
 #ifdef _OPENMP

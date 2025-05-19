@@ -47,6 +47,9 @@ setupModel(const Rcpp::List& control)
     if (loss_type == "poisson") {
       solver_type = "fista";
     }
+    if (loss_type == "multinomial") {
+      solver_type = "pgd";
+    }
   }
 
   model.setAlphaMinRatio(alpha_min_ratio);

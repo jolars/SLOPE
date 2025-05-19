@@ -59,7 +59,7 @@ preprocessResponse <- function(family, y, fit_intercept) {
       min_class <- min(y_table)
       class_names <- names(y_table)
       n_classes <- length(y_table)
-      n_targets <- n_classes
+      n_targets <- n_classes - 1
       y_out <- as.numeric(y) - 1 # In libslope, classes are 0-indexed
 
       if (n_classes == 2) {

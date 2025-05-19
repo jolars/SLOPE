@@ -120,6 +120,36 @@ NoScreening::checkKktViolations(Eigen::VectorXd&,
   return true;
 }
 
+bool
+NoScreening::checkKktViolations(Eigen::VectorXd&,
+                                const Eigen::VectorXd&,
+                                const Eigen::ArrayXd&,
+                                std::vector<int>&,
+                                const Eigen::Map<Eigen::MatrixXd>&,
+                                const Eigen::MatrixXd&,
+                                const Eigen::VectorXd&,
+                                const Eigen::VectorXd&,
+                                JitNormalization,
+                                const std::vector<int>&)
+{
+  return true;
+}
+
+bool
+NoScreening::checkKktViolations(Eigen::VectorXd&,
+                                const Eigen::VectorXd&,
+                                const Eigen::ArrayXd&,
+                                std::vector<int>&,
+                                const Eigen::Map<Eigen::SparseMatrix<double>>&,
+                                const Eigen::MatrixXd&,
+                                const Eigen::VectorXd&,
+                                const Eigen::VectorXd&,
+                                JitNormalization,
+                                const std::vector<int>&)
+{
+  return true;
+}
+
 std::string
 NoScreening::toString() const
 {
@@ -233,6 +263,55 @@ StrongScreening::checkKktViolations(Eigen::VectorXd& gradient,
                                     const Eigen::VectorXd& x_scales,
                                     JitNormalization jit_normalization,
                                     const std::vector<int>& full_set)
+{
+  return checkKktViolationsImpl(gradient,
+                                beta,
+                                lambda_curr,
+                                working_set,
+                                x,
+                                residual,
+                                x_centers,
+                                x_scales,
+                                jit_normalization,
+                                full_set);
+}
+
+bool
+StrongScreening::checkKktViolations(Eigen::VectorXd& gradient,
+                                    const Eigen::VectorXd& beta,
+                                    const Eigen::ArrayXd& lambda_curr,
+                                    std::vector<int>& working_set,
+                                    const Eigen::Map<Eigen::MatrixXd>& x,
+                                    const Eigen::MatrixXd& residual,
+                                    const Eigen::VectorXd& x_centers,
+                                    const Eigen::VectorXd& x_scales,
+                                    JitNormalization jit_normalization,
+                                    const std::vector<int>& full_set)
+{
+  return checkKktViolationsImpl(gradient,
+                                beta,
+                                lambda_curr,
+                                working_set,
+                                x,
+                                residual,
+                                x_centers,
+                                x_scales,
+                                jit_normalization,
+                                full_set);
+}
+
+bool
+StrongScreening::checkKktViolations(
+  Eigen::VectorXd& gradient,
+  const Eigen::VectorXd& beta,
+  const Eigen::ArrayXd& lambda_curr,
+  std::vector<int>& working_set,
+  const Eigen::Map<Eigen::SparseMatrix<double>>& x,
+  const Eigen::MatrixXd& residual,
+  const Eigen::VectorXd& x_centers,
+  const Eigen::VectorXd& x_scales,
+  JitNormalization jit_normalization,
+  const std::vector<int>& full_set)
 {
   return checkKktViolationsImpl(gradient,
                                 beta,

@@ -98,50 +98,6 @@ computeScales(Eigen::VectorXd& x_scales, const T& x, const std::string& type)
 }
 
 /**
- * Normalize a mapped dense matrix by centering and scaling.
- *
- * Since Eigen::Map cannot be modified in-place (it's a view of external
- * memory), this overload ignores the modify_x parameter and always returns the
- * appropriate JitNormalization enum for deferred normalization.
- *
- * @param x The mapped dense input matrix.
- * @param x_centers A vector that will hold the column centers.
- * @param x_scales A vector that will hold the column scaling factors.
- * @param centering_type A string specifying the centering type.
- * @param scaling_type A string specifying the scaling type.
- * @param modify_x Ignored for mapped matrices (normalization is always
- * deferred).
- *
- * @return JitNormalization enum indicating what normalization should be
- * applied.
- */
-template<typename Derived>
-JitNormalization
-normalize(Eigen::Map<Derived>& x,
-          Eigen::VectorXd& x_centers,
-          Eigen::VectorXd& x_scales,
-          const std::string& centering_type,
-          const std::string& scaling_type,
-          const bool)
-{
-  computeCenters(x_centers, x, centering_type);
-  computeScales(x_scales, x, scaling_type);
-
-  bool center = centering_type != "none";
-  bool scale = scaling_type != "none";
-
-  if (center && scale) {
-    return JitNormalization::Both;
-  } else if (center) {
-    return JitNormalization::Center;
-  } else if (scale) {
-    return JitNormalization::Scale;
-  } else {
-    return JitNormalization::None;
-  }
-}
-
-/**
  * Normalize a dense matrix by centering and scaling.
  *
  * The function computes column centers and scaling factors based on the
@@ -162,13 +118,54 @@ normalize(Eigen::Map<Derived>& x,
  *
  * @return true if normalization succeeds, false otherwise.
  */
+template<typename T>
 JitNormalization
-normalize(Eigen::MatrixXd& x,
+normalize(Eigen::MatrixBase<T>& x,
           Eigen::VectorXd& x_centers,
           Eigen::VectorXd& x_scales,
           const std::string& centering_type,
           const std::string& scaling_type,
-          const bool modify_x);
+          const bool modify_x)
+{
+  const int p = x.cols();
+
+  computeCenters(x_centers, x, centering_type);
+  computeScales(x_scales, x, scaling_type);
+
+  if ((x_scales.array().abs() == 0.0).any()) {
+    throw std::invalid_argument("One or more columns have zero variance");
+  }
+
+  bool center = centering_type != "none";
+  bool scale = scaling_type != "none";
+  bool center_jit = center && !modify_x;
+  bool scale_jit = scale && !modify_x;
+
+  JitNormalization jit_normalization;
+
+  if (center_jit && scale_jit) {
+    jit_normalization = JitNormalization::Both;
+  } else if (center_jit) {
+    jit_normalization = JitNormalization::Center;
+  } else if (scale_jit) {
+    jit_normalization = JitNormalization::Scale;
+  } else {
+    jit_normalization = JitNormalization::None;
+  }
+
+  if (modify_x && (center || scale)) {
+    for (int j = 0; j < p; ++j) {
+      if (center) {
+        x.col(j).array() -= x_centers(j);
+      }
+      if (scale) {
+        x.col(j).array() /= x_scales(j);
+      }
+    }
+  }
+
+  return jit_normalization;
+}
 
 /**
  * Normalize a sparse matrix by scaling only.
@@ -193,13 +190,46 @@ normalize(Eigen::MatrixXd& x,
  *
  * @return true if normalization succeeds, false otherwise.
  */
+template<typename T>
 JitNormalization
-normalize(Eigen::SparseMatrix<double>& x,
+normalize(Eigen::SparseMatrixBase<T>& x,
           Eigen::VectorXd& x_centers,
           Eigen::VectorXd& x_scales,
           const std::string& centering_type,
           const std::string& scaling_type,
-          const bool modify_x);
+          const bool)
+{
+  computeCenters(x_centers, x, centering_type);
+  computeScales(x_scales, x, scaling_type);
+
+  bool center = centering_type != "none";
+  bool scale = scaling_type != "none";
+  bool center_jit = center;
+  bool scale_jit = scale;
+
+  JitNormalization jit_normalization;
+
+  if (center_jit && scale_jit) {
+    jit_normalization = JitNormalization::Both;
+  } else if (center_jit) {
+    jit_normalization = JitNormalization::Center;
+  } else if (scale_jit) {
+    jit_normalization = JitNormalization::Scale;
+  } else {
+    jit_normalization = JitNormalization::None;
+  }
+
+  // TODO: Implement in-place scaling for sparse matrices.
+  // if (modify_x && scaling_type != "none") {
+  //   for (int j = 0; j < x.cols(); ++j) {
+  //     for (Eigen::SparseMatrix<double>::InnerIterator it(x, j); it; ++it) {
+  //       it.valueRef() = it.value() / x_scales(j);
+  //     }
+  //   }
+  // }
+
+  return jit_normalization;
+}
 
 /**
  * @brief Rescales the coefficients using the given parameters.

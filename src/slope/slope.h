@@ -5,15 +5,28 @@
 
 #pragma once
 
+#include "clusters.h"
+#include "constants.h"
+#include "diagnostics.h"
+#include "estimate_alpha.h"
 #include "logger.h"
+#include "losses/loss.h"
+#include "losses/setup_loss.h"
+#include "math.h"
+#include "normalize.h"
+#include "regularization_sequence.h"
 #include "screening.h"
 #include "slope_fit.h"
 #include "slope_path.h"
 #include "solvers/hybrid_cd.h"
+#include "solvers/setup_solver.h"
+#include "sorted_l1_norm.h"
 #include "timer.h"
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <cassert>
+#include <memory>
+#include <numeric>
 #include <optional>
 
 /** @namespace slope
@@ -329,10 +342,309 @@ public:
    * all solutions and optimization metrics in a SlopePath object.
    */
   template<typename T>
-  SlopePath path(T& x,
+  SlopePath path(Eigen::EigenBase<T>& x,
                  const Eigen::MatrixXd& y_in,
                  Eigen::ArrayXd alpha = Eigen::ArrayXd::Zero(0),
-                 Eigen::ArrayXd lambda = Eigen::ArrayXd::Zero(0));
+                 Eigen::ArrayXd lambda = Eigen::ArrayXd::Zero(0))
+  {
+    using Eigen::MatrixXd;
+    using Eigen::VectorXd;
+
+    const int n = x.rows();
+    const int p = x.cols();
+
+    if (n != y_in.rows()) {
+      throw std::invalid_argument(
+        "x and y_in must have the same number of rows");
+    }
+
+    auto jit_normalization = normalize(x.derived(),
+                                       this->x_centers,
+                                       this->x_scales,
+                                       this->centering_type,
+                                       this->scaling_type,
+                                       this->modify_x);
+
+    std::unique_ptr<Loss> loss = setupLoss(this->loss_type);
+
+    MatrixXd y = loss->preprocessResponse(y_in);
+
+    const int m = y.cols();
+
+    std::vector<int> full_set(p * m);
+    std::iota(full_set.begin(), full_set.end(), 0);
+
+    VectorXd beta0 = VectorXd::Zero(m);
+    VectorXd beta = VectorXd::Zero(p * m);
+
+    MatrixXd eta = MatrixXd::Zero(n, m); // linear predictor
+
+    if (this->intercept) {
+      beta0 = loss->link(y.colwise().mean()).transpose();
+      eta.rowwise() = beta0.transpose();
+    }
+
+    MatrixXd residual = loss->residual(eta, y);
+    VectorXd gradient(beta.size());
+
+    // Path data
+    bool user_alpha = alpha.size() > 0;
+    bool user_lambda = lambda.size() > 0;
+
+    if (!user_lambda) {
+      lambda = lambdaSequence(
+        p * m, this->q, this->lambda_type, n, this->theta1, this->theta2);
+    } else {
+      if (lambda.size() != beta.size()) {
+        throw std::invalid_argument(
+          "lambda must be the same length as the number of coefficients");
+      }
+      if (lambda.minCoeff() < 0) {
+        throw std::invalid_argument("lambda must be non-negative");
+      }
+      if (!lambda.isFinite().all()) {
+        throw std::invalid_argument("lambda must be finite");
+      }
+    }
+
+    // Setup the regularization sequence and path
+    SortedL1Norm sl1_norm;
+
+    // TODO: Make this part of the slope class
+    auto solver = setupSolver(this->solver_type,
+                              this->loss_type,
+                              jit_normalization,
+                              this->intercept,
+                              this->update_clusters,
+                              this->cd_iterations);
+
+    updateGradient(gradient,
+                   x.derived(),
+                   residual,
+                   full_set,
+                   this->x_centers,
+                   this->x_scales,
+                   Eigen::VectorXd::Ones(n),
+                   jit_normalization);
+
+    int alpha_max_ind = whichMax(gradient.cwiseAbs());
+    double alpha_max = sl1_norm.dualNorm(gradient, lambda);
+
+    if (alpha_type == "path" ||
+        (alpha_type == "estimate" && alpha_estimate != 1)) {
+      if (alpha_min_ratio < 0) {
+        alpha_min_ratio = n > gradient.size() ? 1e-4 : 1e-2;
+      }
+
+      alpha =
+        regularizationPath(alpha, path_length, alpha_min_ratio, alpha_max);
+      path_length = alpha.size();
+    } else if (alpha_type == "estimate" && alpha_estimate == -1) {
+      if (loss_type != "quadratic") {
+        throw std::invalid_argument("Automatic alpha estimation is only "
+                                    "available for the quadratic loss");
+      }
+      // return this->estimateAlpha(x, y);
+    }
+
+    // Screening setup
+    std::unique_ptr<ScreeningRule> screening_rule =
+      createScreeningRule(this->screening_type);
+    std::vector<int> working_set =
+      screening_rule->initialize(full_set, alpha_max_ind);
+
+    // Path variables
+    double null_deviance = loss->deviance(eta, y);
+    double dev_prev = null_deviance;
+
+    Timer timer;
+
+    double alpha_prev = std::max(alpha_max, alpha(0));
+
+    std::vector<SlopeFit> fits;
+
+    // Regularization path loop
+    for (int path_step = 0; path_step < this->path_length; ++path_step) {
+      double alpha_curr = alpha(path_step);
+
+      assert(alpha_curr <= alpha_prev && "Alpha must be decreasing");
+
+      Eigen::ArrayXd lambda_curr = alpha_curr * lambda;
+      Eigen::ArrayXd lambda_prev = alpha_prev * lambda;
+
+      std::vector<double> duals, primals, time;
+      timer.start();
+
+      // Update gradient for the full set
+      // TODO: Only update for non-working set since gradient is updated before
+      // the convergence check in the inner loop for the working set
+      updateGradient(gradient,
+                     x.derived(),
+                     residual,
+                     full_set,
+                     x_centers,
+                     x_scales,
+                     Eigen::VectorXd::Ones(x.rows()),
+                     jit_normalization);
+
+      working_set = screening_rule->screen(
+        gradient, lambda_curr, lambda_prev, beta, full_set);
+
+      int it = 0;
+      for (; it < this->max_it; ++it) {
+        // Compute primal, dual, and gap
+        residual = loss->residual(eta, y);
+        updateGradient(gradient,
+                       x.derived(),
+                       residual,
+                       working_set,
+                       this->x_centers,
+                       this->x_scales,
+                       Eigen::VectorXd::Ones(n),
+                       jit_normalization);
+
+        double primal = loss->loss(eta, y) +
+                        sl1_norm.eval(beta(working_set),
+                                      lambda_curr.head(working_set.size()));
+
+        MatrixXd theta = residual;
+
+        // First compute gradient with potential offset for intercept case
+        VectorXd dual_gradient = gradient;
+
+        // TODO: Can we avoid this copy? Maybe revert offset afterwards or,
+        // alternatively, solve intercept until convergence and then no longer
+        // need the offset at all.
+        if (this->intercept) {
+          VectorXd theta_mean = theta.colwise().mean();
+          theta.rowwise() -= theta_mean.transpose();
+
+          offsetGradient(dual_gradient,
+                         x.derived(),
+                         theta_mean,
+                         working_set,
+                         this->x_centers,
+                         this->x_scales,
+                         jit_normalization);
+        }
+
+        // Common scaling operation
+        double dual_norm = sl1_norm.dualNorm(
+          dual_gradient(working_set), lambda_curr.head(working_set.size()));
+        theta.array() /= std::max(1.0, dual_norm);
+
+        double dual = loss->dual(theta, y, Eigen::VectorXd::Ones(n));
+
+        if (collect_diagnostics) {
+          timer.pause();
+          double true_dual = computeDual(beta,
+                                         residual,
+                                         loss,
+                                         sl1_norm,
+                                         lambda_curr,
+                                         x.derived(),
+                                         y,
+                                         this->x_centers,
+                                         this->x_scales,
+                                         jit_normalization,
+                                         this->intercept);
+          timer.resume();
+
+          time.emplace_back(timer.elapsed());
+          primals.emplace_back(primal);
+          duals.emplace_back(true_dual);
+        }
+
+        double dual_gap = primal - dual;
+
+        // std::cout << "gap: " << dual_gap << std::endl;
+
+        assert(dual_gap > -1e-6 && "Dual gap should be positive");
+
+        double tol_scaled = (std::abs(primal) + constants::EPSILON) * this->tol;
+
+        if (dual_gap <= tol_scaled) {
+          bool no_violations =
+            screening_rule->checkKktViolations(gradient,
+                                               beta,
+                                               lambda_curr,
+                                               working_set,
+                                               x.derived(),
+                                               residual,
+                                               this->x_centers,
+                                               this->x_scales,
+                                               jit_normalization,
+                                               full_set);
+          if (no_violations) {
+            break;
+          }
+        }
+
+        solver->run(beta0,
+                    beta,
+                    eta,
+                    lambda_curr,
+                    loss,
+                    sl1_norm,
+                    gradient,
+                    working_set,
+                    x.derived(),
+                    this->x_centers,
+                    this->x_scales,
+                    y);
+      }
+
+      if (it == this->max_it) {
+        WarningLogger::addWarning(
+          WarningCode::MAXIT_REACHED,
+          "Maximum number of iterations reached at step = " +
+            std::to_string(path_step) + ".");
+      }
+
+      alpha_prev = alpha_curr;
+
+      // Compute early stopping criteria
+      double dev = loss->deviance(eta, y);
+      double dev_ratio = 1 - dev / null_deviance;
+      double dev_change = path_step == 0 ? 1.0 : 1 - dev / dev_prev;
+      dev_prev = dev;
+
+      Clusters clusters;
+
+      if (return_clusters) {
+        clusters.update(beta);
+      }
+
+      SlopeFit fit{ beta0,
+                    beta.reshaped(p, m).sparseView(),
+                    clusters,
+                    alpha_curr,
+                    lambda,
+                    dev,
+                    null_deviance,
+                    primals,
+                    duals,
+                    time,
+                    it,
+                    this->centering_type,
+                    this->scaling_type,
+                    this->intercept,
+                    this->x_centers,
+                    this->x_scales };
+
+      fits.emplace_back(std::move(fit));
+
+      if (!user_alpha) {
+        int n_unique = unique(beta.cwiseAbs()).size();
+        if (dev_ratio > dev_ratio_tol || dev_change < dev_change_tol ||
+            n_unique >= this->max_clusters.value_or(n + 1)) {
+          break;
+        }
+      }
+    }
+
+    return fits;
+  }
 
   /**
    * @brief Fits a single SLOPE regression model for given alpha and lambda
@@ -350,10 +662,96 @@ public:
    * returning coefficients and optimization details in a SlopeFit object.
    */
   template<typename T>
-  SlopeFit fit(T& x,
+  SlopeFit fit(Eigen::EigenBase<T>& x,
                const Eigen::MatrixXd& y_in,
                const double alpha = 1.0,
-               Eigen::ArrayXd lambda = Eigen::ArrayXd::Zero(0));
+               Eigen::ArrayXd lambda = Eigen::ArrayXd::Zero(0))
+  {
+    Eigen::ArrayXd alpha_arr(1);
+    alpha_arr(0) = alpha;
+    SlopePath res = path(x, y_in, alpha_arr, lambda);
+
+    return { res(0) };
+  };
+
+  /**
+   * @brief Estimates the regularization parameter alpha for SLOPE regression
+   *
+   * This function implements an algorithm to estimate an appropriate
+   * regularization parameter (alpha) for SLOPE, which is a generalization of
+   * the lasso. When n >= p + 30, it directly estimates alpha from OLS
+   * residuals. Otherwise, it uses an iterative procedure that alternates
+   * between estimating alpha and fitting the SLOPE model.
+   *
+   * The iterative procedure works by:
+   * 1. Starting with an empty set of selected variables
+   * 2. Estimating alpha based on the selected variables
+   * 3. Fitting a SLOPE model with that alpha
+   * 4. Updating the selected variables based on non-zero coefficients
+   * 5. Repeating until convergence or maximum iterations reached
+   *
+   * @tparam MatrixType The type of matrix used to store the design matrix
+   * @param x Design matrix with n observations and p predictors
+   * @param y Response matrix
+   * @return A SlopePath object containing the fitted model with estimated alpha
+   * @throws std::runtime_error If maximum iterations reached or if too many
+   * variables selected
+   */
+  template<typename T>
+  SlopePath estimateAlpha(Eigen::EigenBase<T>& x, Eigen::MatrixXd& y)
+  {
+    int n = x.rows();
+    int p = x.cols();
+
+    // Create a copy with alpha type set to path to avoid recursion
+    Slope model_copy = *this;
+    model_copy.setAlphaType("path");
+
+    std::vector<int> selected;
+    Eigen::ArrayXd alpha(1);
+    SlopePath result;
+
+    // Estimate the noise level, if possible
+    if (n >= p + 30) {
+      alpha(0) = estimateNoise(x, y, this->intercept) / n;
+      this->alpha_estimate = alpha(0);
+      result = model_copy.path(x, y, alpha);
+    } else {
+      for (int it = 0; it < this->alpha_est_maxit; ++it) {
+        T x_selected = subsetCols(x.derived(), selected);
+
+        std::vector<int> selected_prev = selected;
+        selected.clear();
+
+        alpha(0) = estimateNoise(x_selected, y, this->intercept) / n;
+        this->alpha_estimate = alpha(0);
+
+        result = model_copy.path(x, y, alpha);
+        auto coefs = result.getCoefs().back();
+
+        for (typename Eigen::SparseMatrix<double>::InnerIterator it(coefs, 0);
+             it;
+             ++it) {
+          selected.emplace_back(it.row());
+        }
+
+        if (selected == selected_prev) {
+          return result;
+        }
+
+        if (static_cast<int>(selected.size()) >= n + this->intercept) {
+          throw std::runtime_error(
+            "selected >= n - 1 variables, cannot estimate variance");
+        }
+      }
+
+      slope::WarningLogger::addWarning(
+        slope::WarningCode::MAXIT_REACHED,
+        "Maximum iterations reached in alpha estimation");
+    }
+
+    return result;
+  }
 
   /**
    * @brief Relaxes a fitted SLOPE model
@@ -572,6 +970,7 @@ private:
   double theta2 = 0.5;
   double tol = 1e-4;
   double tol_relax = 1e-4;
+  double alpha_estimate = -1;
   int alpha_est_maxit = 1000;
   int cd_iterations = 10;
   int max_it = 1e5;

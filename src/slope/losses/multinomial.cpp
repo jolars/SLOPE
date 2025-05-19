@@ -13,6 +13,7 @@ Multinomial::loss(const Eigen::MatrixXd& eta, const Eigen::MatrixXd& y)
 
   double out = logSumExp(eta).mean();
 
+  assert(eta.allFinite());
   assert(out == out && "Loss is NaN");
 
   out -= (y.array() * eta.array()).sum() / n;
@@ -31,8 +32,8 @@ Multinomial::dual(const Eigen::MatrixXd& theta,
   Eigen::ArrayXXd eta = link(theta + y);
 
   // TODO: Find out if this formulation can be improved numerically
-  double out = logSumExp(eta).mean() - (y.array() * eta).sum() / n -
-               (theta.array() * eta).sum() / n;
+  double out =
+    logSumExp(eta).mean() - (eta * (y.array() + theta.array())).sum() / n;
 
   return out;
 }

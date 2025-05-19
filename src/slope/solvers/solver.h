@@ -42,7 +42,7 @@ public:
   {
   }
 
-  /// Default desstructor
+  /// Default destructor
   virtual ~SolverBase() = default;
 
   /**
@@ -99,6 +99,64 @@ public:
                    const Eigen::VectorXd& gradient,
                    const std::vector<int>& working_set,
                    const Eigen::SparseMatrix<double>& x,
+                   const Eigen::VectorXd& x_centers,
+                   const Eigen::VectorXd& x_scales,
+                   const Eigen::MatrixXd& y) = 0;
+
+  /**
+   * @brief Pure virtual function defining the solver's optimization routine
+   *
+   * @param beta0 Intercept terms for each response
+   * @param beta Coefficient vecttor (size p x m)
+   * @param eta Linear predictor matrix (n samples x m responses)
+   * @param lambda Vector of regularization parameters
+   * @param loss Pointer to loss function object
+   * @param penalty Sorted L1 norm object for proximal operations
+   * @param gradient Gradient matrix for loss function
+   * @param working_set Vector of indices for active predictors
+   * @param x Input feature matrix (n samples x p predictors)
+   * @param x_centers Vector of feature means for centering
+   * @param x_scales Vector of feature scales for normalization
+   * @param y Response matrix (n samples x m responses)
+   */
+  virtual void run(Eigen::VectorXd& beta0,
+                   Eigen::VectorXd& beta,
+                   Eigen::MatrixXd& eta,
+                   const Eigen::ArrayXd& lambda,
+                   const std::unique_ptr<Loss>& loss,
+                   const SortedL1Norm& penalty,
+                   const Eigen::VectorXd& gradient,
+                   const std::vector<int>& working_set,
+                   const Eigen::Map<Eigen::MatrixXd>& x,
+                   const Eigen::VectorXd& x_centers,
+                   const Eigen::VectorXd& x_scales,
+                   const Eigen::MatrixXd& y) = 0;
+
+  /**
+   * @brief Pure virtual function defining the solver's optimization routine
+   *
+   * @param beta0 Intercept terms for each response
+   * @param beta Coefficient vecttor (size p x m)
+   * @param eta Linear predictor matrix (n samples x m responses)
+   * @param lambda Vector of regularization parameters
+   * @param loss Pointer to loss function object
+   * @param penalty Sorted L1 norm object for proximal operations
+   * @param gradient Gradient matrix for loss function
+   * @param working_set Vector of indices for active predictors
+   * @param x Input feature matrix (n samples x p predictors)
+   * @param x_centers Vector of feature means for centering
+   * @param x_scales Vector of feature scales for normalization
+   * @param y Response matrix (n samples x m responses)
+   */
+  virtual void run(Eigen::VectorXd& beta0,
+                   Eigen::VectorXd& beta,
+                   Eigen::MatrixXd& eta,
+                   const Eigen::ArrayXd& lambda,
+                   const std::unique_ptr<Loss>& loss,
+                   const SortedL1Norm& penalty,
+                   const Eigen::VectorXd& gradient,
+                   const std::vector<int>& working_set,
+                   const Eigen::Map<Eigen::SparseMatrix<double>>& x,
                    const Eigen::VectorXd& x_centers,
                    const Eigen::VectorXd& x_scales,
                    const Eigen::MatrixXd& y) = 0;

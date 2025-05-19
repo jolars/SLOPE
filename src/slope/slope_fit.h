@@ -234,11 +234,12 @@ public:
    * @see Loss
    */
   template<typename T>
-  Eigen::MatrixXd predict(T& x, const std::string& type = "response") const
+  Eigen::MatrixXd predict(Eigen::EigenBase<T>& x,
+                          const std::string& type = "response") const
   {
     validateOption(type, { "response", "linear" }, "type");
 
-    Eigen::MatrixXd eta = x * getCoefs();
+    Eigen::MatrixXd eta = x.derived() * getCoefs();
 
     if (has_intercept) {
       eta.rowwise() += getIntercepts().transpose();
