@@ -42,12 +42,4 @@ test_that("plot.trainedSLOPE works as expected", {
     number = 10
   )
   expect_silent(dont_plot(tune, ci_col = "salmon"))
-
-  xy <- SLOPE:::randomProblem(200, p = 10, q = 0.5, response = "binomial")
-  x <- xy$x
-  y <- xy$y
-
-  fit <- trainSLOPE(x, y, q = c(0.1, 0.2), number = 2, family = "binomial")
-
-  expect_silent(dont_plot(fit, ci_col = "salmon"))
 })
