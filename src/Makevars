@@ -1,4 +1,4 @@
-PKG_CXXFLAGS=-I. $(SHLIB_OPENMP_CXXFLAGS) -DEIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
+PKG_CPPFLAGS=-I. $(SHLIB_OPENMP_CXXFLAGS) -DEIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
 PKG_LIBS = $(SHLIB_OPENMP_CXXFLAGS)
 
 CXX_STD = CXX17
@@ -22,7 +22,6 @@ SOURCES = \
     slope/losses/setup_loss.cpp \
     slope/math.cpp \
     slope/normalize.cpp \
-    slope/ols.cpp \
     slope/qnorm.cpp \
     slope/regularization_sequence.cpp \
     slope/score.cpp \

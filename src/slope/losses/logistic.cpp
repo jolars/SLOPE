@@ -19,11 +19,14 @@ Logistic::dual(const Eigen::MatrixXd& theta,
 {
   using Eigen::log;
 
-  // Clamp probabilities to [p_min, 1-p_min]
-  Eigen::ArrayXd pr =
-    (theta + y).array().min(constants::P_MAX).max(constants::P_MIN);
+  int n = y.rows();
 
-  return -(pr * log(pr) + (1.0 - pr) * log(1.0 - pr)).mean();
+  Eigen::VectorXd eta = link(theta + y);
+
+  double out = log(1.0 + eta.array().exp()).mean() - eta.dot(y.reshaped()) / n -
+               theta.reshaped().dot(eta) / n;
+
+  return out;
 }
 
 Eigen::MatrixXd
@@ -58,8 +61,10 @@ Logistic::link(const Eigen::MatrixXd& mu)
 Eigen::MatrixXd
 Logistic::inverseLink(const Eigen::MatrixXd& eta)
 {
-  return eta.unaryExpr(
-    [](const double& x) { return 1.0 / (1.0 + std::exp(-x)); });
+  Eigen::ArrayXd pr =
+    1.0 / (1.0 + (-eta).array().min(constants::MAX_EXP).exp());
+
+  return pr.max(constants::P_MIN).min(constants::P_MAX);
 }
 
 Eigen::MatrixXd
