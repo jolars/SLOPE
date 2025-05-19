@@ -389,7 +389,7 @@ disabled for Poisson due to convergence issues.
 fit <- SLOPE(bodyfat$x, bodyfat$y)
 
 # Multinomial response, custom alpha and lambda
-m <- length(unique(wine$y))
+m <- length(unique(wine$y)) - 1
 p <- ncol(wine$x)
 
 alpha <- 0.005
