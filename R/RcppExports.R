@@ -17,6 +17,10 @@ denseSLOPE <- function(x, y, control) {
     .Call(`_SLOPE_denseSLOPE`, x, y, control)
 }
 
+bigSLOPE <- function(x, y, control) {
+    .Call(`_SLOPE_bigSLOPE`, x, y, control)
+}
+
 cvSparseCpp <- function(x, y, cv_args, model_args) {
     .Call(`_SLOPE_cvSparseCpp`, x, y, cv_args, model_args)
 }

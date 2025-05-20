@@ -39,6 +39,8 @@
                     SparseM
                     caret
                     e1071
+                    bigmemory
+                    BH
                   ];
                 }
               );

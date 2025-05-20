@@ -90,10 +90,13 @@ Depends:
 Imports:
     Matrix,
     methods,
-    Rcpp
+    Rcpp,
+    bigmemory
 LinkingTo:
     Rcpp,
-    RcppEigen (>= 0.3.4.0.0)
+    RcppEigen (>= 0.3.4.0.0),
+    BH,
+    bigmemory
 Suggests:
     covr,
     knitr,

@@ -2,6 +2,8 @@
 #include "slope/slope.h"
 #include "slope/threads.h"
 #include <RcppEigen.h>
+#include <bigmemory/BigMatrix.h>
+#include <bigmemory/MatrixAccessor.hpp>
 
 template<typename T>
 Rcpp::List
@@ -77,4 +79,19 @@ denseSLOPE(Eigen::MatrixXd& x,
     throw std::invalid_argument("Input matrix must not contain missing values");
   }
   return callSLOPE(x, y, control);
+}
+
+// [[Rcpp::export]]
+Rcpp::List
+bigSLOPE(SEXP x, const Eigen::MatrixXd& y, const Rcpp::List& control)
+{
+  using Eigen::Map;
+  using Eigen::MatrixXd;
+
+  Rcpp::XPtr<BigMatrix> bm_ptr(x);
+
+  Map<MatrixXd> x_map =
+    Map<MatrixXd>((double*)bm_ptr->matrix(), bm_ptr->nrow(), bm_ptr->ncol());
+
+  return callSLOPE(x_map, y, control);
 }
