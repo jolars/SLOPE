@@ -454,8 +454,20 @@ SLOPE <- function(
   alpha <- control$alpha
 
   is_sparse <- inherits(x, "sparseMatrix")
+  is_big_matrix <- inherits(x, "big.matrix")
 
-  fitSLOPE <- if (is_sparse) sparseSLOPE else denseSLOPE
+  fitSLOPE <- if (is_sparse) {
+    sparseSLOPE
+  } else if (is_big_matrix) {
+    bigSLOPE
+  } else {
+    denseSLOPE
+  }
+
+  if (is_big_matrix) {
+    x <- x@address
+  }
+
   fit <- fitSLOPE(x, y, control)
 
   lambda <- fit$lambda
@@ -606,6 +618,7 @@ processSlopeArgs <- function(
 
   # convert sparse x to dgCMatrix class from package Matrix.
   is_sparse <- inherits(x, "sparseMatrix")
+  is_big_matrix <- inherits(x, "big.matrix")
 
   if (NROW(y) == 0) {
     stop("`y` is empty")
@@ -617,7 +630,7 @@ processSlopeArgs <- function(
 
   if (is_sparse) {
     x <- as_dgCMatrix(x)
-  } else {
+  } else if (!is_big_matrix) {
     x <- as.matrix(x)
   }
 

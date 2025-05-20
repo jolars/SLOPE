@@ -65,6 +65,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// bigSLOPE
+Rcpp::List bigSLOPE(SEXP x, const Eigen::MatrixXd& y, const Rcpp::List& control);
+RcppExport SEXP _SLOPE_bigSLOPE(SEXP xSEXP, SEXP ySEXP, SEXP controlSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type control(controlSEXP);
+    rcpp_result_gen = Rcpp::wrap(bigSLOPE(x, y, control));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cvSparseCpp
 Rcpp::List cvSparseCpp(Eigen::SparseMatrix<double>& x, const Eigen::MatrixXd& y, const Rcpp::List& cv_args, const Rcpp::List& model_args);
 RcppExport SEXP _SLOPE_cvSparseCpp(SEXP xSEXP, SEXP ySEXP, SEXP cv_argsSEXP, SEXP model_argsSEXP) {
@@ -99,6 +112,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_SLOPE_lambdaSequenceCpp", (DL_FUNC) &_SLOPE_lambdaSequenceCpp, 6},
     {"_SLOPE_sparseSLOPE", (DL_FUNC) &_SLOPE_sparseSLOPE, 3},
     {"_SLOPE_denseSLOPE", (DL_FUNC) &_SLOPE_denseSLOPE, 3},
+    {"_SLOPE_bigSLOPE", (DL_FUNC) &_SLOPE_bigSLOPE, 3},
     {"_SLOPE_cvSparseCpp", (DL_FUNC) &_SLOPE_cvSparseCpp, 4},
     {"_SLOPE_cvDenseCpp", (DL_FUNC) &_SLOPE_cvDenseCpp, 4},
     {NULL, NULL, 0}
