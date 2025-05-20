@@ -23,17 +23,14 @@ patient with dealing with the large number of breaking changes.
   automatically set to `"auto"`.
 - `alpha` is now scaled by `n` (the number of observations) and differences with
   respect to the type of scaling are no longer taken into account.
-- The multinomial family now uses the redundant parameterization of the
-  multinomial logistic regression model. This means that regularization
-  sequences need to be of length `p` times `m` (number of classes). The returned
-  coefficients from `SLOPE()` now have dimensions `p` times `m` (rather than
-  `m - 1`).
 - The object `coefficients` from `SLOPE()` is now a list of sparse matrices
   (rather than a three-dimensional array as before). Now it contains only the
   coefficients and not the intercepts. The intercepts are instead stored in
   `intercepts` in the returned object and are always present even if
   `intercept = FALSE`.
-- The behavior of `coef.SLOPE()` has changed somewhat.
+- The behavior of `coef.SLOPE()` has changed somewhat, and if
+  `simplify = FALSE`, then the returned object is now instead a list of sparse
+  matrices (rather than a three-dimensional array as before).
 - The default value of `q` in `SLOPE()` has changed from
   `0.1 * min(1, NROW(x) / NCOL(x))` to `0.1`.
 - Arguments `sigma`, `n_sigma`, and `lambda_min_ratio` in `SLOPE()` that were
@@ -65,7 +62,10 @@ patient with dealing with the large number of breaking changes.
 
 ## New Features
 
-- Centering `x` in `SLOPE()` is now allowed again.
+- Centering `x` in `SLOPE()` is now allowed again, even when the matrix is
+  sparse.
+- Out-of-memory matrices are now allowed through the `bigmemory` package. Only
+  support for dense matrices is available at the moment.
 - Centers and scales can now be specified manually by providing vectors to
   `center` and `scale` in `SLOPE()`.
 - A new solver based on a hybrid method of proximal gradient descent and
