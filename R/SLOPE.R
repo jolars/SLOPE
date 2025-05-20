@@ -419,9 +419,6 @@ SLOPE <- function(
     )
   }
 
-  n <- NROW(x)
-  p <- NCOL(x)
-
   ocall <- match.call()
 
   control <- processSlopeArgs(
