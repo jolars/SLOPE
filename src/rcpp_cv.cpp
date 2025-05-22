@@ -31,8 +31,7 @@ cvImpl(T& x,
   using Rcpp::Named;
   using Rcpp::wrap;
 
-  // slope::Slope model = setupModel(model_args);
-  slope::Slope model;
+  slope::Slope model = setupModel(model_args);
 
   auto alpha = as<ArrayXd>(model_args["alpha"]);
   auto lambda = as<ArrayXd>(model_args["lambda"]);
