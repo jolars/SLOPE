@@ -81,7 +81,7 @@
                         <h4 data-toc-skip class="author">Johan
 Larsson</h4>
             
-            <h4 data-toc-skip class="date">2025-05-20</h4>
+            <h4 data-toc-skip class="date">2025-05-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jolars/SLOPE/blob/main/vignettes/introduction.Rmd" class="external-link"><code>vignettes/introduction.Rmd</code></a></small>
       <div class="d-none name"><code>introduction.Rmd</code></div>
@@ -195,12 +195,9 @@ sequence using resampling. This package features the function
 <span><span class="op">)</span></span></code></pre></div>
 <p>As before, the plot method offers the best summary.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tune</span>, measure <span class="op">=</span> <span class="st">"mae"</span><span class="op">)</span> <span class="co"># plot mean absolute error</span></span></code></pre></div>
-<div class="figure">
-<img src="introduction_files/figure-html/unnamed-chunk-4-1.png" alt="Model tuning results from Gaussian SLOPE on the bodyfat dataset." width="528"><p class="caption">
-Model tuning results from Gaussian SLOPE on the bodyfat dataset.
-</p>
-</div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tune</span>, measure <span class="op">=</span> <span class="st">"mae"</span><span class="op">)</span> <span class="co"># plot mean absolute error</span></span>
+<span><span class="co">#&gt; Warning: `measure` is deprecated, and will be removed in a future version. the</span></span>
+<span><span class="co">#&gt; measure will instead be taken from the `TrainedSLOPE` object</span></span></code></pre></div>
 <p>Printing the resulting object will display the optimum values</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tune</span></span>
