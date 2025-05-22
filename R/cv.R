@@ -9,8 +9,7 @@
 #'   implies to relaxation of the penalty.
 #' @param n_folds number of folds (cross-validation)
 #' @param n_repeats number of folds (cross-validation)
-#' @param measure to try to optimize. Default is `"deviance"`, which is
-#'   the same as `"mse"` for Gaussian regression.
+#' @param measure DEPRECATED
 #' @param ... other arguments to pass on to [SLOPE()]
 #'
 #' @return An object of class `"TrainedSLOPE"`, with the following slots:

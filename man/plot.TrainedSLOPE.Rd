@@ -6,7 +6,6 @@
 \usage{
 \method{plot}{TrainedSLOPE}(
   x,
-  measure = c("auto", "mse", "mae", "deviance", "auc", "misclass"),
   plot_min = TRUE,
   ci_alpha = 0.2,
   ci_border = NA,
@@ -15,17 +14,13 @@
   polygon_args = list(),
   lines_args = list(),
   abline_args = list(),
+  measure,
   ...
 )
 }
 \arguments{
 \item{x}{an object of class \code{'TrainedSLOPE'}, typically from a call
 to \code{\link[=trainSLOPE]{trainSLOPE()}}}
-
-\item{measure}{any of the measures used in the call to \code{\link[=trainSLOPE]{trainSLOPE()}}. If
-\code{measure = "auto"} then deviance will be used for binomial and multinomial
-models, whilst mean-squared error will be used for Gaussian and Poisson
-models.}
 
 \item{plot_min}{whether to mark the location of the penalty corresponding
 to the best prediction score}
@@ -48,6 +43,11 @@ which sets up the plot frame}
 
 \item{abline_args}{list of additional arguments to pass to
 \code{\link[graphics:abline]{graphics::abline()}}, which plots the minimum}
+
+\item{measure}{any of the measures used in the call to \code{\link[=trainSLOPE]{trainSLOPE()}}. If
+\code{measure = "auto"} then deviance will be used for binomial and multinomial
+models, whilst mean-squared error will be used for Gaussian and Poisson
+models.}
 
 \item{...}{ignored}
 }

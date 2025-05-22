@@ -8,6 +8,7 @@ cvSLOPE(
   x,
   y,
   q = 0.2,
+  gamma = 0,
   n_folds = 10,
   n_repeats = 1,
   measure = c("mse", "mae", "deviance", "misclass", "auc"),
@@ -25,12 +26,14 @@ be converted to matrices internally.}
 
 \item{q}{a vector of quantiles for the \code{q} parameter in SLOPE}
 
+\item{gamma}{relaxation parameter for SLOPE. Default is \code{0.0}, which
+implies to relaxation of the penalty.}
+
 \item{n_folds}{number of folds (cross-validation)}
 
 \item{n_repeats}{number of folds (cross-validation)}
 
-\item{measure}{to try to optimize. Default is \code{"deviance"}, which is
-the same as \code{"mse"} for Gaussian regression.}
+\item{measure}{DEPRECATED}
 
 \item{...}{other arguments to pass on to \code{\link[=SLOPE]{SLOPE()}}}
 }
