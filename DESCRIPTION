@@ -90,8 +90,7 @@ Depends:
 Imports:
     Matrix,
     methods,
-    Rcpp,
-    bigmemory
+    Rcpp
 LinkingTo:
     Rcpp,
     RcppEigen (>= 0.3.4.0.0),
@@ -102,7 +101,8 @@ Suggests:
     knitr,
     rmarkdown,
     spelling,
-    testthat (>= 2.1.0)
+    testthat (>= 2.1.0),
+    bigmemory
 SystemRequirements: C++17
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
