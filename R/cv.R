@@ -5,6 +5,8 @@
 #'
 #' @inheritParams SLOPE
 #' @param q a vector of quantiles for the `q` parameter in SLOPE
+#' @param gamma relaxation parameter for SLOPE. Default is `0.0`, which
+#'   implies to relaxation of the penalty.
 #' @param n_folds number of folds (cross-validation)
 #' @param n_repeats number of folds (cross-validation)
 #' @param measure to try to optimize. Default is `"deviance"`, which is
@@ -39,6 +41,7 @@ cvSLOPE <- function(
   x,
   y,
   q = 0.2,
+  gamma = 0.0,
   n_folds = 10,
   n_repeats = 1,
   measure = c(
@@ -94,6 +97,7 @@ cvSLOPE <- function(
 
   cv_args <- list(
     q = q,
+    gamma = gamma,
     metric = measure,
     predefined_folds = folds
   )
@@ -107,6 +111,7 @@ cvSLOPE <- function(
 
     data.frame(
       q = results_i[["params"]][["q"]],
+      gamma = results_i[["params"]][["gamma"]],
       alpha = results_i[["alphas"]],
       measure = measure,
       mean = means,

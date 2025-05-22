@@ -130,3 +130,21 @@ test_that("Returned AUC from cvSLOPE is correct", {
   expect_gte(tuned$optima$mean[1], 0)
   expect_lte(tuned$optima$mean[1], 1)
 })
+
+test_that("Cross-validating on gamma works", {
+  set.seed(35)
+
+  xy <- SLOPE:::randomProblem(200, p = 2)
+  x <- xy$x
+  y <- xy$y
+
+  tuned <- cvSLOPE(
+    x,
+    y,
+    q = c(0.1, 0.2),
+    gamma = c(0.0, 1.0),
+  )
+
+  expect_gte(tuned$optima$mean[1], 0)
+  expect_lte(tuned$optima$mean[1], 1)
+})

@@ -135,14 +135,6 @@ plot_coefs <- function(x, coefs, xlab, xlim, log_var = "x", ...) {
 #' plot(tune, ci_col = "salmon")
 plot.TrainedSLOPE <- function(
   x,
-  measure = c(
-    "auto",
-    "mse",
-    "mae",
-    "deviance",
-    "auc",
-    "misclass"
-  ),
   plot_min = TRUE,
   ci_alpha = 0.2,
   ci_border = NA,
@@ -151,48 +143,28 @@ plot.TrainedSLOPE <- function(
   polygon_args = list(),
   lines_args = list(),
   abline_args = list(),
+  measure,
   ...
 ) {
   object <- x
   family <- object[["model"]][["family"]]
 
-  measure <- match.arg(measure)
-
-  if (measure == "auto") {
-    measure <- switch(
-      family,
-      gaussian = "mse",
-      binomial = "deviance",
-      multinomial = "deviance",
-      poisson = "mse"
-    )
-
-    if (!any(measure %in% object[["measure"]][["measure"]])) {
-      measure <- object[["measure"]][["measure"]][1]
-    }
-  }
-
-  if (!any(measure %in% object[["measure"]][["measure"]])) {
-    stop(
-      "measure ",
-      measure,
-      " was not used or not available when",
-      "fitting the model"
+  if (!missing(measure)) {
+    warning(
+      "`measure` is deprecated, and will be removed in a future version. ",
+      "the measure will instead be taken from the `TrainedSLOPE` object",
+      call. = FALSE
     )
   }
 
-  if (length(measure) > 1) {
-    stop("you are only allowed to plot one measure at a time")
-  }
-
-  measure_label <-
-    object[["measure"]][["label"]][object[["measure"]][["measure"]] == measure]
-  summary <-
-    object[["summary"]][object[["summary"]][["measure"]] == measure, ]
+  measure <- object[["measure"]][["measure"]][1]
+  measure_label <- object[["measure"]][["label"]][1]
+  summary <- object[["summary"]]
   opt <- object[["optima"]]
   optimum <- opt[opt[["measure"]] == measure, , drop = FALSE]
 
   q <- unique(summary[["q"]])
+  gamma <- unique(summary[["gamma"]])
 
   xlab <- expression(alpha)
 
@@ -229,8 +201,19 @@ plot.TrainedSLOPE <- function(
     abline_args
   )
 
-  for (i in seq_along(q)) {
-    summary_i <- summary[summary[["q"]] == q[i], ]
+  grid <- expand.grid(
+    q = q,
+    gamma = gamma
+  )
+
+  for (i in seq_len(nrow(grid))) {
+    g <- grid[i, ]
+
+    ind <- which(
+      summary[["q"]] == g[["q"]] &
+        summary[["gamma"]] == g[["gamma"]]
+    )
+    summary_i <- summary[ind, ]
 
     # Plot frame
     plot_args <- utils::modifyList(
@@ -240,7 +223,26 @@ plot.TrainedSLOPE <- function(
         y = summary_i[["mean"]]
       )
     )
+
     do.call(plot, plot_args)
+
+    if (nrow(grid) > 1) {
+      title_parts <- NULL
+      if (length(q) > 1) {
+        q_part <- bquote(paste("q = ", .(g[["q"]])))
+        title_parts <- if (is.null(title_parts)) q_part else
+          bquote(paste(.(title_parts), ", ", .(q_part)))
+      }
+      if (length(gamma) > 1) {
+        gamma_part <- bquote(paste(gamma, " = ", .(g[["gamma"]])))
+        title_parts <- if (is.null(title_parts)) gamma_part else
+          bquote(paste(.(title_parts), ", ", .(gamma_part)))
+      }
+
+      if (!is.null(title_parts)) {
+        graphics::title(main = title_parts)
+      }
+    }
 
     polygon_args <- utils::modifyList(
       polygon_args,
@@ -260,7 +262,11 @@ plot.TrainedSLOPE <- function(
     )
     do.call(graphics::lines, lines_args)
 
-    if (plot_min && optimum[["q"]] == q[i]) {
+    if (
+      plot_min &&
+        optimum[["q"]] == g[["q"]] &&
+        optimum[["gamma"]] == g[["gamma"]]
+    ) {
       do.call(graphics::abline, abline_args)
     }
   }

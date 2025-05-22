@@ -33,8 +33,6 @@ cvImpl(T& x,
 
   slope::Slope model = setupModel(model_args);
 
-  auto alpha = as<ArrayXd>(model_args["alpha"]);
-  auto lambda = as<ArrayXd>(model_args["lambda"]);
   auto lambda_type = as<std::string>(model_args["lambda_type"]);
 
   if (lambda_type != "user") {
@@ -45,6 +43,7 @@ cvImpl(T& x,
 
   std::map<std::string, std::vector<double>> hyperparams;
   hyperparams["q"] = as<std::vector<double>>(cv_args["q"]);
+  hyperparams["gamma"] = as<std::vector<double>>(cv_args["gamma"]);
 
   cv_config.hyperparams = hyperparams;
   cv_config.metric = as<std::string>(cv_args["metric"]);
