@@ -58,7 +58,6 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'TrainedSLOPE'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  measure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"mse"</span>, <span class="st">"mae"</span>, <span class="st">"deviance"</span>, <span class="st">"auc"</span>, <span class="st">"misclass"</span><span class="op">)</span>,</span>
 <span>  plot_min <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  ci_alpha <span class="op">=</span> <span class="fl">0.2</span>,</span>
 <span>  ci_border <span class="op">=</span> <span class="cn">NA</span>,</span>
@@ -67,6 +66,7 @@
 <span>  polygon_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  lines_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  abline_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">measure</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -78,13 +78,6 @@
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>an object of class <code>'TrainedSLOPE'</code>, typically from a call
 to <code><a href="trainSLOPE.html">trainSLOPE()</a></code></p></dd>
-
-
-<dt id="arg-measure">measure<a class="anchor" aria-label="anchor" href="#arg-measure"></a></dt>
-<dd><p>any of the measures used in the call to <code><a href="trainSLOPE.html">trainSLOPE()</a></code>. If
-<code>measure = "auto"</code> then deviance will be used for binomial and multinomial
-models, whilst mean-squared error will be used for Gaussian and Poisson
-models.</p></dd>
 
 
 <dt id="arg-plot-min">plot_min<a class="anchor" aria-label="anchor" href="#arg-plot-min"></a></dt>
@@ -123,6 +116,13 @@ which sets up the plot frame</p></dd>
 <dt id="arg-abline-args">abline_args<a class="anchor" aria-label="anchor" href="#arg-abline-args"></a></dt>
 <dd><p>list of additional arguments to pass to
 <code><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">graphics::abline()</a></code>, which plots the minimum</p></dd>
+
+
+<dt id="arg-measure">measure<a class="anchor" aria-label="anchor" href="#arg-measure"></a></dt>
+<dd><p>any of the measures used in the call to <code><a href="trainSLOPE.html">trainSLOPE()</a></code>. If
+<code>measure = "auto"</code> then deviance will be used for binomial and multinomial
+models, whilst mean-squared error will be used for Gaussian and Poisson
+models.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
