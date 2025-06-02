@@ -37,3 +37,4 @@
 ^patches$
 ^air.toml$
 ^node_modules$
+^.releaserc.json
