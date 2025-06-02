@@ -8,6 +8,7 @@
 #' @param x_variable what to plot on the x axis. `"alpha"` plots
 #'   the scaling parameter for the sequence, `"deviance_ratio"` plots
 #'   the fraction of deviance explained, and `"step"` plots step number.
+#' @param magnitudes whether to plot the magnitudes of the coefficients
 #' @param ... arguments passed to [graphics::matplot()]
 #'
 #' @seealso [SLOPE()], [plotDiagnostics()]
@@ -28,6 +29,7 @@ plot.SLOPE <- function(
     "deviance_ratio",
     "step"
   ),
+  magnitudes = FALSE,
   ...
 ) {
   object <- x
@@ -55,6 +57,11 @@ plot.SLOPE <- function(
   )
 
   coefs <- stats::coef(object, simplify = TRUE, intercept = include_intercept)
+
+  if (magnitudes) {
+    coefs <- abs(coefs)
+  }
+
   xlim <- if (x_variable == "alpha") rev(range(x)) else range(x)
   log_var <- if (x_variable == "alpha") "x" else ""
 

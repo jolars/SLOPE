@@ -8,6 +8,7 @@
   x,
   intercept = FALSE,
   x_variable = c("alpha", "deviance_ratio", "step"),
+  magnitudes = FALSE,
   ...
 )
 }
@@ -19,6 +20,8 @@
 \item{x_variable}{what to plot on the x axis. \code{"alpha"} plots
 the scaling parameter for the sequence, \code{"deviance_ratio"} plots
 the fraction of deviance explained, and \code{"step"} plots step number.}
+
+\item{magnitudes}{whether to plot the magnitudes of the coefficients}
 
 \item{...}{arguments passed to \code{\link[graphics:matplot]{graphics::matplot()}}}
 }
