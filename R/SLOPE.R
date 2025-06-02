@@ -580,7 +580,7 @@ processSlopeArgs <- function(
   )
 
   if (solver == "admm") {
-    stop("The ADMM solver has been removed; setting `solver` to `'auto'`")
+    warning("The ADMM solver has been removed; setting `solver` to `'auto'`")
     solver <- "auto"
   }
 
