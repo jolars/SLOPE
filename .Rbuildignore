@@ -36,3 +36,4 @@
 ^_libs$
 ^patches$
 ^air.toml$
+^node_modules$
