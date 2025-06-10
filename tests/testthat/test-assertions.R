@@ -29,7 +29,7 @@ test_that("unsupported error settings are caught", {
   x <- matrix(1, 3, 3)
   y <- double(3)
 
-  expect_error(SLOPE(x, y, family = "binomial", solver = "admm"))
+  expect_error(SLOPE(x, y, family = "binomial"))
 })
 
 test_that("specifying alpha estimation throws if not gaussian", {
