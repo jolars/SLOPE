@@ -65,39 +65,40 @@ plot.SLOPE <- function(
   xlim <- if (x_variable == "alpha") rev(range(x)) else range(x)
   log_var <- if (x_variable == "alpha") "x" else ""
 
-  if (m == 1) {
-    xlim <- if (x_variable == "alpha") rev(range(x)) else range(x)
-    plot_coefs(x, coefs, xlab, xlim, log_var, ...)
-  } else {
-    for (k in seq_len(m)) {
-      plot_coefs(
-        x,
-        coefs[[k]],
-        xlab,
-        xlim,
-        log_var,
-        main = paste0("Response: ", k),
-        ...
-      )
-    }
-  }
-
-  invisible()
-}
-
-
-plot_coefs <- function(x, coefs, xlab, xlim, log_var = "x", ...) {
-  graphics::matplot(
-    x,
-    t(coefs),
+  default_plot_args <- list(
     type = "l",
     lty = 1,
     xlab = xlab,
     xlim = xlim,
     ylab = expression(hat(beta)),
     log = log_var,
-    ...
+    col = palette.colors(10, "Tableau")
   )
+
+  plot_args <- utils::modifyList(
+    default_plot_args,
+    list(...)
+  )
+
+  if (m == 1) {
+    xlim <- if (x_variable == "alpha") rev(range(x)) else range(x)
+    plot_args_k <- utils::modifyList(plot_args, list(x = x, y = t(coefs)))
+    do.call(graphics::matplot, plot_args_k)
+  } else {
+    for (k in seq_len(m)) {
+      plot_args_k <- utils::modifyList(
+        plot_args,
+        list(
+          x = x,
+          y = t(coefs[[k]]),
+          main = paste0("Response: ", k)
+        )
+      )
+      do.call(graphics::matplot, plot_args_k)
+    }
+  }
+
+  invisible()
 }
 
 #' Plot results from cross-validation
@@ -277,6 +278,7 @@ plot.TrainedSLOPE <- function(
       do.call(graphics::abline, abline_args)
     }
   }
+  palette
 
   invisible()
 }
