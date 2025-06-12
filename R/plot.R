@@ -155,7 +155,6 @@ plot.TrainedSLOPE <- function(
   ...
 ) {
   object <- x
-  family <- object[["model"]][["family"]]
 
   if (!missing(measure)) {
     warning(
