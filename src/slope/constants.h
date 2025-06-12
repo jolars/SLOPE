@@ -41,5 +41,8 @@ constexpr double NEG_INF = std::numeric_limits<double>::lowest();
 /// @brief Maximum allowed exponent
 constexpr double MAX_EXP = 250;
 
+/// @brief Maximum allowed divisor
+constexpr double MAX_DIV = 1e-12;
+
 } // namespace constants
 } // namespace slope

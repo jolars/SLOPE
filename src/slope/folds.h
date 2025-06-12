@@ -124,22 +124,21 @@ public:
    * constructed sparse matrix subsets.
    */
   template<typename T>
-  std::tuple<T, Eigen::MatrixXd, T, Eigen::MatrixXd> split(
-    Eigen::EigenBase<T>& x,
-    const Eigen::MatrixXd& y,
-    size_t fold_idx,
-    size_t rep_idx = 0) const
+  auto split(Eigen::EigenBase<T>& x,
+             const Eigen::MatrixXd& y,
+             size_t fold_idx,
+             size_t rep_idx = 0) const
   {
     auto test_idx = getTestIndices(fold_idx, rep_idx);
     auto train_idx = getTrainingIndices(fold_idx, rep_idx);
 
-    T x_test = subset(x.derived(), test_idx);
+    auto x_test = subset(x.derived(), test_idx);
     Eigen::MatrixXd y_test = y(test_idx, Eigen::all);
 
-    T x_train = subset(x.derived(), train_idx);
+    auto x_train = subset(x.derived(), train_idx);
     Eigen::MatrixXd y_train = y(train_idx, Eigen::all);
 
-    return { x_train, y_train, x_test, y_test };
+    return std::make_tuple(x_train, y_train, x_test, y_test);
   }
 
   /**

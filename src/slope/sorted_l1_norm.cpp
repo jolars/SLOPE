@@ -1,4 +1,5 @@
 #include "sorted_l1_norm.h"
+#include "constants.h"
 #include "math.h"
 #include "utils.h"
 
@@ -80,14 +81,8 @@ SortedL1Norm::dualNorm(const Eigen::VectorXd& gradient,
   assert(lambda.size() == gradient.size() &&
          "Gradient and lambda sizes must agree");
 
-  if (lambda(0) == 0) {
-    // TODO: this is a crude approach for the unregularized case.
-    // We should consider something more clever and avoid
-    // the division.
-    return (cumSum(abs_gradient) / 1e-6).maxCoeff();
-  }
-
-  return (cumSum(abs_gradient) / (cumSum(lambda))).maxCoeff();
+  return (cumSum(abs_gradient) / (cumSum(lambda).cwiseMax(constants::MAX_DIV)))
+    .maxCoeff();
 }
 
 } // namspace slope

@@ -32,6 +32,11 @@ softmax(const Eigen::MatrixXd& eta)
 std::vector<int>
 setUnion(const std::vector<int>& a, const std::vector<int>& b)
 {
+  assert(std::is_sorted(a.begin(), a.end()) &&
+         "First argument to setUnion must be sorted");
+  assert(std::is_sorted(b.begin(), b.end()) &&
+         "Second argument to setUnion must be sorted");
+
   std::vector<int> out;
   std::set_union(
     a.begin(), a.end(), b.begin(), b.end(), std::back_inserter(out));
@@ -42,6 +47,11 @@ setUnion(const std::vector<int>& a, const std::vector<int>& b)
 std::vector<int>
 setDiff(const std::vector<int>& a, const std::vector<int>& b)
 {
+  assert(std::is_sorted(a.begin(), a.end()) &&
+         "First argument to setDiff must be sorted");
+  assert(std::is_sorted(b.begin(), b.end()) &&
+         "Second argument to setDiff must be sorted");
+
   std::vector<int> out;
   std::set_difference(
     a.begin(), a.end(), b.begin(), b.end(), std::back_inserter(out));

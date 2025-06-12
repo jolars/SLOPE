@@ -168,8 +168,14 @@ StrongScreening::screen(Eigen::VectorXd& gradient,
                         const Eigen::ArrayXd& lambda_curr,
                         const Eigen::ArrayXd& lambda_prev,
                         const Eigen::VectorXd& beta,
-                        const std::vector<int>&)
+                        const std::vector<int>& full_set)
 {
+
+  if (lambda_curr(0) == 0.0) {
+    // If lambda is zero, we cannot screen any features
+    return full_set;
+  }
+
   std::vector<int> active_set = activeSet(beta);
   strong_set = strongSet(gradient, lambda_curr, lambda_prev);
   strong_set = setUnion(strong_set, active_set);

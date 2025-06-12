@@ -17,16 +17,11 @@ Logistic::dual(const Eigen::MatrixXd& theta,
                const Eigen::MatrixXd& y,
                const Eigen::VectorXd&)
 {
-  using Eigen::log;
-
   int n = y.rows();
 
   Eigen::VectorXd eta = link(theta + y);
 
-  double out = log(1.0 + eta.array().exp()).mean() - eta.dot(y.reshaped()) / n -
-               theta.reshaped().dot(eta) / n;
-
-  return out;
+  return loss(eta, y) - theta.reshaped().dot(eta) / n;
 }
 
 Eigen::MatrixXd

@@ -444,7 +444,6 @@ public:
         throw std::invalid_argument("Automatic alpha estimation is only "
                                     "available for the quadratic loss");
       }
-      // return this->estimateAlpha(x, y);
     }
 
     // Screening setup
@@ -491,7 +490,8 @@ public:
         gradient, lambda_curr, lambda_prev, beta, full_set);
 
       int it = 0;
-      for (; it < this->max_it; ++it) {
+      int total_it = 0;
+      for (; it < this->max_it; ++it, ++total_it) {
         // Compute primal, dual, and gap
         residual = loss->residual(eta, y);
         updateGradient(gradient,
@@ -557,13 +557,11 @@ public:
 
         double dual_gap = primal - dual;
 
-        // std::cout << "gap: " << dual_gap << std::endl;
-
         assert(dual_gap > -1e-6 && "Dual gap should be positive");
 
         double tol_scaled = (std::abs(primal) + constants::EPSILON) * this->tol;
 
-        if (dual_gap <= tol_scaled) {
+        if (dual_gap <= tol_scaled || it == this->max_it) {
           bool no_violations =
             screening_rule->checkKktViolations(gradient,
                                                beta,
@@ -577,6 +575,8 @@ public:
                                                full_set);
           if (no_violations) {
             break;
+          } else {
+            it = 0; // Restart if there are KKT violations
           }
         }
 
@@ -625,7 +625,7 @@ public:
                     primals,
                     duals,
                     time,
-                    it,
+                    total_it,
                     this->centering_type,
                     this->scaling_type,
                     this->intercept,
@@ -789,7 +789,7 @@ public:
       beta = fit.getCoefs(false);
     }
 
-    double alpha = 0;
+    double alpha = fit.getAlpha();
 
     Timer timer;
 

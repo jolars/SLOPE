@@ -155,7 +155,7 @@ findBestParameters(CvResult& cv_result, const std::unique_ptr<Score>& scorer);
  * @param thread_model SLOPE model instance used for fitting (thread-local copy)
  * @param fold Index of the fold to use as test set
  * @param rep Index of the repetition
- * @param gamma Relaxation parameter for post-fitting relaxation (default: 0.0)
+ * @param gamma Relaxation parameter for the relaxed SLOPE (default: 0.0,)
  * @param copy_x Whether to copy the design matrix for each fold (default: true)
  * @return Eigen::ArrayXd Array of scores for each alpha value on this fold
  *
@@ -334,7 +334,7 @@ crossValidate(Slope model,
   // Total number of evaluations (n_repeats * n_folds)
   Folds folds =
     config.predefined_folds.has_value()
-      ? Folds(config.predefined_folds.value())
+      ? Folds(*config.predefined_folds)
       : Folds(n, config.n_folds, config.n_repeats, config.random_seed);
 
   int n_evals = folds.numEvals();

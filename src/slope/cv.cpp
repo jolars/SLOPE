@@ -46,12 +46,14 @@ findBestParameters(CvResult& cv_result, const std::unique_ptr<Score>& scorer)
     int best_alpha_ind = whichBest(result.mean_scores, comp);
     double current_score = result.mean_scores(best_alpha_ind);
 
+    assert(best_alpha_ind >= 0 && best_alpha_ind < result.alphas.size());
     assert(result.alphas(best_alpha_ind) > 0);
 
     if (scorer->isWorse(cv_result.best_score, current_score)) {
       cv_result.best_ind = i;
       cv_result.best_score = current_score;
       cv_result.best_params = result.params;
+      cv_result.best_alpha_ind = best_alpha_ind;
 
       cv_result.best_params["alpha"] = result.alphas(best_alpha_ind);
     }

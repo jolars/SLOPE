@@ -37,9 +37,11 @@ void
 sort(T& v, const bool descending = false)
 {
   if (descending) {
-    std::sort(v.data(), v.data() + v.size(), std::greater<double>());
+    std::sort(
+      v.data(), v.data() + v.size(), std::greater<typename T::value_type>());
   } else {
-    std::sort(v.data(), v.data() + v.size(), std::less<double>());
+    std::sort(
+      v.data(), v.data() + v.size(), std::less<typename T::value_type>());
   }
 }
 
@@ -178,7 +180,8 @@ move_elements(std::vector<T>& v, const int from, const int to, const int size)
   if (from > to) {
     std::rotate(v.begin() + to, v.begin() + from, v.begin() + from + size);
   } else {
-    std::rotate(v.begin() + from, v.begin() + from + size, v.begin() + to + 1);
+    std::rotate(
+      v.begin() + from, v.begin() + from + size, v.begin() + to + size);
   }
 }
 
@@ -229,7 +232,7 @@ subset(const Eigen::EigenBase<T>& x, const std::vector<int>& indices)
  * same.
  */
 template<typename T>
-T
+typename Eigen::MatrixBase<T>::PlainObject
 subset(const Eigen::DenseBase<T>& x, const std::vector<int>& indices)
 {
   return x.derived()(indices, Eigen::all);
@@ -247,6 +250,7 @@ subset(const Eigen::DenseBase<T>& x, const std::vector<int>& indices)
  * in the indices vector, preserving their order. The number of columns remains
  * the same. The sparsity structure is maintained in the extracted rows.
  */
+
 template<typename T>
 T
 subset(const Eigen::SparseMatrixBase<T>& x, const std::vector<int>& indices)

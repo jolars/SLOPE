@@ -21,22 +21,32 @@ kktCheck(const Eigen::VectorXd& gradient,
     return out;
   }
 
-  VectorXd flat_abs_gradient = gradient(indices).cwiseAbs();
+  ArrayXd abs_gradient = gradient(indices).cwiseAbs();
+  auto ord = sortIndex(abs_gradient, true);
+  permute(abs_gradient, ord);
 
-  auto ord = sortIndex(flat_abs_gradient, true);
-
-  // TODO: Use dualNorm() instead
-  ArrayXd diff = flat_abs_gradient(ord).array() - lambda.head(indices.size());
+  ArrayXd diff = abs_gradient - lambda.head(indices.size());
   ArrayXb tmp = cumSum(diff) >= 0.0;
-  inversePermute(tmp, ord);
 
-  auto which_violations = which(tmp);
-
-  for (const auto& ind : which_violations) {
-    out.emplace_back(indices[ind]);
+  // Find the last position where cumulative sum is non-negative
+  int k = 0;
+  if (tmp.size() > 0) {
+    for (int i = tmp.size() - 1; i >= 0; --i) {
+      if (tmp[i]) {
+        k = i + 1;
+        break;
+      }
+    }
   }
+
+  out.reserve(k);
+  for (int i = 0; i < k; ++i) {
+    out.emplace_back(indices[ord[i]]);
+  }
+
+  std::sort(out.begin(), out.end());
 
   return out;
 }
 
-} // namespace slope
+} // namegspace slope

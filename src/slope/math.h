@@ -406,6 +406,9 @@ template<typename T, typename Comparator>
 int
 whichBest(const T& x, const Comparator& comp)
 {
+  if (x.size() == 0)
+    return -1;
+
   return std::distance(x.begin(), std::max_element(x.begin(), x.end(), comp));
 }
 
