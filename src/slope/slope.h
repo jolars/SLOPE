@@ -827,7 +827,7 @@ public:
     MatrixXd w_ones = MatrixXd::Ones(n, m);
     MatrixXd z = y;
 
-    Clusters clusters = fit.getClusters();
+    slope::Clusters clusters(beta);
 
     int passes = 0;
 
@@ -935,20 +935,15 @@ public:
   {
     std::vector<SlopeFit> fits;
 
-    Eigen::VectorXd beta0 = path(0).getIntercepts(false);
-    Eigen::VectorXd beta = path(0).getCoefs(false);
-
     for (size_t i = 0; i < path.size(); i++) {
-      auto relaxed_fit = relax(path(i), x, y, gamma, beta0, beta);
+      // TODO: Reinstate warm starts. Need to be careful about
+      // the warm started values though since they have to
+      // agree with the cluster or we will run into trouble.
+      // We can probably fix this by using the signs
+      // of the cluster object rather than the betas though.
+      auto relaxed_fit = relax(path(i), x, y, gamma);
 
       fits.emplace_back(relaxed_fit);
-
-      // Update warm starts
-      // TODO: Maybe be more clever about whether to use the
-      // previous values or the regularized estimates and warm starts.
-      // Maybe just pick the solution with larger coefficients?
-      beta0 = relaxed_fit.getIntercepts(false);
-      beta = relaxed_fit.getCoefs(false);
     }
 
     return fits;
