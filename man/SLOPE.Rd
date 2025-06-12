@@ -20,13 +20,14 @@ SLOPE(
   theta2 = 0.5,
   tol_dev_change = 1e-05,
   tol_dev_ratio = 0.999,
-  max_variables = NROW(x),
+  max_variables = NROW(x) + 1,
   solver = c("auto", "hybrid", "pgd", "fista", "admm"),
   max_passes = 1e+06,
   tol = 1e-04,
   threads = NULL,
   diagnostics = FALSE,
   patterns = FALSE,
+  gamma = 1,
   tol_abs,
   tol_rel,
   tol_rel_gap,
@@ -140,6 +141,11 @@ of the available (logical) threads will be used}
 \item{patterns}{whether to return the SLOPE pattern
 (cluster, ordering, and sign information) as a list of sparse
 matrices, one for each step on the path.}
+
+\item{gamma}{relaxation mixing parameter, between 0 and 1. Has no effect if
+set to 0. If larger than 0, the solver will mix the coefficients
+from the ordinary SLOPE solutions with the coefficients from the
+relaxed solutions (fitting OLS on the SLOPE pattern).}
 
 \item{tol_abs}{DEPRECATED}
 

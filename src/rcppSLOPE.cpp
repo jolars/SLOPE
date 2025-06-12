@@ -21,6 +21,7 @@ callSLOPE(T& x, const Eigen::MatrixXd& y, const Rcpp::List& control)
   auto lambda = as<ArrayXd>(control["lambda"]);
   auto lambda_type = as<std::string>(control["lambda_type"]);
   auto threads = as<int>(control["threads"]);
+  auto gamma = as<double>(control["gamma"]);
 
   if (lambda_type != "user") {
     model.setLambdaType(lambda_type);
@@ -45,6 +46,10 @@ callSLOPE(T& x, const Eigen::MatrixXd& y, const Rcpp::List& control)
   }
 
   Eigen::SparseMatrix<double> pattern_matrix;
+
+  if (gamma < 1) {
+    fit = model.relax(fit, x, y, gamma);
+  }
 
   return Rcpp::List::create(
     Named("intercepts") = wrap(fit.getIntercepts()),

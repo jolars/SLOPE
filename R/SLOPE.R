@@ -239,6 +239,10 @@
 #' @param prox_method DEPRECATED
 #' @param screen DEPRECATED
 #' @param screen_alg DEPRECATED
+#' @param gamma relaxation mixing parameter, between 0 and 1. Has no effect if
+#'   set to 0. If larger than 0, the solver will mix the coefficients
+#'   from the ordinary SLOPE solutions with the coefficients from the
+#'   relaxed solutions (fitting OLS on the SLOPE pattern).
 #' @param tol_rel_gap DEPRECATED
 #' @param tol_infeas DEPRECATED
 #' @param tol_abs DEPRECATED
@@ -359,6 +363,7 @@ SLOPE <- function(
   threads = NULL,
   diagnostics = FALSE,
   patterns = FALSE,
+  gamma = 1,
   tol_abs,
   tol_rel,
   tol_rel_gap,
@@ -432,7 +437,8 @@ SLOPE <- function(
     tol,
     diagnostics,
     patterns,
-    threads
+    threads,
+    gamma
   )
 
   x <- control$x
@@ -540,7 +546,8 @@ processSlopeArgs <- function(
   tol = 1e-4,
   diagnostics = FALSE,
   patterns = TRUE,
-  threads = NULL
+  threads = NULL,
+  gamma = 1
 ) {
   family <- match.arg(family)
   solver <- match.arg(solver)
@@ -565,7 +572,9 @@ processSlopeArgs <- function(
     theta1 >= 0,
     theta2 >= 0,
     is.finite(theta1),
-    is.finite(theta2)
+    is.finite(theta2),
+    gamma >= 0,
+    gamma <= 1
   )
 
   if (solver == "admm") {
@@ -695,6 +704,7 @@ processSlopeArgs <- function(
     patterns = patterns,
     family = family,
     fit_intercept = fit_intercept,
+    gamma = gamma,
     lambda = lambda,
     lambda_type = lambda_type,
     max_passes = max_passes,
