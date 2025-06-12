@@ -9,6 +9,8 @@
 #'   the scaling parameter for the sequence, `"deviance_ratio"` plots
 #'   the fraction of deviance explained, and `"step"` plots step number.
 #' @param magnitudes whether to plot the magnitudes of the coefficients
+#' @param add_labels whether to add labels (numbers) on the right side
+#'   of the plot for each coefficient
 #' @param ... arguments passed to [graphics::matplot()]
 #'
 #' @seealso [SLOPE()], [plotDiagnostics()]
@@ -30,6 +32,7 @@ plot.SLOPE <- function(
     "step"
   ),
   magnitudes = FALSE,
+  add_labels = FALSE,
   ...
 ) {
   object <- x
@@ -81,24 +84,44 @@ plot.SLOPE <- function(
   )
 
   if (m == 1) {
+    coefs_k <- t(coefs)
     xlim <- if (x_variable == "alpha") rev(range(x)) else range(x)
-    plot_args_k <- utils::modifyList(plot_args, list(x = x, y = t(coefs)))
+    plot_args_k <- utils::modifyList(plot_args, list(x = x, y = coefs_k))
     do.call(graphics::matplot, plot_args_k)
+
+    if (add_labels) {
+      addCoefLabels(coefs_k, x)
+    }
   } else {
     for (k in seq_len(m)) {
+      coefs_k <- t(coefs[[k]])
       plot_args_k <- utils::modifyList(
         plot_args,
         list(
           x = x,
-          y = t(coefs[[k]]),
+          y = coefs_k,
           main = paste0("Response: ", k)
         )
       )
       do.call(graphics::matplot, plot_args_k)
+
+      if (add_labels) {
+        addCoefLabels(coefs_k, x)
+      }
     }
   }
 
   invisible()
+}
+
+addCoefLabels <- function(coef_matrix, x) {
+  n_coefs <- ncol(coef_matrix)
+  last_x <- x[length(x)]
+
+  for (i in seq_len(n_coefs)) {
+    last_y <- coef_matrix[nrow(coef_matrix), i]
+    graphics::text(last_x, last_y, i, pos = 4, cex = 0.8)
+  }
 }
 
 #' Plot results from cross-validation

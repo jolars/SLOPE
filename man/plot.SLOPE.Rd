@@ -9,6 +9,7 @@
   intercept = FALSE,
   x_variable = c("alpha", "deviance_ratio", "step"),
   magnitudes = FALSE,
+  add_labels = FALSE,
   ...
 )
 }
@@ -22,6 +23,9 @@ the scaling parameter for the sequence, \code{"deviance_ratio"} plots
 the fraction of deviance explained, and \code{"step"} plots step number.}
 
 \item{magnitudes}{whether to plot the magnitudes of the coefficients}
+
+\item{add_labels}{whether to add labels (numbers) on the right side
+of the plot for each coefficient}
 
 \item{...}{arguments passed to \code{\link[graphics:matplot]{graphics::matplot()}}}
 }

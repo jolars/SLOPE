@@ -80,6 +80,8 @@ patient with dealing with the large number of breaking changes.
   of `x` by their maximum absolute value.
 - When `alpha = "estimate"`, there is a now an iteration limit in case the
   algorithm does not converge to one set of features. Thanks @RomanParzer.
+- `plot.SLOPE()` gains a new argument `add_labels`, which add numbers for the
+  coefficients to the plot. Set to `FALSE` by default.
 
 ## Bug Fixes
 
