@@ -85,6 +85,7 @@ patient with dealing with the large number of breaking changes.
   visualize cluster structure).
 - `plot.SLOPE()` gains a new argument `add_labels`, which add numbers for the
   coefficients to the plot. Set to `FALSE` by default.
+- Relaxed SLOPE models can now be fit by specifying `gamma` in `SLOPE()`.
 
 ## Bug Fixes
 
