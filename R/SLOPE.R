@@ -352,7 +352,7 @@ SLOPE <- function(
   theta2 = 0.5,
   tol_dev_change = 1e-5,
   tol_dev_ratio = 0.999,
-  max_variables = NROW(x),
+  max_variables = NROW(x) + 1,
   solver = c("auto", "hybrid", "pgd", "fista", "admm"),
   max_passes = 1e6,
   tol = 1e-4,
