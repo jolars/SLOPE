@@ -300,7 +300,6 @@ plot.TrainedSLOPE <- function(
       do.call(graphics::abline, abline_args)
     }
   }
-  palette
 
   invisible()
 }
