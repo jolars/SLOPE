@@ -153,24 +153,11 @@ matrices, one for each step on the path.}
 
 \item{prox_method}{DEPRECATED}
 
-\item{screen}{whether to use predictor screening rules (rules that allow
-some predictors to be discarded prior to fitting), which improve speed
-greatly when the number of predictors is larger than the number
-of observations.}
+\item{screen}{DEPRECATED}
 
-\item{verbosity}{level of verbosity for displaying output from the
-program. Setting this to 1 displays basic information on the path level,
-2 a little bit more information on the path level, and 3 displays
-information from the solver.}
+\item{verbosity}{DEPRECATED}
 
-\item{screen_alg}{what type of screening algorithm to use.
-\itemize{
-\item \code{"strong"} uses the set from the strong screening rule and check
-against the full set
-\item \code{"previous"} first fits with the previous active set, then checks
-against the strong set, and finally against the full set if there are
-no violations in the strong set
-}}
+\item{screen_alg}{DEPRECATED}
 }
 \value{
 An object of class \code{"SLOPE"} with the following slots:

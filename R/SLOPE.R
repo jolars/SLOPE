@@ -215,27 +215,12 @@
 #'   when `lambda == "OSCAR"`. This parameter basically sets the slope
 #'   for the lambda sequence and is equivalent to \eqn{\lambda_2} in the
 #'   original OSCAR formulation.
-#' @param prox_method DEPRECATED
 #' @param max_passes maximum number of passes (outer iterations) for solver
 #' @param diagnostics whether to save diagnostics from the solver
 #'   (timings and other values depending on type of solver)
 #' @param patterns whether to return the SLOPE pattern
 #'   (cluster, ordering, and sign information) as a list of sparse
 #'   matrices, one for each step on the path.
-#' @param screen whether to use predictor screening rules (rules that allow
-#'   some predictors to be discarded prior to fitting), which improve speed
-#'   greatly when the number of predictors is larger than the number
-#'   of observations.
-#' @param screen_alg what type of screening algorithm to use.
-#'   - `"strong"` uses the set from the strong screening rule and check
-#'     against the full set
-#'   - `"previous"` first fits with the previous active set, then checks
-#'     against the strong set, and finally against the full set if there are
-#'     no violations in the strong set
-#' @param verbosity level of verbosity for displaying output from the
-#'   program. Setting this to 1 displays basic information on the path level,
-#'   2 a little bit more information on the path level, and 3 displays
-#'   information from the solver.
 #' @param tol_dev_change the regularization path is stopped if the
 #'   fractional change in deviance falls below this value; note that this is
 #'   automatically set to 0 if a alpha is manually entered
@@ -250,6 +235,10 @@
 #'   duality gap
 #' @param threads number of threads to use in the solver; if `NULL`, half
 #'   of the available (logical) threads will be used
+#' @param verbosity DEPRECATED
+#' @param prox_method DEPRECATED
+#' @param screen DEPRECATED
+#' @param screen_alg DEPRECATED
 #' @param tol_rel_gap DEPRECATED
 #' @param tol_infeas DEPRECATED
 #' @param tol_abs DEPRECATED
