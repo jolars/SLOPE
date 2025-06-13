@@ -127,7 +127,7 @@ addCoefLabels <- function(coef_matrix, x) {
 #' Plot results from cross-validation
 #'
 #' @param x an object of class `'TrainedSLOPE'`, typically from a call
-#'   to [trainSLOPE()]
+#'   to [cvSLOPE()]
 #' @param measure any of the measures used in the call to [trainSLOPE()]. If
 #'   `measure = "auto"` then deviance will be used for binomial and multinomial
 #'   models, whilst mean-squared error will be used for Gaussian and Poisson
@@ -150,7 +150,7 @@ addCoefLabels <- function(coef_matrix, x) {
 #'   of the parameter combinations.
 #' @param ... ignored
 #'
-#' @seealso [trainSLOPE()]
+#' @seealso [cvSLOPE()]
 #' @family model-tuning
 #'
 #' @return A plot for every value of `q` is produced on the current device.
@@ -160,7 +160,8 @@ addCoefLabels <- function(coef_matrix, x) {
 #' @examples
 #' # Cross-validation for a SLOPE binomial model
 #' set.seed(123)
-#' tune <- cvSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
+#' tune <- cvSLOPE(
+#'   subset(mtcars, select = c("mpg", "drat", "wt")),
 #'   mtcars$hp,
 #'   q = c(0.1, 0.2),
 #'   n_folds = 10
@@ -260,10 +261,12 @@ plot.TrainedSLOPE <- function(
     summary_i <- summary[ind, ]
 
     # Plot frame
+    x <- summary_i[["alpha"]]
     plot_args <- utils::modifyList(
       plot_args,
       list(
-        x = summary_i[["alpha"]],
+        x = x,
+        xlim = rev(range(x)),
         y = summary_i[["mean"]]
       )
     )

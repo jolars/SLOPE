@@ -21,7 +21,7 @@
 }
 \arguments{
 \item{x}{an object of class \code{'TrainedSLOPE'}, typically from a call
-to \code{\link[=trainSLOPE]{trainSLOPE()}}}
+to \code{\link[=cvSLOPE]{cvSLOPE()}}}
 
 \item{plot_min}{whether to mark the location of the penalty corresponding
 to the best prediction score}
@@ -64,7 +64,8 @@ Plot results from cross-validation
 \examples{
 # Cross-validation for a SLOPE binomial model
 set.seed(123)
-tune <- cvSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
+tune <- cvSLOPE(
+  subset(mtcars, select = c("mpg", "drat", "wt")),
   mtcars$hp,
   q = c(0.1, 0.2),
   n_folds = 10
@@ -72,7 +73,7 @@ tune <- cvSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
 plot(tune, ci_col = "salmon", index = 1)
 }
 \seealso{
-\code{\link[=trainSLOPE]{trainSLOPE()}}
+\code{\link[=cvSLOPE]{cvSLOPE()}}
 
 Other model-tuning: 
 \code{\link{cvSLOPE}()},
