@@ -146,6 +146,8 @@ addCoefLabels <- function(coef_matrix, x) {
 #'  [graphics::lines()], which plots the mean
 #' @param abline_args list of additional arguments to pass to
 #'   [graphics::abline()], which plots the minimum
+#' @param index an optional index, to plot only one (the index-th) set
+#'   of the parameter combinations.
 #' @param ... ignored
 #'
 #' @seealso [trainSLOPE()]
@@ -158,12 +160,12 @@ addCoefLabels <- function(coef_matrix, x) {
 #' @examples
 #' # Cross-validation for a SLOPE binomial model
 #' set.seed(123)
-#' tune <- trainSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
+#' tune <- cvSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
 #'   mtcars$hp,
 #'   q = c(0.1, 0.2),
-#'   number = 10
+#'   n_folds = 10
 #' )
-#' plot(tune, ci_col = "salmon")
+#' plot(tune, ci_col = "salmon", index = 1)
 plot.TrainedSLOPE <- function(
   x,
   plot_min = TRUE,
@@ -174,6 +176,7 @@ plot.TrainedSLOPE <- function(
   polygon_args = list(),
   lines_args = list(),
   abline_args = list(),
+  index = NULL,
   measure,
   ...
 ) {
@@ -236,6 +239,17 @@ plot.TrainedSLOPE <- function(
     gamma = gamma
   )
 
+  multi_param <- nrow(grid) > 1
+
+  if (!is.null(index)) {
+    stopifnot(
+      is.numeric(index),
+      index >= 1,
+      index <= nrow(grid)
+    )
+    grid <- grid[index, , drop = FALSE]
+  }
+
   for (i in seq_len(nrow(grid))) {
     g <- grid[i, ]
 
@@ -256,7 +270,7 @@ plot.TrainedSLOPE <- function(
 
     do.call(plot, plot_args)
 
-    if (nrow(grid) > 1) {
+    if (multi_param) {
       title_parts <- NULL
       if (length(q) > 1) {
         q_part <- bquote(paste("q = ", .(g[["q"]])))

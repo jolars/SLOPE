@@ -14,6 +14,7 @@
   polygon_args = list(),
   lines_args = list(),
   abline_args = list(),
+  index = NULL,
   measure,
   ...
 )
@@ -44,6 +45,9 @@ which sets up the plot frame}
 \item{abline_args}{list of additional arguments to pass to
 \code{\link[graphics:abline]{graphics::abline()}}, which plots the minimum}
 
+\item{index}{an optional index, to plot only one (the index-th) set
+of the parameter combinations.}
+
 \item{measure}{any of the measures used in the call to \code{\link[=trainSLOPE]{trainSLOPE()}}. If
 \code{measure = "auto"} then deviance will be used for binomial and multinomial
 models, whilst mean-squared error will be used for Gaussian and Poisson
@@ -60,12 +64,12 @@ Plot results from cross-validation
 \examples{
 # Cross-validation for a SLOPE binomial model
 set.seed(123)
-tune <- trainSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
+tune <- cvSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
   mtcars$hp,
   q = c(0.1, 0.2),
-  number = 10
+  n_folds = 10
 )
-plot(tune, ci_col = "salmon")
+plot(tune, ci_col = "salmon", index = 1)
 }
 \seealso{
 \code{\link[=trainSLOPE]{trainSLOPE()}}
