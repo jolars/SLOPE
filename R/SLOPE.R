@@ -466,7 +466,9 @@ SLOPE <- function(
   alpha <- fit$alpha
   path_length <- length(alpha)
   intercepts <- fit$intercepts
+  intercepts_scaled <- fit$intercepts_scaled
   beta <- fit$betas
+  beta_scaled <- fit$betas_scaled
   # TODO: Do not return nonzeros; it's just wasting space.
   nonzeros <- lapply(beta, function(b) abs(b) > 0)
   coefficients <- beta
@@ -506,6 +508,8 @@ SLOPE <- function(
     list(
       intercepts = intercepts,
       coefficients = coefficients,
+      intercepts_scaled = intercepts_scaled,
+      coefficients_scaled = coefficients,
       nonzeros = nonzeros,
       lambda = lambda,
       alpha = alpha[seq_along(beta)],

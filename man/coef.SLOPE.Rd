@@ -10,6 +10,7 @@
   exact = FALSE,
   simplify = TRUE,
   intercept = TRUE,
+  scale = c("original", "normalized"),
   sigma,
   ...
 )
@@ -31,6 +32,9 @@ the coefficients to drop extraneous dimensions}
 
 \item{intercept}{whether to include the intercept in the output; only
 applicable when \code{simplify = TRUE} and an intercept has been fit.}
+
+\item{scale}{whether to return the coefficients in the original scale
+or in the normalized scale.}
 
 \item{sigma}{deprecated. Please use \code{alpha} instead.}
 
@@ -54,6 +58,7 @@ please use \code{\link[=SLOPE]{SLOPE()}} to refit the model.
 \examples{
 fit <- SLOPE(mtcars$mpg, mtcars$vs, path_length = 10)
 coef(fit)
+coef(fit, scale = "normalized")
 }
 \seealso{
 \code{\link[=predict.SLOPE]{predict.SLOPE()}}, \code{\link[=SLOPE]{SLOPE()}}

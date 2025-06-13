@@ -11,6 +11,8 @@
 #' @param object an object of class `'SLOPE'`.
 #' @param intercept whether to include the intercept in the output; only
 #'   applicable when `simplify = TRUE` and an intercept has been fit.
+#' @param scale whether to return the coefficients in the original scale
+#'   or in the normalized scale.
 #' @param ... arguments that are passed on to [stats::update()] (and therefore
 #'   also to [SLOPE()]) if `exact = TRUE` and the given penalty
 #'   is not in `object`
@@ -25,12 +27,14 @@
 #' @examples
 #' fit <- SLOPE(mtcars$mpg, mtcars$vs, path_length = 10)
 #' coef(fit)
+#' coef(fit, scale = "normalized")
 coef.SLOPE <- function(
   object,
   alpha = NULL,
   exact = FALSE,
   simplify = TRUE,
   intercept = TRUE,
+  scale = c("original", "normalized"),
   sigma,
   ...
 ) {
@@ -39,8 +43,18 @@ coef.SLOPE <- function(
     alpha <- sigma
   }
 
-  beta <- object$coefficients
-  intercepts <- getElement(object, "intercepts")
+  scale <- match.arg(scale)
+
+  beta <- switch(
+    scale,
+    original = getElement(object, "coefficients"),
+    normalized = getElement(object, "coefficients_scaled")
+  )
+  intercepts <- switch(
+    scale,
+    original = getElement(object, "intercepts"),
+    normalized = getElement(object, "intercepts_scaled")
+  )
   penalty <- object$alpha
   value <- alpha
 
@@ -49,8 +63,16 @@ coef.SLOPE <- function(
     beta <- beta[[penalty %in% value]]
   } else if (exact) {
     object <- stats::update(object, alpha = alpha, ...)
-    beta <- object$coefficients
-    intercepts <- getElement(object, "intercepts")
+    beta <- switch(
+      scale,
+      original = getElement(object, "coefficients"),
+      normalized = getElement(object, "coefficients_scaled")
+    )
+    intercepts <- switch(
+      scale,
+      original = getElement(object, "intercepts"),
+      normalized = getElement(object, "intercepts_scaled")
+    )
   } else {
     stopifnot(value >= 0)
     interpolation_list <- interpolatePenalty(penalty, value)

@@ -53,7 +53,9 @@ callSLOPE(T& x, const Eigen::MatrixXd& y, const Rcpp::List& control)
 
   return Rcpp::List::create(
     Named("intercepts") = wrap(fit.getIntercepts()),
+    Named("intercepts_scaled") = wrap(fit.getIntercepts(false)),
     Named("betas") = wrap(fit.getCoefs()),
+    Named("betas_scaled") = wrap(fit.getCoefs(false)),
     Named("passes") = wrap(fit.getPasses()),
     Named("primals") = wrap(fit.getPrimals()),
     Named("duals") = wrap(fit.getDuals()),
