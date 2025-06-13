@@ -27,19 +27,19 @@ test_that("plot.SLOPE works as expected", {
 test_that("plot.trainedSLOPE works as expected", {
   set.seed(123)
 
-  tune <- trainSLOPE(
+  tune <- cvSLOPE(
     subset(mtcars, select = c("mpg", "drat", "wt")),
     mtcars$hp,
     q = c(0.1, 0.2),
-    number = 10
+    n_folds = 10
   )
   expect_silent(dont_plot(tune, ci_col = "salmon"))
 
-  tune <- trainSLOPE(
+  tune <- cvSLOPE(
     subset(mtcars, select = c("mpg", "drat", "wt")),
     mtcars$hp,
     q = 0.4,
-    number = 10
+    n_folds = 10
   )
   expect_silent(dont_plot(tune, ci_col = "salmon"))
 })
