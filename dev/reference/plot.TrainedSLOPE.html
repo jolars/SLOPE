@@ -66,6 +66,7 @@
 <span>  polygon_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  lines_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  abline_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  index <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">measure</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -118,6 +119,11 @@ which sets up the plot frame</p></dd>
 <code><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">graphics::abline()</a></code>, which plots the minimum</p></dd>
 
 
+<dt id="arg-index">index<a class="anchor" aria-label="anchor" href="#arg-index"></a></dt>
+<dd><p>an optional index, to plot only one (the index-th) set
+of the parameter combinations.</p></dd>
+
+
 <dt id="arg-measure">measure<a class="anchor" aria-label="anchor" href="#arg-measure"></a></dt>
 <dd><p>any of the measures used in the call to <code><a href="trainSLOPE.html">trainSLOPE()</a></code>. If
 <code>measure = "auto"</code> then deviance will be used for binomial and multinomial
@@ -145,12 +151,13 @@ models.</p></dd>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Cross-validation for a SLOPE binomial model</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">tune</span> <span class="op">&lt;-</span> <span class="fu"><a href="trainSLOPE.html">trainSLOPE</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">mtcars</span>, select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mpg"</span>, <span class="st">"drat"</span>, <span class="st">"wt"</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span><span class="va">tune</span> <span class="op">&lt;-</span> <span class="fu"><a href="cvSLOPE.html">cvSLOPE</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">mtcars</span>, select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mpg"</span>, <span class="st">"drat"</span>, <span class="st">"wt"</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  <span class="va">mtcars</span><span class="op">$</span><span class="va">hp</span>,</span></span>
 <span class="r-in"><span>  q <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.2</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  number <span class="op">=</span> <span class="fl">10</span></span></span>
+<span class="r-in"><span>  n_folds <span class="op">=</span> <span class="fl">10</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tune</span>, ci_col <span class="op">=</span> <span class="st">"salmon"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tune</span>, ci_col <span class="op">=</span> <span class="st">"salmon"</span>, index <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot.TrainedSLOPE-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
