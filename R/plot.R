@@ -75,7 +75,7 @@ plot.SLOPE <- function(
     xlim = xlim,
     ylab = expression(hat(beta)),
     log = log_var,
-    col = palette.colors(10, "Tableau")
+    col = grDevices::palette.colors(10, "Tableau")
   )
 
   plot_args <- utils::modifyList(
