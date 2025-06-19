@@ -30,7 +30,7 @@ reference:
               - score
       - title: Clusters
       - contents:
-              - plot_clusters
+              - plotClusters
       - title: Model Tuning
       - contents:
               - cvSLOPE
