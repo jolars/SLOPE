@@ -299,10 +299,10 @@ plot.TrainedSLOPE <- function(
 #' Y <- X %*% beta + rnorm(1000)
 #' fit <- SLOPE(X, Y, patterns = TRUE)
 #'
-#' plot_clusters(fit)
-#' plot_clusters(fit, alpha_steps = 1:10)
+#' plotClusters(fit)
+#' plotClusters(fit, alpha_steps = 1:10)
 
-plot_clusters <- function(
+plotClusters <- function(
     x, plot_signs = FALSE,
     color_clusters = TRUE,
     include_zeroes = TRUE,
