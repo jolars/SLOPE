@@ -317,3 +317,129 @@ plot.TrainedSLOPE <- function(
 
   invisible()
 }
+
+
+
+#' Plot cluster structure
+#'
+#' @param x an object of class `'SLOPE'`
+#' @param plot_signs logical, indicating whether to plot signs of estimated
+#' coefficients on the plot
+#' @param color_clusters logical, indicating whether the clusters should have
+#' different colors
+#' @param include_zeroes logical, indicating whether zero variables should be
+#' plotted. Default to TRUE
+#' @param show_alpha logical, indicatiung whether labels with alpha values or
+#' steps in the path should be plotted. Default FALSE.
+#' @param alpha_steps a vector of integer alpha steps to plot. If NULL, all the steps
+#' are plotted. Default to NULL.
+#'
+#' @seealso [SLOPE()]
+#'
+#' @return Invisibly returns NULL. The function is called for its
+#'   side effect of producing a plot.
+#'
+#' @export
+#'
+#' @examples
+#' set.seed(10)
+#' X <- matrix(rnorm(10000), ncol = 10)
+#' colnames(X) <- paste0("X", 1:10)
+#' beta <- c(rep(10, 3), rep(-20, 2), rep(20, 2), rep(0, 3))
+#' Y <- X %*% beta + rnorm(1000)
+#' fit <- SLOPE(X, Y, patterns = TRUE)
+#'
+#' plotClusters(fit)
+#' plotClusters(fit, alpha_steps = 1:10)
+
+plotClusters <- function(
+    x, plot_signs = FALSE,
+    color_clusters = TRUE,
+    include_zeroes = TRUE,
+    show_alpha = FALSE,
+    alpha_steps = NULL
+) {
+  object <- x
+
+  pat <- object$patterns
+  pat[[1]] <- as.matrix(numeric(length(object$lambda)), ncol = 1)
+
+  if (is.null(alpha_steps)) {
+    alpha_steps <- 1:length(pat)
+  } else {
+    alpha_steps <- unique(alpha_steps)
+    stopifnot(is.numeric(alpha_steps),
+              all(alpha_steps %% 1 == 0),
+              all(alpha_steps >= 1),
+              all(alpha_steps <= length(pat)))
+  }
+
+  mat <- sapply(pat[alpha_steps], function(m) {
+    rowSums(t(t(as.matrix(m)) * 1:ncol(as.matrix(m))))
+  })
+
+  rownames(mat) <- 1:nrow(mat)
+
+  if (!include_zeroes) mat <- mat[rowSums(mat) != 0, ]
+
+  abs_mat <- abs(mat)
+
+  abs_vals <- sort(unique(as.vector(abs_mat)))
+
+  if (color_clusters){
+    my_colors <- c("white", grDevices::rainbow(length(abs_vals) - 1, alpha = 0.7))
+  } else {
+    my_colors <- c("white", rep("grey", length(abs_vals) - 1))
+  }
+
+  if (show_alpha) {
+    step <- round(object$alpha, 3)
+    xlabel <- "alpha"
+  } else {
+    step <- 1:ncol(mat)
+    xlabel <- "path step"
+  }
+
+  breaks <- c(-1, abs_vals)
+
+  graphics::image(t(abs_mat),
+                  col = my_colors,
+                  breaks = breaks,
+                  axes = FALSE,
+                  xlab = xlabel, ylab = "variable")
+
+  graphics::box(col = "black", lwd = 1.5)
+  graphics::axis(1,
+                 at = seq(0, 1, length.out = ncol(mat)),
+                 labels = step,
+                 las = 2)
+  graphics::axis(2,
+                 at = seq(0, 1, length.out = nrow(mat)),
+                 labels = rownames(mat),
+                 las = 1)
+
+  if (plot_signs) {
+    for (i in 1:nrow(mat)) {
+      for (j in 1:ncol(mat)) {
+        val <- mat[nrow(mat):1, ][i, j]
+        sign_char <- ifelse(val > 0, "+", ifelse(val < 0, "-", ""))
+
+        x <- (j - 1) / (ncol(mat) - 1)
+        y <- 1 - (i - 1) / (nrow(mat) - 1)
+
+        graphics::text(x, y, labels = sign_char)
+      }
+    }
+  }
+
+  x_coords <- seq(0, 1, length.out = ncol(mat))
+  x_coords <- x_coords + mean(x_coords[1:2])
+
+  y_coords <- seq(0, 1, length.out = nrow(mat))
+  y_coords <- y_coords + mean(y_coords[1:2])
+
+  graphics::abline(v = x_coords, col = grDevices::adjustcolor("black", alpha = 0.5), lwd = 0.5)
+  graphics::abline(h = y_coords, col = grDevices::adjustcolor("black", alpha = 0.5), lwd = 0.5)
+
+  invisible()
+}
