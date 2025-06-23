@@ -1,4 +1,4 @@
-# SLOPE 0.5.2.9000
+# SLOPE 1.0.0
 
 This update of SLOPE brings an entirely different C++ implementation of the
 underlying package based on the C++ library
