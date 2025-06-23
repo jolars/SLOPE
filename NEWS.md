@@ -88,6 +88,8 @@ patient with dealing with the large number of breaking changes.
 - Relaxed SLOPE models can now be fit by specifying `gamma` in `SLOPE()`.
 - `plot.trainedSLOPE()` gaina a new argument `index`, to select which of the
   hyperparameter combinations to plot for.
+- There's a new function `plotClusters()`, which allows plotting the cluster
+  structure in SLOPE.
 
 ## Bug Fixes
 
