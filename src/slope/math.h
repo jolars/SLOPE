@@ -789,7 +789,7 @@ clusterGradient(Eigen::VectorXd& beta,
 
   const int n = x.rows();
   const int p = x.cols();
-  const int n_clusters = clusters.n_clusters();
+  const int n_clusters = clusters.size();
 
   Eigen::VectorXd gradient = Eigen::VectorXd::Zero(n_clusters);
 

@@ -12,29 +12,31 @@ slopeThreshold(const double x,
 {
   using std::size_t;
 
+  assert(j >= 0 && j < clusters.size());
+
   const size_t cluster_size = clusters.cluster_size(j);
   const double abs_x = std::abs(x);
   const int sign_x = sign(x);
   const size_t n_lambda = lambdas.size();
 
   // Prepare a lazy cumulative sum of lambdas.
-  // cum[i] holds sum_{k=0}^{i-1} lambdas(k) with cum[0] = 0.
-  std::vector<double> cum(n_lambda + 1, 0.0);
+  // cumsum[i] holds sum_{k=0}^{i-1} lambdas(k) with cumsum[0] = 0.
+  std::vector<double> cumsum(n_lambda + 1, 0.0);
   size_t computed = 0; // Last index for which cum has been computed.
 
-  // getCum(i) computes and returns cum[i] on demand.
-  auto getCum = [&](size_t i) -> double {
+  // getCum(i) computes and returns cumsum[i] on demand.
+  auto getCumSum = [&](size_t i) -> double {
     i = std::min(i, n_lambda); // Prevent out-of-bounds access
     while (computed < i) {
       computed++;
-      cum[computed] = cum[computed - 1] + lambdas(computed - 1);
+      cumsum[computed] = cumsum[computed - 1] + lambdas(computed - 1);
     }
-    return cum[i];
+    return cumsum[i];
   };
 
   // getLambdaSum(start, len) returns sum of lambdas from start to start+len-1
   auto getLambdaSum = [&](size_t start, size_t len) -> double {
-    return getCum(start + len) - getCum(start);
+    return getCumSum(start + len) - getCumSum(start);
   };
 
   // Determine whether the update moves upward.
@@ -69,7 +71,7 @@ slopeThreshold(const double x,
     int end = clusters.pointer(j + 1);
     double hi = getLambdaSum(end - cluster_size, cluster_size);
 
-    for (int k = j + 1; k < clusters.n_clusters(); ++k) {
+    for (int k = j + 1; k < clusters.size(); ++k) {
       end = clusters.pointer(k + 1);
       double lo = getLambdaSum(end - cluster_size, cluster_size);
       double c_k = clusters.coeff(k);
@@ -83,9 +85,10 @@ slopeThreshold(const double x,
     }
 
     if (abs_x > hi) {
-      return { x - sign_x * hi, clusters.n_clusters() - 1 };
+      return { x - sign_x * hi, clusters.size() - 1 };
     } else {
-      return { 0, clusters.n_clusters() - 1 };
+      // Zero cluster case
+      return { 0, clusters.size() };
     }
   }
 }

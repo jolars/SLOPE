@@ -10,6 +10,7 @@
 #include "../math.h"
 #include "slope_threshold.h"
 #include <Eigen/Core>
+#include <random>
 #include <vector>
 
 namespace slope {
@@ -336,7 +337,8 @@ coordinateDescent(Eigen::VectorXd& beta0,
                   const Eigen::VectorXd& x_scales,
                   const bool intercept,
                   const JitNormalization jit_normalization,
-                  const bool update_clusters)
+                  const bool update_clusters,
+                  const std::string& cd_type = "cyclical")
 {
   using namespace Eigen;
 
@@ -346,7 +348,27 @@ coordinateDescent(Eigen::VectorXd& beta0,
 
   double max_abs_gradient = 0;
 
-  for (int c_ind = 0; c_ind < clusters.n_clusters(); ++c_ind) {
+  // Create a vector of indices to process
+  std::vector<int> indices;
+  indices.reserve(clusters.size());
+  for (int i = 0; i < clusters.size(); ++i) {
+    if (clusters.coeff(i) != 0) { // Skip zero cluster
+      indices.push_back(i);
+    }
+  }
+
+  if (cd_type == "permuted") {
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(indices.begin(), indices.end(), g);
+  }
+
+  for (int c_ind : indices) {
+    // Skip if index is no longer valid due to cluster updates
+    if (c_ind >= clusters.size()) {
+      continue;
+    }
+
     double c_old = clusters.coeff(c_ind);
 
     if (c_old == 0) {
@@ -361,7 +383,9 @@ coordinateDescent(Eigen::VectorXd& beta0,
 
     for (auto c_it = clusters.cbegin(c_ind); c_it != clusters.cend(c_ind);
          ++c_it) {
-      double s_ind = sign(beta(*c_it));
+      int ind = *c_it;
+      assert(ind >= 0 && ind < beta.size() && "Invalid index in cluster");
+      double s_ind = sign(beta(ind));
       s.emplace_back(s_ind);
     }
 
@@ -391,14 +415,10 @@ coordinateDescent(Eigen::VectorXd& beta0,
     double c_tilde;
     int new_index;
 
-    if (lambda(0) == 0) {
-      // No regularization
-      c_tilde = c_old - grad / hess;
-      new_index = c_ind;
-    } else {
-      std::tie(c_tilde, new_index) =
-        slopeThreshold(c_old - grad / hess, c_ind, lambda / hess, clusters);
-    }
+    std::tie(c_tilde, new_index) =
+      slopeThreshold(c_old - grad / hess, c_ind, lambda / hess, clusters);
+
+    assert(new_index >= 0 && new_index <= clusters.size());
 
     double c_diff = c_old - c_tilde;
 

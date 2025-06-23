@@ -41,14 +41,17 @@ public:
    * @param intercept If true, fits intercept term
    * @param update_clusters If true, updates clusters during optimization
    * @param cd_iterations Frequency of proximal gradient descent updates
+   * @param cd_type Type of coordinate descent to use ("cyclical" or "permuted")
    */
   Hybrid(JitNormalization jit_normalization,
          bool intercept,
          bool update_clusters,
-         int cd_iterations)
+         int cd_iterations,
+         const std::string& cd_type)
     : SolverBase(jit_normalization, intercept)
     , update_clusters(update_clusters)
     , cd_iterations(cd_iterations)
+    , cd_type(cd_type)
   {
   }
 
@@ -190,7 +193,8 @@ private:
                         x_scales,
                         this->intercept,
                         this->jit_normalization,
-                        this->update_clusters);
+                        this->update_clusters,
+                        this->cd_type);
 
       double new_obj =
         computeObjective(penalty, beta, residual, w, lambda, working_set);
@@ -235,6 +239,8 @@ private:
 
   bool update_clusters = false; ///< If true, updates clusters during CD steps
   int cd_iterations = 10;       ///< Number of CD iterations per hybrid step
+  std::string cd_type =
+    "cyclical"; ///< Type of coordinate descent ("cyclical" or "permuted")
 };
 
 } // namespace slope

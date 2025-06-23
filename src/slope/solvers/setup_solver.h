@@ -39,6 +39,7 @@ setupSolver(const std::string& solver_type,
             JitNormalization jit_normalization,
             bool intercept,
             bool update_clusters,
-            int cd_iterations);
+            int cd_iterations,
+            const std::string& cd_type);
 
 } // namespace slope

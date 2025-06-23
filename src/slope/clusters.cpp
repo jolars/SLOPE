@@ -9,152 +9,81 @@ Clusters::Clusters(const Eigen::VectorXd& beta)
   update(beta);
 }
 
-bool
-Clusters::hasAllZeros() const
-{
-  return !c.empty() && c[0] == 0 && c.size() == 1 && c_ind.empty();
-}
-
-std::vector<int>&
-Clusters::getZeroIndices() const
-{
-  if (!zero_indices_valid) {
-    zero_indices.clear();
-
-    // Find indices not in c_ind (set difference)
-    for (int j = 0; j < p; ++j) {
-      if (std::find(c_ind.begin(), c_ind.end(), j) == c_ind.end()) {
-        zero_indices.push_back(j);
-      }
-    }
-
-    zero_indices_valid = true;
-  }
-
-  return zero_indices;
-}
-
 std::vector<int>::const_iterator
 Clusters::cbegin(const int i) const
 {
-  if (i < static_cast<int>(c.size())) {
-    return c_ind.cbegin() + c_ptr[i];
-  }
-
-  return getZeroIndices().cbegin();
+  assert(i >= 0 && i < size());
+  return c_ind.cbegin() + this->pointer(i);
 }
 
 std::vector<int>::const_iterator
 Clusters::cend(const int i) const
 {
-  if (i < static_cast<int>(c.size())) {
-    return c_ind.cbegin() + c_ptr[i + 1];
-  }
-
-  return getZeroIndices().cend();
+  assert(i >= 0 && i < size());
+  return c_ind.cbegin() + this->pointer(i + 1);
 }
 
 std::vector<int>::iterator
 Clusters::begin(const int i)
 {
-  if (i < static_cast<int>(c.size())) {
-    return c_ind.begin() + c_ptr[i];
-  }
-
-  return getZeroIndices().begin();
+  assert(i >= 0 && i < size());
+  return c_ind.begin() + this->pointer(i);
 }
 
 std::vector<int>::iterator
 Clusters::end(const int i)
 {
-  if (i < static_cast<int>(c.size())) {
-    return c_ind.begin() + c_ptr[i + 1];
-  }
-
-  return getZeroIndices().end();
+  assert(i >= 0 && i < size());
+  return c_ind.begin() + this->pointer(i + 1);
 }
 
 int
 Clusters::cluster_size(const int i) const
 {
-  if (i < static_cast<int>(c.size())) {
-    return c_ptr[i + 1] - c_ptr[i];
-  }
-
-  // For zero cluster, compute the size based on indices not in other clusters
-  if (i == static_cast<int>(c.size()) && p > static_cast<int>(c_ind.size())) {
-    return p - static_cast<int>(c_ind.size());
-  }
-
-  return 0; // Invalid cluster index
+  assert(i >= 0 && i < size());
+  return this->pointer(i + 1) - this->pointer(i);
 }
 
 int
 Clusters::pointer(const int i) const
 {
-  if (i < static_cast<int>(c_ptr.size())) {
-    return c_ptr[i];
-  }
-
-  return c_ind.size(); // Return end of indices for virtual zero cluster
+  assert(i >= 0 && i <= size());
+  return c_ptr[i];
 }
 
 int
-Clusters::n_clusters() const
+Clusters::size() const
 {
-  // Special case: if we have a coefficient of 0 in c, that means all values are
-  // 0
-  if (hasAllZeros()) {
-    return 1;
-  }
-
-  // Regular case: count non-zero clusters, and add 1 if there are zero
-  // coefficients
-  return c.size() + (p > static_cast<int>(c_ind.size()) ? 1 : 0);
+  return c.size();
 }
 
 double
 Clusters::coeff(const int i) const
 {
-  if (i < static_cast<int>(c.size())) {
-    return c[i];
-  }
-
-  return 0.0; // Return 0 for the virtual zero cluster
+  assert(i >= 0 && i < size());
+  return c[i];
 }
 
 void
 Clusters::setCoeff(const int i, const double x)
 {
+  assert(i >= 0 && i < size());
   c[i] = x;
 }
 
-std::vector<double>
+const std::vector<double>&
 Clusters::coeffs() const
 {
-  std::vector<double> result = c;
-
-  // Special case: if we have a coefficient of 0 in c and all values are zeros
-  // don't add an additional zero
-  if (hasAllZeros()) {
-    return result; // Just return {0.0}
-  }
-
-  // Add zero coefficient if there's a zero cluster
-  if (p > static_cast<int>(c_ind.size())) {
-    result.push_back(0.0);
-  }
-
-  return result;
+  return c;
 }
 
-std::vector<int>
+const std::vector<int>&
 Clusters::indices() const
 {
   return c_ind;
 }
 
-std::vector<int>
+const std::vector<int>&
 Clusters::pointers() const
 {
   return c_ptr;
@@ -163,13 +92,29 @@ Clusters::pointers() const
 void
 Clusters::update(const int old_index, const int new_index, const double c_new)
 {
-  // Invalidate zero indices cache - the cluster structure is changing
-  zero_indices_valid = false;
+  assert(old_index < size());
+  assert(new_index <= size());
 
   auto c_old = coeff(old_index);
 
   if (c_new != c_old) {
-    if (c_new == coeff(new_index)) {
+    if (c_new == 0) {
+      // Get the size and pointer of the cluster to be removed
+      auto cluster_size_val = cluster_size(old_index);
+
+      // Remove indices in the cluster
+      c_ind.erase(c_ind.begin() + pointer(old_index),
+                  c_ind.begin() + pointer(old_index + 1));
+
+      // Update pointers after the removed cluster
+      c_ptr.erase(c_ptr.begin() + old_index + 1);
+
+      for (size_t i = old_index + 1; i < c_ptr.size(); ++i) {
+        c_ptr[i] -= cluster_size_val;
+      }
+
+      c.erase(c.begin() + old_index);
+    } else if (c_new == coeff(new_index)) {
       merge(old_index, new_index);
     } else {
       setCoeff(old_index, c_new);
@@ -178,6 +123,9 @@ Clusters::update(const int old_index, const int new_index, const double c_new)
       }
     }
   }
+
+  assert(c_ptr.size() == c.size() + 1);
+  assert(std::is_sorted(c.begin(), c.end(), std::greater<>{}));
 }
 
 void
@@ -190,29 +138,22 @@ Clusters::update(const Eigen::VectorXd& beta)
   c.clear();
   c_ind.clear();
   c_ptr.clear();
-  signs.clear();
-
-  // Invalidate zero indices cache
-  zero_indices_valid = false;
 
   std::vector<sort_pair> sorted;
   sorted.reserve(p);
-  signs.reserve(p);
 
   for (int i = 0; i < beta.size(); ++i) {
-    signs.emplace_back(sign(beta(i)));
     double abs_val = std::abs(beta(i));
     if (abs_val > 0) {
       sorted.emplace_back(abs_val, i);
     }
   }
 
-  // Special case: all values are zero
-  if (sorted.empty() && p > 0) {
-    c.push_back(0.0); // Add a single zero coefficient
-    c_ptr.push_back(0);
-    c_ptr.push_back(0);
+  sorted.shrink_to_fit();
 
+  // Special case: all values are zero
+  if (sorted.empty()) {
+    c_ptr.push_back(0); // Initialize with a single pointer at 0
     return;
   }
 
@@ -252,21 +193,29 @@ Clusters::update(const Eigen::VectorXd& beta)
     c_ptr.emplace_back(std::distance(sorted.begin(), range_end));
     range_start = range_end;
   }
+
+  assert(c_ptr.size() == c.size() + 1);
+  assert(std::is_sorted(c.begin(), c.end(), std::greater<>{}));
 }
 
 void
 Clusters::reorder(const int old_index, const int new_index)
 {
   auto c_size = cluster_size(old_index);
+  int old_ptr = pointer(old_index); // Save pointer for cluster being moved
+  int new_ptr = pointer(new_index); // Save destination pointer
 
   // update coefficients
   move_elements(c, old_index, new_index, 1);
 
-  // update indices
-  move_elements(c_ind, pointer(old_index), pointer(new_index), c_size);
+  assert(std::is_sorted(c.begin(), c.end(), std::greater<>{}));
 
   // update pointers
   if (new_index < old_index) {
+    std::rotate(c_ind.begin() + pointer(new_index),
+                c_ind.begin() + pointer(old_index),
+                c_ind.begin() + pointer(old_index + 1));
+
     move_elements(c_ptr, old_index + 1, new_index + 1, 1);
 
     std::for_each(c_ptr.begin() + new_index + 1,
@@ -275,6 +224,10 @@ Clusters::reorder(const int old_index, const int new_index)
 
     c_ptr[new_index + 1] = c_ptr[new_index] + c_size;
   } else {
+    std::rotate(c_ind.begin() + pointer(old_index),
+                c_ind.begin() + pointer(old_index + 1),
+                c_ind.begin() + pointer(new_index + 1));
+
     move_elements(c_ptr, old_index, new_index, 1);
 
     std::for_each(c_ptr.begin() + old_index,
@@ -287,85 +240,113 @@ Clusters::reorder(const int old_index, const int new_index)
 void
 Clusters::merge(const int old_index, const int new_index)
 {
-  auto c_size = cluster_size(old_index);
+  assert(old_index >= 0 && "old_index must be non-negative");
+  assert(new_index >= 0 && "new_index must be non-negative");
+  assert(old_index != new_index && "Cannot merge a cluster with itself");
+  assert(old_index < size() && "old_index out of bounds");
+  assert(new_index < size() && "new_index out of bounds");
+
+  auto c_size_old = cluster_size(old_index);
+  auto c_size_new = cluster_size(new_index);
+
+  auto c_ind_begin = c_ind.begin();
+
+  assert(pointer(old_index) >= 0 &&
+         pointer(old_index) <= static_cast<int>(c_ind.size()));
+  assert(pointer(old_index + 1) >= 0 &&
+         pointer(old_index + 1) <= static_cast<int>(c_ind.size()));
+  assert(pointer(new_index) >= 0 &&
+         pointer(new_index) <= static_cast<int>(c_ind.size()));
+  assert(pointer(new_index + 1) >= 0 &&
+         pointer(new_index + 1) <= static_cast<int>(c_ind.size()));
+
+  assert(c_ind_begin + pointer(old_index) >= c_ind.begin() &&
+         c_ind_begin + pointer(old_index) <= c_ind.end());
+  assert(c_ind_begin + pointer(old_index + 1) >= c_ind.begin() &&
+         c_ind_begin + pointer(old_index + 1) <= c_ind.end());
+  assert(c_ind_begin + pointer(new_index + 1) >= c_ind.begin() &&
+         c_ind_begin + pointer(new_index + 1) <= c_ind.end());
+
+  // update pointers
+  if (new_index < old_index) {
+    assert(pointer(new_index + 1) <= static_cast<int>(c_ind.size()));
+    assert(pointer(old_index) < pointer(old_index + 1) &&
+           "First two iterators must form a valid range");
+    assert(pointer(old_index) <= pointer(old_index + 1) &&
+           "Second iterator must be before or equal to third");
+    assert(pointer(new_index + 1) <= static_cast<int>(c_ind.size()));
+
+    std::rotate(c_ind_begin + pointer(new_index),
+                c_ind_begin + pointer(old_index),
+                c_ind_begin + pointer(old_index + 1));
+    std::for_each(c_ptr.begin() + new_index + 1,
+                  c_ptr.begin() + old_index + 1,
+                  [c_size_old](int& x) { x += c_size_old; });
+  } else {
+    assert(pointer(old_index + 1) <= static_cast<int>(c_ind.size()));
+    assert(pointer(old_index) < pointer(old_index + 1) &&
+           "First two iterators must form a valid range");
+    assert(pointer(old_index + 1) <= pointer(new_index + 1) &&
+           "Second iterator must be before or equal to third");
+    assert(pointer(old_index + 1) <= static_cast<int>(c_ind.size()));
+
+    std::rotate(c_ind_begin + pointer(old_index),
+                c_ind_begin + pointer(old_index + 1),
+                c_ind_begin + pointer(new_index + 1));
+    std::for_each(c_ptr.begin() + old_index + 1,
+                  c_ptr.begin() + new_index + 1,
+                  [c_size_old](int& x) { x -= c_size_old; });
+  }
+
+  c_ptr.erase(c_ptr.begin() + old_index + 1);
 
   // update coefficients
   c.erase(c.cbegin() + old_index);
 
-  // update indices
-  move_elements(c_ind, pointer(old_index), pointer(new_index), c_size);
-
-  // update pointers
-  if (new_index < old_index) {
-    std::for_each(c_ptr.begin() + new_index + 1,
-                  c_ptr.begin() + old_index + 1,
-                  [c_size](int& x) { x += c_size; });
-  } else {
-    std::for_each(c_ptr.begin() + old_index + 1,
-                  c_ptr.begin() + new_index + 1,
-                  [c_size](int& x) { x -= c_size; });
-  }
-
-  c_ptr.erase(c_ptr.begin() + old_index + 1);
+  assert(c_ptr.size() == c.size() + 1 &&
+         "Pointer array size mismatch after merge");
 }
 
 std::vector<std::vector<int>>
 Clusters::getClusters() const
 {
   std::vector<std::vector<int>> clusters;
-  clusters.reserve(n_clusters());
+  clusters.reserve(size());
 
-  // Special case for all zeros vector
-  if (hasAllZeros()) {
-    std::vector<int> zero_cluster;
-    for (int i = 0; i < p; ++i) {
-      zero_cluster.push_back(i);
-    }
-    clusters.push_back(zero_cluster);
-    return clusters;
-  }
-
-  for (int i = 0; i < n_clusters(); ++i) {
+  for (int i = 0; i < size(); ++i) {
     clusters.emplace_back(cbegin(i), cend(i));
   }
 
   return clusters;
 }
 
-Eigen::SparseMatrix<int>
-Clusters::patternMatrix() const
-{
-  std::vector<Eigen::Triplet<int>> triplets;
-  triplets.reserve(p);
-
-  int n_cols = 0;
-
-  for (int k = 0; k < n_clusters(); ++k) {
-    if (coeff(k) == 0) {
-      // Skip the zero cluster
-      break;
-    }
-
-    n_cols++;
-
-    for (auto it = cbegin(k); it != cend(k); ++it) {
-      int ind = *it;
-      int s = signs[ind];
-      triplets.emplace_back(ind, k, s);
-    }
-  }
-
-  Eigen::SparseMatrix<int> out(p, n_cols);
-  out.setFromTriplets(triplets.begin(), triplets.end());
-
-  return out;
-}
-
+// TODO: Template or overload for sparse matrices
 Eigen::SparseMatrix<int>
 patternMatrix(const Eigen::VectorXd& beta)
 {
   Clusters clusters(beta);
-  return clusters.patternMatrix();
+
+  int p = beta.size();
+  Eigen::SparseMatrix<int> out(p, clusters.size());
+
+  if (clusters.size() == 0) {
+    return out; // Return empty matrix if no clusters
+  }
+
+  std::vector<Eigen::Triplet<int>> triplets;
+  triplets.reserve(p);
+
+  for (int k = 0; k < clusters.size(); ++k) {
+    for (auto it = clusters.cbegin(k); it != clusters.cend(k); ++it) {
+      int ind = *it;
+      int s = std::copysign(1.0, beta(ind));
+      triplets.emplace_back(ind, k, s);
+    }
+  }
+
+  out.setFromTriplets(triplets.begin(), triplets.end());
+
+  return out;
 }
 
 } // namespace slope

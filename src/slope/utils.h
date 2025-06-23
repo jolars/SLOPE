@@ -177,9 +177,16 @@ template<typename T>
 void
 move_elements(std::vector<T>& v, const int from, const int to, const int size)
 {
+  assert(from >= 0);
+  assert(to >= 0);
+  assert(size >= 0);
+  assert(from != to);
+
   if (from > to) {
+    assert(from + size <= static_cast<int>(v.size()));
     std::rotate(v.begin() + to, v.begin() + from, v.begin() + from + size);
   } else {
+    assert(to + size <= static_cast<int>(v.size()));
     std::rotate(
       v.begin() + from, v.begin() + from + size, v.begin() + to + size);
   }

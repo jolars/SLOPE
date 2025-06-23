@@ -2,7 +2,6 @@
 
 namespace slope {
 
-// TODO: Make this work for sparse beta
 std::tuple<Eigen::VectorXd, Eigen::MatrixXd>
 rescaleCoefficients(const Eigen::VectorXd& beta0,
                     const Eigen::SparseMatrix<double>& beta,
@@ -28,7 +27,6 @@ rescaleCoefficients(const Eigen::VectorXd& beta0,
 
         if (scaling) {
           it.valueRef() /= x_scales(j);
-          // beta_out(j, k) /= x_scales(j);
         }
         if (centering) {
           x_bar_beta_sum += x_centers(j) * it.valueRef();

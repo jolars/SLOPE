@@ -196,6 +196,14 @@ Slope::setHybridCdIterations(int cd_iterations)
 }
 
 void
+Slope::setHybridCdType(const std::string& cd_type)
+{
+  validateOption(cd_type, { "cyclical", "permuted" }, "cd_type");
+
+  this->cd_type = cd_type;
+}
+
+void
 Slope::setLambdaType(const std::string& lambda_type)
 {
   validateOption(
