@@ -86,7 +86,7 @@ patient with dealing with the large number of breaking changes.
 - `plot.SLOPE()` gains a new argument `add_labels`, which add numbers for the
   coefficients to the plot. Set to `FALSE` by default.
 - Relaxed SLOPE models can now be fit by specifying `gamma` in `SLOPE()`.
-- `plot.trainedSLOPE()` gaina a new argument `index`, to select which of the
+- `plot.trainedSLOPE()` gains a new argument `index`, to select which of the
   hyperparameter combinations to plot for.
 - There's a new function `plotClusters()`, which allows plotting the cluster
   structure in SLOPE.
