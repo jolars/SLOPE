@@ -25,7 +25,7 @@ different colors}
 \item{include_zeroes}{logical, indicating whether zero variables should be
 plotted. Default to TRUE}
 
-\item{show_alpha}{logical, indicatiung whether labels with alpha values or
+\item{show_alpha}{logical, indicating whether labels with alpha values or
 steps in the path should be plotted.}
 
 \item{alpha_steps}{a vector of integer alpha steps to plot. If \code{NULL},
