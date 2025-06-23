@@ -78,7 +78,7 @@
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>an object of class <code>'TrainedSLOPE'</code>, typically from a call
-to <code><a href="trainSLOPE.html">trainSLOPE()</a></code></p></dd>
+to <code><a href="cvSLOPE.html">cvSLOPE()</a></code></p></dd>
 
 
 <dt id="arg-plot-min">plot_min<a class="anchor" aria-label="anchor" href="#arg-plot-min"></a></dt>
@@ -141,7 +141,7 @@ models.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="trainSLOPE.html">trainSLOPE()</a></code></p>
+    <div class="dont-index"><p><code><a href="cvSLOPE.html">cvSLOPE()</a></code></p>
 <p>Other model-tuning:
 <code><a href="cvSLOPE.html">cvSLOPE</a>()</code>,
 <code><a href="trainSLOPE.html">trainSLOPE</a>()</code></p></div>
@@ -151,7 +151,8 @@ models.</p></dd>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Cross-validation for a SLOPE binomial model</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">tune</span> <span class="op">&lt;-</span> <span class="fu"><a href="cvSLOPE.html">cvSLOPE</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">mtcars</span>, select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mpg"</span>, <span class="st">"drat"</span>, <span class="st">"wt"</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span><span class="va">tune</span> <span class="op">&lt;-</span> <span class="fu"><a href="cvSLOPE.html">cvSLOPE</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">mtcars</span>, select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mpg"</span>, <span class="st">"drat"</span>, <span class="st">"wt"</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  <span class="va">mtcars</span><span class="op">$</span><span class="va">hp</span>,</span></span>
 <span class="r-in"><span>  q <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.2</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  n_folds <span class="op">=</span> <span class="fl">10</span></span></span>
