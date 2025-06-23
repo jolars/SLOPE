@@ -277,13 +277,19 @@ plot.TrainedSLOPE <- function(
       title_parts <- NULL
       if (length(q) > 1) {
         q_part <- bquote(paste("q = ", .(g[["q"]])))
-        title_parts <- if (is.null(title_parts)) q_part else
+        title_parts <- if (is.null(title_parts)) {
+          q_part
+        } else {
           bquote(paste(.(title_parts), ", ", .(q_part)))
+        }
       }
       if (length(gamma) > 1) {
         gamma_part <- bquote(paste(gamma, " = ", .(g[["gamma"]])))
-        title_parts <- if (is.null(title_parts)) gamma_part else
+        title_parts <- if (is.null(title_parts)) {
+          gamma_part
+        } else {
           bquote(paste(.(title_parts), ", ", .(gamma_part)))
+        }
       }
 
       if (!is.null(title_parts)) {
@@ -322,7 +328,6 @@ plot.TrainedSLOPE <- function(
 }
 
 
-
 #' Plot cluster structure
 #'
 #' @param x an object of class `'SLOPE'`
@@ -356,11 +361,12 @@ plot.TrainedSLOPE <- function(
 #' plotClusters(fit, alpha_steps = 1:10)
 
 plotClusters <- function(
-    x, plot_signs = FALSE,
-    color_clusters = TRUE,
-    include_zeroes = TRUE,
-    show_alpha = FALSE,
-    alpha_steps = NULL
+  x,
+  plot_signs = FALSE,
+  color_clusters = TRUE,
+  include_zeroes = TRUE,
+  show_alpha = FALSE,
+  alpha_steps = NULL
 ) {
   object <- x
 
@@ -371,10 +377,12 @@ plotClusters <- function(
     alpha_steps <- 1:length(pat)
   } else {
     alpha_steps <- unique(alpha_steps)
-    stopifnot(is.numeric(alpha_steps),
-              all(alpha_steps %% 1 == 0),
-              all(alpha_steps >= 1),
-              all(alpha_steps <= length(pat)))
+    stopifnot(
+      is.numeric(alpha_steps),
+      all(alpha_steps %% 1 == 0),
+      all(alpha_steps >= 1),
+      all(alpha_steps <= length(pat))
+    )
   }
 
   mat <- sapply(pat[alpha_steps], function(m) {
@@ -383,14 +391,19 @@ plotClusters <- function(
 
   rownames(mat) <- 1:nrow(mat)
 
-  if (!include_zeroes) mat <- mat[rowSums(mat) != 0, ]
+  if (!include_zeroes) {
+    mat <- mat[rowSums(mat) != 0, ]
+  }
 
   abs_mat <- abs(mat)
 
   abs_vals <- sort(unique(as.vector(abs_mat)))
 
-  if (color_clusters){
-    my_colors <- c("white", grDevices::rainbow(length(abs_vals) - 1, alpha = 0.7))
+  if (color_clusters) {
+    my_colors <- c(
+      "white",
+      grDevices::rainbow(length(abs_vals) - 1, alpha = 0.7)
+    )
   } else {
     my_colors <- c("white", rep("grey", length(abs_vals) - 1))
   }
@@ -405,21 +418,28 @@ plotClusters <- function(
 
   breaks <- c(-1, abs_vals)
 
-  graphics::image(t(abs_mat),
-                  col = my_colors,
-                  breaks = breaks,
-                  axes = FALSE,
-                  xlab = xlabel, ylab = "variable")
+  graphics::image(
+    t(abs_mat),
+    col = my_colors,
+    breaks = breaks,
+    axes = FALSE,
+    xlab = xlabel,
+    ylab = "variable"
+  )
 
   graphics::box(col = "black", lwd = 1.5)
-  graphics::axis(1,
-                 at = seq(0, 1, length.out = ncol(mat)),
-                 labels = step,
-                 las = 2)
-  graphics::axis(2,
-                 at = seq(0, 1, length.out = nrow(mat)),
-                 labels = rownames(mat),
-                 las = 1)
+  graphics::axis(
+    1,
+    at = seq(0, 1, length.out = ncol(mat)),
+    labels = step,
+    las = 2
+  )
+  graphics::axis(
+    2,
+    at = seq(0, 1, length.out = nrow(mat)),
+    labels = rownames(mat),
+    las = 1
+  )
 
   if (plot_signs) {
     for (i in 1:nrow(mat)) {
@@ -441,8 +461,16 @@ plotClusters <- function(
   y_coords <- seq(0, 1, length.out = nrow(mat))
   y_coords <- y_coords + mean(y_coords[1:2])
 
-  graphics::abline(v = x_coords, col = grDevices::adjustcolor("black", alpha = 0.5), lwd = 0.5)
-  graphics::abline(h = y_coords, col = grDevices::adjustcolor("black", alpha = 0.5), lwd = 0.5)
+  graphics::abline(
+    v = x_coords,
+    col = grDevices::adjustcolor("black", alpha = 0.5),
+    lwd = 0.5
+  )
+  graphics::abline(
+    h = y_coords,
+    col = grDevices::adjustcolor("black", alpha = 0.5),
+    lwd = 0.5
+  )
 
   invisible()
 }
