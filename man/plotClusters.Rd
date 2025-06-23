@@ -26,10 +26,10 @@ different colors}
 plotted. Default to TRUE}
 
 \item{show_alpha}{logical, indicatiung whether labels with alpha values or
-steps in the path should be plotted. Default FALSE.}
+steps in the path should be plotted.}
 
-\item{alpha_steps}{a vector of integer alpha steps to plot. If NULL, all the steps
-are plotted. Default to NULL.}
+\item{alpha_steps}{a vector of integer alpha steps to plot. If \code{NULL},
+all the steps are plotted.}
 }
 \value{
 Invisibly returns NULL. The function is called for its

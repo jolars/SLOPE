@@ -338,9 +338,9 @@ plot.TrainedSLOPE <- function(
 #' @param include_zeroes logical, indicating whether zero variables should be
 #' plotted. Default to TRUE
 #' @param show_alpha logical, indicatiung whether labels with alpha values or
-#' steps in the path should be plotted. Default FALSE.
-#' @param alpha_steps a vector of integer alpha steps to plot. If NULL, all the steps
-#' are plotted. Default to NULL.
+#' steps in the path should be plotted.
+#' @param alpha_steps a vector of integer alpha steps to plot. If `NULL`,
+#' all the steps are plotted.
 #'
 #' @seealso [SLOPE()]
 #'
