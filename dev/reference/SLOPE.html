@@ -91,6 +91,7 @@ in decreasing order according  to its absolute values.</p>
 <span>  diagnostics <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  patterns <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  gamma <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  cd_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"permuted"</span>, <span class="st">"cyclical"</span><span class="op">)</span>,</span>
 <span>  <span class="va">tol_abs</span>,</span>
 <span>  <span class="va">tol_rel</span>,</span>
 <span>  <span class="va">tol_rel_gap</span>,</span>
@@ -252,6 +253,13 @@ matrices, one for each step on the path.</p></dd>
 set to 0. If larger than 0, the solver will mix the coefficients
 from the ordinary SLOPE solutions with the coefficients from the
 relaxed solutions (fitting OLS on the SLOPE pattern).</p></dd>
+
+
+<dt id="arg-cd-type">cd_type<a class="anchor" aria-label="anchor" href="#arg-cd-type"></a></dt>
+<dd><p>Type of coordinate descent to use, either <code>"cyclical"</code> or
+<code>"permuted"</code>. The former means that the cluster are cycled through
+in descending order of their coefficients' magnitudes, while the
+latter means that the clusters are permuted randomly for each pass.</p></dd>
 
 
 <dt id="arg-tol-abs">tol_abs<a class="anchor" aria-label="anchor" href="#arg-tol-abs"></a></dt>
