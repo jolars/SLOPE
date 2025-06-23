@@ -9,6 +9,14 @@ lambdaSequenceCpp <- function(n_lambda, q, theta1, theta2, lambda_type, n) {
     .Call(`_SLOPE_lambdaSequenceCpp`, n_lambda, q, theta1, theta2, lambda_type, n)
 }
 
+cvSparseCpp <- function(x, y, cv_args, model_args) {
+    .Call(`_SLOPE_cvSparseCpp`, x, y, cv_args, model_args)
+}
+
+cvDenseCpp <- function(x, y, cv_args, model_args) {
+    .Call(`_SLOPE_cvDenseCpp`, x, y, cv_args, model_args)
+}
+
 sparseSLOPE <- function(x, y, control) {
     .Call(`_SLOPE_sparseSLOPE`, x, y, control)
 }
@@ -19,13 +27,5 @@ denseSLOPE <- function(x, y, control) {
 
 bigSLOPE <- function(x, y, control) {
     .Call(`_SLOPE_bigSLOPE`, x, y, control)
-}
-
-cvSparseCpp <- function(x, y, cv_args, model_args) {
-    .Call(`_SLOPE_cvSparseCpp`, x, y, cv_args, model_args)
-}
-
-cvDenseCpp <- function(x, y, cv_args, model_args) {
-    .Call(`_SLOPE_cvDenseCpp`, x, y, cv_args, model_args)
 }
 

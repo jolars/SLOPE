@@ -1,4 +1,5 @@
 #include "setup_model.h"
+#include "slope/clusters.h"
 #include "slope/slope.h"
 #include "slope/threads.h"
 #include <RcppEigen.h>
@@ -31,39 +32,40 @@ callSLOPE(T& x, const Eigen::MatrixXd& y, const Rcpp::List& control)
     slope::Threads::set(threads);
   }
 
-  slope::SlopePath fit = model.path(x, y, alpha, lambda);
+  slope::SlopePath path = model.path(x, y, alpha, lambda);
 
   std::vector<Eigen::SparseMatrix<double>> patterns;
 
   bool return_patterns = Rcpp::as<bool>(control["patterns"]);
 
-  if (return_patterns) {
-    auto clusters = fit.getClusters();
+  auto coefs = path.getCoefs(false);
 
-    for (auto cluster : clusters) {
-      patterns.push_back(cluster.patternMatrix().cast<double>());
+  if (return_patterns) {
+    for (auto coef : coefs) {
+      Eigen::SparseMatrix<double> U = slope::patternMatrix(coef).cast<double>();
+      patterns.push_back(U);
     }
   }
 
   Eigen::SparseMatrix<double> pattern_matrix;
 
   if (gamma < 1) {
-    fit = model.relax(fit, x, y, gamma);
+    path = model.relax(path, x, y, gamma);
   }
 
   return Rcpp::List::create(
-    Named("intercepts") = wrap(fit.getIntercepts()),
-    Named("intercepts_scaled") = wrap(fit.getIntercepts(false)),
-    Named("betas") = wrap(fit.getCoefs()),
-    Named("betas_scaled") = wrap(fit.getCoefs(false)),
-    Named("passes") = wrap(fit.getPasses()),
-    Named("primals") = wrap(fit.getPrimals()),
-    Named("duals") = wrap(fit.getDuals()),
-    Named("time") = wrap(fit.getTime()),
-    Named("deviance_ratio") = wrap(fit.getDevianceRatios()),
-    Named("null_deviance") = wrap(fit.getNullDeviance()),
-    Named("alpha") = wrap(fit.getAlpha()),
-    Named("lambda") = wrap(fit.getLambda()),
+    Named("intercepts") = wrap(path.getIntercepts()),
+    Named("intercepts_scaled") = wrap(path.getIntercepts(false)),
+    Named("betas") = wrap(path.getCoefs()),
+    Named("betas_scaled") = wrap(coefs),
+    Named("passes") = wrap(path.getPasses()),
+    Named("primals") = wrap(path.getPrimals()),
+    Named("duals") = wrap(path.getDuals()),
+    Named("time") = wrap(path.getTime()),
+    Named("deviance_ratio") = wrap(path.getDevianceRatios()),
+    Named("null_deviance") = wrap(path.getNullDeviance()),
+    Named("alpha") = wrap(path.getAlpha()),
+    Named("lambda") = wrap(path.getLambda()),
     Named("patterns") = wrap(patterns));
 }
 
