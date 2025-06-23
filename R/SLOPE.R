@@ -235,6 +235,10 @@
 #'   duality gap
 #' @param threads number of threads to use in the solver; if `NULL`, half
 #'   of the available (logical) threads will be used
+#' @param cd_type Type of coordinate descent to use, either `"cyclical"` or
+#'  `"permuted"`. The former means that the cluster are cycled through
+#'  in descending order of their coefficients' magnitudes, while the
+#'  latter means that the clusters are permuted randomly for each pass.
 #' @param verbosity DEPRECATED
 #' @param prox_method DEPRECATED
 #' @param screen DEPRECATED
@@ -364,6 +368,7 @@ SLOPE <- function(
   diagnostics = FALSE,
   patterns = FALSE,
   gamma = 1,
+  cd_type = c("permuted", "cyclical"),
   tol_abs,
   tol_rel,
   tol_rel_gap,
@@ -438,7 +443,8 @@ SLOPE <- function(
     diagnostics,
     patterns,
     threads,
-    gamma
+    gamma,
+    cd_type
   )
 
   x <- control$x
@@ -551,10 +557,12 @@ processSlopeArgs <- function(
   diagnostics = FALSE,
   patterns = TRUE,
   threads = NULL,
-  gamma = 1
+  gamma = 1,
+  cd_type = c("permuted", "cyclical")
 ) {
   family <- match.arg(family)
   solver <- match.arg(solver)
+  cd_type <- match.arg(cd_type)
 
   n <- NROW(x)
   p <- NCOL(x)
@@ -725,7 +733,8 @@ processSlopeArgs <- function(
     tol_dev_change = tol_dev_change,
     tol_dev_ratio = tol_dev_ratio,
     variable_names = variable_names,
-    threads = threads
+    threads = threads,
+    cd_type = cd_type
   )
 
   control

@@ -90,6 +90,9 @@ patient with dealing with the large number of breaking changes.
   hyperparameter combinations to plot for.
 - There's a new function `plotClusters()`, which allows plotting the cluster
   structure in SLOPE.
+- `SLOPE()` gains a new argument `cd_type`, to control the type of coordinate
+  descent used for the hybrid solver, with options `"cyclical"` and
+  `"permuted"`.
 
 ## Bug Fixes
 

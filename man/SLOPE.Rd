@@ -28,6 +28,7 @@ SLOPE(
   diagnostics = FALSE,
   patterns = FALSE,
   gamma = 1,
+  cd_type = c("permuted", "cyclical"),
   tol_abs,
   tol_rel,
   tol_rel_gap,
@@ -146,6 +147,11 @@ matrices, one for each step on the path.}
 set to 0. If larger than 0, the solver will mix the coefficients
 from the ordinary SLOPE solutions with the coefficients from the
 relaxed solutions (fitting OLS on the SLOPE pattern).}
+
+\item{cd_type}{Type of coordinate descent to use, either \code{"cyclical"} or
+\code{"permuted"}. The former means that the cluster are cycled through
+in descending order of their coefficients' magnitudes, while the
+latter means that the clusters are permuted randomly for each pass.}
 
 \item{tol_abs}{DEPRECATED}
 

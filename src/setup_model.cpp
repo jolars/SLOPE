@@ -30,6 +30,7 @@ setupModel(const Rcpp::List& control)
   auto tol = as<double>(control["tol"]);
   auto tol_dev_change = as<double>(control["tol_dev_change"]);
   auto tol_dev_ratio = as<double>(control["tol_dev_ratio"]);
+  auto cd_type = as<std::string>(control["cd_type"]);
 
   slope::Slope model;
 
@@ -67,6 +68,7 @@ setupModel(const Rcpp::List& control)
   model.setTol(tol);
   model.setDiagnostics(diagnostics);
   model.setReturnClusters(patterns);
+  model.setHybridCdType(cd_type);
 
   if (centering_type == "manual") {
     model.setCentering(centers);
