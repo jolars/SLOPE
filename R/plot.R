@@ -374,7 +374,7 @@ plotClusters <- function(
   pat[[1]] <- as.matrix(numeric(length(object$lambda)), ncol = 1)
 
   if (is.null(alpha_steps)) {
-    alpha_steps <- 1:length(pat)
+    alpha_steps <- seq_along(pat)
   } else {
     alpha_steps <- unique(alpha_steps)
     stopifnot(
@@ -386,10 +386,10 @@ plotClusters <- function(
   }
 
   mat <- sapply(pat[alpha_steps], function(m) {
-    rowSums(t(t(as.matrix(m)) * 1:ncol(as.matrix(m))))
+    rowSums(t(t(as.matrix(m)) * seq_len(ncol(as.matrix(m)))))
   })
 
-  rownames(mat) <- 1:nrow(mat)
+  rownames(mat) <- seq_len(nrow(mat))
 
   if (!include_zeroes) {
     mat <- mat[rowSums(mat) != 0, ]
@@ -412,7 +412,7 @@ plotClusters <- function(
     step <- round(object$alpha, 3)
     xlabel <- "alpha"
   } else {
-    step <- 1:ncol(mat)
+    step <- seq_len(ncol(mat))
     xlabel <- "path step"
   }
 
@@ -442,9 +442,9 @@ plotClusters <- function(
   )
 
   if (plot_signs) {
-    for (i in 1:nrow(mat)) {
-      for (j in 1:ncol(mat)) {
-        val <- mat[nrow(mat):1, ][i, j]
+    for (i in seq_len(nrow(mat))) {
+      for (j in seq_len(ncol(mat))) {
+        val <- mat[rev(seq_len(nrow(mat))), ][i, j]
         sign_char <- ifelse(val > 0, "+", ifelse(val < 0, "-", ""))
 
         x <- (j - 1) / (ncol(mat) - 1)
