@@ -10,6 +10,7 @@
 #include "../math.h"
 #include "slope_threshold.h"
 #include <Eigen/Core>
+#include <optional>
 #include <random>
 #include <vector>
 
@@ -317,8 +318,9 @@ computeClusterGradientAndHessian(const Eigen::SparseMatrixBase<T>& x,
  * @param x_scales The scale values of the data matrix columns
  * @param intercept Shuold an intervept be fit?
  * @param jit_normalization Type o fJIT normalization.
- * @param update_clusters Flag indicating whether to update the cluster
- * information
+ * @param rng Random number generator for shuffling indices in permuted CD.
+ * @param update_clusters Flag indicating whether to update the clusters
+ *   after each uupdate.
  *
  * @see Clusters
  * @see SortedL1Norm
@@ -338,6 +340,7 @@ coordinateDescent(Eigen::VectorXd& beta0,
                   const bool intercept,
                   const JitNormalization jit_normalization,
                   const bool update_clusters,
+                  std::mt19937& rng,
                   const std::string& cd_type = "cyclical")
 {
   using namespace Eigen;
@@ -358,9 +361,7 @@ coordinateDescent(Eigen::VectorXd& beta0,
   }
 
   if (cd_type == "permuted") {
-    std::random_device rd;
-    std::mt19937 g(rd());
-    std::shuffle(indices.begin(), indices.end(), g);
+    std::shuffle(indices.begin(), indices.end(), rng);
   }
 
   for (int c_ind : indices) {

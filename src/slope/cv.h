@@ -357,7 +357,9 @@ crossValidate(Slope model,
 
     Eigen::MatrixXd scores = Eigen::MatrixXd::Zero(n_evals, n_alpha);
 
+#ifdef _OPENMP
     Eigen::setNbThreads(1);
+#endif
 
     // Thread-safety for exceptions
     std::vector<std::string> thread_errors(n_evals);

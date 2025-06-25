@@ -42,16 +42,20 @@ public:
    * @param update_clusters If true, updates clusters during optimization
    * @param cd_iterations Frequency of proximal gradient descent updates
    * @param cd_type Type of coordinate descent to use ("cyclical" or "permuted")
+   * @param random_seed Optional random seed for reproducibility
    */
   Hybrid(JitNormalization jit_normalization,
          bool intercept,
          bool update_clusters,
          int cd_iterations,
-         const std::string& cd_type)
+         const std::string& cd_type,
+         std::optional<int> random_seed = std::nullopt)
     : SolverBase(jit_normalization, intercept)
     , update_clusters(update_clusters)
     , cd_iterations(cd_iterations)
     , cd_type(cd_type)
+    , rng(random_seed.has_value() ? std::mt19937(*random_seed)
+                                  : std::mt19937(std::random_device{}()))
   {
   }
 
@@ -194,6 +198,7 @@ private:
                         this->intercept,
                         this->jit_normalization,
                         this->update_clusters,
+                        rng,
                         this->cd_type);
 
       double new_obj =
@@ -241,6 +246,9 @@ private:
   int cd_iterations = 10;       ///< Number of CD iterations per hybrid step
   std::string cd_type =
     "cyclical"; ///< Type of coordinate descent ("cyclical" or "permuted")
+  std::mt19937 rng{
+    std::random_device{}()
+  }; ///< Random number generator for coordinate descent
 };
 
 } // namespace slope

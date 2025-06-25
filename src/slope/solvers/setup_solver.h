@@ -3,8 +3,11 @@
  * @brief Factory function to create and configure a SLOPE solver
  */
 
+#pragma once
+
 #include "solver.h"
 #include <memory>
+#include <optional>
 #include <string>
 
 namespace slope {
@@ -24,6 +27,7 @@ namespace slope {
  * optimization (Hybrid solver)
  * @param cd_iterations Frequency of proximal gradient descent updates (Hybrid
  * solver)
+ * @param random_seed Optional random seed for reproducibility
  *
  * @return std::unique_ptr<SolverBase> A unique pointer to the
  * configured solver
@@ -40,6 +44,7 @@ setupSolver(const std::string& solver_type,
             bool intercept,
             bool update_clusters,
             int cd_iterations,
-            const std::string& cd_type);
+            const std::string& cd_type,
+            std::optional<int> random_seed = std::nullopt);
 
 } // namespace slope
