@@ -432,7 +432,7 @@ plotClusters <- function(
     xlabel <- expression(alpha)
   } else {
     step <- seq_len(ncol(mat))
-    xlabel <- "path step"
+    xlabel <- "Step"
   }
 
   breaks <- c(-1, abs_vals)
