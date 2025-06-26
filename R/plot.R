@@ -347,6 +347,7 @@ plot.TrainedSLOPE <- function(
 #' all the steps are plotted.
 #' @param palette a character string specifying the color palette to use for
 #' the clusters. This is passed to [grDevices::hcl.colors()].
+#' @param ... additional arguments passed to [graphics::image()].
 #'
 #' @seealso [SLOPE()], [graphics::image()], [graphics::text()].
 #'
@@ -373,7 +374,8 @@ plotClusters <- function(
   include_zeroes = TRUE,
   show_alpha = FALSE,
   alpha_steps = NULL,
-  palette = "viridis"
+  palette = "viridis",
+  ...
 ) {
   object <- x
 
@@ -441,8 +443,7 @@ plotClusters <- function(
 
   breaks <- c(-1, abs_vals)
 
-  graphics::image(
-    t(abs_mat),
+  default_image_args <- list(
     col = my_colors,
     breaks = breaks,
     axes = FALSE,
@@ -450,6 +451,9 @@ plotClusters <- function(
     ylab = "Variable"
   )
 
+  image_args <- utils::modifyList(default_image_args, list(...))
+
+  do.call(graphics::image, c(list(t(abs_mat)), image_args))
 
   x_coords <- seq(0, 1, length.out = ncol(mat))
   x_coords <- x_coords + mean(x_coords[1:2])

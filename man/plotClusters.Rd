@@ -11,7 +11,8 @@ plotClusters(
   include_zeroes = TRUE,
   show_alpha = FALSE,
   alpha_steps = NULL,
-  palette = "viridis"
+  palette = "viridis",
+  ...
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ all the steps are plotted.}
 
 \item{palette}{a character string specifying the color palette to use for
 the clusters. This is passed to \code{\link[grDevices:palettes]{grDevices::hcl.colors()}}.}
+
+\item{...}{additional arguments passed to \code{\link[graphics:image]{graphics::image()}}.}
 }
 \value{
 Invisibly returns NULL. The function is called for its
