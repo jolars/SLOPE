@@ -330,6 +330,10 @@ plot.TrainedSLOPE <- function(
 
 #' Plot cluster structure
 #'
+#' Note that this function requires the `patterns` argument to be set to
+#' `TRUE` in the call to [SLOPE()]. Calling this function on a
+#' `SLOPE` object without patterns will result in an error.
+#'
 #' @param x an object of class `'SLOPE'`
 #' @param plot_signs logical, indicating whether to plot signs of estimated
 #' coefficients on the plot

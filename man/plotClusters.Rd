@@ -40,7 +40,9 @@ Invisibly returns NULL. The function is called for its
 side effect of producing a plot.
 }
 \description{
-Plot cluster structure
+Note that this function requires the \code{patterns} argument to be set to
+\code{TRUE} in the call to \code{\link[=SLOPE]{SLOPE()}}. Calling this function on a
+\code{SLOPE} object without patterns will result in an error.
 }
 \examples{
 set.seed(10)
