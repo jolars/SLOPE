@@ -443,7 +443,7 @@ plotClusters <- function(
     breaks = breaks,
     axes = FALSE,
     xlab = xlabel,
-    ylab = "variable"
+    ylab = "Variable"
   )
 
 
