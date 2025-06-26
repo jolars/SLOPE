@@ -429,7 +429,7 @@ plotClusters <- function(
 
   if (show_alpha) {
     step <- round(object$alpha, 3)
-    xlabel <- "alpha"
+    xlabel <- expression(alpha)
   } else {
     step <- seq_len(ncol(mat))
     xlabel <- "path step"
