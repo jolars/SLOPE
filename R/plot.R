@@ -366,7 +366,6 @@ plot.TrainedSLOPE <- function(
 #'
 #' plotClusters(fit)
 #' plotClusters(fit, alpha_steps = 1:10)
-
 plotClusters <- function(
   x,
   plot_signs = FALSE,
