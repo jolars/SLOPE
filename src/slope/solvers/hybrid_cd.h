@@ -10,7 +10,6 @@
 #include "../math.h"
 #include "slope_threshold.h"
 #include <Eigen/Core>
-#include <optional>
 #include <random>
 #include <vector>
 
@@ -311,7 +310,7 @@ computeClusterGradientAndHessian(const Eigen::SparseMatrixBase<T>& x,
  * @param beta The coefficients
  * @param residual The residual vector
  * @param clusters The cluster information, stored in a Cluster object.
- * @param lambda Regularization weights
+ * @param lambda_cumsum Cumulative sum of the lambda sequence.
  * @param x The design matrix
  * @param w Working weights
  * @param x_centers The center values of the data matrix columns
@@ -332,7 +331,7 @@ coordinateDescent(Eigen::VectorXd& beta0,
                   Eigen::VectorXd& beta,
                   Eigen::MatrixXd& residual,
                   Clusters& clusters,
-                  const Eigen::ArrayXd& lambda,
+                  const Eigen::ArrayXd& lambda_cumsum,
                   const T& x,
                   const Eigen::MatrixXd& w,
                   const Eigen::VectorXd& x_centers,
@@ -416,9 +415,10 @@ coordinateDescent(Eigen::VectorXd& beta0,
     double c_tilde;
     int new_index;
 
-    std::tie(c_tilde, new_index) =
-      slopeThreshold(c_old - grad / hess, c_ind, lambda / hess, clusters);
+    std::tie(c_tilde, new_index) = slopeThreshold(
+      c_old - grad / hess, c_ind, lambda_cumsum / hess, clusters);
 
+    assert(c_tilde == 0 || new_index < clusters.size());
     assert(new_index >= 0 && new_index <= clusters.size());
 
     double c_diff = c_old - c_tilde;

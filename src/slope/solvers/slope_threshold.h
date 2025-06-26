@@ -20,14 +20,14 @@ namespace slope {
  *
  * @param x The value of x.
  * @param j The value of j.
- * @param lambdas The array of lambdas.
+ * @param lambda_cumsum Cumulative sum of the lambda sequence.
  * @param clusters The clusters object.
  * @return A tuple containing the slope threshold and the index.
  */
 std::tuple<double, int>
 slopeThreshold(const double x,
                const int j,
-               const Eigen::ArrayXd lambdas,
+               const Eigen::ArrayXd& lambda_cumsum,
                const Clusters& clusters);
 
 }

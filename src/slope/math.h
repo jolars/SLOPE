@@ -47,12 +47,16 @@ sign(T val)
  */
 template<typename T>
 Eigen::ArrayXd
-cumSum(const T& x)
+cumSum(const T& x, const bool leading_zero = false)
 {
-  std::vector<double> cum_sum(x.size());
-  std::partial_sum(x.begin(), x.end(), cum_sum.begin(), std::plus<double>());
+  const size_t start = leading_zero ? 1 : 0;
+  Eigen::ArrayXd out(x.size() + start);
 
-  Eigen::Map<Eigen::ArrayXd> out(cum_sum.data(), cum_sum.size());
+  if (leading_zero) {
+    out(0) = 0.0;
+  }
+
+  std::partial_sum(x.begin(), x.end(), out.begin() + start);
 
   return out;
 }

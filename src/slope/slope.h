@@ -840,7 +840,7 @@ public:
 
     int m = y.cols();
 
-    Eigen::ArrayXd lambda_relax = Eigen::ArrayXd::Zero(p * m);
+    Eigen::ArrayXd lambda_cumsum_relax = Eigen::ArrayXd::Zero(p * m + 1);
 
     auto working_set = activeSet(beta);
 
@@ -906,7 +906,7 @@ public:
                                                     beta,
                                                     working_residual,
                                                     clusters,
-                                                    lambda_relax,
+                                                    lambda_cumsum_relax,
                                                     x,
                                                     w,
                                                     x_centers,
@@ -1018,7 +1018,7 @@ private:
   std::optional<int> max_clusters = std::nullopt;
   std::optional<int> random_seed = 0;
   std::string alpha_type = "path";
-  std::string cd_type = "cyclical";
+  std::string cd_type = "permuted";
   std::string centering_type = "mean";
   std::string lambda_type = "bh";
   std::string loss_type = "quadratic";

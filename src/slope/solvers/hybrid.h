@@ -13,6 +13,7 @@
 #include "pgd.h"
 #include "solver.h"
 #include <memory>
+#include <optional>
 
 namespace slope {
 
@@ -176,6 +177,10 @@ private:
 
     MatrixXd residual = eta - z;
 
+    Eigen::ArrayXd lambda_cumsum(lambda.size() + 1);
+    lambda_cumsum(0) = 0.0;
+    std::partial_sum(lambda.begin(), lambda.end(), lambda_cumsum.begin() + 1);
+
     for (int it = 0; it < this->cd_iterations; ++it) {
       double old_obj =
         computeObjective(penalty, beta, residual, w, lambda, working_set);
@@ -190,7 +195,7 @@ private:
                         beta,
                         residual,
                         clusters,
-                        lambda,
+                        lambda_cumsum,
                         x,
                         w,
                         x_centers,

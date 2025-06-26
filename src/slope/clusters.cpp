@@ -96,6 +96,7 @@ Clusters::update(const int old_index, const int new_index, const double c_new)
   assert(new_index <= size());
 
   auto c_old = coeff(old_index);
+  assert(c_new == 0 || new_index < size());
 
   if (c_new != c_old) {
     if (c_new == 0) {
