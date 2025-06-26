@@ -371,6 +371,14 @@ plotClusters <- function(
   object <- x
 
   pat <- object$patterns
+
+  if (is.null(pat)) {
+    stop(
+      "No patterns found in the SLOPE object.",
+      "Please run SLOPE with `patterns = TRUE`."
+    )
+  }
+
   pat[[1]] <- as.matrix(numeric(length(object$lambda)), ncol = 1)
 
   if (is.null(alpha_steps)) {
