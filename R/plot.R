@@ -341,8 +341,10 @@ plot.TrainedSLOPE <- function(
 #' steps in the path should be plotted.
 #' @param alpha_steps a vector of integer alpha steps to plot. If `NULL`,
 #' all the steps are plotted.
+#' @param palette a character string specifying the color palette to use for
+#' the clusters. This is passed to [grDevices::hcl.colors()].
 #'
-#' @seealso [SLOPE()]
+#' @seealso [SLOPE()], [graphics::image()], [graphics::text()].
 #'
 #' @return Invisibly returns NULL. The function is called for its
 #'   side effect of producing a plot.
@@ -366,7 +368,8 @@ plotClusters <- function(
   color_clusters = TRUE,
   include_zeroes = TRUE,
   show_alpha = FALSE,
-  alpha_steps = NULL
+  alpha_steps = NULL,
+  palette = "viridis"
 ) {
   object <- x
 
@@ -408,9 +411,17 @@ plotClusters <- function(
   abs_vals <- sort(unique(as.vector(abs_mat)))
 
   if (color_clusters) {
+    n_clusters <- length(abs_vals)
+
     my_colors <- c(
       "white",
-      grDevices::rainbow(length(abs_vals) - 1, alpha = 0.7)
+      grDevices::hcl.colors(
+        n_clusters - 1,
+        palette = palette,
+        alpha = NULL,
+        rev = FALSE,
+        fixup = TRUE
+      )
     )
   } else {
     my_colors <- c("white", rep("grey", length(abs_vals) - 1))
@@ -435,19 +446,12 @@ plotClusters <- function(
     ylab = "variable"
   )
 
-  graphics::box(col = "black", lwd = 1.5)
-  graphics::axis(
-    1,
-    at = seq(0, 1, length.out = ncol(mat)),
-    labels = step,
-    las = 2
-  )
-  graphics::axis(
-    2,
-    at = seq(0, 1, length.out = nrow(mat)),
-    labels = rownames(mat),
-    las = 1
-  )
+
+  x_coords <- seq(0, 1, length.out = ncol(mat))
+  x_coords <- x_coords + mean(x_coords[1:2])
+
+  y_coords <- seq(0, 1, length.out = nrow(mat))
+  y_coords <- y_coords + mean(y_coords[1:2])
 
   if (plot_signs) {
     for (i in seq_len(nrow(mat))) {
@@ -463,21 +467,22 @@ plotClusters <- function(
     }
   }
 
-  x_coords <- seq(0, 1, length.out = ncol(mat))
-  x_coords <- x_coords + mean(x_coords[1:2])
+  graphics::abline(v = x_coords, col = "white")
+  graphics::abline(h = y_coords, col = "white")
 
-  y_coords <- seq(0, 1, length.out = nrow(mat))
-  y_coords <- y_coords + mean(y_coords[1:2])
+  graphics::box()
 
-  graphics::abline(
-    v = x_coords,
-    col = grDevices::adjustcolor("black", alpha = 0.5),
-    lwd = 0.5
+  graphics::axis(
+    1,
+    at = seq(0, 1, length.out = ncol(mat)),
+    labels = step,
+    las = 2
   )
-  graphics::abline(
-    h = y_coords,
-    col = grDevices::adjustcolor("black", alpha = 0.5),
-    lwd = 0.5
+  graphics::axis(
+    2,
+    at = seq(0, 1, length.out = nrow(mat)),
+    labels = rownames(mat),
+    las = 1
   )
 
   invisible()
