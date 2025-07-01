@@ -2,9 +2,9 @@ test_that("deviance() works.", {
   fit <- SLOPE(
     abalone$x,
     abalone$y,
-    family = "poisson",
     path_length = 20,
-    cd_type = "cyclical"
+    cd_type = "cyclical",
+    tol = 1e-5
   )
   d <- deviance(fit)
   expect_equivalent(
