@@ -1,3 +1,9 @@
+# SLOPE 1.0.1
+
+## Bug Fixes
+
+- Fixed a test error on the m1-san platform.
+
 # SLOPE 1.0.0
 
 This update of SLOPE brings an entirely different C++ implementation of the
