@@ -2,7 +2,7 @@
 
 ## Bug Fixes
 
-- Fixed a test error on the m1-san platform.
+- Fixed a test error on the M1mac platform.
 
 # SLOPE 1.0.0
 
