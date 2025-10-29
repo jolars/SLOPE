@@ -76,7 +76,6 @@ public:
    * the linear predictor eta. \f(\frac{\partial^2 L}{\partial \eta^2}\f)
    *
    * @param eta Linear predictor.
-   * @param y Response.
    * @return The residual.
    */
   virtual Eigen::MatrixXd hessianDiagonal(const Eigen::MatrixXd& eta) = 0;

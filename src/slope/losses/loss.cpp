@@ -1,5 +1,5 @@
-#include "slope/losses/loss.h"
 #include <Eigen/Core>
+#include <slope/losses/loss.h>
 
 namespace slope {
 

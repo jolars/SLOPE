@@ -23,7 +23,7 @@ namespace slope {
  * matrices)
  *
  * @param x Input matrix
- * @param k Column index to compute derivatives for
+ * @param ind Column index to compute derivatives for
  * @param w Vector of weights
  * @param residual Residual vector
  * @param x_centers Vector of feature centers (means)
@@ -107,7 +107,7 @@ computeGradientAndHessian(const T& x,
  * gradient and Hessian needed for the coordinate descent update.
  *
  * @param x Input matrix
- * @param j Cluster index
+ * @param c_ind Cluster index
  * @param s Vector of signs for each variable in the cluster
  * @param clusters The cluster information object
  * @param w Weights
@@ -187,7 +187,7 @@ computeClusterGradientAndHessian(const Eigen::MatrixBase<T>& x,
  * computation for this data structure.
  *
  * @param x Input sparse matrix
- * @param j Cluster index
+ * @param c_ind Cluster index
  * @param s Vector of signs for each variable in the cluster
  * @param clusters The cluster information object
  * @param w Vector of weights
@@ -320,6 +320,7 @@ computeClusterGradientAndHessian(const Eigen::SparseMatrixBase<T>& x,
  * @param rng Random number generator for shuffling indices in permuted CD.
  * @param update_clusters Flag indicating whether to update the clusters
  *   after each uupdate.
+ * @param cd_type Type of coordinate descent to use ("cyclical" or "permuted")
  *
  * @see Clusters
  * @see SortedL1Norm

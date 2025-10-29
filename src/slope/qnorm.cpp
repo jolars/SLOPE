@@ -1,3 +1,4 @@
+#include "qnorm.h"
 #include <array>
 #include <cmath>
 #include <limits>

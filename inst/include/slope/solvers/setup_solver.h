@@ -27,6 +27,7 @@ namespace slope {
  * optimization (Hybrid solver)
  * @param cd_iterations Frequency of proximal gradient descent updates (Hybrid
  * solver)
+ * @param cd_type Type of coordinate descent to use ("cyclical" or "permuted")
  * @param random_seed Optional random seed for reproducibility
  *
  * @return std::unique_ptr<SolverBase> A unique pointer to the

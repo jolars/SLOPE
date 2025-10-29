@@ -1,6 +1,6 @@
-#include "slope/folds.h"
 #include <algorithm>
 #include <random>
+#include <slope/folds.h>
 
 namespace slope {
 

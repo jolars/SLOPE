@@ -1,8 +1,8 @@
-#include "slope/losses/setup_loss.h"
-#include "slope/losses/logistic.h"
-#include "slope/losses/multinomial.h"
-#include "slope/losses/poisson.h"
-#include "slope/losses/quadratic.h"
+#include <slope/losses/logistic.h>
+#include <slope/losses/multinomial.h>
+#include <slope/losses/poisson.h>
+#include <slope/losses/quadratic.h>
+#include <slope/losses/setup_loss.h>
 
 namespace slope {
 

@@ -1,8 +1,8 @@
-#include "slope/regularization_sequence.h"
-#include "slope/math.h"
-#include "slope/qnorm.h"
-#include "slope/utils.h"
+#include "qnorm.h"
 #include <cassert>
+#include <slope/math.h>
+#include <slope/regularization_sequence.h>
+#include <slope/utils.h>
 
 namespace slope {
 

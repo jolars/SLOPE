@@ -1,5 +1,5 @@
-#include "slope/solvers/slope_threshold.h"
-#include "slope/math.h"
+#include <slope/math.h>
+#include <slope/solvers/slope_threshold.h>
 
 namespace slope {
 

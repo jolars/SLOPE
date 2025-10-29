@@ -3,12 +3,12 @@
  * @brief Hybrid solver implementation for SLOPE
  */
 
-#include "slope/solvers/hybrid.h"
-#include "slope/losses/loss.h"
-#include "slope/sorted_l1_norm.h"
 #include <Eigen/Dense>
 #include <Eigen/SparseCore>
 #include <memory>
+#include <slope/losses/loss.h>
+#include <slope/solvers/hybrid.h>
+#include <slope/sorted_l1_norm.h>
 
 namespace slope {
 

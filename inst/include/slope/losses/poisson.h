@@ -55,7 +55,6 @@ public:
    * @brief Calculates hessian diagonal
    *
    * @param eta Linear predictor
-   * @param y Response
    * @return A matrix of ones (n x m)
    */
   Eigen::MatrixXd hessianDiagonal(const Eigen::MatrixXd& eta) override;

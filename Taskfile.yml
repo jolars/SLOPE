@@ -83,6 +83,7 @@ tasks:
       - cp -ri tmp/include inst/
       - rm -rf tmp
       - git add src/slope
+      - git add inst/include
       - 'git commit -m "feat: update libslope to {{.VERSION}}" -m "Release:
         https://github.com/jolars/libslope/releases/tag/{{.VERSION}}"'
     silent: true

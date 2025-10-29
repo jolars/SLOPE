@@ -113,57 +113,14 @@ struct CvConfig
   std::optional<std::vector<std::vector<std::vector<int>>>> predefined_folds;
 };
 
-/**
- * @brief Creates a grid of parameter combinations from parameter value ranges
- *
- * @param param_values Map of parameter names to vectors of possible values
- * @return std::vector<std::map<std::string, double>> Vector of parameter
- * combinations
- *
- * This function takes a map where keys are parameter names and values are
- * vectors of possible values for each parameter, then generates all possible
- * combinations.
- */
+namespace detail {
+
 std::vector<std::map<std::string, double>>
 createGrid(const std::map<std::string, std::vector<double>>& param_values);
 
-/**
- * @brief Identifies the best parameters from cross-validation results
- *
- * @param cv_result Cross-validation results to analyze and update
- * @param scorer The scoring metric used to evaluate performance
- *
- * This function examines all cross-validation results across the parameter grid
- * and updates the cv_result with information about the best parameter
- * combination, including the best score and corresponding indices.
- */
 void
 findBestParameters(CvResult& cv_result, const std::unique_ptr<Score>& scorer);
 
-/**
- * @brief Fits a SLOPE model on a single cross-validation fold for dense
- * matrices
- *
- * @tparam T The type of the design matrix (must be a dense matrix type)
- * @param x The design matrix containing predictors
- * @param y The response matrix
- * @param folds Cross-validation folds object containing train/test split
- * indices
- * @param loss Loss function object for the model
- * @param scorer Scoring metric to evaluate model performance
- * @param alphas Regularization parameter values to evaluate
- * @param thread_model SLOPE model instance used for fitting (thread-local copy)
- * @param fold Index of the fold to use as test set
- * @param rep Index of the repetition
- * @param gamma Relaxation parameter for the relaxed SLOPE (default: 0.0,)
- * @param copy_x Whether to copy the design matrix for each fold (default: true)
- * @return Eigen::ArrayXd Array of scores for each alpha value on this fold
- *
- * This function fits a SLOPE model on the training data for a specific fold and
- * evaluates performance on the test data. It supports both copying data or
- * using views depending on the copy_x parameter, and handles relaxation if
- * requested.
- */
 template<typename T>
 Eigen::ArrayXd
 fitToFold(Eigen::MatrixBase<T>& x,
@@ -224,31 +181,6 @@ fitToFold(Eigen::MatrixBase<T>& x,
   return scores;
 }
 
-/**
- * @brief Fits a SLOPE model on a single cross-validation fold for sparse
- * matrices
- *
- * @tparam T The type of the design matrix (must be a sparse matrix type)
- * @param x The sparse design matrix containing predictors
- * @param y The response matrix
- * @param folds Cross-validation folds object containing train/test split
- * indices
- * @param loss Loss function object for the model
- * @param scorer Scoring metric to evaluate model performance
- * @param alphas Regularization parameter values to evaluate
- * @param thread_model SLOPE model instance used for fitting (thread-local copy)
- * @param fold Index of the fold to use as test set
- * @param rep Index of the repetition
- * @param gamma Relaxation parameter for post-fitting relaxation (default: 0.0)
- * @param copy_x Whether to copy the design matrix for each fold (default: true,
- *        but ignored for sparse matrices which are always copied)
- * @return Eigen::ArrayXd Array of scores for each alpha value on this fold
- *
- * This function is a specialization for sparse matrices that fits a SLOPE model
- * on the training data for a specific fold and evaluates performance on the
- * test data. For sparse matrices, the design matrix is always copied regardless
- * of the copy_x parameter.
- */
 template<typename T>
 Eigen::ArrayXd
 fitToFold(Eigen::SparseMatrixBase<T>& x,
@@ -282,6 +214,8 @@ fitToFold(Eigen::SparseMatrixBase<T>& x,
 
   return scores;
 }
+
+} // namespace detail
 
 /**
  * @brief Performs cross-validation on a SLOPE model to select optimal
@@ -329,7 +263,7 @@ crossValidate(Slope model,
     hyperparams[key] = values;
   }
 
-  auto grid = createGrid(hyperparams);
+  auto grid = detail::createGrid(hyperparams);
 
   // Total number of evaluations (n_repeats * n_folds)
   Folds folds =
@@ -376,17 +310,17 @@ crossValidate(Slope model,
 
         Slope thread_model = model;
 
-        scores.row(i) = fitToFold(x.derived(),
-                                  y,
-                                  folds,
-                                  loss,
-                                  scorer,
-                                  result.alphas,
-                                  thread_model,
-                                  fold,
-                                  rep,
-                                  gamma,
-                                  config.copy_x);
+        scores.row(i) = detail::fitToFold(x.derived(),
+                                          y,
+                                          folds,
+                                          loss,
+                                          scorer,
+                                          result.alphas,
+                                          thread_model,
+                                          fold,
+                                          rep,
+                                          gamma,
+                                          config.copy_x);
 
       } catch (const std::exception& e) {
         thread_errors[i] = e.what();
@@ -424,7 +358,7 @@ crossValidate(Slope model,
   Eigen::setNbThreads(0);
 #endif
 
-  findBestParameters(cv_result, scorer);
+  detail::findBestParameters(cv_result, scorer);
 
   return cv_result;
 }

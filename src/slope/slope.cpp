@@ -1,9 +1,9 @@
-#include "slope/slope.h"
-#include "slope/solvers/setup_solver.h"
-#include "slope/utils.h"
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <set>
+#include <slope/slope.h>
+#include <slope/solvers/setup_solver.h>
+#include <slope/utils.h>
 
 namespace slope {
 

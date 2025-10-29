@@ -1,6 +1,7 @@
-#include "slope/cv.h"
+#include <slope/cv.h>
 
 namespace slope {
+namespace detail {
 
 std::vector<std::map<std::string, double>>
 createGrid(const std::map<std::string, std::vector<double>>& param_values)
@@ -60,4 +61,5 @@ findBestParameters(CvResult& cv_result, const std::unique_ptr<Score>& scorer)
   }
 }
 
+} // namespace detail
 } // namespace slope

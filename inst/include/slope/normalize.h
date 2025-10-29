@@ -185,8 +185,6 @@ normalize(Eigen::MatrixBase<T>& x,
  * "manual", or "standardization").
  * @param scaling_type A string specifying the normalization type ("none",
  * "manual", or "standardization").
- * @param modify_x If true, performs in-place scaling on x; otherwise, leaves x
- * unchanged.
  *
  * @return true if normalization succeeds, false otherwise.
  */

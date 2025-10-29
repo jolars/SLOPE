@@ -301,6 +301,18 @@ subsetCols(const Eigen::MatrixBase<T>& x, const std::vector<int>& indices)
   return x.derived()(Eigen::all, indices);
 }
 
+/**
+ * Extracts selected columns from a sparse matrix.
+ *
+ * Creates a new sparse matrix containing only the columns specified by the
+ * indices vector. The resulting matrix preserves the sparsity structure and
+ * maintains the original row ordering.
+ *
+ * @param x Input sparse matrix
+ * @param indices Vector of column indices to extract (0-based)
+ *
+ * @return Sparse matrix containing only the selected columns
+ */
 template<typename T>
 T
 subsetCols(const Eigen::SparseMatrixBase<T>& x, const std::vector<int>& indices)

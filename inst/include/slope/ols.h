@@ -16,6 +16,20 @@
 namespace slope {
 namespace detail {
 
+/**
+ * Fits ordinary least squares (OLS) regression using dense matrices.
+ *
+ * This function performs OLS regression using QR decomposition with column
+ * pivoting for numerical stability. Optionally includes an intercept term.
+ *
+ * @param X Feature matrix (dense)
+ * @param y Response vector
+ * @param fit_intercept Whether to include an intercept term (default: true)
+ *
+ * @return std::pair<double, Eigen::VectorXd> containing:
+ *         - first: Intercept value (0.0 if fit_intercept is false)
+ *         - second: Coefficient vector for predictors
+ */
 template<typename T>
 std::pair<double, Eigen::VectorXd>
 fitOls(const Eigen::MatrixBase<T>& X,
@@ -48,6 +62,21 @@ fitOls(const Eigen::MatrixBase<T>& X,
   return { intercept, coeffs };
 }
 
+/**
+ * Fits ordinary least squares (OLS) regression using sparse matrices.
+ *
+ * This function performs OLS regression for sparse feature matrices using
+ * sparse matrix operations. Optionally includes an intercept term by
+ * augmenting the sparse matrix with a dense column of ones.
+ *
+ * @param X Feature matrix (sparse)
+ * @param y Response vector  
+ * @param fit_intercept Whether to include an intercept term (default: true)
+ *
+ * @return std::pair<double, Eigen::VectorXd> containing:
+ *         - first: Intercept value (0.0 if fit_intercept is false)
+ *         - second: Coefficient vector for predictors
+ */
 template<typename T>
 std::pair<double, Eigen::VectorXd>
 fitOls(const Eigen::SparseMatrixBase<T>& X,

@@ -1,6 +1,6 @@
-#include "slope/losses/logistic.h"
-#include "slope/constants.h"
-#include "slope/math.h"
+#include <slope/constants.h>
+#include <slope/losses/logistic.h>
+#include <slope/math.h>
 
 namespace slope {
 

@@ -1,4 +1,4 @@
-#include "slope/normalize.h"
+#include <slope/normalize.h>
 
 namespace slope {
 

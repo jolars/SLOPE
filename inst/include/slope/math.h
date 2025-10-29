@@ -42,6 +42,7 @@ sign(T val)
  *
  * @tparam T The type of the input array.
  * @param x The input array.
+ * @param leading_zero If true, the output array will have an additional leading
  * @return An Eigen::ArrayXd containing the cumulative sum of the elements in
  * the input array.
  */
@@ -778,6 +779,24 @@ mins(const Eigen::MatrixBase<T>& x)
   return x.colwise().minCoeff();
 }
 
+/**
+ * Computes the gradient for clustered variables.
+ *
+ * This function calculates the gradient of the loss function with respect
+ * to the clustered coefficients, taking into account the cluster structure
+ * where multiple variables may have the same coefficient magnitude.
+ *
+ * @param beta Current coefficient vector (modified in-place)
+ * @param residual Current residual matrix (modified in-place)
+ * @param clusters Cluster information object containing variable groupings
+ * @param x Input feature matrix
+ * @param w Weight matrix for observations
+ * @param x_centers Vector of feature centers (means) for normalization
+ * @param x_scales Vector of feature scales (standard deviations) for normalization
+ * @param jit_normalization Normalization strategy applied to features
+ *
+ * @return Gradient vector with respect to cluster coefficients
+ */
 template<typename T>
 Eigen::VectorXd
 clusterGradient(Eigen::VectorXd& beta,

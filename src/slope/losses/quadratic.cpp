@@ -1,4 +1,4 @@
-#include "slope/losses/quadratic.h"
+#include <slope/losses/quadratic.h>
 
 namespace slope {
 

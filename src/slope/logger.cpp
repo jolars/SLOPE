@@ -1,4 +1,4 @@
-#include "slope/logger.h"
+#include <slope/logger.h>
 
 #ifdef _OPENMP
 #include <omp.h>
