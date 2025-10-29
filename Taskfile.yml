@@ -18,7 +18,8 @@ tasks:
 
   docs:
     cmds:
-      - 'Rscript -e ''devtools::document(roclets = c("rd", "collate", "namespace"))'''
+      - 'Rscript -e ''devtools::document(roclets = c("rd", "collate",
+        "namespace"))'''
 
   compile-attributes:
     cmds:
@@ -66,14 +67,22 @@ tasks:
     cmds:
       - echo "Fetching latest libslope release..."
       - mkdir -p tmp
-      - gh release download --repo jolars/libslope --dir tmp/ --archive=tar.gz --clobber
-      - cd tmp && tar xzf *.tar.gz
+      - mkdir -p inst/include
+      - gh release download --repo jolars/libslope --dir tmp/ --archive=tar.gz
+        --clobber
+      - cd tmp && tar xzf *.tar.gz --strip-components=1
       - rm -rf src/slope
       - mkdir -p src/slope
-      - cp -r tmp/*/src/slope/* src/slope/
-      - echo "# WARNING! DO NOT MODIFY FILES IN THIS DIRECTORY" >> src/slope/DO_NOT_MODIFY
-      - echo "# These files are automatically updated from https://github.com/jolars/libslope" >> src/slope/DO_NOT_MODIFY
+      - cp -ri tmp/src/slope/* src/slope/
+      - echo "# WARNING! DO NOT MODIFY FILES IN THIS DIRECTORY" >>
+        src/slope/DO_NOT_MODIFY
+      - echo "# These files are automatically updated from
+        https://github.com/jolars/libslope" >> src/slope/DO_NOT_MODIFY
+      - rm -rf inst/include/slope
+      - rm -rf inst/include/slope.h
+      - cp -ri tmp/include inst/
       - rm -rf tmp
       - git add src/slope
-      - 'git commit -m "feat: update libslope to {{.VERSION}}" -m "Release: https://github.com/jolars/libslope/releases/tag/{{.VERSION}}"'
+      - 'git commit -m "feat: update libslope to {{.VERSION}}" -m "Release:
+        https://github.com/jolars/libslope/releases/tag/{{.VERSION}}"'
     silent: true
