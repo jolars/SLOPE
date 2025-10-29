@@ -1,7 +1,7 @@
-#include "sorted_l1_norm.h"
-#include "constants.h"
-#include "math.h"
-#include "utils.h"
+#include "slope/sorted_l1_norm.h"
+#include "slope/constants.h"
+#include "slope/math.h"
+#include "slope/utils.h"
 
 namespace slope {
 

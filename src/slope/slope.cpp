@@ -1,6 +1,6 @@
-#include "slope.h"
-#include "solvers/setup_solver.h"
-#include "utils.h"
+#include "slope/slope.h"
+#include "slope/solvers/setup_solver.h"
+#include "slope/utils.h"
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <set>

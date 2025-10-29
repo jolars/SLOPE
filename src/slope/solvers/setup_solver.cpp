@@ -1,5 +1,5 @@
-#include "hybrid.h"
-#include "pgd.h"
+#include "slope/solvers/hybrid.h"
+#include "slope/solvers/pgd.h"
 #include <memory>
 #include <stdexcept>
 #include <string>

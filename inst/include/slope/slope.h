@@ -865,7 +865,7 @@ public:
     std::mt19937 rng;
 
     if (random_seed.has_value()) {
-      rng.seed(random_seed.value());
+      rng.seed(*random_seed);
     } else {
       rng.seed(std::random_device{}());
     }

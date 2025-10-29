@@ -1,6 +1,6 @@
-#include "clusters.h"
-#include "math.h"
-#include "utils.h"
+#include "slope/clusters.h"
+#include "slope/math.h"
+#include "slope/utils.h"
 
 namespace slope {
 

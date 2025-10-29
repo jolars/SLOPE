@@ -1,4 +1,4 @@
-#include "utils.h"
+#include "slope/utils.h"
 #include <stdexcept>
 
 namespace slope {

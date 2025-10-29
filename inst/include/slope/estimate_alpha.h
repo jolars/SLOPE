@@ -47,7 +47,8 @@ estimateNoise(Eigen::EigenBase<T>& x,
     }
   } else {
     // Normal case with predictors
-    auto [ols_intercept, ols_coefs] = fitOls(x.derived(), y, fit_intercept);
+    auto [ols_intercept, ols_coefs] =
+      detail::fitOls(x.derived(), y, fit_intercept);
     residuals = y - x.derived() * ols_coefs;
 
     if (fit_intercept) {

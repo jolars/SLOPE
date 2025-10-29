@@ -1,6 +1,6 @@
 #include "kkt_check.h"
-#include "math.h"
-#include "utils.h"
+#include "slope/math.h"
+#include "slope/utils.h"
 #include <Eigen/Core>
 
 namespace slope {

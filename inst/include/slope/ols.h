@@ -13,17 +13,9 @@
 #include <Eigen/SparseQR>
 #include <utility>
 
-/**
- * @brief Fits an OLS regression model using dense matrices
- *
- * @param X The design matrix with predictors (features) - dense representation
- * @param y The target/response vector
- * @param fit_intercept Whether to include an intercept term (default: true)
- *
- * @return std::pair containing:
- *         - double: Intercept term (or 0 if fit_intercept is false)
- *         - Eigen::VectorXd: Coefficient vector
- */
+namespace slope {
+namespace detail {
+
 template<typename T>
 std::pair<double, Eigen::VectorXd>
 fitOls(const Eigen::MatrixBase<T>& X,
@@ -56,17 +48,6 @@ fitOls(const Eigen::MatrixBase<T>& X,
   return { intercept, coeffs };
 }
 
-/**
- * @brief Fits an OLS regression model using sparse matrices
- *
- * @param X The design matrix with predictors (features) - sparse representation
- * @param y The target/response vector
- * @param fit_intercept Whether to include an intercept term (default: true)
- *
- * @return std::pair containing:
- *         - double: Intercept term (or 0 if fit_intercept is false)
- *         - Eigen::VectorXd: Coefficient vector
- */
 template<typename T>
 std::pair<double, Eigen::VectorXd>
 fitOls(const Eigen::SparseMatrixBase<T>& X,
@@ -111,3 +92,6 @@ fitOls(const Eigen::SparseMatrixBase<T>& X,
 
   return { intercept, coeffs };
 }
+
+} // namespace detail
+} // namespace slope

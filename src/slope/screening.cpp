@@ -3,10 +3,10 @@
  * @brief Implementation of screening rules for SLOPE regression optimization
  */
 
-#include "screening.h"
-#include "kkt_check.h"
-#include "math.h"
-#include "utils.h"
+#include "slope/screening.h"
+#include "slope/kkt_check.h"
+#include "slope/math.h"
+#include "slope/utils.h"
 #include <Eigen/Core>
 #include <stdexcept>
 

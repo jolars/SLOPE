@@ -1,5 +1,5 @@
-#include "math.h"
-#include "constants.h"
+#include "slope/math.h"
+#include "slope/constants.h"
 
 namespace slope {
 

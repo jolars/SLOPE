@@ -1,4 +1,4 @@
-#include "hybrid_cd.h"
+#include "slope/solvers/hybrid_cd.h"
 
 namespace slope {
 

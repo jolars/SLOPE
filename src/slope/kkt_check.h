@@ -1,9 +1,3 @@
-/**
- * @file
- * @brief Karush-Kuhn-Tucker (KKT) optimality condition checking for SLOPE
- * regression
- */
-
 #pragma once
 
 #include <Eigen/Core>

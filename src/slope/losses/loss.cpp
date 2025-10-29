@@ -1,4 +1,4 @@
-#include "loss.h"
+#include "slope/losses/loss.h"
 #include <Eigen/Core>
 
 namespace slope {

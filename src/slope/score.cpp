@@ -1,5 +1,5 @@
-#include "score.h"
-#include "constants.h"
+#include "slope/score.h"
+#include "slope/constants.h"
 #include <Eigen/Core>
 #include <memory>
 #include <vector>
