@@ -55,6 +55,11 @@ tasks:
     cmds:
       - "Rscript -e 'devtools::test()'"
 
+  readme:
+    cmds:
+      - Rscript -e 'rmarkdown::render("README.Rmd")'
+      - rm -rf README.html
+
   vignettes:
     cmds:
       - "Rscript -e 'devtools::build_vignettes()'"
