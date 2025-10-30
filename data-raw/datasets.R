@@ -268,3 +268,29 @@ student <- list(x = x2, y = y)
 usethis::use_data(student, overwrite = TRUE)
 
 unlink(tmp_file)
+
+# glioma (binary) -------------------------------------------------------
+
+tmp_file <- tempfile()
+tmp_dir <- tempdir()
+
+download.file(
+  "https://static-content.springer.com/esm/art%3A10.1038%2Fs41598-023-38243-1/MediaObjects/41598_2023_38243_MOESM2_ESM.xlsx",
+  tmp_file
+)
+
+dat <- readxl::read_excel(tmp_file)[, -1]
+colnames(dat)[1] <- "group"
+metabolites <- colnames(dat)[-1]
+
+glioma_data <- dat |>
+  dplyr::filter(group != "Meningioma") |>
+  dplyr::mutate(group = ifelse(group == "Healthy control", 0, 1))
+
+x <- as.matrix(glioma_data[, -1])
+y_raw <- as.vector(glioma_data[, 1])[["group"]]
+y <- factor(y_raw, levels = c(0, 1), labels = c("control", "case"))
+
+glioma <- list(x = x, y = y)
+
+usethis::use_data(glioma, overwrite = TRUE)
