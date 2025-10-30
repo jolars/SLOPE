@@ -1,0 +1,131 @@
+# Copilot Instructions for SLOPE
+
+## Repository Overview
+
+SLOPE is an R package that provides efficient implementations for Sorted L-One Penalized Estimation: generalized linear models regularized with the sorted L1-norm. The package supports ordinary least-squares regression, binomial regression, multinomial regression, and Poisson regression for both dense and sparse predictor matrices. The codebase includes predictor screening rules for fast solutions to high-dimensional problems.
+
+**Repository Stats:**
+- **Languages:** R (46 files), C++ (68 files with C++17 requirement)
+- **Size:** Medium-sized package (~52.5MB installed, mainly due to compiled C++ libraries)
+- **Dependencies:** Matrix, Rcpp, RcppEigen, BH, bigmemory
+- **Build System:** Task runner (Taskfile.yml) + standard R package tools
+
+## Build Instructions
+
+### Environment Setup
+- **R Version:** Requires R ≥ 3.5.0 (developed with R 4.4.3)
+- **C++ Standard:** C++17 required (specified in src/Makevars)
+- **Build Tools:** Task runner, Rcpp ecosystem
+- **Optional:** Nix environment available via `flake.nix` (use `direnv allow` if `.envrc` present)
+
+### Key Build Commands
+**ALWAYS run `task compile-attributes` or `Rcpp::compileAttributes()` before any build operation** - this is automatically handled by task dependencies but critical if running R commands directly.
+
+1. **Install Dependencies & Build Package:**
+   ```bash
+   task install        # Installs to local _libs directory (preferred)
+   # OR
+   task default        # Alias for install
+   ```
+
+2. **Run Tests:**
+   ```bash
+   task test           # ~2 seconds, 147 tests via testthat
+   ```
+
+3. **Full R Package Check:**
+   ```bash
+   task check          # ~1.5 minutes, includes documentation and R CMD check
+   ```
+
+4. **Build Package Archive:**
+   ```bash
+   task build          # Creates ../SLOPE_1.0.1.tar.gz
+   ```
+
+5. **Update Documentation:**
+   ```bash
+   task docs           # Generate Rd files via roxygen2
+   ```
+
+### Build Dependencies & Common Issues
+
+- **Critical:** Always run `Rcpp::compileAttributes()` before building
+- **OpenMP:** Required for parallel compilation (handled in Makevars)
+- **Installation Location:** Package installs to `_libs/` directory for development
+- **Timing:** Most builds complete in under 2 minutes; tests run in ~2 seconds
+
+**Build Warnings to Expect (non-critical):**
+- "installed size is 52.5Mb" - normal for C++ package with Eigen
+- "hidden files and directories (.clang-format)" - development file, safe to ignore
+- "unable to verify current time" - timestamp check issue in some environments
+
+## Project Layout & Architecture
+
+### Core Directory Structure
+```
+SLOPE/
+├── R/                   # R source code (20 files)
+│   ├── slope.R          # Main SLOPE() function
+│   ├── cv.R             # Cross-validation functions  
+│   ├── predict.R        # Prediction methods
+│   └── plot.R           # Plotting functions
+├── src/                 # C++ source code
+│   ├── Makevars         # Build configuration (C++17, OpenMP)
+│   ├── slope/           # Core C++ library (imported from libslope)
+│   └── *.cpp            # R-C++ interface files
+├── tests/testthat/      # Test suite (147 tests)
+├── inst/include/        # Header files for C++ library
+├── man/                 # Generated documentation
+├── vignettes/           # Package vignettes
+└── data/                # Example datasets
+```
+
+### Key Configuration Files
+- **DESCRIPTION:** Package metadata, dependencies, C++17 requirement
+- **NAMESPACE:** Auto-generated, do not edit manually
+- **Taskfile.yml:** Build automation (preferred over Makefile)
+- **src/Makevars:** C++ compilation flags and source file list
+- **_pkgdown.yml:** Website generation configuration
+
+### GitHub CI/CD Workflows
+Located in `.github/workflows/`:
+- **R-CMD-check.yaml:** Runs on Windows/Ubuntu with R release/devel (main validation)
+- **test-coverage.yaml:** Code coverage via codecov
+- **release.yaml:** Semantic release automation
+- **pkgdown.yaml:** Documentation website deployment
+
+**CI Expectations:** All workflows must pass. The R-CMD-check runs the same validation as `task check` locally.
+
+### Important Dependencies
+- **External C++ Library:** Core algorithms from `libslope` (auto-updated via `task update-libslope`)
+- **Rcpp Integration:** All C++ code accessed via Rcpp interface in `src/RcppExports.cpp`
+- **Matrix Operations:** Extensive use of Eigen library for linear algebra
+
+## Development Workflow
+
+### Making Changes
+1. **R Code Changes:** Edit files in `R/` directory
+2. **C++ Changes:** Avoid editing `src/slope/` (auto-generated from libslope)
+3. **Interface Changes:** Modify `src/*.cpp` for R-C++ interfaces
+4. **Documentation:** Use roxygen2 comments, run `task docs` to update
+
+### Validation Sequence
+```bash
+task install    # Build and install package (~30 seconds)
+task test       # Run test suite (~2 seconds)  
+task check      # Full R CMD check (~1.5 minutes)
+```
+
+### Common Pitfalls
+- **Never edit `NAMESPACE`** - auto-generated by roxygen2
+- **Don't modify `src/slope/`** - use `task update-libslope` to update
+- **Always recompile after C++ changes** - `task install` handles this
+- **Use local library** - package installs to `_libs/` not system R library
+
+### Testing Strategy
+- **Unit Tests:** Comprehensive testthat suite covers all major functions
+- **Integration Tests:** R CMD check includes example execution and vignette building  
+- **Coverage:** Tracked via codecov (target >80%)
+
+The build system is well-established and reliable. Trust these instructions and only explore alternative approaches if you encounter specific errors not covered here.
