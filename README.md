@@ -7,11 +7,9 @@
 
 [![R build
 status](https://github.com/jolars/SLOPE/workflows/R-CMD-check/badge.svg)](https://github.com/jolars/SLOPE/actions)
-[![Coverage
-status](https://codecov.io/gh/jolars/SLOPE/graph/badge.svg?token=SmorGv47Zg)](https://app.codecov.io/github/jolars/SLOPE)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/SLOPE)](https://CRAN.R-project.org/package=SLOPE)
-[![Codecov test
+[![Code
 coverage](https://codecov.io/gh/jolars/SLOPE/graph/badge.svg)](https://app.codecov.io/gh/jolars/SLOPE)
 <!-- badges: end -->
 
