@@ -1,3 +1,10 @@
+# SLOPE 1.1.0
+
+## New Features
+
+- A new data set, `glioma`, has been added to the package. It contains gene
+  expression measurements for patients with glioma along with healthy controls.
+
 # SLOPE 1.0.1
 
 ## Bug Fixes

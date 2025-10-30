@@ -57,6 +57,8 @@
                   devtools
                   languageserver
                   glmnet
+                  dplyr
+                  here
                   SLOPE
                   tidyverse
                   usethis
