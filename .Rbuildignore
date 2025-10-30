@@ -38,3 +38,4 @@
 ^air.toml$
 ^node_modules$
 ^\.releaserc\.json$
+^\.clang-format$
