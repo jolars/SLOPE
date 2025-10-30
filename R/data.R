@@ -218,5 +218,5 @@
 #'   M., Moniuszko, M., Kretowski, A., & Ciborowski, M. (2023). A comparison of
 #'   different machine-learning techniques for the selection of a panel of
 #'   metabolites allowing early detection of brain tumors. Scientific Reports,
-#'   13(1), 11044. <https://doi.org/10.1038/s41598-023-38243-1>
+#'   13(1), 11044. \doi{10.1038/s41598-023-38243-1}
 "glioma"
