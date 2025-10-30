@@ -51,6 +51,7 @@
               autoconf
               go-task
               quartoMinimal
+              pandoc
               llvmPackages.openmp
               (rWrapper.override {
                 packages = with rPackages; [
