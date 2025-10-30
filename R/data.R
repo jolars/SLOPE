@@ -188,7 +188,6 @@
 #'   Student Performance. In A. Brito and J. Teixeira Eds., Proceedings of 5th
 #'   FUture BUsiness TEChnology Conference (FUBUTEC 2008) pp. 5-12, Porto,
 #'   Portugal, April, 2008, EUROSIS, ISBN 978-9077381-39-7.
-#'   <http://www3.dsi.uminho.pt/pcortez/student.pdf>
 #' @source Dua, D. and Karra Taniskidou, E. (2017). UCI Machine Learning
 #'  Repository <http://archive.ics.uci.edu/ml/>. Irvine, CA: University of
 #'  California, School of Information and Computer Science.
