@@ -1,3 +1,10 @@
+# SLOPE 1.1.1
+
+## Small Changes
+
+- The citation information has been updated. Use `citation("SLOPE")` to see the
+  correct way to cite the package.
+
 # SLOPE 1.1.0
 
 ## New Features
