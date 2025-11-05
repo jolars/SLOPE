@@ -1,65 +1,19 @@
-year <- sub("-.*", "", meta$Date)
-
-if (!length(year)) {
-  i <- regexpr("(?<=\\s{1})\\d{4}(?=-{1})", meta$Built, perl = TRUE)
-  year <- substring(meta$Built, i, i + 3)
-}
-
-if (!length(year)) {
-  year <- substr(Sys.Date(), 1, 4)
-}
-
-pkg <- meta$Package
-vers <- meta$Version
-title <- meta$Title
-
-if (is.null(vers)) {
-  vers <- packageVersion("SLOPE")
-}
-
-vers <- paste("R package version", vers)
-
-author <- meta$`Authors@R`
-if (length(author)) {
-  aar <- .read_authors_at_R_field(author)
-  author <- Filter(function(e) {
-    !(is.null(e$given) && is.null(e$family)) && !is.na(match(
-      "aut",
-      e$role
-    ))
-  }, aar)
-  if (!length(author)) {
-    author <- Filter(function(e) {
-      !(is.null(e$given) && is.null(e$family)) && !is.na(match(
-        "cre",
-        e$role
-      ))
-    }, aar)
-  }
-}
-if (length(author)) {
-  has_authors_at_R_field <- TRUE
-} else {
-  has_authors_at_R_field <- FALSE
-  author <- as.person(meta$Author)
-}
-
-author <- format(author, include = c("given", "family"))
-if (length(author) > 1L) {
-  author <- paste(paste(head(author, -1L), collapse = ", "),
-    tail(author, 1L),
-    sep = " and "
-  )
-}
-
 bibentry(
-  bibtype = "Manual",
-  title   = paste0("{", pkg, "}: ", title),
-  author  = author,
-  year    = year,
-  note    = vers,
-  url     = "https://CRAN.R-project.org/package=SLOPE",
-  header  = "To cite the SLOPE package in publications, please use:"
+  bibtype = "Misc",
+  title = "Efficient Solvers for {{SLOPE}} in {{R}}, {{Python}}, {{Julia}}, and {{C}}++",
+  author = c(
+    person("Johan", "Larsson"),
+    person("Małgorzata", "Bogdan"),
+    person("Krystyna", "Grzesiak"),
+    person("Mathurin", "Massias"),
+    person("Jonas", "Wallin")
+  ),
+  number = "arXiv:2511.02430",
+  year = 2025,
+  month = "nov",
+  eprint = "2511.02430",
+  doi = "10.48550/arXiv.2511.02430",
+  header = "To cite the SLOPE package in publications, please use:"
 )
 
 bibentry(
@@ -72,7 +26,7 @@ bibentry(
     person("Weijie", "Su"),
     person("Emmanuel J.", "Candès")
   ),
-  journal = "The annals of applied statistics",
+  journal = "The Annals of Applied Statistics",
   volume = 9,
   number = 3,
   pages = "1103--1140",
@@ -80,4 +34,25 @@ bibentry(
   doi = "10.1214/15-AOAS842",
   issn = "1932-6157",
   header = "To cite the SLOPE method in publications, please use:"
+)
+
+bibentry(
+  bibtype = "InProceedings",
+  title = "Coordinate Descent for {{SLOPE}}",
+  author = c(
+    person("Johan", "Larsson"),
+    person("Quentin", "Klopfenstein"),
+    person("Mathurin", "Massias"),
+    person("Jonas", "Wallin")
+  ),
+  journal = "Proceedings of Machine Learning Research",
+  volume = 206,
+  pages = "4802--4821",
+  publisher = "PMLR",
+  series = "Proceedings of Machine Learning Research",
+  booktitle = "Proceedings of the 26th International Conference on Artificial Intelligence and Statistics",
+  address = "Valencia, Spain",
+  year = 2023,
+  month = "apr",
+  header = "To cite the hybrid coordinate descent optimization method used in this package, please use:"
 )

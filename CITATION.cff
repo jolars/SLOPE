@@ -1,13 +1,10 @@
 cff-version: 1.2.0
 title: 'SLOPE: Sorted L1 Penalized Estimation'
-message: >-
-  If you use this software, please cite it using
-  these metadata.
 type: software
 authors:
   - given-names: Johan
     family-names: Larsson
-    email: johanlarsson@outlook.com
+    email: johan@jolars.co
     affiliation: 'Department of Statistics, Lund University'
     orcid: 'https://orcid.org/0000-0002-4029-5945'
   - given-names: Jonas
@@ -63,3 +60,29 @@ keywords:
   - sparse regression
   - generalized linear models
 license: GPL-3.0-or-later
+message: If you use this software, please cite our article on
+  arXiv.
+preferred-citation:
+  authors:
+    - family: Larsson
+      given: Johan
+      orcid: "https://orcid.org/0000-0002-4029-5945"
+    - family: Bogdan
+      given: Malgorzata
+    - family: Grzesiak
+      given: Krystyna
+    - family: Massias
+      given: Mathurin
+    - family: Wallin
+      given: Jonas
+    - family-names: Larsson
+      given-names: Johan
+  date-published: 2025-11-05
+  doi: 10.48550/arXiv.2511.02430
+  url: https://joss.theoj.org/papers/10.21105/joss.08936
+  number: arXiv:2511.02430
+  publisher:
+    name: arXiv
+  title: "Efficient Solvers for SLOPE in R, Python, Julia, and C++"
+  type: article
+  source: arXiv.org
