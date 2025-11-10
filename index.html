@@ -82,17 +82,50 @@
 </div>
 <!-- badges: start -->
 
-<p>Efficient implementations for Sorted L-One Penalized Estimation (SLOPE): generalized linear models regularized with the sorted L1-norm. There is support for ordinary least-squares regression, binomial regression, multinomial regression, and poisson regression, as well as both dense and sparse predictor matrices. In addition, the package features predictor screening rules that enable efficient solutions to high-dimensional problems.</p>
+<p>Efficient implementations for Sorted L-One Penalized Estimation (SLOPE): generalized linear models regularized with the sorted L1-norm.</p>
+<div class="section level2">
+<h2 id="features">Features<a class="anchor" aria-label="anchor" href="#features"></a>
+</h2>
+<ul>
+<li>Gaussian (quadratic), binomial (logistic), multinomial logistic, and Poisson regression</li>
+<li>Sparse and dense input matrices</li>
+<li>Efficient hybrid coordinate descent algorithm</li>
+<li>Predictor (feature) screening rules that speed up fitting in high-dimensional settings</li>
+<li>Cross-validation</li>
+<li>Parallelized routines</li>
+<li>Duality-based stopping criteria for robust control of suboptimality</li>
+</ul>
+</div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You can install the current stable release from <a href="https://cran.r-project.org/" class="external-link">CRAN</a> with</p>
+<p>You can install the current stable release from <a href="https://cran.r-project.org/" class="external-link">CRAN</a> with the following command:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"SLOPE"</span><span class="op">)</span></span></code></pre></div>
-<p>or the development version from <a href="https://github.com/" class="external-link">GitHub</a> with</p>
+<p>Alternatively, you can install the development version from <a href="https://github.com/" class="external-link">GitHub</a> with the following command:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"jolars/SLOPE"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># install.packages("pak")</span></span>
+<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"jolars/SLOPE"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="getting-started">Getting Started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
+</h2>
+<p>By default, SLOPE fits a full regularization path to the given data. Here is an example of fitting a logistic SLOPE model to the built-in <code>heart</code> dataset.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://jolars.github.io/SLOPE/">SLOPE</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/SLOPE.html">SLOPE</a></span><span class="op">(</span><span class="va">heart</span><span class="op">$</span><span class="va">x</span>, <span class="va">heart</span><span class="op">$</span><span class="va">y</span>, family <span class="op">=</span> <span class="st">"binomial"</span><span class="op">)</span></span></code></pre></div>
+<p>We can plot the resulting regularization path:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-5-1.png" width="100%"></p>
+<p>We can also perform cross-validation to select optimal scaling of the regularization sequence:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">18</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">cvfit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cvSLOPE.html">cvSLOPE</a></span><span class="op">(</span><span class="va">heart</span><span class="op">$</span><span class="va">x</span>, <span class="va">heart</span><span class="op">$</span><span class="va">y</span>, family <span class="op">=</span> <span class="st">"binomial"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cvfit</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-6-1.png" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="versioning">Versioning<a class="anchor" aria-label="anchor" href="#versioning"></a>
