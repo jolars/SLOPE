@@ -16,6 +16,9 @@
 
 - The citation information has been updated. Use `citation("SLOPE")` to
   see the correct way to cite the package.
+- The y axis label for coefficients has changed from
+  `expression(hat(beta))` to `"Coefficients"` to avoid issues with
+  rendering in some environments, where the hat symbol would be cropped.
 
 ## SLOPE 1.1.0
 
