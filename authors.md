@@ -52,7 +52,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/jolars/SLOPE/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/jolars/SLOPE/blob/v1.2.0/inst/CITATION)
 
 Larsson J, Bogdan M, Grzesiak K, Massias M, Wallin J (2025). “Efficient
 Solvers for SLOPE in R, Python, Julia, and C++.”
