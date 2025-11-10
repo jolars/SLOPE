@@ -8,7 +8,7 @@
 #'
 #' Note that these sequences are automatically scaled (unless a value for
 #' the `alpha` parameter is manually supplied) when using [SLOPE()]. In this
-#' function, nu such scaling is attempted.
+#' function, no such scaling is attempted.
 #'
 #' @param n_lambda The number of lambdas to generate. This should typically
 #'   be equal to the number of predictors in your data set.

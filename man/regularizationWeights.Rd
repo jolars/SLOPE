@@ -51,7 +51,7 @@ this function, in particular the section \emph{Regularization Sequences}.
 
 Note that these sequences are automatically scaled (unless a value for
 the \code{alpha} parameter is manually supplied) when using \code{\link[=SLOPE]{SLOPE()}}. In this
-function, nu such scaling is attempted.
+function, no such scaling is attempted.
 }
 \examples{
 # compute different penalization sequences
