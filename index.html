@@ -118,22 +118,14 @@
 <p>We can plot the resulting regularization path:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
-<div class="figure" style="text-align: center">
-<img src="reference/figures/README-unnamed-chunk-5-1.png" alt="Regularization path for logistic SLOPE model on the `heart` dataset."><p class="caption">
-Regularization path for logistic SLOPE model on the <code>heart</code> dataset.
-</p>
-</div>
+<p><img src="reference/figures/README-unnamed-chunk-5-1.png" style="display: block; margin: auto;"></p>
 <p>We can also perform cross-validation to select optimal scaling of the regularization sequence:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">18</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">cvfit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cvSLOPE.html">cvSLOPE</a></span><span class="op">(</span><span class="va">heart</span><span class="op">$</span><span class="va">x</span>, <span class="va">heart</span><span class="op">$</span><span class="va">y</span>, family <span class="op">=</span> <span class="st">"binomial"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cvfit</span><span class="op">)</span></span></code></pre></div>
-<div class="figure" style="text-align: center">
-<img src="reference/figures/README-unnamed-chunk-6-1.png" alt="Cross-validation plot for logistic SLOPE model on the `heart` dataset."><p class="caption">
-Cross-validation plot for logistic SLOPE model on the <code>heart</code> dataset.
-</p>
-</div>
+<p><img src="reference/figures/README-unnamed-chunk-6-1.png" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">
 <h2 id="versioning">Versioning<a class="anchor" aria-label="anchor" href="#versioning"></a>
