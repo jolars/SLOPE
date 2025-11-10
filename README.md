@@ -15,28 +15,68 @@ coverage](https://codecov.io/gh/jolars/SLOPE/graph/badge.svg)](https://app.codec
 <!-- badges: end -->
 
 Efficient implementations for Sorted L-One Penalized Estimation (SLOPE):
-generalized linear models regularized with the sorted L1-norm. There is
-support for ordinary least-squares regression, binomial regression,
-multinomial regression, and poisson regression, as well as both dense
-and sparse predictor matrices. In addition, the package features
-predictor screening rules that enable efficient solutions to
-high-dimensional problems.
+generalized linear models regularized with the sorted L1-norm.
+
+## Features
+
+- Gaussian (quadratic), binomial (logistic), multinomial logistic, and
+  Poisson regression
+- Sparse and dense input matrices
+- Efficient hybrid coordinate descent algorithm
+- Predictor (feature) screening rules that speed up fitting in
+  high-dimensional settings
+- Cross-validation
+- Parallelized routines
+- Duality-based stopping criteria for robust control of suboptimality
 
 ## Installation
 
 You can install the current stable release from
-[CRAN](https://cran.r-project.org/) with
+[CRAN](https://cran.r-project.org/) with the following command:
 
 ``` r
 install.packages("SLOPE")
 ```
 
-or the development version from [GitHub](https://github.com/) with
+Alternatively, you can install the development version from
+[GitHub](https://github.com/) with the following command:
 
 ``` r
-# install.packages("remotes")
-remotes::install_github("jolars/SLOPE")
+# install.packages("pak")
+pak::pak("jolars/SLOPE")
 ```
+
+## Getting Started
+
+By default, SLOPE fits a full regularization path to the given data.
+Here is an example of fitting a logistic SLOPE model to the built-in
+`heart` dataset.
+
+``` r
+library(SLOPE)
+
+fit <- SLOPE(heart$x, heart$y, family = "binomial")
+```
+
+We can plot the resulting regularization path:
+
+``` r
+plot(fit)
+```
+
+<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
+
+We can also perform cross-validation to select optimal scaling of the
+regularization sequence:
+
+``` r
+set.seed(18)
+
+cvfit <- cvSLOPE(heart$x, heart$y, family = "binomial")
+plot(cvfit)
+```
+
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
 
 ## Versioning
 
