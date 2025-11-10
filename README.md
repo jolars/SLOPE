@@ -64,7 +64,7 @@ We can plot the resulting regularization path:
 plot(fit)
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
+![](man/figures/README-unnamed-chunk-5-1.png)<!-- -->
 
 We can also perform cross-validation to select optimal scaling of the
 regularization sequence:
@@ -76,7 +76,7 @@ cvfit <- cvSLOPE(heart$x, heart$y, family = "binomial")
 plot(cvfit)
 ```
 
-<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
+![](man/figures/README-unnamed-chunk-6-1.png)<!-- -->
 
 ## Versioning
 

@@ -9,7 +9,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "man/figures/README-",
-  out.width = "100%"
+  fig.width = 5
 )
 ```
 
@@ -70,7 +70,6 @@ fit <- SLOPE(heart$x, heart$y, family = "binomial")
 We can plot the resulting regularization path:
 
 ```{r}
-#| fig.width = 5
 plot(fit)
 ```
 
