@@ -51,7 +51,11 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.1.1" id="slope-111">SLOPE 1.1.1<a class="anchor" aria-label="anchor" href="#slope-111"></a></h2>
 <div class="section level3">
-<h3 id="small-changes-1-1-1">Small Changes<a class="anchor" aria-label="anchor" href="#small-changes-1-1-1"></a></h3>
+<h3 id="major-changes-1-1-1">Major Changes<a class="anchor" aria-label="anchor" href="#major-changes-1-1-1"></a></h3>
+<ul><li>The default argument for <code>threads</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> has been changed from <code>NULL</code> (half of available cores) to <code>1</code> (no multithreading). This is to avoid excessive CPU usage on systems with many cores. Users can still set <code>threads = NULL</code> to get the previous behavior, or set it to any positive integer to control the number of threads used.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="minor-changes-1-1-1">Minor Changes<a class="anchor" aria-label="anchor" href="#minor-changes-1-1-1"></a></h3>
 <ul><li>The citation information has been updated. Use <code>citation("SLOPE")</code> to see the correct way to cite the package.</li>
 </ul></div>
 </div>
@@ -335,7 +339,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>
