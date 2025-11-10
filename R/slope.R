@@ -515,7 +515,7 @@ SLOPE <- function(
       intercepts = intercepts,
       coefficients = coefficients,
       intercepts_scaled = intercepts_scaled,
-      coefficients_scaled = coefficients,
+      coefficients_scaled = beta_scaled,
       nonzeros = nonzeros,
       lambda = lambda,
       alpha = alpha[seq_along(beta)],

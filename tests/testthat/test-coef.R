@@ -46,3 +46,29 @@ test_that("refitting works if exact = TRUE", {
 
   expect_s4_class(coefs, "dgCMatrix")
 })
+
+test_that("coefficient rescaling", {
+  set.seed(1150)
+  xy <- SLOPE:::randomProblem(100, 10)
+
+  xy$x[, 1] <- xy$x[, 1] * 10
+
+  # check for slope
+  fit <- SLOPE(xy$x, xy$y, alpha = 0.5)
+
+  # check simplify
+  coefs_original <- coef(fit, scale = "original")
+  coefs_unscaled <- coef(fit, scale = "normalized")
+
+  expect_false(all(coefs_original[-1, ] == coefs_unscaled[-1, ]))
+
+  sds <- apply(xy$x, 2, function(x) {
+    sqrt((length(x) - 1) / length(x)) * stats::sd(x)
+  })
+
+  expect_equal(
+    as.vector(coefs_original[-1, ] * sds),
+    as.vector(coefs_unscaled[-1, ]),
+    tolerance = 1e-6
+  )
+})

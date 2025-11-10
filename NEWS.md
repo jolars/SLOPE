@@ -16,6 +16,12 @@
   `"Coefficients"` to avoid issues with rendering in some environments, where
   the hat symbol would be cropped.
 
+## Bug Fixes
+
+- In the return object from `SLOPE()`, the `coefficients_scaled` field
+  incorrectly contained unscaled coefficients, which also affected
+  `coef.SLOPE()`. This has now been fixed.
+
 # SLOPE 1.1.0
 
 ## New Features
