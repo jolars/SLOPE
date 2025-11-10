@@ -6,6 +6,20 @@
 #include <bigmemory/BigMatrix.h>
 #include <bigmemory/MatrixAccessor.hpp>
 
+static void
+chkIntFn(void* dummy)
+{
+  R_CheckUserInterrupt();
+}
+
+// this will call the above in a top-level context so it won't longjmp-out of
+// your context
+bool
+checkInterrupt()
+{
+  return (R_ToplevelExec(chkIntFn, NULL) == FALSE);
+}
+
 template<typename T>
 Rcpp::List
 callSLOPE(T& x, const Eigen::MatrixXd& y, const Rcpp::List& control)
@@ -32,7 +46,7 @@ callSLOPE(T& x, const Eigen::MatrixXd& y, const Rcpp::List& control)
     slope::Threads::set(threads);
   }
 
-  slope::SlopePath path = model.path(x, y, alpha, lambda);
+  slope::SlopePath path = model.path(x, y, alpha, lambda, checkInterrupt);
 
   std::vector<Eigen::SparseMatrix<double>> patterns;
 
