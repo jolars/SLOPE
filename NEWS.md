@@ -1,4 +1,4 @@
-# SLOPE 1.1.1
+# SLOPE 1.2.0
 
 ## Major Changes
 
