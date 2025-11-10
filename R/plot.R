@@ -73,7 +73,7 @@ plot.SLOPE <- function(
     lty = 1,
     xlab = xlab,
     xlim = xlim,
-    ylab = expression(hat(beta)),
+    ylab = "Coefficients",
     log = log_var,
     col = grDevices::palette.colors(10, "Tableau")
   )
