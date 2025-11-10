@@ -64,7 +64,14 @@ We can plot the resulting regularization path:
 plot(fit)
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+
+<img src="man/figures/README-unnamed-chunk-5-1.png" alt="Regularization path for logistic SLOPE model on the `heart` dataset."  />
+<p class="caption">
+Regularization path for logistic SLOPE model on the `heart` dataset.
+</p>
+
+</div>
 
 We can also perform cross-validation to select optimal scaling of the
 regularization sequence:
@@ -76,7 +83,14 @@ cvfit <- cvSLOPE(heart$x, heart$y, family = "binomial")
 plot(cvfit)
 ```
 
-<img src="man/figures/README-unnamed-chunk-6-1.png" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+
+<img src="man/figures/README-unnamed-chunk-6-1.png" alt="Cross-validation plot for logistic SLOPE model on the `heart` dataset."  />
+<p class="caption">
+Cross-validation plot for logistic SLOPE model on the `heart` dataset.
+</p>
+
+</div>
 
 ## Versioning
 
