@@ -16,13 +16,5 @@
 
 ## Reverse Dependencies
 
-We checked reverse dependencies geneSLOPE and sgs for compatibility with the new
-version and found no issues.
-
-## Bug fix for M1mac system
-
-This release fixes a test failure on the M1mac system
-<https://www.stats.ox.ac.uk/pub/bdr/M1mac/SLOPE.out>. Testing on mac-builder
-<<https://mac.R-project.org/macbuilder/results/1751374240-4c650b290d8cc31c/> and
-rhub <https://github.com/jolars/SLOPE/actions/runs/15998323131> suggests that
-the issue is now resolved.
+We checked reverse dependencies sgs for compatibility with the new version and
+found no issues.
