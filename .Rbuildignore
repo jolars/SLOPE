@@ -39,3 +39,4 @@
 ^node_modules$
 ^\.releaserc\.json$
 ^\.clang-format$
+^README\.html$
