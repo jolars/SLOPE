@@ -12,6 +12,7 @@ Candès
 Chu
 Ciborowski
 Cortez
+Ctrl
 Czajkowski
 DOI
 Dua
@@ -51,6 +52,7 @@ Pereira
 Pienkowski
 Portugese
 Pwhether
+RStudio
 Rcpp
 RcppArmadillo
 RcppEigen
@@ -108,6 +110,7 @@ mathrm
 meningioma
 metabolomics
 mlr
+multithreading
 nonflavanoid
 ntu
 orthonormality
@@ -127,4 +130,5 @@ th
 tumours
 tw
 unregularized
+unscaled
 www
