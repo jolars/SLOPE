@@ -14,6 +14,8 @@
 
 ### Minor Changes
 
+- The C++ routine can now be interrupted through R’s usual interrupt
+  mechanism (e.g., Ctrl+C in RStudio or R terminal).
 - The citation information has been updated. Use `citation("SLOPE")` to
   see the correct way to cite the package.
 - The y axis label for coefficients has changed from
