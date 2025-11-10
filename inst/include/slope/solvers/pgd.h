@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "../eigen_compat.h"
 #include "../losses/loss.h"
 #include "../math.h"
 #include "../sorted_l1_norm.h"
@@ -14,6 +15,8 @@
 #include <memory>
 
 namespace slope {
+
+using slope::all;
 
 /**
  * @brief Proximal Gradient Descent solver for SLOPE optimization
@@ -113,7 +116,6 @@ private:
                const Eigen::VectorXd& x_scales,
                const Eigen::MatrixXd& y)
   {
-    using Eigen::all;
     using Eigen::MatrixXd;
     using Eigen::VectorXd;
 

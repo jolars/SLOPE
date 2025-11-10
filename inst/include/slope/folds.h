@@ -8,12 +8,15 @@
  */
 #pragma once
 
+#include "eigen_compat.h"
 #include "utils.h"
 #include <Eigen/Core>
 #include <cstdint>
 #include <vector>
 
 namespace slope {
+
+using slope::all;
 
 /**
  * @brief Manages data partitioning for cross-validation
@@ -133,10 +136,10 @@ public:
     auto train_idx = getTrainingIndices(fold_idx, rep_idx);
 
     auto x_test = subset(x.derived(), test_idx);
-    Eigen::MatrixXd y_test = y(test_idx, Eigen::all);
+    Eigen::MatrixXd y_test = y(test_idx, all);
 
     auto x_train = subset(x.derived(), train_idx);
-    Eigen::MatrixXd y_train = y(train_idx, Eigen::all);
+    Eigen::MatrixXd y_train = y(train_idx, all);
 
     return std::make_tuple(x_train, y_train, x_test, y_test);
   }

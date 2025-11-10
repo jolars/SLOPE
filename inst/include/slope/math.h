@@ -5,8 +5,10 @@
 
 #pragma once
 
+#include "eigen_compat.h"
 #include "clusters.h"
 #include "jit_normalization.h"
+#include "utils.h"
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <numeric>
@@ -632,7 +634,7 @@ stdDevs(const Eigen::SparseMatrixBase<T>& x)
     }
 
     // Account for zeros
-    int nz_count = x.col(j).nonZeros();
+    int nz_count = slope::nonZeros(x.col(j));
     if (nz_count < n) {
       sum_sq_diff += (n - nz_count) * mean * mean;
     }

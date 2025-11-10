@@ -233,7 +233,7 @@ public:
    *
    * @param screening_type Type of screening. Supported values are:
    * are:
-   *   - "strong": Strong screening rule ()
+   *   - "strong": Strong screening rule
    *   - "none": No screening
    */
   void setScreening(const std::string& screening_type);
@@ -366,6 +366,8 @@ public:
    * @param alpha Sequence of mixing parameters for elastic net regularization
    * @param lambda Sequence of regularization parameters (if empty, computed
    * automatically)
+   * @param check_interrupt Optional lambda to check for user interrupt. It runs
+   *   periodically during the path fitting.
    * @return SlopePath object containing full solution path and optimization
    * metrics
    *
@@ -373,16 +375,21 @@ public:
    * all solutions and optimization metrics in a SlopePath object.
    */
   template<typename T>
-  SlopePath path(Eigen::EigenBase<T>& x,
-                 const Eigen::MatrixXd& y_in,
-                 Eigen::ArrayXd alpha = Eigen::ArrayXd::Zero(0),
-                 Eigen::ArrayXd lambda = Eigen::ArrayXd::Zero(0))
+  SlopePath path(
+    Eigen::EigenBase<T>& x,
+    const Eigen::MatrixXd& y_in,
+    Eigen::ArrayXd alpha = Eigen::ArrayXd::Zero(0),
+    Eigen::ArrayXd lambda = Eigen::ArrayXd::Zero(0),
+    std::function<bool()> check_interrupt = []() { return false; })
   {
     using Eigen::MatrixXd;
     using Eigen::VectorXd;
 
     const int n = x.rows();
     const int p = x.cols();
+
+    const int INTERRUPT_FREQ = 100;
+    bool interrupt = false;
 
     if (n != y_in.rows()) {
       throw std::invalid_argument(
@@ -497,6 +504,19 @@ public:
 
     // Regularization path loop
     for (int path_step = 0; path_step < this->path_length; ++path_step) {
+      // Check for interrupt at the start of each path step
+      bool local_interrupt = false;
+#ifdef _OPENMP
+#pragma omp critical(check_interrupt)
+#endif
+      {
+        local_interrupt = check_interrupt();
+      }
+      if (local_interrupt) {
+        interrupt = true;
+        break;
+      }
+
       double alpha_curr = alpha(path_step);
 
       assert(alpha_curr <= alpha_prev && "Alpha must be decreasing");
@@ -613,6 +633,20 @@ public:
           }
         }
 
+        if (it % INTERRUPT_FREQ == 0) {
+          bool local_interrupt = false;
+#ifdef _OPENMP
+#pragma omp critical(check_interrupt)
+#endif
+          {
+            local_interrupt = check_interrupt();
+          }
+          if (local_interrupt) {
+            interrupt = true;
+            break;
+          }
+        }
+
         solver->run(beta0,
                     beta,
                     eta,
@@ -667,6 +701,10 @@ public:
 
       fits.emplace_back(std::move(fit));
 
+      if (interrupt) {
+        break;
+      }
+
       if (!user_alpha) {
         int n_unique = unique(beta.cwiseAbs()).size();
         if (dev_ratio > dev_ratio_tol || dev_change < dev_change_tol ||
@@ -689,20 +727,24 @@ public:
    * @param alpha Mixing parameter for elastic net regularization
    * @param lambda Vector of regularization parameters (if empty, computed
    * automatically)
+   * @param check_interrupt Optional lambda to check for user interrupt. It runs
+   *  periodically during the fitting.
    * @return SlopeFit Object containing fitted model and optimization metrics
    *
    * Fits a single SLOPE model with specified regularization parameters,
    * returning coefficients and optimization details in a SlopeFit object.
    */
   template<typename T>
-  SlopeFit fit(Eigen::EigenBase<T>& x,
-               const Eigen::MatrixXd& y_in,
-               const double alpha = 1.0,
-               Eigen::ArrayXd lambda = Eigen::ArrayXd::Zero(0))
+  SlopeFit fit(
+    Eigen::EigenBase<T>& x,
+    const Eigen::MatrixXd& y_in,
+    const double alpha = 1.0,
+    Eigen::ArrayXd lambda = Eigen::ArrayXd::Zero(0),
+    std::function<bool()> check_interrupt = []() { return false; })
   {
     Eigen::ArrayXd alpha_arr(1);
     alpha_arr(0) = alpha;
-    SlopePath res = path(x, y_in, alpha_arr, lambda);
+    SlopePath res = path(x, y_in, alpha_arr, lambda, check_interrupt);
 
     return { res(0) };
   };
@@ -726,12 +768,16 @@ public:
    * @tparam MatrixType The type of matrix used to store the design matrix
    * @param x Design matrix with n observations and p predictors
    * @param y Response matrix
+   * @param check_interrupt Optional lambda to check for user interrupt
    * @return A SlopePath object containing the fitted model with estimated alpha
    * @throws std::runtime_error If maximum iterations reached or if too many
    * variables selected
    */
   template<typename T>
-  SlopePath estimateAlpha(Eigen::EigenBase<T>& x, Eigen::MatrixXd& y)
+  SlopePath estimateAlpha(
+    Eigen::EigenBase<T>& x,
+    Eigen::MatrixXd& y,
+    std::function<bool()> check_interrupt = []() { return false; })
   {
     int n = x.rows();
     int p = x.cols();
@@ -748,7 +794,8 @@ public:
     if (n >= p + 30) {
       alpha(0) = estimateNoise(x, y, this->intercept) / n;
       this->alpha_estimate = alpha(0);
-      result = model_copy.path(x, y, alpha);
+      result =
+        model_copy.path(x, y, alpha, Eigen::ArrayXd::Zero(0), check_interrupt);
     } else {
       for (int it = 0; it < this->alpha_est_maxit; ++it) {
         T x_selected = subsetCols(x.derived(), selected);
@@ -759,7 +806,8 @@ public:
         alpha(0) = estimateNoise(x_selected, y, this->intercept) / n;
         this->alpha_estimate = alpha(0);
 
-        result = model_copy.path(x, y, alpha);
+        result = model_copy.path(
+          x, y, alpha, Eigen::ArrayXd::Zero(0), check_interrupt);
         auto coefs = result.getCoefs().back();
 
         for (typename Eigen::SparseMatrix<double>::InnerIterator it(coefs, 0);

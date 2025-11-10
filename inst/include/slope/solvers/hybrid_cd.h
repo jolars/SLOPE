@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "../eigen_compat.h"
 #include "../clusters.h"
 #include "../math.h"
 #include "slope_threshold.h"
@@ -265,7 +266,7 @@ computeClusterGradientAndHessian(const Eigen::SparseMatrixBase<T>& x,
   }
 
   x_s.setFromTriplets(triplets.begin(), triplets.end());
-  assert(x_s.nonZeros() > 0);
+  assert(slope::nonZeros(x_s) > 0);
 
   double hess = 0;
   double grad = 0;

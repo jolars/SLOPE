@@ -70,7 +70,7 @@ fitOls(const Eigen::MatrixBase<T>& X,
  * augmenting the sparse matrix with a dense column of ones.
  *
  * @param X Feature matrix (sparse)
- * @param y Response vector  
+ * @param y Response vector
  * @param fit_intercept Whether to include an intercept term (default: true)
  *
  * @return std::pair<double, Eigen::VectorXd> containing:
@@ -83,7 +83,7 @@ fitOls(const Eigen::SparseMatrixBase<T>& X,
        const Eigen::VectorXd& y,
        bool fit_intercept = true)
 {
-  // TODO: We should not make this copy.
+  // TODO: Investigate if we can avoid this copy.
   Eigen::SparseMatrix<double> x_mod = X;
 
   if (fit_intercept) {

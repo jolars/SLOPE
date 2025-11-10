@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "eigen_compat.h"
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <algorithm>
@@ -15,6 +16,37 @@
 #include <vector>
 
 namespace slope {
+
+using slope::all;
+
+/**
+ * Count non-zero elements in a matrix.
+ * 
+ * Helper function for Eigen matrices since nonZeros() was removed from 
+ * dense matrices in Eigen 5.0.0, but still exists for sparse matrices.
+ *
+ * @param x Sparse matrix
+ * @return Number of non-zero elements
+ */
+template<typename Derived>
+Eigen::Index
+nonZeros(const Eigen::SparseMatrixBase<Derived>& x)
+{
+  return x.derived().nonZeros();
+}
+
+/**
+ * Count non-zero elements in a dense matrix.
+ *
+ * @param x Dense matrix
+ * @return Number of non-zero elements
+ */
+template<typename Derived>
+Eigen::Index
+nonZeros(const Eigen::DenseBase<Derived>& x)
+{
+  return (x.derived().array() != 0).count();
+}
 
 /**
  * Sorts the elements in a container in ascending or descending order.
@@ -242,7 +274,7 @@ template<typename T>
 typename Eigen::MatrixBase<T>::PlainObject
 subset(const Eigen::DenseBase<T>& x, const std::vector<int>& indices)
 {
-  return x.derived()(indices, Eigen::all);
+  return x.derived()(indices, all);
 }
 
 /**
@@ -263,7 +295,7 @@ T
 subset(const Eigen::SparseMatrixBase<T>& x, const std::vector<int>& indices)
 {
   std::vector<Eigen::Triplet<double>> triplets;
-  triplets.reserve(x.derived().nonZeros());
+  triplets.reserve(slope::nonZeros(x.derived()));
 
   for (int j = 0; j < x.cols(); ++j) {
     for (typename T::InnerIterator it(x.derived(), j); it; ++it) {
@@ -298,7 +330,7 @@ template<typename T>
 T
 subsetCols(const Eigen::MatrixBase<T>& x, const std::vector<int>& indices)
 {
-  return x.derived()(Eigen::all, indices);
+  return x.derived()(all, indices);
 }
 
 /**
@@ -318,7 +350,7 @@ T
 subsetCols(const Eigen::SparseMatrixBase<T>& x, const std::vector<int>& indices)
 {
   std::vector<Eigen::Triplet<double>> triplets;
-  triplets.reserve(x.derived().nonZeros());
+  triplets.reserve(slope::nonZeros(x.derived()));
 
   for (size_t j_idx = 0; j_idx < indices.size(); ++j_idx) {
     int j = indices[j_idx];

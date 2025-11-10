@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "eigen_compat.h"
 #include "folds.h"
 #include "score.h"
 #include "slope.h"
@@ -20,6 +21,8 @@
 #endif
 
 namespace slope {
+
+using slope::all;
 
 /**
  * @brief Stores cross-validation results for a specific set of hyperparameters
@@ -160,11 +163,11 @@ fitToFold(Eigen::MatrixBase<T>& x,
     auto test_idx = folds.getTestIndices(fold, rep);
 
     // Create views
-    auto x_train = x(train_idx, Eigen::all);
-    auto x_test = x(test_idx, Eigen::all);
+    auto x_train = x(train_idx, all);
+    auto x_test = x(test_idx, all);
 
-    Eigen::MatrixXd y_train = y(train_idx, Eigen::all);
-    Eigen::MatrixXd y_test = y(test_idx, Eigen::all);
+    Eigen::MatrixXd y_train = y(train_idx, all);
+    Eigen::MatrixXd y_test = y(test_idx, all);
 
     auto path = thread_model.path(x_train, y_train, alphas);
 
