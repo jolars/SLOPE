@@ -69,7 +69,7 @@ particular the section *Regularization Sequences*.
 Note that these sequences are automatically scaled (unless a value for
 the `alpha` parameter is manually supplied) when using
 [`SLOPE()`](https://jolars.github.io/SLOPE/reference/SLOPE.md). In this
-function, nu such scaling is attempted.
+function, no such scaling is attempted.
 
 ## See also
 

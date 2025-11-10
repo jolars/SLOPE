@@ -59,6 +59,10 @@
 <ul><li>The citation information has been updated. Use <code>citation("SLOPE")</code> to see the correct way to cite the package.</li>
 <li>The y axis label for coefficients has changed from <code>expression(hat(beta))</code> to <code>"Coefficients"</code> to avoid issues with rendering in some environments, where the hat symbol would be cropped.</li>
 </ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-1-2-0">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-2-0"></a></h3>
+<ul><li>In the return object from <code><a href="../reference/SLOPE.html">SLOPE()</a></code>, the <code>coefficients_scaled</code> field incorrectly contained unscaled coefficients, which also affected <code><a href="../reference/coef.SLOPE.html">coef.SLOPE()</a></code>. This has now been fixed.</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.1.0" id="slope-110">SLOPE 1.1.0<a class="anchor" aria-label="anchor" href="#slope-110"></a></h2><p class="text-muted">CRAN release: 2025-10-30</p>

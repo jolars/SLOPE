@@ -20,6 +20,15 @@
   `expression(hat(beta))` to `"Coefficients"` to avoid issues with
   rendering in some environments, where the hat symbol would be cropped.
 
+### Bug Fixes
+
+- In the return object from
+  [`SLOPE()`](https://jolars.github.io/SLOPE/reference/SLOPE.md), the
+  `coefficients_scaled` field incorrectly contained unscaled
+  coefficients, which also affected
+  [`coef.SLOPE()`](https://jolars.github.io/SLOPE/reference/coef.SLOPE.md).
+  This has now been fixed.
+
 ## SLOPE 1.1.0
 
 CRAN release: 2025-10-30
