@@ -24,7 +24,7 @@ SLOPE(
   solver = c("auto", "hybrid", "pgd", "fista", "admm"),
   max_passes = 1e+06,
   tol = 1e-04,
-  threads = NULL,
+  threads = 1,
   diagnostics = FALSE,
   patterns = FALSE,
   gamma = 1,

@@ -364,7 +364,7 @@ SLOPE <- function(
   solver = c("auto", "hybrid", "pgd", "fista", "admm"),
   max_passes = 1e6,
   tol = 1e-4,
-  threads = NULL,
+  threads = 1,
   diagnostics = FALSE,
   patterns = FALSE,
   gamma = 1,

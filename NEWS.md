@@ -1,6 +1,14 @@
 # SLOPE 1.1.1
 
-## Small Changes
+## Major Changes
+
+- The default argument for `threads` in `SLOPE()` has been changed from `NULL`
+  (half of available cores) to `1` (no multithreading). This is to avoid
+  excessive CPU usage on systems with many cores. Users can still set
+  `threads = NULL` to get the previous behavior, or set it to any positive
+  integer to control the number of threads used.
+
+## Minor Changes
 
 - The citation information has been updated. Use `citation("SLOPE")` to see the
   correct way to cite the package.
