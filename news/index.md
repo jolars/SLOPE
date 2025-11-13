@@ -2,6 +2,8 @@
 
 ## SLOPE 1.2.0
 
+CRAN release: 2025-11-11
+
 ### Major Changes
 
 - The default argument for `threads` in
