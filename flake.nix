@@ -20,53 +20,40 @@
             mkdir -p "$(pwd)/_libs"
             export R_LIBS_USER="$(pwd)/_libs"
           '';
-          packages =
-            let
-              SLOPE = (
-                pkgs.rPackages.buildRPackage {
-                  name = "SLOPE";
-                  src = ./.;
-                  propagatedBuildInputs = with pkgs.rPackages; [
-                    Matrix
-                    Rcpp
-                    RcppEigen
-                    covr
-                    knitr
-                    rmarkdown
-                    scales
-                    spelling
-                    testthat
-                    SparseM
-                    caret
-                    e1071
-                    bigmemory
-                    BH
-                  ];
-                }
-              );
-            in
-            with pkgs;
-            [
-              bashInteractive
-              autoconf
-              go-task
-              quartoMinimal
-              pandoc
-              llvmPackages.openmp
-              (rWrapper.override {
-                packages = with rPackages; [
-                  devtools
-                  languageserver
-                  glmnet
-                  dplyr
-                  here
-                  SLOPE
-                  tidyverse
-                  usethis
-                  rhub
-                ];
-              })
-            ];
+          packages = with pkgs; [
+            bashInteractive
+            autoconf
+            go-task
+            quartoMinimal
+            pandoc
+            llvmPackages.openmp
+            (rWrapper.override {
+              packages = with rPackages; [
+                BH
+                Matrix
+                Rcpp
+                RcppEigen
+                SparseM
+                bigmemory
+                caret
+                covr
+                devtools
+                dplyr
+                e1071
+                glmnet
+                here
+                knitr
+                languageserver
+                rhub
+                rmarkdown
+                scales
+                spelling
+                testthat
+                tidyverse
+                usethis
+              ];
+            })
+          ];
         };
       }
     );
