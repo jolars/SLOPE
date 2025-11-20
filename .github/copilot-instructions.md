@@ -2,26 +2,40 @@
 
 ## Repository Overview
 
-SLOPE is an R package that provides efficient implementations for Sorted L-One Penalized Estimation: generalized linear models regularized with the sorted L1-norm. The package supports ordinary least-squares regression, binomial regression, multinomial regression, and Poisson regression for both dense and sparse predictor matrices. The codebase includes predictor screening rules for fast solutions to high-dimensional problems.
+SLOPE is an R package that provides efficient implementations for Sorted L-One
+Penalized Estimation: generalized linear models regularized with the sorted
+L1-norm. The package supports ordinary least-squares regression, binomial
+regression, multinomial regression, and Poisson regression for both dense and
+sparse predictor matrices. The codebase includes predictor screening rules for
+fast solutions to high-dimensional problems.
 
 **Repository Stats:**
-- **Languages:** R (46 files), C++ (68 files with C++17 requirement)
-- **Size:** Medium-sized package (~52.5MB installed, mainly due to compiled C++ libraries)
+
+- **Languages:** R (20 files), C++ (68 files with C++17 requirement)
+- **Size:** Medium-sized package (~52.5MB installed, mainly due to compiled C++
+  libraries)
 - **Dependencies:** Matrix, Rcpp, RcppEigen, BH, bigmemory
 - **Build System:** Task runner (Taskfile.yml) + standard R package tools
+- **Current Version:** 1.2.0
 
 ## Build Instructions
 
 ### Environment Setup
+
 - **R Version:** Requires R ≥ 3.5.0 (developed with R 4.4.3)
 - **C++ Standard:** C++17 required (specified in src/Makevars)
 - **Build Tools:** Task runner, Rcpp ecosystem
-- **Optional:** Nix environment available via `flake.nix` (use `direnv allow` if `.envrc` present)
+- **Optional:** Nix environment available via `flake.nix` (use `direnv allow` if
+  `.envrc` present)
 
 ### Key Build Commands
-**ALWAYS run `task compile-attributes` or `Rcpp::compileAttributes()` before any build operation** - this is automatically handled by task dependencies but critical if running R commands directly.
+
+**ALWAYS run `task compile-attributes` or `Rcpp::compileAttributes()` before any
+build operation** - this is automatically handled by task dependencies but
+critical if running R commands directly.
 
 1. **Install Dependencies & Build Package:**
+
    ```bash
    task install        # Installs to local _libs directory (preferred)
    # OR
@@ -29,18 +43,21 @@ SLOPE is an R package that provides efficient implementations for Sorted L-One P
    ```
 
 2. **Run Tests:**
+
    ```bash
-   task test           # ~2 seconds, 147 tests via testthat
+   task test           # ~2 seconds, 162 tests via testthat
    ```
 
 3. **Full R Package Check:**
+
    ```bash
    task check          # ~1.5 minutes, includes documentation and R CMD check
    ```
 
 4. **Build Package Archive:**
+
    ```bash
-   task build          # Creates ../SLOPE_1.0.1.tar.gz
+   task build          # Creates ../SLOPE_1.2.0.tar.gz
    ```
 
 5. **Update Documentation:**
@@ -52,80 +69,182 @@ SLOPE is an R package that provides efficient implementations for Sorted L-One P
 
 - **Critical:** Always run `Rcpp::compileAttributes()` before building
 - **OpenMP:** Required for parallel compilation (handled in Makevars)
-- **Installation Location:** Package installs to `_libs/` directory for development
+- **Installation Location:** Package installs to `_libs/` directory for
+  development
 - **Timing:** Most builds complete in under 2 minutes; tests run in ~2 seconds
 
 **Build Warnings to Expect (non-critical):**
+
 - "installed size is 52.5Mb" - normal for C++ package with Eigen
-- "hidden files and directories (.clang-format)" - development file, safe to ignore
+- "hidden files and directories (.clang-format)" - development file, safe to
+  ignore
 - "unable to verify current time" - timestamp check issue in some environments
 
 ## Project Layout & Architecture
 
 ### Core Directory Structure
+
 ```
 SLOPE/
 ├── R/                   # R source code (20 files)
 │   ├── slope.R          # Main SLOPE() function
-│   ├── cv.R             # Cross-validation functions  
+│   ├── cv.R             # Cross-validation functions
 │   ├── predict.R        # Prediction methods
-│   └── plot.R           # Plotting functions
+│   └── plot.R           # Plotting functions (includes single-solution dot charts)
 ├── src/                 # C++ source code
 │   ├── Makevars         # Build configuration (C++17, OpenMP)
 │   ├── slope/           # Core C++ library (imported from libslope)
 │   └── *.cpp            # R-C++ interface files
-├── tests/testthat/      # Test suite (147 tests)
+├── tests/testthat/      # Test suite (162 tests, 53 test_that blocks)
 ├── inst/include/        # Header files for C++ library
-├── man/                 # Generated documentation
+├── man/                 # Generated documentation (roxygen2)
 ├── vignettes/           # Package vignettes
-└── data/                # Example datasets
+├── data/                # Example datasets (heart, wine, bodyfat, etc.)
+└── data-raw/            # Scripts to generate data/ datasets
+    └── datasets.R       # Downloads and processes datasets
 ```
 
 ### Key Configuration Files
+
 - **DESCRIPTION:** Package metadata, dependencies, C++17 requirement
-- **NAMESPACE:** Auto-generated, do not edit manually
+- **NAMESPACE:** Auto-generated by roxygen2, do not edit manually
+- **NEWS.md:** User-facing changelog, manually maintained for all changes
 - **Taskfile.yml:** Build automation (preferred over Makefile)
 - **src/Makevars:** C++ compilation flags and source file list
-- **_pkgdown.yml:** Website generation configuration
+- **\_pkgdown.yml:** Website generation configuration
+- **codecov.yml:** Code coverage configuration
+
+### Code Formatting Tools
+
+- **air.toml:** R code formatter configuration (80 char width, 2-space indent)
+  - Format R code with: `air` (if available in environment)
+- **.clang-format:** C++ code formatting (Mozilla style)
+  - Used for C++ code in `src/` directory
+- **.prettierrc.toml:** Markdown/YAML formatting (prose wrap always)
+  - Used for documentation files
+
+### Data Management
+
+- **data/**: Contains .rda files with example datasets (bodyfat, abalone, heart,
+  wine, glioma, student)
+- **data-raw/datasets.R**: Script to download and process raw datasets
+  - Downloads from online sources (e.g., LIBSVM datasets)
+  - Processes and saves as .rda files in data/ directory
+  - Run this script to regenerate datasets when needed
 
 ### GitHub CI/CD Workflows
-Located in `.github/workflows/`:
-- **R-CMD-check.yaml:** Runs on Windows/Ubuntu with R release/devel (main validation)
-- **test-coverage.yaml:** Code coverage via codecov
-- **release.yaml:** Semantic release automation
-- **pkgdown.yaml:** Documentation website deployment
 
-**CI Expectations:** All workflows must pass. The R-CMD-check runs the same validation as `task check` locally.
+Located in `.github/workflows/`:
+
+- **R-CMD-check.yaml:** Runs on Windows/Ubuntu with R release/devel (main
+  validation)
+- **test-coverage.yaml:** Code coverage via codecov
+- **pkgdown.yaml:** Documentation website deployment to GitHub Pages
+  - Builds on push to main/master, PRs, releases, and manual dispatch
+  - Deploys to https://jolars.github.io/SLOPE/
+  - Uses `pkgdown::build_site_github_pages()`
+
+**CI Expectations:** All workflows must pass. The R-CMD-check runs the same
+validation as `task check` locally.
+
+### Website & Documentation
+
+- **pkgdown**: Package website automatically generated and deployed
+  - Configuration: `_pkgdown.yml`
+  - Site URL: https://jolars.github.io/SLOPE/
+  - Organized reference sections: Main Functionality, Clusters, Model Tuning, Utilities, Datasets
+  - Includes vignettes, function reference, and news
+  - Build locally with: `pkgdown::build_site()` (requires pkgdown package)
 
 ### Important Dependencies
-- **External C++ Library:** Core algorithms from `libslope` (auto-updated via `task update-libslope`)
-- **Rcpp Integration:** All C++ code accessed via Rcpp interface in `src/RcppExports.cpp`
+
+- **External C++ Library:** Core algorithms from `libslope` (auto-updated via
+  `task update-libslope`)
+- **Rcpp Integration:** All C++ code accessed via Rcpp interface in
+  `src/RcppExports.cpp`
 - **Matrix Operations:** Extensive use of Eigen library for linear algebra
 
 ## Development Workflow
 
 ### Making Changes
+
 1. **R Code Changes:** Edit files in `R/` directory
 2. **C++ Changes:** Avoid editing `src/slope/` (auto-generated from libslope)
 3. **Interface Changes:** Modify `src/*.cpp` for R-C++ interfaces
-4. **Documentation:** Use roxygen2 comments, run `task docs` to update
+4. **Documentation:** Use roxygen2 comments in R files, run `task docs` to
+   update `.Rd` files
+5. **Tests:** Add tests in `tests/testthat/test-*.R` files
+6. **Website:** pkgdown website auto-updates on push to main, or build locally
+   with `pkgdown::build_site()`
+7. **NEWS.md:** For all significant changes (new features, breaking changes,
+   major bug fixes), manually update `NEWS.md` under the appropriate version
+   header.
 
 ### Validation Sequence
+
 ```bash
 task install    # Build and install package (~30 seconds)
-task test       # Run test suite (~2 seconds)  
+task test       # Run test suite (~2 seconds, 162 tests)
 task check      # Full R CMD check (~1.5 minutes)
 ```
 
 ### Common Pitfalls
-- **Never edit `NAMESPACE`** - auto-generated by roxygen2
+
+- **Never edit `NAMESPACE` or `man/*.Rd` files manually** - auto-generated by
+  roxygen2
 - **Don't modify `src/slope/`** - use `task update-libslope` to update
 - **Always recompile after C++ changes** - `task install` handles this
 - **Use local library** - package installs to `_libs/` not system R library
+- **Documentation updates require `task docs`** - changes to roxygen2 comments
+  won't appear until regenerated
 
 ### Testing Strategy
-- **Unit Tests:** Comprehensive testthat suite covers all major functions
-- **Integration Tests:** R CMD check includes example execution and vignette building  
+
+- **Unit Tests:** Comprehensive testthat suite (162 tests) covers all major
+  functions
+- **Test Helper:** Use `dont_plot()` and `dont_print()` from
+  `tests/testthat/setup.R` for testing without output
+- **Integration Tests:** R CMD check includes example execution and vignette
+  building
 - **Coverage:** Tracked via codecov (target >80%)
 
-The build system is well-established and reliable. Trust these instructions and only explore alternative approaches if you encounter specific errors not covered here.
+### R Package Conventions
+
+- **S3 Methods:** Use `.` for S3 method names (e.g., `plot.SLOPE`, `coef.SLOPE`)
+- **Documentation:** Always document exported functions with roxygen2
+- **Examples:** Include runnable examples in roxygen2 `@examples` sections
+- **Families:** Use `@family` tags to group related functions in documentation
+- **Code Formatting:** Use `air` to format R code (80 char width, 2-space indent)
+
+### Commit Message Conventions
+
+This project uses **Conventional Commits** for all commit messages:
+
+- **Format:** `<type>(<scope>): <description>`
+- **Types:**
+  - `feat:` New features
+  - `fix:` Bug fixes
+  - `docs:` Documentation changes
+  - `chore:` Maintenance tasks, dependency updates
+  - `test:` Test additions or modifications
+  - `refactor:` Code refactoring without behavior changes
+  - `ci:` CI/CD configuration changes
+  - `build:` Build system or dependency changes
+- **Examples:**
+  - `feat: use dotcharts for single solutions`
+  - `fix: correctly return scaled coefficients`
+  - `docs: fix typo in documentation`
+  - `chore: bump version in DESCRIPTION`
+
+### Dataset Management
+
+When modifying or adding datasets:
+
+1. Edit `data-raw/datasets.R` to add data processing scripts
+2. Script should download raw data and save as .rda in `data/` directory
+3. Document datasets in `R/` files with roxygen2 `@format` and `@source` tags
+4. Example datasets include: heart, wine, bodyfat, abalone, glioma, student
+
+The build system is well-established and reliable. Trust these instructions and
+only explore alternative approaches if you encounter specific errors not covered
+here.
