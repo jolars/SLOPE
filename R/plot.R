@@ -247,7 +247,6 @@ addCoefLabels <- function(coef_matrix, x) {
 #'   of the parameter combinations.
 #' @param ... ignored
 #'
-#' @seealso [cvSLOPE()]
 #' @family model-tuning
 #'
 #' @return A plot for every value of `q` is produced on the current device.

@@ -20,15 +20,16 @@
 #'   penalty path.
 #' @param sigma deprecated. Please use `alpha` instead.
 #'
-#' @seealso [stats::predict()], [stats::predict.glm()], [coef.SLOPE()]
+#' @seealso [stats::predict()], [stats::predict.glm()]
 #' @family SLOPE-methods
 #'
 #' @return Predictions from the model with scale determined by `type`.
 #'
+#' @export
+#'
 #' @examples
 #' fit <- with(mtcars, SLOPE(cbind(mpg, hp), vs, family = "binomial"))
 #' predict(fit, with(mtcars, cbind(mpg, hp)), type = "class")
-#' @export
 predict.SLOPE <- function(
   object,
   x,
