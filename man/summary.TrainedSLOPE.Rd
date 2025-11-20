@@ -42,6 +42,7 @@ summary(tune)
 Other model-tuning: 
 \code{\link{cvSLOPE}()},
 \code{\link{plot.TrainedSLOPE}()},
+\code{\link{refit}()},
 \code{\link{trainSLOPE}()}
 }
 \concept{model-tuning}

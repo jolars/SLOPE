@@ -10,6 +10,8 @@
 #' @param n_folds number of folds (cross-validation)
 #' @param n_repeats number of folds (cross-validation)
 #' @param measure DEPRECATED
+#' @param refit logical; if `TRUE`, refits the model on the full dataset using
+#'   the optimal parameters. Default is `TRUE`.
 #' @param ... other arguments to pass on to [SLOPE()]
 #'
 #' @return An object of class `"TrainedSLOPE"`, with the following slots:
@@ -19,11 +21,12 @@
 #' \item{optima}{a `data.frame` of the best (mean)
 #'   values for the different metrics and their corresponding parameter values}
 #' \item{measure}{a `data.frame` listing the used metric and its label}
+#' \item{model}{the model fit to the entire dataset using optimal parameters
+#'   (only present if `refit = TRUE`)}
 #' \item{call}{the call}
 #'
 #' @export
 #'
-#' @seealso [plot.TrainedSLOPE()]
 #' @family model-tuning
 #'
 #' @examples
@@ -36,6 +39,17 @@
 #'   n_repeats = 2,
 #'   measure = "mse"
 #' )
+#'
+#' # Access the refitted model
+#' tune$model
+#'
+#' # Or use refit() to refit with different measure
+#' fit <- refit(
+#'   tune,
+#'   subset(mtcars, select = c("mpg", "drat", "wt")),
+#'   mtcars$hp
+#' )
+#' coef(fit)
 cvSLOPE <- function(
   x,
   y,
@@ -50,6 +64,7 @@ cvSLOPE <- function(
     "misclass",
     "auc"
   ),
+  refit = TRUE,
   ...
 ) {
   ocall <- match.call()
@@ -151,7 +166,10 @@ cvSLOPE <- function(
     FUN.VALUE = character(1)
   )
 
-  structure(
+  rownames(summary) <- NULL
+  rownames(optima) <- NULL
+
+  result <- structure(
     list(
       summary = summary,
       data = res$results,
@@ -165,6 +183,25 @@ cvSLOPE <- function(
     ),
     class = "TrainedSLOPE"
   )
+
+  if (refit) {
+    opt_params <- optima[1, ]
+
+    fit_args <- utils::modifyList(
+      list(
+        x = x,
+        y = y,
+        q = opt_params$q,
+        alpha = opt_params$alpha,
+        gamma = if ("gamma" %in% names(opt_params)) opt_params$gamma else gamma
+      ),
+      list(...)
+    )
+
+    result$model <- do.call(SLOPE, fit_args)
+  }
+
+  result
 }
 
 #' Create Cross-Validation Folds

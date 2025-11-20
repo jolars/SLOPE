@@ -73,10 +73,9 @@ tune <- cvSLOPE(
 plot(tune, ci_col = "salmon", index = 1)
 }
 \seealso{
-\code{\link[=cvSLOPE]{cvSLOPE()}}
-
 Other model-tuning: 
 \code{\link{cvSLOPE}()},
+\code{\link{refit}()},
 \code{\link{summary.TrainedSLOPE}()},
 \code{\link{trainSLOPE}()}
 }

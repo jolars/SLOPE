@@ -12,6 +12,7 @@ cvSLOPE(
   n_folds = 10,
   n_repeats = 1,
   measure = c("mse", "mae", "deviance", "misclass", "auc"),
+  refit = TRUE,
   ...
 )
 }
@@ -35,6 +36,9 @@ implies to relaxation of the penalty.}
 
 \item{measure}{DEPRECATED}
 
+\item{refit}{logical; if \code{TRUE}, refits the model on the full dataset using
+the optimal parameters. Default is \code{TRUE}.}
+
 \item{...}{other arguments to pass on to \code{\link[=SLOPE]{SLOPE()}}}
 }
 \value{
@@ -45,6 +49,8 @@ and 0.95 confidence levels}
 \item{optima}{a \code{data.frame} of the best (mean)
 values for the different metrics and their corresponding parameter values}
 \item{measure}{a \code{data.frame} listing the used metric and its label}
+\item{model}{the model fit to the entire dataset using optimal parameters
+(only present if \code{refit = TRUE})}
 \item{call}{the call}
 }
 \description{
@@ -61,12 +67,22 @@ tune <- cvSLOPE(
   n_repeats = 2,
   measure = "mse"
 )
+
+# Access the refitted model
+tune$model
+
+# Or use refit() to refit with different measure
+fit <- refit(
+  tune,
+  subset(mtcars, select = c("mpg", "drat", "wt")),
+  mtcars$hp
+)
+coef(fit)
 }
 \seealso{
-\code{\link[=plot.TrainedSLOPE]{plot.TrainedSLOPE()}}
-
 Other model-tuning: 
 \code{\link{plot.TrainedSLOPE}()},
+\code{\link{refit}()},
 \code{\link{summary.TrainedSLOPE}()},
 \code{\link{trainSLOPE}()}
 }
