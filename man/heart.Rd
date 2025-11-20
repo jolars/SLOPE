@@ -3,7 +3,7 @@
 \docType{data}
 \name{heart}
 \alias{heart}
-\title{Heart disease}
+\title{Heart Disease}
 \format{
 270 observations from 17 variables represented as a list consisting
 of a binary factor response vector \code{y},

@@ -2,7 +2,7 @@
 % Please edit documentation in R/coef.R
 \name{coef.SLOPE}
 \alias{coef.SLOPE}
-\title{Obtain coefficients}
+\title{Obtain Coefficients}
 \usage{
 \method{coef}{SLOPE}(
   object,

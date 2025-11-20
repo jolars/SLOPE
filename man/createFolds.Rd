@@ -2,7 +2,7 @@
 % Please edit documentation in R/cv.R
 \name{createFolds}
 \alias{createFolds}
-\title{Create cross-validation folds}
+\title{Create Cross-Validation Folds}
 \usage{
 createFolds(n, n_folds, n_repeats = 1)
 }

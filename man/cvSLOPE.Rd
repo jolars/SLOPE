@@ -2,7 +2,7 @@
 % Please edit documentation in R/cv.R
 \name{cvSLOPE}
 \alias{cvSLOPE}
-\title{Tune SLOPE with cross-validation}
+\title{Tune SLOPE with Cross-Validation}
 \usage{
 cvSLOPE(
   x,

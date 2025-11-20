@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.R
 \name{plotClusters}
 \alias{plotClusters}
-\title{Plot cluster structure}
+\title{Plot Cluster Structure}
 \usage{
 plotClusters(
   x,

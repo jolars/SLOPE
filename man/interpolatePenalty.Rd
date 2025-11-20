@@ -2,7 +2,7 @@
 % Please edit documentation in R/interpolate_penalty.R
 \name{interpolatePenalty}
 \alias{interpolatePenalty}
-\title{Interpolate penalty values}
+\title{Interpolate Penalty Values}
 \usage{
 interpolatePenalty(penalty, x)
 }
@@ -15,7 +15,7 @@ interpolatePenalty(penalty, x)
 Interpolated values of lambda
 }
 \description{
-Interpolate penalty values
+Interpolate Penalty Values
 }
 \author{
 Jerome Friedman, Trevor Hastie, Rob Tibshirani, and Noah Simon

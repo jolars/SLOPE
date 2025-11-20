@@ -1,4 +1,4 @@
-#' Generate predictions from SLOPE models
+#' Generate Predictions from SLOPE Models
 #'
 #' Return predictions from models fit by [SLOPE()].
 #'

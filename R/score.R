@@ -1,4 +1,4 @@
-#' Compute one of several loss metrics on a new data set
+#' Compute One of Several Loss Metrics on a New Data Set
 #'
 #' This function is a unified interface to return various types of loss for a
 #' model fit with [SLOPE()].

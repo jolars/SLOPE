@@ -2,7 +2,7 @@
 % Please edit documentation in R/summary.R
 \name{print.summary_SLOPE}
 \alias{print.summary_SLOPE}
-\title{Print summary of SLOPE model}
+\title{Print Summary of SLOPE Model}
 \usage{
 \method{print}{summary_SLOPE}(x, digits = 3, ...)
 }
@@ -17,7 +17,7 @@
 Invisibly returns the input object
 }
 \description{
-Print summary of SLOPE model
+Print Summary of SLOPE Model
 }
 \seealso{
 \code{\link[=summary.SLOPE]{summary.SLOPE()}}

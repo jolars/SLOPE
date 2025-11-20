@@ -56,7 +56,7 @@
 #' @family datasets
 "abalone"
 
-#' Heart disease
+#' Heart Disease
 #'
 #' Diagnostic attributes of patients classified as having heart disease or not.
 #'
@@ -103,7 +103,7 @@
 #' @family datasets
 "heart"
 
-#' Wine cultivars
+#' Wine Cultivars
 #'
 #' A data set of results from chemical analysis of wines grown in Italy
 #' from three different cultivars.
@@ -137,7 +137,7 @@
 #' @family datasets
 "wine"
 
-#' Student performance
+#' Student Performance
 #'
 #' A data set of the attributes of 382 students in secondary education
 #' collected from two schools. The goal is to predict the
@@ -194,7 +194,7 @@
 #' @family datasets
 "student"
 
-#' Glioma metabolomics
+#' Glioma Metabolomics
 #'
 #' Metabolomics dataset from 165 different plasma measurements from
 #' 94 patients (cases) with glioma (brain tumours) and 71 healthy controls. The

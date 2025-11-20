@@ -2,7 +2,7 @@
 % Please edit documentation in R/summary.R
 \name{summary.SLOPE}
 \alias{summary.SLOPE}
-\title{Summarize SLOPE model}
+\title{Summarize SLOPE Model}
 \usage{
 \method{summary}{SLOPE}(object, ...)
 }

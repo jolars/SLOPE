@@ -1,4 +1,4 @@
-#' Summarize SLOPE model
+#' Summarize SLOPE Model
 #'
 #' Produces a summary of a fitted SLOPE model, including information about
 #' the regularization path, model family, and fitted values.
@@ -65,7 +65,7 @@ summary.SLOPE <- function(object, ...) {
   )
 }
 
-#' Print summary of SLOPE model
+#' Print Summary of SLOPE Model
 #'
 #' @param x an object of class `'summary_SLOPE'`
 #' @param digits number of significant digits to print
@@ -135,7 +135,7 @@ print.summary_SLOPE <- function(x, digits = 3, ...) {
   invisible(x)
 }
 
-#' Summarize TrainedSLOPE model
+#' Summarize TrainedSLOPE Model
 #'
 #' Produces a summary of a trained SLOPE model from cross-validation,
 #' including information about the optimal parameters and performance metrics.
@@ -196,7 +196,7 @@ summary.TrainedSLOPE <- function(object, ...) {
   )
 }
 
-#' Print summary of TrainedSLOPE model
+#' Print Summary of TrainedSLOPE Model
 #'
 #' @param x an object of class `'summary_TrainedSLOPE'`
 #' @param digits number of significant digits to print

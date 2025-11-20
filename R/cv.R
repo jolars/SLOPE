@@ -1,4 +1,4 @@
-#' Tune SLOPE with cross-validation
+#' Tune SLOPE with Cross-Validation
 #'
 #' This function trains a model fit by [SLOPE()] by tuning its parameters
 #' through cross-validation.
@@ -167,7 +167,7 @@ cvSLOPE <- function(
   )
 }
 
-#' Create cross-validation folds
+#' Create Cross-Validation Folds
 #'
 #' Internal function that creates fold assignments for k-fold cross-validation,
 #' with support for repeated cross-validation.

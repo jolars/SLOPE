@@ -3,7 +3,7 @@
 \name{print.SLOPE}
 \alias{print.SLOPE}
 \alias{print.TrainedSLOPE}
-\title{Print results from SLOPE fit}
+\title{Print Results from SLOPE Fit}
 \usage{
 \method{print}{SLOPE}(x, ...)
 
@@ -18,7 +18,7 @@
 Prints output on the screen
 }
 \description{
-Print results from SLOPE fit
+Print Results from SLOPE Fit
 }
 \examples{
 fit <- SLOPE(wine$x, wine$y, family = "multinomial")

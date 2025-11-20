@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.R
 \name{plot.TrainedSLOPE}
 \alias{plot.TrainedSLOPE}
-\title{Plot results from cross-validation}
+\title{Plot Results from Cross-Validation}
 \usage{
 \method{plot}{TrainedSLOPE}(
   x,
@@ -59,7 +59,7 @@ models.}
 A plot for every value of \code{q} is produced on the current device.
 }
 \description{
-Plot results from cross-validation
+Plot Results from Cross-Validation
 }
 \examples{
 # Cross-validation for a SLOPE binomial model

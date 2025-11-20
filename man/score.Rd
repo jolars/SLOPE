@@ -6,7 +6,7 @@
 \alias{score.BinomialSLOPE}
 \alias{score.MultinomialSLOPE}
 \alias{score.PoissonSLOPE}
-\title{Compute one of several loss metrics on a new data set}
+\title{Compute One of Several Loss Metrics on a New Data Set}
 \usage{
 score(object, x, y, measure)
 

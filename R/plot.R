@@ -1,4 +1,4 @@
-#' Plot coefficients
+#' Plot Coefficients
 #'
 #' Plot the fitted model's regression
 #' coefficients along the regularization path. When the path contains a single
@@ -221,7 +221,7 @@ addCoefLabels <- function(coef_matrix, x) {
   }
 }
 
-#' Plot results from cross-validation
+#' Plot Results from Cross-Validation
 #'
 #' @param x an object of class `'TrainedSLOPE'`, typically from a call
 #'   to [cvSLOPE()]
@@ -425,7 +425,7 @@ plot.TrainedSLOPE <- function(
 }
 
 
-#' Plot cluster structure
+#' Plot Cluster Structure
 #'
 #' Note that this function requires the `patterns` argument to be set to
 #' `TRUE` in the call to [SLOPE()]. Calling this function on a

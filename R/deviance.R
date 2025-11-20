@@ -1,4 +1,4 @@
-#' Model deviance
+#' Model Deviance
 #'
 #' @param object an object of class `'SLOPE'`.
 #' @param ... ignored

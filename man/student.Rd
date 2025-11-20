@@ -3,7 +3,7 @@
 \docType{data}
 \name{student}
 \alias{student}
-\title{Student performance}
+\title{Student Performance}
 \format{
 382 observations from 13 variables represented as a list consisting
 of a binary factor response matrix \code{y} with two responses: \code{portugese} and

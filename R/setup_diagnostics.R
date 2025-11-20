@@ -1,4 +1,4 @@
-#' Setup a data.frame of diagnostics
+#' Setup a data.frame of Diagnostics
 #'
 #' @param res the result from calling the C++ routine used to fit a model
 #'   in SLOPE

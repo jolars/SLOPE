@@ -2,7 +2,7 @@
 % Please edit documentation in R/train_slope.R
 \name{trainSLOPE}
 \alias{trainSLOPE}
-\title{Train a SLOPE model}
+\title{Train a SLOPE Model}
 \usage{
 trainSLOPE(
   x,

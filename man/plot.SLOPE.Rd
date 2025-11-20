@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.R
 \name{plot.SLOPE}
 \alias{plot.SLOPE}
-\title{Plot coefficients}
+\title{Plot Coefficients}
 \usage{
 \method{plot}{SLOPE}(
   x,

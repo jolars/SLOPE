@@ -2,7 +2,7 @@
 % Please edit documentation in R/summary.R
 \name{summary.TrainedSLOPE}
 \alias{summary.TrainedSLOPE}
-\title{Summarize TrainedSLOPE model}
+\title{Summarize TrainedSLOPE Model}
 \usage{
 \method{summary}{TrainedSLOPE}(object, ...)
 }

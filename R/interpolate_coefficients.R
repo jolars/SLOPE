@@ -1,4 +1,4 @@
-#' Interpolate coefficients
+#' Interpolate Coefficients
 #'
 #' @param interpolation_list a list generated from [interpolatePenalty()]
 #' @param beta coefficients

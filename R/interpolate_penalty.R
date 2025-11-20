@@ -1,4 +1,4 @@
-#' Interpolate penalty values
+#' Interpolate Penalty Values
 #'
 #' @param penalty current penalty sequence
 #' @param x new sequence

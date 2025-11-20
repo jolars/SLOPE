@@ -1,4 +1,4 @@
-#' Plot results from diagnostics collected during model fitting
+#' Plot Results from Diagnostics Collected During Model Fitting
 #'
 #' This function plots various diagnostics collected during
 #' the model fitting resulting from a call to [SLOPE()] *provided that

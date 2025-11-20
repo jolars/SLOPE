@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_diagnostics.R
 \name{plotDiagnostics}
 \alias{plotDiagnostics}
-\title{Plot results from diagnostics collected during model fitting}
+\title{Plot Results from Diagnostics Collected During Model Fitting}
 \usage{
 plotDiagnostics(
   object,

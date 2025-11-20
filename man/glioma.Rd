@@ -3,7 +3,7 @@
 \docType{data}
 \name{glioma}
 \alias{glioma}
-\title{Glioma metabolomics}
+\title{Glioma Metabolomics}
 \format{
 165 observations from 138 variables represented as a list consisting
 of a binary response (factor) vector \code{y} with levels 'control' and 'case'

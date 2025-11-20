@@ -2,7 +2,7 @@
 % Please edit documentation in R/setup_diagnostics.R
 \name{setup_diagnostics}
 \alias{setup_diagnostics}
-\title{Setup a data.frame of diagnostics}
+\title{Setup a data.frame of Diagnostics}
 \usage{
 setup_diagnostics(res)
 }
@@ -14,6 +14,6 @@ in SLOPE}
 A data.frame
 }
 \description{
-Setup a data.frame of diagnostics
+Setup a data.frame of Diagnostics
 }
 \keyword{internal}

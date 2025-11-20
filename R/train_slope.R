@@ -1,4 +1,4 @@
-#' Train a SLOPE model
+#' Train a SLOPE Model
 #'
 #' This function trains a model fit by [SLOPE()] by tuning its parameters
 #' through cross-validation.

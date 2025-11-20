@@ -6,7 +6,7 @@
 \alias{predict.BinomialSLOPE}
 \alias{predict.PoissonSLOPE}
 \alias{predict.MultinomialSLOPE}
-\title{Generate predictions from SLOPE models}
+\title{Generate Predictions from SLOPE Models}
 \usage{
 \method{predict}{SLOPE}(object, x, alpha = NULL, type = "link", simplify = TRUE, sigma, ...)
 

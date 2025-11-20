@@ -1,4 +1,4 @@
-#' Print results from SLOPE fit
+#' Print Results from SLOPE Fit
 #'
 #' @param x an object of class `'SLOPE'` or `'TrainedSLOPE'`
 #' @param ... other arguments passed to [print()]

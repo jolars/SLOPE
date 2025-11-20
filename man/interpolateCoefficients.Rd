@@ -2,7 +2,7 @@
 % Please edit documentation in R/interpolate_coefficients.R
 \name{interpolateCoefficients}
 \alias{interpolateCoefficients}
-\title{Interpolate coefficients}
+\title{Interpolate Coefficients}
 \usage{
 interpolateCoefficients(beta, intercepts, interpolation_list)
 }
@@ -18,6 +18,6 @@ A matrix (or list of matrices) with new coefficients based
 on linearly interpolating from new and old lambda values.
 }
 \description{
-Interpolate coefficients
+Interpolate Coefficients
 }
 \keyword{internal}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/summary.R
 \name{print.summary_TrainedSLOPE}
 \alias{print.summary_TrainedSLOPE}
-\title{Print summary of TrainedSLOPE model}
+\title{Print Summary of TrainedSLOPE Model}
 \usage{
 \method{print}{summary_TrainedSLOPE}(x, digits = 3, ...)
 }
@@ -17,7 +17,7 @@
 Invisibly returns the input object
 }
 \description{
-Print summary of TrainedSLOPE model
+Print Summary of TrainedSLOPE Model
 }
 \seealso{
 \code{\link[=summary.TrainedSLOPE]{summary.TrainedSLOPE()}}

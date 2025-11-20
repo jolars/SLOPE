@@ -3,7 +3,7 @@
 \docType{data}
 \name{wine}
 \alias{wine}
-\title{Wine cultivars}
+\title{Wine Cultivars}
 \format{
 178 observations from 13 variables represented as a list consisting
 of a categorical response vector \code{y}
