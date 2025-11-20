@@ -30,6 +30,7 @@ Other SLOPE-methods:
 \code{\link{plot.SLOPE}()},
 \code{\link{predict.SLOPE}()},
 \code{\link{print.SLOPE}()},
-\code{\link{score}()}
+\code{\link{score}()},
+\code{\link{summary.SLOPE}()}
 }
 \concept{SLOPE-methods}

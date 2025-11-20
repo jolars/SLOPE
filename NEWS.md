@@ -6,6 +6,8 @@
   value of `alpha`, and not an empty plot (as before).
 - The `SLOPE` object now includes `n_observations` and `n_predictors` fields,
   which store the number of observations and predictors in the training data.
+- The `summary.SLOPE()` method now displays the number of observations and
+  predictors, with improved formatting for the path summary table.
 
 # SLOPE 1.2.0
 

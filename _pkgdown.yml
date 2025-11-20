@@ -24,6 +24,8 @@ reference:
               - SLOPE
               - plot.SLOPE
               - print.SLOPE
+              - summary.SLOPE
+              - print.summary_SLOPE
               - predict.SLOPE
               - coef.SLOPE
               - deviance.SLOPE
