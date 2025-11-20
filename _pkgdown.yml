@@ -31,9 +31,14 @@ reference:
       - deviance.SLOPE
       - score
   - title: Clusters
+    desc: Analyze the cluster strucure from SLOPE fits
   - contents:
       - plotClusters
   - title: Model Tuning
+    desc:
+      Use `cvSLOPE()` to perform cross-validation for selecting the optimal
+      regularization parameters, `plot.TrainedSLOPE()` to visualize the results,
+      and `refit.TrainedSLOPE()` to fit the final model to your data set.
   - contents:
       - cvSLOPE
       - trainSLOPE
@@ -43,11 +48,13 @@ reference:
       - summary.TrainedSLOPE
       - print.summary_TrainedSLOPE
   - title: Utilities
+    desc: Helper functions for various tasks.
   - contents:
       - plotDiagnostics
       - regularizationWeights
       - sortedL1Prox
-  - title: Datasets
+  - title: Data Sets
+    desc: Data sets buddled with the package.
   - contents:
       - abalone
       - bodyfat
