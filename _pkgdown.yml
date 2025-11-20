@@ -38,13 +38,13 @@ reference:
     desc:
       Use `cvSLOPE()` to perform cross-validation for selecting the optimal
       regularization parameters, `plot.TrainedSLOPE()` to visualize the results,
-      and `refit.TrainedSLOPE()` to fit the final model to your data set.
+      and `refit()` to fit the final model to your data set.
   - contents:
       - cvSLOPE
       - trainSLOPE
       - plot.TrainedSLOPE
       - print.TrainedSLOPE
-      - refit.TrainedSLOPE
+      - refit
       - summary.TrainedSLOPE
       - print.summary_TrainedSLOPE
   - title: Utilities
