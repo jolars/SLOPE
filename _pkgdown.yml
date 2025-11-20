@@ -1,56 +1,56 @@
 destination: docs
 
 development:
-      mode: auto
+  mode: auto
 
 url: https://jolars.github.io/SLOPE/
 
 template:
-      bootstrap: 5
-      params:
-            ganalytics: UA-85513662-2
+  bootstrap: 5
+  params:
+    ganalytics: UA-85513662-2
 
 news:
-      releases:
-            - text: "Version 0.2.0"
-              href: https://jolars.co/blog/2020-04-14-slope-0-2-0/
+  releases:
+    - text: "Version 0.2.0"
+      href: https://jolars.co/blog/2020-04-14-slope-0-2-0/
 
 reference:
-      - title: Main Functionality
-        desc: Fit the model with `SLOPE()`, visualize the results with
-              `plot.SLOPE()`, and produce predictions for new data with
-              `predict.SLOPE()`.
-      - contents:
-              - SLOPE
-              - plot.SLOPE
-              - print.SLOPE
-              - summary.SLOPE
-              - print.summary_SLOPE
-              - predict.SLOPE
-              - coef.SLOPE
-              - deviance.SLOPE
-              - score
-      - title: Clusters
-      - contents:
-              - plotClusters
-      - title: Model Tuning
-      - contents:
-              - cvSLOPE
-              - trainSLOPE
-              - plot.TrainedSLOPE
-              - print.TrainedSLOPE
-              - summary.TrainedSLOPE  
-              - print.summary_TrainedSLOPE
-      - title: Utilities
-      - contents:
-              - plotDiagnostics
-              - regularizationWeights
-              - sortedL1Prox
-      - title: Datasets
-      - contents:
-              - abalone
-              - bodyfat
-              - heart
-              - student
-              - wine
-              - glioma
+  - title: Main Functionality
+    desc:
+      Fit the model with `SLOPE()`, visualize the results with `plot.SLOPE()`,
+      and produce predictions for new data with `predict.SLOPE()`.
+  - contents:
+      - SLOPE
+      - plot.SLOPE
+      - print.SLOPE
+      - summary.SLOPE
+      - print.summary_SLOPE
+      - predict.SLOPE
+      - coef.SLOPE
+      - deviance.SLOPE
+      - score
+  - title: Clusters
+  - contents:
+      - plotClusters
+  - title: Model Tuning
+  - contents:
+      - cvSLOPE
+      - trainSLOPE
+      - plot.TrainedSLOPE
+      - print.TrainedSLOPE
+      - summary.TrainedSLOPE
+      - print.summary_TrainedSLOPE
+  - title: Utilities
+  - contents:
+      - plotDiagnostics
+      - regularizationWeights
+      - sortedL1Prox
+  - title: Datasets
+  - contents:
+      - abalone
+      - bodyfat
+      - heart
+      - student
+      - wine
+      - glioma
