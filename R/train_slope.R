@@ -36,8 +36,6 @@
 #' \item{call}{the call}
 #'
 #' @export
-#'
-#' @seealso [plot.TrainedSLOPE()]
 #' @family model-tuning
 #'
 #' @examples
