@@ -53,8 +53,18 @@
 <div class="section level2">
 <h2 id="repository-overview">Repository Overview<a class="anchor" aria-label="anchor" href="#repository-overview"></a></h2>
 <p>SLOPE is an R package that provides efficient implementations for Sorted L-One Penalized Estimation: generalized linear models regularized with the sorted L1-norm. The package supports ordinary least-squares regression, binomial regression, multinomial regression, and Poisson regression for both dense and sparse predictor matrices. The codebase includes predictor screening rules for fast solutions to high-dimensional problems.</p>
-<p><strong>Repository Stats:</strong> - <strong>Languages:</strong> R (46 files), C++ (68 files with C++17 requirement) - <strong>Size:</strong> Medium-sized package (~52.5MB installed, mainly due to compiled C++ libraries) - <strong>Dependencies:</strong> Matrix, Rcpp, RcppEigen, BH, bigmemory - <strong>Build System:</strong> Task runner (Taskfile.yml) + standard R package tools</p>
-</div>
+<p><strong>Repository Stats:</strong></p>
+<ul><li>
+<strong>Languages:</strong> R (20 files), C++ (68 files with C++17 requirement)</li>
+<li>
+<strong>Size:</strong> Medium-sized package (~52.5MB installed, mainly due to compiled C++ libraries)</li>
+<li>
+<strong>Dependencies:</strong> Matrix, Rcpp, RcppEigen, BH, bigmemory</li>
+<li>
+<strong>Build System:</strong> Task runner (Taskfile.yml) + standard R package tools</li>
+<li>
+<strong>Current Version:</strong> 1.2.0</li>
+</ul></div>
 <div class="section level2">
 <h2 id="build-instructions">Build Instructions<a class="anchor" aria-label="anchor" href="#build-instructions"></a></h2>
 <div class="section level3">
@@ -79,7 +89,7 @@
 </li>
 <li>
 <p><strong>Run Tests:</strong></p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="ex">task</span> test           <span class="co"># ~2 seconds, 147 tests via testthat</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="ex">task</span> test           <span class="co"># ~2 seconds, 162 tests via testthat</span></span></code></pre></div>
 </li>
 <li>
 <p><strong>Full R Package Check:</strong></p>
@@ -87,7 +97,7 @@
 </li>
 <li>
 <p><strong>Build Package Archive:</strong></p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="ex">task</span> build          <span class="co"># Creates ../SLOPE_1.0.1.tar.gz</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="ex">task</span> build          <span class="co"># Creates ../SLOPE_1.2.0.tar.gz</span></span></code></pre></div>
 </li>
 <li>
 <p><strong>Update Documentation:</strong></p>
@@ -104,8 +114,11 @@
 <strong>Installation Location:</strong> Package installs to <code>_libs/</code> directory for development</li>
 <li>
 <strong>Timing:</strong> Most builds complete in under 2 minutes; tests run in ~2 seconds</li>
-</ul><p><strong>Build Warnings to Expect (non-critical):</strong> - “installed size is 52.5Mb” - normal for C++ package with Eigen - “hidden files and directories (.clang-format)” - development file, safe to ignore - “unable to verify current time” - timestamp check issue in some environments</p>
-</div>
+</ul><p><strong>Build Warnings to Expect (non-critical):</strong></p>
+<ul><li>“installed size is 52.5Mb” - normal for C++ package with Eigen</li>
+<li>“hidden files and directories (.clang-format)” - development file, safe to ignore</li>
+<li>“unable to verify current time” - timestamp check issue in some environments</li>
+</ul></div>
 </div>
 <div class="section level2">
 <h2 id="project-layout--architecture">Project Layout &amp; Architecture<a class="anchor" aria-label="anchor" href="#project-layout--architecture"></a></h2>
@@ -116,34 +129,92 @@
 │   ├── slope.R          # Main SLOPE() function
 │   ├── cv.R             # Cross-validation functions
 │   ├── predict.R        # Prediction methods
-│   └── plot.R           # Plotting functions
+│   └── plot.R           # Plotting functions (includes single-solution dot charts)
 ├── src/                 # C++ source code
 │   ├── Makevars         # Build configuration (C++17, OpenMP)
 │   ├── slope/           # Core C++ library (imported from libslope)
 │   └── *.cpp            # R-C++ interface files
-├── tests/testthat/      # Test suite (147 tests)
+├── tests/testthat/      # Test suite (162 tests, 53 test_that blocks)
 ├── inst/include/        # Header files for C++ library
-├── man/                 # Generated documentation
+├── man/                 # Generated documentation (roxygen2)
 ├── vignettes/           # Package vignettes
-└── data/                # Example datasets</code></pre>
+├── data/                # Example datasets (heart, wine, bodyfat, etc.)
+└── data-raw/            # Scripts to generate data/ datasets
+    └── datasets.R       # Downloads and processes datasets</code></pre>
 </div>
 <div class="section level3">
 <h3 id="key-configuration-files">Key Configuration Files<a class="anchor" aria-label="anchor" href="#key-configuration-files"></a></h3>
 <ul><li>
 <strong>DESCRIPTION:</strong> Package metadata, dependencies, C++17 requirement</li>
 <li>
-<strong>NAMESPACE:</strong> Auto-generated, do not edit manually</li>
+<strong>NAMESPACE:</strong> Auto-generated by roxygen2, do not edit manually</li>
+<li>
+<strong>NEWS.md:</strong> User-facing changelog, manually maintained for all changes</li>
 <li>
 <strong>Taskfile.yml:</strong> Build automation (preferred over Makefile)</li>
 <li>
 <strong>src/Makevars:</strong> C++ compilation flags and source file list</li>
-<li>**_pkgdown.yml:** Website generation configuration</li>
+<li>
+<strong>_pkgdown.yml:</strong> Website generation configuration</li>
+<li>
+<strong>codecov.yml:</strong> Code coverage configuration</li>
+</ul></div>
+<div class="section level3">
+<h3 id="code-formatting-tools">Code Formatting Tools<a class="anchor" aria-label="anchor" href="#code-formatting-tools"></a></h3>
+<ul><li>
+<strong>air.toml:</strong> R code formatter configuration (80 char width, 2-space indent)
+<ul><li>Format R code with: <code>air</code> (if available in environment)</li>
+</ul></li>
+<li>
+<strong>.clang-format:</strong> C++ code formatting (Mozilla style)
+<ul><li>Used for C++ code in <code>src/</code> directory</li>
+</ul></li>
+<li>
+<strong>.prettierrc.toml:</strong> Markdown/YAML formatting (prose wrap always)
+<ul><li>Used for documentation files</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="data-management">Data Management<a class="anchor" aria-label="anchor" href="#data-management"></a></h3>
+<ul><li>
+<strong>data/</strong>: Contains .rda files with example datasets (bodyfat, abalone, heart, wine, glioma, student)</li>
+<li>
+<strong>data-raw/datasets.R</strong>: Script to download and process raw datasets
+<ul><li>Downloads from online sources (e.g., LIBSVM datasets)</li>
+<li>Processes and saves as .rda files in data/ directory</li>
+<li>Run this script to regenerate datasets when needed</li>
+</ul></li>
 </ul></div>
 <div class="section level3">
 <h3 id="github-cicd-workflows">GitHub CI/CD Workflows<a class="anchor" aria-label="anchor" href="#github-cicd-workflows"></a></h3>
-<p>Located in <code>.github/workflows/</code>: - <strong>R-CMD-check.yaml:</strong> Runs on Windows/Ubuntu with R release/devel (main validation) - <strong>test-coverage.yaml:</strong> Code coverage via codecov - <strong>release.yaml:</strong> Semantic release automation - <strong>pkgdown.yaml:</strong> Documentation website deployment</p>
-<p><strong>CI Expectations:</strong> All workflows must pass. The R-CMD-check runs the same validation as <code>task check</code> locally.</p>
+<p>Located in <code>.github/workflows/</code>:</p>
+<ul><li>
+<strong>R-CMD-check.yaml:</strong> Runs on Windows/Ubuntu with R release/devel (main validation)</li>
+<li>
+<strong>test-coverage.yaml:</strong> Code coverage via codecov</li>
+<li>
+<strong>pkgdown.yaml:</strong> Documentation website deployment to GitHub Pages
+<ul><li>Builds on push to main/master, PRs, releases, and manual dispatch</li>
+<li>Deploys to <a href="https://jolars.github.io/SLOPE/" class="uri">https://jolars.github.io/SLOPE/</a>
+</li>
+<li>Uses <code><a href="https://pkgdown.r-lib.org/reference/build_site_github_pages.html" class="external-link">pkgdown::build_site_github_pages()</a></code>
+</li>
+</ul></li>
+</ul><p><strong>CI Expectations:</strong> All workflows must pass. The R-CMD-check runs the same validation as <code>task check</code> locally.</p>
 </div>
+<div class="section level3">
+<h3 id="website--documentation">Website &amp; Documentation<a class="anchor" aria-label="anchor" href="#website--documentation"></a></h3>
+<ul><li>
+<strong>pkgdown</strong>: Package website automatically generated and deployed
+<ul><li>Configuration: <code>_pkgdown.yml</code>
+</li>
+<li>Site URL: <a href="https://jolars.github.io/SLOPE/" class="uri">https://jolars.github.io/SLOPE/</a>
+</li>
+<li>Organized reference sections: Main Functionality, Clusters, Model Tuning, Utilities, Datasets</li>
+<li>Includes vignettes, function reference, and news</li>
+<li>Build locally with: <code><a href="https://pkgdown.r-lib.org/reference/build_site.html" class="external-link">pkgdown::build_site()</a></code> (requires pkgdown package)</li>
+</ul></li>
+</ul></div>
 <div class="section level3">
 <h3 id="important-dependencies">Important Dependencies<a class="anchor" aria-label="anchor" href="#important-dependencies"></a></h3>
 <ul><li>
@@ -166,34 +237,99 @@
 <li>
 <strong>Interface Changes:</strong> Modify <code>src/*.cpp</code> for R-C++ interfaces</li>
 <li>
-<strong>Documentation:</strong> Use roxygen2 comments, run <code>task docs</code> to update</li>
+<strong>Documentation:</strong> Use roxygen2 comments in R files, run <code>task docs</code> to update <code>.Rd</code> files</li>
+<li>
+<strong>Tests:</strong> Add tests in <code>tests/testthat/test-*.R</code> files</li>
+<li>
+<strong>Website:</strong> pkgdown website auto-updates on push to main, or build locally with <code><a href="https://pkgdown.r-lib.org/reference/build_site.html" class="external-link">pkgdown::build_site()</a></code>
+</li>
+<li>
+<strong>NEWS.md:</strong> For all significant changes (new features, breaking changes, major bug fixes), manually update <code>NEWS.md</code> under the appropriate version header.</li>
 </ol></div>
 <div class="section level3">
 <h3 id="validation-sequence">Validation Sequence<a class="anchor" aria-label="anchor" href="#validation-sequence"></a></h3>
 <div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="ex">task</span> install    <span class="co"># Build and install package (~30 seconds)</span></span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="ex">task</span> test       <span class="co"># Run test suite (~2 seconds)  </span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="ex">task</span> test       <span class="co"># Run test suite (~2 seconds, 162 tests)</span></span>
 <span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="ex">task</span> check      <span class="co"># Full R CMD check (~1.5 minutes)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="common-pitfalls">Common Pitfalls<a class="anchor" aria-label="anchor" href="#common-pitfalls"></a></h3>
 <ul><li>
-<strong>Never edit <code>NAMESPACE</code></strong> - auto-generated by roxygen2</li>
+<strong>Never edit <code>NAMESPACE</code> or <code>man/*.Rd</code> files manually</strong> - auto-generated by roxygen2</li>
 <li>
 <strong>Don’t modify <code>src/slope/</code></strong> - use <code>task update-libslope</code> to update</li>
 <li>
 <strong>Always recompile after C++ changes</strong> - <code>task install</code> handles this</li>
 <li>
 <strong>Use local library</strong> - package installs to <code>_libs/</code> not system R library</li>
+<li>
+<strong>Documentation updates require <code>task docs</code></strong> - changes to roxygen2 comments won’t appear until regenerated</li>
 </ul></div>
 <div class="section level3">
 <h3 id="testing-strategy">Testing Strategy<a class="anchor" aria-label="anchor" href="#testing-strategy"></a></h3>
 <ul><li>
-<strong>Unit Tests:</strong> Comprehensive testthat suite covers all major functions</li>
+<strong>Unit Tests:</strong> Comprehensive testthat suite (162 tests) covers all major functions</li>
 <li>
-<strong>Integration Tests:</strong> R CMD check includes example execution and vignette building<br></li>
+<strong>Test Helper:</strong> Use <code>dont_plot()</code> and <code>dont_print()</code> from <code>tests/testthat/setup.R</code> for testing without output</li>
+<li>
+<strong>Integration Tests:</strong> R CMD check includes example execution and vignette building</li>
 <li>
 <strong>Coverage:</strong> Tracked via codecov (target &gt;80%)</li>
-</ul><p>The build system is well-established and reliable. Trust these instructions and only explore alternative approaches if you encounter specific errors not covered here.</p>
+</ul></div>
+<div class="section level3">
+<h3 id="r-package-conventions">R Package Conventions<a class="anchor" aria-label="anchor" href="#r-package-conventions"></a></h3>
+<ul><li>
+<strong>S3 Methods:</strong> Use <code>.</code> for S3 method names (e.g., <code>plot.SLOPE</code>, <code>coef.SLOPE</code>)</li>
+<li>
+<strong>Documentation:</strong> Always document exported functions with roxygen2</li>
+<li>
+<strong>Examples:</strong> Include runnable examples in roxygen2 <code>@examples</code> sections</li>
+<li>
+<strong>Families:</strong> Use <code>@family</code> tags to group related functions in documentation</li>
+<li>
+<strong>Code Formatting:</strong> Use <code>air</code> to format R code (80 char width, 2-space indent)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="commit-message-conventions">Commit Message Conventions<a class="anchor" aria-label="anchor" href="#commit-message-conventions"></a></h3>
+<p>This project uses <strong>Conventional Commits</strong> for all commit messages:</p>
+<ul><li>
+<strong>Format:</strong> <code>&lt;type&gt;(&lt;scope&gt;): &lt;description&gt;</code>
+</li>
+<li>
+<strong>Types:</strong>
+<ul><li>
+<code>feat:</code> New features</li>
+<li>
+<code>fix:</code> Bug fixes</li>
+<li>
+<code>docs:</code> Documentation changes</li>
+<li>
+<code>chore:</code> Maintenance tasks, dependency updates</li>
+<li>
+<code>test:</code> Test additions or modifications</li>
+<li>
+<code>refactor:</code> Code refactoring without behavior changes</li>
+<li>
+<code>ci:</code> CI/CD configuration changes</li>
+<li>
+<code>build:</code> Build system or dependency changes</li>
+</ul></li>
+<li>
+<strong>Examples:</strong>
+<ul><li><code>feat: use dotcharts for single solutions</code></li>
+<li><code>fix: correctly return scaled coefficients</code></li>
+<li><code>docs: fix typo in documentation</code></li>
+<li><code>chore: bump version in DESCRIPTION</code></li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="dataset-management">Dataset Management<a class="anchor" aria-label="anchor" href="#dataset-management"></a></h3>
+<p>When modifying or adding datasets:</p>
+<ol style="list-style-type: decimal"><li>Edit <code>data-raw/datasets.R</code> to add data processing scripts</li>
+<li>Script should download raw data and save as .rda in <code>data/</code> directory</li>
+<li>Document datasets in <code>R/</code> files with roxygen2 <code>@format</code> and <code>@source</code> tags</li>
+<li>Example datasets include: heart, wine, bodyfat, abalone, glioma, student</li>
+</ol><p>The build system is well-established and reliable. Trust these instructions and only explore alternative approaches if you encounter specific errors not covered here.</p>
 </div>
 </div>
 </div>
