@@ -77,6 +77,7 @@ plot(tune, ci_col = "salmon", index = 1)
 
 Other model-tuning: 
 \code{\link{cvSLOPE}()},
+\code{\link{summary.TrainedSLOPE}()},
 \code{\link{trainSLOPE}()}
 }
 \concept{model-tuning}

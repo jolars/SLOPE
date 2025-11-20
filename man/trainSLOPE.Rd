@@ -83,6 +83,7 @@ tune <- trainSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
 \seealso{
 Other model-tuning: 
 \code{\link{cvSLOPE}()},
-\code{\link{plot.TrainedSLOPE}()}
+\code{\link{plot.TrainedSLOPE}()},
+\code{\link{summary.TrainedSLOPE}()}
 }
 \concept{model-tuning}

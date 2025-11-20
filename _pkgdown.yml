@@ -39,6 +39,8 @@ reference:
               - trainSLOPE
               - plot.TrainedSLOPE
               - print.TrainedSLOPE
+              - summary.TrainedSLOPE  
+              - print.summary_TrainedSLOPE
       - title: Utilities
       - contents:
               - plotDiagnostics

@@ -67,6 +67,7 @@ tune <- cvSLOPE(
 
 Other model-tuning: 
 \code{\link{plot.TrainedSLOPE}()},
+\code{\link{summary.TrainedSLOPE}()},
 \code{\link{trainSLOPE}()}
 }
 \concept{model-tuning}

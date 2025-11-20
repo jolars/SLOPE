@@ -134,3 +134,121 @@ print.summary_SLOPE <- function(x, digits = 3, ...) {
 
   invisible(x)
 }
+
+#' Summarize TrainedSLOPE model
+#'
+#' Produces a summary of a trained SLOPE model from cross-validation,
+#' including information about the optimal parameters and performance metrics.
+#'
+#' @param object an object of class `'TrainedSLOPE'`, typically from a call to
+#'   [cvSLOPE()] or [trainSLOPE()]
+#' @param ... other arguments (currently ignored)
+#'
+#' @return An object of class `'summary_TrainedSLOPE'` with the following
+#'   components:
+#' \item{call}{the call that produced the model}
+#' \item{measure}{the performance measure(s) used}
+#' \item{optima}{optimal parameter values and corresponding performance}
+#' \item{n_folds}{number of cross-validation folds}
+#' \item{n_repeats}{number of cross-validation repeats}
+#' \item{n_models}{total number of models evaluated}
+#'
+#' @seealso [cvSLOPE()], [trainSLOPE()], [print.summary_TrainedSLOPE()]
+#' @family model-tuning
+#'
+#' @examples
+#' tune <- cvSLOPE(
+#'   subset(mtcars, select = c("mpg", "drat", "wt")),
+#'   mtcars$hp,
+#'   q = c(0.1, 0.2),
+#'   n_folds = 5
+#' )
+#' summary(tune)
+#'
+#' @method summary TrainedSLOPE
+#' @export
+summary.TrainedSLOPE <- function(object, ...) {
+  n_models <- nrow(object$summary)
+
+  # Try to extract fold information from the call
+  call_list <- as.list(object$call)
+  n_folds <- if ("n_folds" %in% names(call_list)) {
+    eval(call_list$n_folds)
+  } else {
+    10 # default value
+  }
+  n_repeats <- if ("n_repeats" %in% names(call_list)) {
+    eval(call_list$n_repeats)
+  } else {
+    1 # default value
+  }
+
+  structure(
+    list(
+      call = object$call,
+      measure = object$measure,
+      optima = object$optima,
+      n_folds = n_folds,
+      n_repeats = n_repeats,
+      n_models = n_models
+    ),
+    class = "summary_TrainedSLOPE"
+  )
+}
+
+#' Print summary of TrainedSLOPE model
+#'
+#' @param x an object of class `'summary_TrainedSLOPE'`
+#' @param digits number of significant digits to print
+#' @param ... other arguments passed to [print()]
+#'
+#' @return Invisibly returns the input object
+#'
+#' @seealso [summary.TrainedSLOPE()]
+#' @method print summary_TrainedSLOPE
+#' @export
+print.summary_TrainedSLOPE <- function(x, digits = 3, ...) {
+  cat("\nCall:\n")
+  cat(paste(deparse(x$call), sep = "\n", collapse = "\n"), "\n\n")
+
+  cat("Cross-validation:\n")
+  if (!is.na(x$n_folds)) {
+    cat("  Folds:", x$n_folds, "\n")
+  }
+  if (!is.na(x$n_repeats)) {
+    cat("  Repeats:", x$n_repeats, "\n")
+  }
+  cat("  Models evaluated:", x$n_models, "\n")
+
+  cat("\nPerformance measure:", x$measure$label, "\n")
+
+  cat("\nOptimal parameters:\n")
+
+  # Format the optima data frame for display
+  formatted_optima <- x$optima
+  if (is.numeric(formatted_optima$q)) {
+    formatted_optima$q <- signif(formatted_optima$q, digits)
+  }
+  if (is.numeric(formatted_optima$gamma)) {
+    formatted_optima$gamma <- signif(formatted_optima$gamma, digits)
+  }
+  if (is.numeric(formatted_optima$alpha)) {
+    formatted_optima$alpha <- signif(formatted_optima$alpha, digits)
+  }
+  if (is.numeric(formatted_optima$mean)) {
+    formatted_optima$mean <- signif(formatted_optima$mean, digits)
+  }
+  if (is.numeric(formatted_optima$se)) {
+    formatted_optima$se <- signif(formatted_optima$se, digits)
+  }
+  if (is.numeric(formatted_optima$lo)) {
+    formatted_optima$lo <- signif(formatted_optima$lo, digits)
+  }
+  if (is.numeric(formatted_optima$hi)) {
+    formatted_optima$hi <- signif(formatted_optima$hi, digits)
+  }
+
+  print(formatted_optima, row.names = FALSE, ...)
+
+  invisible(x)
+}

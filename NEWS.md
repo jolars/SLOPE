@@ -8,6 +8,9 @@
   which store the number of observations and predictors in the training data.
 - The `summary.SLOPE()` method now displays the number of observations and
   predictors, with improved formatting for the path summary table.
+- Added `summary()` method for `TrainedSLOPE` objects (from `cvSLOPE()` and
+  `trainSLOPE()`), which provides a concise overview of cross-validation
+  results including optimal parameters and performance metrics.
 
 # SLOPE 1.2.0
 

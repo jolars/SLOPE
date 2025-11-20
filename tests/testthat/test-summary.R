@@ -45,3 +45,43 @@ test_that("print.summary_SLOPE runs without error", {
   expect_output(print(s), "Predictors:")
   expect_output(print(s), "Path summary")
 })
+
+test_that("TrainedSLOPE summary works correctly", {
+  tune <- cvSLOPE(
+    subset(mtcars, select = c("mpg", "drat", "wt")),
+    mtcars$hp,
+    q = c(0.1, 0.2),
+    n_folds = 5,
+    n_repeats = 2
+  )
+
+  s <- summary(tune)
+
+  expect_s3_class(s, "summary_TrainedSLOPE")
+  expect_true("call" %in% names(s))
+  expect_true("measure" %in% names(s))
+  expect_true("optima" %in% names(s))
+  expect_true("n_folds" %in% names(s))
+  expect_true("n_repeats" %in% names(s))
+  expect_true("n_models" %in% names(s))
+
+  expect_equal(s$n_folds, 5)
+  expect_equal(s$n_repeats, 2)
+})
+
+test_that("print.summary_TrainedSLOPE runs without error", {
+  tune <- cvSLOPE(
+    subset(mtcars, select = c("mpg", "drat", "wt")),
+    mtcars$hp,
+    q = c(0.1, 0.2),
+    n_folds = 5
+  )
+
+  s <- summary(tune)
+
+  expect_output(print(s), "Cross-validation:")
+  expect_output(print(s), "Folds:")
+  expect_output(print(s), "Models evaluated:")
+  expect_output(print(s), "Performance measure:")
+  expect_output(print(s), "Optimal parameters:")
+})
