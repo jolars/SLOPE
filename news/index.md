@@ -1,5 +1,14 @@
 # Changelog
 
+## SLOPE 1.3.0
+
+### New Features
+
+- The
+  [`plot.SLOPE()`](https://jolars.github.io/SLOPE/reference/plot.SLOPE.md)
+  method now plots a dot chart if there is just a single value of
+  `alpha`, and not an empty plot (as before).
+
 ## SLOPE 1.2.0
 
 CRAN release: 2025-11-11

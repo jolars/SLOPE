@@ -1,7 +1,10 @@
 # Plot coefficients
 
 Plot the fitted model's regression coefficients along the regularization
-path.
+path. When the path contains a single solution (only one alpha value), a
+dot chart is displayed showing the coefficient values. When the path
+contains multiple solutions, a line plot is displayed showing how
+coefficients evolve along the regularization path.
 
 ## Usage
 
@@ -13,6 +16,7 @@ plot(
   x_variable = c("alpha", "deviance_ratio", "step"),
   magnitudes = FALSE,
   add_labels = FALSE,
+  mark_zero = TRUE,
   ...
 )
 ```
@@ -40,12 +44,19 @@ plot(
 - add_labels:
 
   whether to add labels (numbers) on the right side of the plot for each
-  coefficient
+  coefficient (only used when the path contains multiple solutions)
+
+- mark_zero:
+
+  whether to add a vertical line at zero in the dot chart (only used
+  when the path contains a single solution)
 
 - ...:
 
-  arguments passed to
-  [`graphics::matplot()`](https://rdrr.io/r/graphics/matplot.html)
+  for multiple solutions: arguments passed to
+  [`graphics::matplot()`](https://rdrr.io/r/graphics/matplot.html). For
+  a single solution: arguments passed to
+  [`graphics::dotchart()`](https://rdrr.io/r/graphics/dotchart.html).
 
 ## Value
 
@@ -67,6 +78,17 @@ Other SLOPE-methods:
 ## Examples
 
 ``` r
+# Multiple solutions along regularization path
 fit <- SLOPE(heart$x, heart$y)
 plot(fit)
+
+
+# Single solution with dot chart
+fit_single <- SLOPE(heart$x, heart$y, alpha = 0.1)
+plot(fit_single)
+
+
+# Single solution for multinomial regression
+fit_multi <- SLOPE(wine$x, wine$y, family = "multinomial", alpha = 0.05)
+plot(fit_multi)
 ```
