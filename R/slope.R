@@ -294,6 +294,12 @@
 #'   well as a measure of the infeasibility, time, and iteration; only
 #'   available if `diagnostics = TRUE` in the call to [SLOPE()].
 #' }
+#' \item{n_observations}{
+#'   the number of observations in the training data
+#' }
+#' \item{n_predictors}{
+#'   the number of predictors in the training data
+#' }
 #' \item{call}{the call used for fitting the model}
 #' @export
 #'
@@ -528,6 +534,8 @@ SLOPE <- function(
       diagnostics = diagnostics,
       patterns = patterns,
       has_intercept = control$fit_intercept,
+      n_observations = NROW(x),
+      n_predictors = NCOL(x),
       call = ocall
     ),
     class = c(slope_class, "SLOPE")

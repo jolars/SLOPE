@@ -209,6 +209,12 @@ a \code{data.frame} of objective values for the primal and dual problems, as
 well as a measure of the infeasibility, time, and iteration; only
 available if \code{diagnostics = TRUE} in the call to \code{\link[=SLOPE]{SLOPE()}}.
 }
+\item{n_observations}{
+the number of observations in the training data
+}
+\item{n_predictors}{
+the number of predictors in the training data
+}
 \item{call}{the call used for fitting the model}
 }
 \description{

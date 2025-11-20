@@ -4,6 +4,8 @@
 
 - The `plot.SLOPE()` method now plots a dot chart if there is just a single
   value of `alpha`, and not an empty plot (as before).
+- The `SLOPE` object now includes `n_observations` and `n_predictors` fields,
+  which store the number of observations and predictors in the training data.
 
 # SLOPE 1.2.0
 
