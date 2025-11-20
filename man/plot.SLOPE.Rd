@@ -10,6 +10,7 @@
   x_variable = c("alpha", "deviance_ratio", "step"),
   magnitudes = FALSE,
   add_labels = FALSE,
+  mark_zero = TRUE,
   ...
 )
 }
@@ -25,9 +26,14 @@ the fraction of deviance explained, and \code{"step"} plots step number.}
 \item{magnitudes}{whether to plot the magnitudes of the coefficients}
 
 \item{add_labels}{whether to add labels (numbers) on the right side
-of the plot for each coefficient}
+of the plot for each coefficient (only used when the path contains multiple
+solutions)}
 
-\item{...}{arguments passed to \code{\link[graphics:matplot]{graphics::matplot()}}}
+\item{mark_zero}{whether to add a vertical line at zero in the dot chart
+(only used when the path contains a single solution)}
+
+\item{...}{for multiple solutions: arguments passed to \code{\link[graphics:matplot]{graphics::matplot()}}.
+For a single solution: arguments passed to \code{\link[graphics:dotchart]{graphics::dotchart()}}.}
 }
 \value{
 Invisibly returns NULL. The function is called for its
@@ -35,11 +41,23 @@ side effect of producing a plot.
 }
 \description{
 Plot the fitted model's regression
-coefficients along the regularization path.
+coefficients along the regularization path. When the path contains a single
+solution (only one alpha value), a dot chart is displayed showing the
+coefficient values. When the path contains multiple solutions, a line plot
+is displayed showing how coefficients evolve along the regularization path.
 }
 \examples{
+# Multiple solutions along regularization path
 fit <- SLOPE(heart$x, heart$y)
 plot(fit)
+
+# Single solution with dot chart
+fit_single <- SLOPE(heart$x, heart$y, alpha = 0.1)
+plot(fit_single)
+
+# Single solution for multinomial regression
+fit_multi <- SLOPE(wine$x, wine$y, family = "multinomial", alpha = 0.05)
+plot(fit_multi)
 }
 \seealso{
 \code{\link[=SLOPE]{SLOPE()}}, \code{\link[=plotDiagnostics]{plotDiagnostics()}}

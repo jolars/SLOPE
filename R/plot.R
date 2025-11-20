@@ -1,7 +1,10 @@
 #' Plot coefficients
 #'
 #' Plot the fitted model's regression
-#' coefficients along the regularization path.
+#' coefficients along the regularization path. When the path contains a single
+#' solution (only one alpha value), a dot chart is displayed showing the
+#' coefficient values. When the path contains multiple solutions, a line plot
+#' is displayed showing how coefficients evolve along the regularization path.
 #'
 #' @param x an object of class `"SLOPE"`
 #' @param intercept whether to plot the intercept
@@ -10,8 +13,12 @@
 #'   the fraction of deviance explained, and `"step"` plots step number.
 #' @param magnitudes whether to plot the magnitudes of the coefficients
 #' @param add_labels whether to add labels (numbers) on the right side
-#'   of the plot for each coefficient
-#' @param ... arguments passed to [graphics::matplot()]
+#'   of the plot for each coefficient (only used when the path contains multiple
+#'   solutions)
+#' @param mark_zero whether to add a vertical line at zero in the dot chart
+#'   (only used when the path contains a single solution)
+#' @param ... for multiple solutions: arguments passed to [graphics::matplot()].
+#'   For a single solution: arguments passed to [graphics::dotchart()].
 #'
 #' @seealso [SLOPE()], [plotDiagnostics()]
 #' @family SLOPE-methods
@@ -21,8 +28,17 @@
 #' @export
 #'
 #' @examples
+#' # Multiple solutions along regularization path
 #' fit <- SLOPE(heart$x, heart$y)
 #' plot(fit)
+#'
+#' # Single solution with dot chart
+#' fit_single <- SLOPE(heart$x, heart$y, alpha = 0.1)
+#' plot(fit_single)
+#'
+#' # Single solution for multinomial regression
+#' fit_multi <- SLOPE(wine$x, wine$y, family = "multinomial", alpha = 0.05)
+#' plot(fit_multi)
 plot.SLOPE <- function(
   x,
   intercept = FALSE,
@@ -33,6 +49,7 @@ plot.SLOPE <- function(
   ),
   magnitudes = FALSE,
   add_labels = FALSE,
+  mark_zero = TRUE,
   ...
 ) {
   object <- x
@@ -62,21 +79,47 @@ plot.SLOPE <- function(
   coefs <- stats::coef(object, simplify = TRUE, intercept = include_intercept)
 
   if (magnitudes) {
-    coefs <- abs(coefs)
+    if (is.list(coefs)) {
+      coefs <- lapply(coefs, abs)
+    } else {
+      coefs <- abs(coefs)
+    }
   }
 
   xlim <- if (x_variable == "alpha") rev(range(x)) else range(x)
   log_var <- if (x_variable == "alpha") "x" else ""
 
-  default_plot_args <- list(
-    type = "l",
-    lty = 1,
-    xlab = xlab,
-    xlim = xlim,
-    ylab = "Coefficients",
-    log = log_var,
-    col = grDevices::palette.colors(10, "Tableau")
-  )
+  do_single <- length(x) == 1
+
+  if (do_single) {
+    # Single solution: prepare barplot arguments
+    variable_names <- object[["variable_names"]]
+
+    if (include_intercept) {
+      variable_names <- c("(Intercept)", variable_names)
+    }
+
+    if (is.null(variable_names)) {
+      variable_names <- paste0("V", seq_len(NCOL(object[["X"]])))
+    }
+
+    default_plot_args <- list(
+      xlab = "Coefficients",
+      ylab = "Predictor",
+      labels = variable_names
+    )
+  } else {
+    # Multiple solutions: prepare matplot arguments
+    default_plot_args <- list(
+      type = "l",
+      lty = 1,
+      xlab = xlab,
+      xlim = xlim,
+      ylab = "Coefficients",
+      log = log_var,
+      col = grDevices::palette.colors(10, "Tableau")
+    )
+  }
 
   plot_args <- utils::modifyList(
     default_plot_args,
@@ -85,28 +128,71 @@ plot.SLOPE <- function(
 
   if (m == 1) {
     coefs_k <- t(coefs)
-    xlim <- if (x_variable == "alpha") rev(range(x)) else range(x)
-    plot_args_k <- utils::modifyList(plot_args, list(x = x, y = coefs_k))
-    do.call(graphics::matplot, plot_args_k)
 
-    if (add_labels) {
-      addCoefLabels(coefs_k, x)
-    }
-  } else {
-    for (k in seq_len(m)) {
-      coefs_k <- t(coefs[[k]])
+    if (do_single) {
       plot_args_k <- utils::modifyList(
         plot_args,
         list(
-          x = x,
-          y = coefs_k,
-          main = paste0("Response: ", k)
+          x = as.vector(coefs_k),
+          xlim = grDevices::extendrange(as.vector(coefs_k))
         )
       )
+      do.call(graphics::dotchart, plot_args_k)
+
+      if (mark_zero) {
+        graphics::abline(v = 0, col = "grey")
+      }
+    } else {
+      plot_args_k <- utils::modifyList(plot_args, list(x = x, y = coefs_k))
       do.call(graphics::matplot, plot_args_k)
 
       if (add_labels) {
         addCoefLabels(coefs_k, x)
+      }
+    }
+  } else {
+    if (do_single) {
+      coefs_k <- as.matrix(do.call(cbind, t(coefs)))
+
+      class_names <- object[["class_names"]]
+
+      if (is.null(class_names)) {
+        class_names <- paste0("Response ", seq_len(m))
+      }
+
+      # Remove refeerence class (last column)
+      class_names <- class_names[-length(class_names)]
+
+      colnames(coefs_k) <- class_names
+      plot_args_k <- utils::modifyList(
+        plot_args,
+        list(
+          x = coefs_k,
+          xlim = grDevices::extendrange(as.vector(coefs_k))
+        )
+      )
+      do.call(graphics::dotchart, plot_args_k)
+
+      if (mark_zero) {
+        graphics::abline(v = 0, col = "grey")
+      }
+    } else {
+      for (k in seq_len(m)) {
+        coefs_k <- t(coefs[[k]])
+
+        plot_args_k <- utils::modifyList(
+          plot_args,
+          list(
+            x = x,
+            y = coefs_k,
+            main = paste0("Response: ", k)
+          )
+        )
+        do.call(graphics::matplot, plot_args_k)
+
+        if (add_labels) {
+          addCoefLabels(coefs_k, x)
+        }
       }
     }
   }

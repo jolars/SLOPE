@@ -1,3 +1,10 @@
+# SLOPE 1.3.0
+
+## New Features
+
+- The `plot.SLOPE()` method now plots a dot chart if there is just a single
+  value of `alpha`, and not an empty plot (as before).
+
 # SLOPE 1.2.0
 
 ## Major Changes
