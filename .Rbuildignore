@@ -40,3 +40,4 @@
 ^\.releaserc\.json$
 ^\.clang-format$
 ^README\.html$
+^\.lintr$
