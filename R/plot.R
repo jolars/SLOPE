@@ -54,6 +54,17 @@ plot.SLOPE <- function(
 ) {
   object <- x
 
+  stopifnot(
+    is.logical(intercept),
+    length(intercept) == 1,
+    is.logical(magnitudes),
+    length(magnitudes) == 1,
+    is.logical(add_labels),
+    length(add_labels) == 1,
+    is.logical(mark_zero),
+    length(mark_zero) == 1
+  )
+
   x_variable <- match.arg(x_variable)
 
   coefs <- getElement(object, "coefficients")
