@@ -132,8 +132,14 @@ normalize(Eigen::MatrixBase<T>& x,
   computeCenters(x_centers, x, centering_type);
   computeScales(x_scales, x, scaling_type);
 
-  if ((x_scales.array().abs() == 0.0).any()) {
-    throw std::invalid_argument("One or more columns have zero variance");
+  // Handle zero-variance columns by setting their scale to 1.0
+  // to avoid division by zero during normalization
+  if (scaling_type != "none" && scaling_type != "manual") {
+    for (int j = 0; j < p; ++j) {
+      if (std::abs(x_scales(j)) == 0.0) {
+        x_scales(j) = 1.0;
+      }
+    }
   }
 
   bool center = centering_type != "none";
@@ -199,6 +205,17 @@ normalize(Eigen::SparseMatrixBase<T>& x,
 {
   computeCenters(x_centers, x, centering_type);
   computeScales(x_scales, x, scaling_type);
+
+  // Handle zero-variance columns by setting their scale to 1.0
+  // to avoid division by zero during normalization
+  const int p = x.cols();
+  if (scaling_type != "none" && scaling_type != "manual") {
+    for (int j = 0; j < p; ++j) {
+      if (std::abs(x_scales(j)) == 0.0) {
+        x_scales(j) = 1.0;
+      }
+    }
+  }
 
   bool center = centering_type != "none";
   bool scale = scaling_type != "none";
