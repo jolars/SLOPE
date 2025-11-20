@@ -1,6 +1,6 @@
-# Print summary of SLOPE model
+# Print Summary of SLOPE Model
 
-Print summary of SLOPE model
+Print Summary of SLOPE Model
 
 ## Usage
 

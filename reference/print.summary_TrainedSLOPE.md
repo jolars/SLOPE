@@ -1,6 +1,6 @@
-# Print summary of TrainedSLOPE model
+# Print Summary of TrainedSLOPE Model
 
-Print summary of TrainedSLOPE model
+Print Summary of TrainedSLOPE Model
 
 ## Usage
 

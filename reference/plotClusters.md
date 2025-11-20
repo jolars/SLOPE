@@ -1,4 +1,4 @@
-# Plot cluster structure
+# Plot Cluster Structure
 
 Note that this function requires the `patterns` argument to be set to
 `TRUE` in the call to

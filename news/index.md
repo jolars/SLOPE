@@ -22,6 +22,11 @@
   which provides a concise overview of cross-validation results
   including optimal parameters and performance metrics.
 
+### Minor Changes
+
+- All roxygen documentation titles have been converted to title case for
+  consistency.
+
 ## SLOPE 1.2.0
 
 CRAN release: 2025-11-11

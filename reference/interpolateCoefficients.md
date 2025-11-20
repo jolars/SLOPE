@@ -1,6 +1,6 @@
-# Interpolate coefficients
+# Interpolate Coefficients
 
-Interpolate coefficients
+Interpolate Coefficients
 
 ## Usage
 

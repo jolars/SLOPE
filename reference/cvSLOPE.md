@@ -1,4 +1,4 @@
-# Tune SLOPE with cross-validation
+# Tune SLOPE with Cross-Validation
 
 This function trains a model fit by
 [`SLOPE()`](https://jolars.github.io/SLOPE/reference/SLOPE.md) by tuning

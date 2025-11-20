@@ -1,4 +1,4 @@
-# Create cross-validation folds
+# Create Cross-Validation Folds
 
 Internal function that creates fold assignments for k-fold
 cross-validation, with support for repeated cross-validation.

@@ -1,4 +1,4 @@
-# Wine cultivars
+# Wine Cultivars
 
 A data set of results from chemical analysis of wines grown in Italy
 from three different cultivars.

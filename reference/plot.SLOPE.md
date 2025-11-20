@@ -1,4 +1,4 @@
-# Plot coefficients
+# Plot Coefficients
 
 Plot the fitted model's regression coefficients along the regularization
 path. When the path contains a single solution (only one alpha value), a

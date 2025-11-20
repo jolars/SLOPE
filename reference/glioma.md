@@ -1,4 +1,4 @@
-# Glioma metabolomics
+# Glioma Metabolomics
 
 Metabolomics dataset from 165 different plasma measurements from 94
 patients (cases) with glioma (brain tumours) and 71 healthy controls.

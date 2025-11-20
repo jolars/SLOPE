@@ -1,4 +1,4 @@
-# Student performance
+# Student Performance
 
 A data set of the attributes of 382 students in secondary education
 collected from two schools. The goal is to predict the grade in math and

@@ -1,6 +1,6 @@
-# Interpolate penalty values
+# Interpolate Penalty Values
 
-Interpolate penalty values
+Interpolate Penalty Values
 
 ## Usage
 

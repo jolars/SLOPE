@@ -1,6 +1,6 @@
-# Print results from SLOPE fit
+# Print Results from SLOPE Fit
 
-Print results from SLOPE fit
+Print Results from SLOPE Fit
 
 ## Usage
 

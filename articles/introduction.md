@@ -161,7 +161,6 @@ for (i in seq_along(q)) {
   fdr[i] <- v / max(r, 1)
 }
 
-# Create the plot
 plot(
   q,
   fdr,
@@ -172,7 +171,6 @@ plot(
   las = 1
 )
 
-# Add horizontal line at 0.1
 abline(h = 0.1, lty = 3)
 ```
 

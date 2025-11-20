@@ -1,6 +1,6 @@
-# Setup a data.frame of diagnostics
+# Setup a data.frame of Diagnostics
 
-Setup a data.frame of diagnostics
+Setup a data.frame of Diagnostics
 
 ## Usage
 

@@ -1,4 +1,4 @@
-# Train a SLOPE model
+# Train a SLOPE Model
 
 This function trains a model fit by
 [`SLOPE()`](https://jolars.github.io/SLOPE/reference/SLOPE.md) by tuning
@@ -97,13 +97,6 @@ for the given model family against those provided in the argument
 computationally so it is almost always best to leave this argument as it
 is and then choose which argument to focus on in the call to
 [`plot.TrainedSLOPE()`](https://jolars.github.io/SLOPE/reference/plot.TrainedSLOPE.md).
-
-## Parallel operation
-
-This function uses the **foreach** package to enable parallel operation.
-To enable this, simply register a parallel backend using, for instance,
-`doParallel::registerDoParallel()` from the **doParallel** package
-before running this function.
 
 ## See also
 

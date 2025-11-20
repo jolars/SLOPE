@@ -1,6 +1,6 @@
-# Plot results from cross-validation
+# Plot Results from Cross-Validation
 
-Plot results from cross-validation
+Plot Results from Cross-Validation
 
 ## Usage
 

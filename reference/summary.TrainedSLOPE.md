@@ -1,4 +1,4 @@
-# Summarize TrainedSLOPE model
+# Summarize TrainedSLOPE Model
 
 Produces a summary of a trained SLOPE model from cross-validation,
 including information about the optimal parameters and performance

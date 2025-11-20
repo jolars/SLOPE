@@ -88,52 +88,52 @@ and produce predictions for new data with
 - [`SLOPE()`](https://jolars.github.io/SLOPE/reference/SLOPE.md) :
   Sorted L-One Penalized Estimation
 - [`plot(`*`<SLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/plot.SLOPE.md)
-  : Plot coefficients
+  : Plot Coefficients
 - [`print(`*`<SLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/print.SLOPE.md)
   [`print(`*`<TrainedSLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/print.SLOPE.md)
-  : Print results from SLOPE fit
+  : Print Results from SLOPE Fit
 - [`summary(`*`<SLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/summary.SLOPE.md)
-  : Summarize SLOPE model
+  : Summarize SLOPE Model
 - [`print(`*`<summary_SLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/print.summary_SLOPE.md)
-  : Print summary of SLOPE model
+  : Print Summary of SLOPE Model
 - [`predict(`*`<SLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/predict.SLOPE.md)
   [`predict(`*`<GaussianSLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/predict.SLOPE.md)
   [`predict(`*`<BinomialSLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/predict.SLOPE.md)
   [`predict(`*`<PoissonSLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/predict.SLOPE.md)
   [`predict(`*`<MultinomialSLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/predict.SLOPE.md)
-  : Generate predictions from SLOPE models
+  : Generate Predictions from SLOPE Models
 - [`coef(`*`<SLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/coef.SLOPE.md)
-  : Obtain coefficients
+  : Obtain Coefficients
 - [`deviance(`*`<SLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/deviance.SLOPE.md)
-  : Model deviance
+  : Model Deviance
 - [`score()`](https://jolars.github.io/SLOPE/reference/score.md) :
-  Compute one of several loss metrics on a new data set
+  Compute One of Several Loss Metrics on a New Data Set
 
 ## Clusters
 
 - [`plotClusters()`](https://jolars.github.io/SLOPE/reference/plotClusters.md)
-  : Plot cluster structure
+  : Plot Cluster Structure
 
 ## Model Tuning
 
 - [`cvSLOPE()`](https://jolars.github.io/SLOPE/reference/cvSLOPE.md) :
-  Tune SLOPE with cross-validation
+  Tune SLOPE with Cross-Validation
 - [`trainSLOPE()`](https://jolars.github.io/SLOPE/reference/trainSLOPE.md)
-  : Train a SLOPE model
+  : Train a SLOPE Model
 - [`plot(`*`<TrainedSLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/plot.TrainedSLOPE.md)
-  : Plot results from cross-validation
+  : Plot Results from Cross-Validation
 - [`print(`*`<SLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/print.SLOPE.md)
   [`print(`*`<TrainedSLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/print.SLOPE.md)
-  : Print results from SLOPE fit
+  : Print Results from SLOPE Fit
 - [`summary(`*`<TrainedSLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/summary.TrainedSLOPE.md)
-  : Summarize TrainedSLOPE model
+  : Summarize TrainedSLOPE Model
 - [`print(`*`<summary_TrainedSLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/print.summary_TrainedSLOPE.md)
-  : Print summary of TrainedSLOPE model
+  : Print Summary of TrainedSLOPE Model
 
 ## Utilities
 
 - [`plotDiagnostics()`](https://jolars.github.io/SLOPE/reference/plotDiagnostics.md)
-  : Plot results from diagnostics collected during model fitting
+  : Plot Results from Diagnostics Collected During Model Fitting
 - [`regularizationWeights()`](https://jolars.github.io/SLOPE/reference/regularizationWeights.md)
   : Generate Regularization (Penalty) Weights for SLOPE
 - [`sortedL1Prox()`](https://jolars.github.io/SLOPE/reference/sortedL1Prox.md)
@@ -146,13 +146,13 @@ and produce predictions for new data with
 - [`bodyfat`](https://jolars.github.io/SLOPE/reference/bodyfat.md) :
   Bodyfat
 - [`heart`](https://jolars.github.io/SLOPE/reference/heart.md) : Heart
-  disease
+  Disease
 - [`student`](https://jolars.github.io/SLOPE/reference/student.md) :
-  Student performance
+  Student Performance
 - [`wine`](https://jolars.github.io/SLOPE/reference/wine.md) : Wine
-  cultivars
+  Cultivars
 - [`glioma`](https://jolars.github.io/SLOPE/reference/glioma.md) :
-  Glioma metabolomics
+  Glioma Metabolomics
 
 # Articles
 

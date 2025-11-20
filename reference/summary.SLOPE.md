@@ -1,4 +1,4 @@
-# Summarize SLOPE model
+# Summarize SLOPE Model
 
 Produces a summary of a fitted SLOPE model, including information about
 the regularization path, model family, and fitted values.

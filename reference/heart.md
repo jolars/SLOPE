@@ -1,4 +1,4 @@
-# Heart disease
+# Heart Disease
 
 Diagnostic attributes of patients classified as having heart disease or
 not.

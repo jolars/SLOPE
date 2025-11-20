@@ -1,4 +1,4 @@
-# Obtain coefficients
+# Obtain Coefficients
 
 This function returns coefficients from a model fit by
 [`SLOPE()`](https://jolars.github.io/SLOPE/reference/SLOPE.md).

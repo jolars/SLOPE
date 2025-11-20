@@ -1,6 +1,6 @@
-# Model deviance
+# Model Deviance
 
-Model deviance
+Model Deviance
 
 ## Usage
 
