@@ -1,0 +1,380 @@
+---
+title: "Working with Different Model Families"
+author: "Johan Larsson"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+bibliography: SLOPE.bib
+vignette: >
+  %\VignetteIndexEntry{Working with Different Model Families}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 4.5
+)
+```
+
+## Introduction
+
+The SLOPE package supports four different model families from the generalized 
+linear model (GLM) framework:
+
+- **Gaussian** (ordinary least squares regression)
+- **Binomial** (logistic regression)
+- **Multinomial** (multiclass logistic regression)
+- **Poisson** (count data regression)
+
+This vignette demonstrates how to use each family, interpret the results, and
+understand when each is appropriate for your data.
+
+## Gaussian Family (Continuous Responses)
+
+The Gaussian family is appropriate for continuous response variables and
+corresponds to ordinary least squares regression with the sorted L1 penalty.
+
+### Example: Body Fat Prediction
+
+We'll use the `bodyfat` dataset to predict body fat percentage from physical
+measurements.
+
+```{r gaussian-example}
+library(SLOPE)
+
+x <- bodyfat$x
+y <- bodyfat$y
+
+fit_gaussian <- SLOPE(x, y, family = "gaussian")
+
+summary(fit_gaussian)
+```
+
+The regularization path shows how coefficients evolve as regularization
+decreases:
+
+```{r gaussian-plot, fig.cap = "Regularization path for Gaussian regression on body fat data."}
+plot(fit_gaussian)
+```
+
+### Making Predictions
+
+We can obtain predictions at specific values of alpha along the regularization
+path.
+
+```{r gaussian-predict}
+predictions <- predict(fit_gaussian, x, alpha = c(0.01, 0.005))
+head(predictions)
+```
+
+To select the optimal alpha value, we use cross-validation via `trainSLOPE()`.
+
+```{r gaussian-cv}
+set.seed(123)
+tune <- trainSLOPE(x, y, family = "gaussian", q = c(0.1, 0.2))
+alpha_opt <- tune$optima$alpha[1]
+```
+
+We can then refit the model using this optimal value and generate predictions.
+
+```{r gaussian-opt}
+fit_opt <- SLOPE(x, y, family = "gaussian", alpha = alpha_opt)
+pred_opt <- predict(fit_opt, x)
+```
+
+## Binomial Family (Binary Classification)
+
+The binomial family is used for binary classification problems. The response
+should be a factor with two levels or a numeric vector with values 0 and 1.
+
+### Example: Heart Disease Prediction
+
+The `heart` dataset contains diagnostic attributes for predicting presence or
+absence of heart disease.
+
+```{r binomial-example}
+# Load data
+x <- heart$x
+y <- heart$y
+
+# Check response levels
+levels(y)
+
+# Fit binomial model
+fit_binomial <- SLOPE(x, y, family = "binomial")
+
+summary(fit_binomial)
+```
+
+```{r binomial-plot, fig.cap = "Regularization path for binomial regression on heart disease data."}
+plot(fit_binomial)
+```
+
+### Predictions and Classification
+
+For binomial models, predictions can be on different scales:
+
+```{r binomial-predict}
+# Predicted probabilities (default)
+probs <- predict(fit_binomial, x, alpha = 0.01, type = "response")
+head(probs)
+
+# Predicted classes
+classes <- predict(fit_binomial, x, alpha = 0.01, type = "class")
+head(classes)
+
+# Link scale (log-odds)
+link <- predict(fit_binomial, x, alpha = 0.01, type = "link")
+head(link)
+```
+
+### Model Evaluation
+
+```{r binomial-eval}
+# Compute classification accuracy
+pred_class <- predict(fit_binomial, x, alpha = 0.01, type = "class")
+accuracy <- mean(pred_class == y)
+cat("Training accuracy:", round(accuracy, 3), "\n")
+
+# Compute AUC using cross-validation
+set.seed(456)
+tune_binom <- trainSLOPE(
+  x, y,
+  family = "binomial",
+  q = c(0.1, 0.2),
+  measure = "auc"
+)
+
+# View optimal parameters
+tune_binom$optima
+```
+
+## Multinomial Family (Multiclass Classification)
+
+The multinomial family extends logistic regression to multiple classes (more
+than two). This is useful for multiclass classification problems.
+
+### Example: Wine Cultivar Classification
+
+The `wine` dataset contains chemical analysis results from three different wine
+cultivars grown in Italy.
+
+```{r multinomial-example}
+x <- wine$x
+y <- wine$y
+
+levels(y)
+
+fit_multinom <- SLOPE(x, y, family = "multinomial")
+
+summary(fit_multinom)
+```
+
+Note that for multinomial models, there is one coefficient vector per class
+(excluding the reference class). We can extract these coefficients at a specific
+alpha value.
+
+```{r multinomial-coef}
+coefs <- coef(fit_multinom, alpha = 0.01)
+str(coefs)
+```
+
+```{r multinomial-plot, fig.cap = "Regularization path for multinomial regression on wine data. Each panel shows coefficients for one class."}
+plot(fit_multinom)
+```
+
+### Multinomial Predictions
+
+Predicted probabilities are returned as a matrix with one column per class.
+
+```{r multinomial-predict}
+probs_multi <- predict(fit_multinom, x, alpha = 0.01, type = "response")
+head(probs_multi)
+```
+
+We can also obtain the predicted class labels.
+
+```{r multinomial-class}
+pred_classes <- predict(fit_multinom, x, alpha = 0.01, type = "class")
+head(pred_classes)
+```
+
+The misclassification rate provides a simple evaluation metric.
+
+```{r multinomial-eval}
+misclass_rate <- mean(pred_classes != y)
+cat("Training misclassification rate:", round(misclass_rate, 3), "\n")
+```
+
+## Poisson Family (Count Data)
+
+The Poisson family is appropriate when the response variable represents counts
+or rates. Common applications include modeling number of events, occurrences, or
+frequency data.
+
+### Example: Simulated Count Data
+
+Since the package doesn't include a count dataset, we'll create a simple
+example:
+
+```{r poisson-example}
+set.seed(789)
+
+# Generate synthetic Poisson data
+n <- 200
+p <- 30
+x_pois <- matrix(rnorm(n * p), n, p)
+colnames(x_pois) <- paste0("V", 1:p)
+
+# True coefficients (sparse)
+beta_true <- c(2, -1.5, 0, 0, 1, rep(0, p - 5))
+
+# Generate Poisson response
+lambda <- exp(x_pois %*% beta_true)
+y_pois <- rpois(n, lambda)
+
+# Fit Poisson model
+fit_poisson <- SLOPE(x_pois, y_pois, family = "poisson")
+
+summary(fit_poisson)
+```
+
+```{r poisson-plot, fig.cap = "Regularization path for Poisson regression on simulated count data."}
+plot(fit_poisson)
+```
+
+### Poisson Predictions
+
+```{r poisson-predict}
+# Predicted counts (on response scale)
+pred_counts <- predict(fit_poisson, x_pois, alpha = 0.02, type = "response")
+head(pred_counts)
+
+# Link scale (log of expected count)
+pred_link <- predict(fit_poisson, x_pois, alpha = 0.02, type = "link")
+head(pred_link)
+
+# Compare with true values (using first column if multiple alphas)
+pred_vec <- if (is.matrix(pred_counts)) pred_counts[, 1] else pred_counts
+plot(y_pois, pred_vec,
+  xlab = "Observed counts",
+  ylab = "Predicted counts",
+  main = "Poisson Model: Observed vs Predicted",
+  pch = 16, col = rgb(0, 0, 0, 0.3)
+)
+abline(0, 1, col = "red", lwd = 2)
+```
+
+## Choosing the Right Family
+
+Here's a quick guide for selecting the appropriate family:
+
+| Family       | Response Type              | Example Applications                    |
+|--------------|---------------------------|-----------------------------------------|
+| Gaussian     | Continuous real numbers   | Prediction, regression                  |
+| Binomial     | Binary (0/1, Yes/No)      | Classification, disease diagnosis       |
+| Multinomial  | Categorical (3+ classes)  | Multi-class classification              |
+| Poisson      | Non-negative counts       | Event counts, rare events               |
+
+## Cross-Validation Across Families
+
+The `trainSLOPE()` and `cvSLOPE()` functions automatically select appropriate
+performance metrics based on the model family:
+
+```{r cv-families, eval = FALSE}
+# Gaussian: MSE, MAE, or deviance
+tune_gauss <- trainSLOPE(bodyfat$x, bodyfat$y,
+  family = "gaussian",
+  q = 0.1,
+  measure = "mse"
+)
+
+# Binomial: MSE, MAE, deviance, AUC, or misclassification
+tune_binom <- trainSLOPE(heart$x, heart$y,
+  family = "binomial",
+  q = 0.1,
+  measure = "auc"
+)
+
+# Multinomial: MSE, MAE, deviance, AUC, or misclassification
+tune_multi <- trainSLOPE(wine$x, wine$y,
+  family = "multinomial",
+  q = 0.1,
+  measure = "misclass"
+)
+```
+
+## Interpreting Coefficients
+
+### Gaussian: Direct Interpretation
+
+In Gaussian models, coefficients represent the change in the response for a
+one-unit increase in the predictor. We extract coefficients at a specific alpha
+value and convert to a vector for easier interpretation.
+
+```{r gaussian-interp}
+beta <- coef(fit_gaussian, alpha = 0.01)
+beta <- as.vector(beta)
+beta[beta != 0]
+```
+
+### Binomial: Log-Odds Scale
+
+In binomial models, coefficients are on the log-odds scale. To interpret them
+as odds ratios, we exponentiate the coefficients.
+
+```{r binomial-interp}
+beta_binom <- coef(fit_binomial, alpha = 0.01)
+beta_binom <- as.vector(beta_binom)
+nz <- which(beta_binom != 0)
+if (length(nz) > 0) {
+  cat("Log-odds:\n")
+  print(beta_binom[nz])
+  cat("\nOdds ratios:\n")
+  print(exp(beta_binom[nz]))
+}
+```
+
+### Multinomial: Class-Specific Effects
+
+Multinomial coefficients show the effect on log-odds of each class relative to
+the reference class. The coefficients are stored as a list with one element per
+class.
+
+```{r multinomial-interp}
+beta_multi <- coef(fit_multinom, alpha = 0.01)
+names(beta_multi)
+```
+
+### Poisson: Log Rate Scale
+
+Poisson coefficients are on the log scale. Exponentiating them gives rate
+ratios, showing the multiplicative effect on the expected count.
+
+```{r poisson-interp}
+beta_pois <- coef(fit_poisson, alpha = 0.02)
+beta_pois <- as.vector(beta_pois)
+nz_pois <- which(beta_pois != 0)
+if (length(nz_pois) > 0) {
+  cat("Log-rate coefficients:\n")
+  print(beta_pois[nz_pois])
+  cat("\nRate ratios:\n")
+  print(exp(beta_pois[nz_pois]))
+}
+```
+
+## Summary
+
+- SLOPE supports four GLM families: Gaussian, binomial, multinomial, and Poisson
+- Each family is appropriate for different types of response variables
+- The package provides consistent interfaces across families
+- Cross-validation and model selection work seamlessly with all families
+- Coefficient interpretation depends on the link function used by each family
+
+For more details on the SLOPE method and its properties, see the "Introduction
+to SLOPE" vignette.
+
+## References
