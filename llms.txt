@@ -92,6 +92,10 @@ and produce predictions for new data with
 - [`print(`*`<SLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/print.SLOPE.md)
   [`print(`*`<TrainedSLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/print.SLOPE.md)
   : Print results from SLOPE fit
+- [`summary(`*`<SLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/summary.SLOPE.md)
+  : Summarize SLOPE model
+- [`print(`*`<summary_SLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/print.summary_SLOPE.md)
+  : Print summary of SLOPE model
 - [`predict(`*`<SLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/predict.SLOPE.md)
   [`predict(`*`<GaussianSLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/predict.SLOPE.md)
   [`predict(`*`<BinomialSLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/predict.SLOPE.md)
@@ -121,6 +125,10 @@ and produce predictions for new data with
 - [`print(`*`<SLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/print.SLOPE.md)
   [`print(`*`<TrainedSLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/print.SLOPE.md)
   : Print results from SLOPE fit
+- [`summary(`*`<TrainedSLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/summary.TrainedSLOPE.md)
+  : Summarize TrainedSLOPE model
+- [`print(`*`<summary_TrainedSLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/print.summary_TrainedSLOPE.md)
+  : Print summary of TrainedSLOPE model
 
 ## Utilities
 

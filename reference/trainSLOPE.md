@@ -109,7 +109,8 @@ before running this function.
 
 Other model-tuning:
 [`cvSLOPE()`](https://jolars.github.io/SLOPE/reference/cvSLOPE.md),
-[`plot.TrainedSLOPE()`](https://jolars.github.io/SLOPE/reference/plot.TrainedSLOPE.md)
+[`plot.TrainedSLOPE()`](https://jolars.github.io/SLOPE/reference/plot.TrainedSLOPE.md),
+[`summary.TrainedSLOPE()`](https://jolars.github.io/SLOPE/reference/summary.TrainedSLOPE.md)
 
 ## Examples
 

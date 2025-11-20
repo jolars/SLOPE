@@ -110,7 +110,8 @@ Other SLOPE-methods:
 [`deviance.SLOPE()`](https://jolars.github.io/SLOPE/reference/deviance.SLOPE.md),
 [`plot.SLOPE()`](https://jolars.github.io/SLOPE/reference/plot.SLOPE.md),
 [`print.SLOPE()`](https://jolars.github.io/SLOPE/reference/print.SLOPE.md),
-[`score()`](https://jolars.github.io/SLOPE/reference/score.md)
+[`score()`](https://jolars.github.io/SLOPE/reference/score.md),
+[`summary.SLOPE()`](https://jolars.github.io/SLOPE/reference/summary.SLOPE.md)
 
 ## Examples
 

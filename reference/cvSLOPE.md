@@ -91,6 +91,7 @@ An object of class `"TrainedSLOPE"`, with the following slots:
 
 Other model-tuning:
 [`plot.TrainedSLOPE()`](https://jolars.github.io/SLOPE/reference/plot.TrainedSLOPE.md),
+[`summary.TrainedSLOPE()`](https://jolars.github.io/SLOPE/reference/summary.TrainedSLOPE.md),
 [`trainSLOPE()`](https://jolars.github.io/SLOPE/reference/trainSLOPE.md)
 
 ## Examples

@@ -88,7 +88,8 @@ Other SLOPE-methods:
 [`plot.SLOPE()`](https://jolars.github.io/SLOPE/reference/plot.SLOPE.md),
 [`predict.SLOPE()`](https://jolars.github.io/SLOPE/reference/predict.SLOPE.md),
 [`print.SLOPE()`](https://jolars.github.io/SLOPE/reference/print.SLOPE.md),
-[`score()`](https://jolars.github.io/SLOPE/reference/score.md)
+[`score()`](https://jolars.github.io/SLOPE/reference/score.md),
+[`summary.SLOPE()`](https://jolars.github.io/SLOPE/reference/summary.SLOPE.md)
 
 ## Examples
 

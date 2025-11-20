@@ -53,6 +53,9 @@
 <div class="section level3">
 <h3 id="new-features-1-3-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-3-0"></a></h3>
 <ul><li>The <code><a href="../reference/plot.SLOPE.html">plot.SLOPE()</a></code> method now plots a dot chart if there is just a single value of <code>alpha</code>, and not an empty plot (as before).</li>
+<li>The <code>SLOPE</code> object now includes <code>n_observations</code> and <code>n_predictors</code> fields, which store the number of observations and predictors in the training data.</li>
+<li>The <code><a href="../reference/summary.SLOPE.html">summary.SLOPE()</a></code> method now displays the number of observations and predictors, with improved formatting for the path summary table.</li>
+<li>Added <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> method for <code>TrainedSLOPE</code> objects (from <code><a href="../reference/cvSLOPE.html">cvSLOPE()</a></code> and <code><a href="../reference/trainSLOPE.html">trainSLOPE()</a></code>), which provides a concise overview of cross-validation results including optimal parameters and performance metrics.</li>
 </ul></div>
 </div>
     <div class="section level2">

@@ -28,11 +28,15 @@
 <url><loc>https://jolars.github.io/SLOPE/reference/plotDiagnostics.html</loc></url>
 <url><loc>https://jolars.github.io/SLOPE/reference/predict.SLOPE.html</loc></url>
 <url><loc>https://jolars.github.io/SLOPE/reference/print.SLOPE.html</loc></url>
+<url><loc>https://jolars.github.io/SLOPE/reference/print.summary_SLOPE.html</loc></url>
+<url><loc>https://jolars.github.io/SLOPE/reference/print.summary_TrainedSLOPE.html</loc></url>
 <url><loc>https://jolars.github.io/SLOPE/reference/regularizationWeights.html</loc></url>
 <url><loc>https://jolars.github.io/SLOPE/reference/score.html</loc></url>
 <url><loc>https://jolars.github.io/SLOPE/reference/setup_diagnostics.html</loc></url>
 <url><loc>https://jolars.github.io/SLOPE/reference/sortedL1Prox.html</loc></url>
 <url><loc>https://jolars.github.io/SLOPE/reference/student.html</loc></url>
+<url><loc>https://jolars.github.io/SLOPE/reference/summary.SLOPE.html</loc></url>
+<url><loc>https://jolars.github.io/SLOPE/reference/summary.TrainedSLOPE.html</loc></url>
 <url><loc>https://jolars.github.io/SLOPE/reference/trainSLOPE.html</loc></url>
 <url><loc>https://jolars.github.io/SLOPE/reference/wine.html</loc></url>
 </urlset>

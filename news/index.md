@@ -8,6 +8,19 @@
   [`plot.SLOPE()`](https://jolars.github.io/SLOPE/reference/plot.SLOPE.md)
   method now plots a dot chart if there is just a single value of
   `alpha`, and not an empty plot (as before).
+- The `SLOPE` object now includes `n_observations` and `n_predictors`
+  fields, which store the number of observations and predictors in the
+  training data.
+- The
+  [`summary.SLOPE()`](https://jolars.github.io/SLOPE/reference/summary.SLOPE.md)
+  method now displays the number of observations and predictors, with
+  improved formatting for the path summary table.
+- Added [`summary()`](https://rdrr.io/r/base/summary.html) method for
+  `TrainedSLOPE` objects (from
+  [`cvSLOPE()`](https://jolars.github.io/SLOPE/reference/cvSLOPE.md) and
+  [`trainSLOPE()`](https://jolars.github.io/SLOPE/reference/trainSLOPE.md)),
+  which provides a concise overview of cross-validation results
+  including optimal parameters and performance metrics.
 
 ## SLOPE 1.2.0
 

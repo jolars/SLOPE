@@ -295,6 +295,14 @@ An object of class `"SLOPE"` with the following slots:
   as well as a measure of the infeasibility, time, and iteration; only
   available if `diagnostics = TRUE` in the call to `SLOPE()`.
 
+- n_observations:
+
+  the number of observations in the training data
+
+- n_predictors:
+
+  the number of predictors in the training data
+
 - call:
 
   the call used for fitting the model

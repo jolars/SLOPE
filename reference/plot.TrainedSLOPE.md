@@ -97,6 +97,7 @@ A plot for every value of `q` is produced on the current device.
 
 Other model-tuning:
 [`cvSLOPE()`](https://jolars.github.io/SLOPE/reference/cvSLOPE.md),
+[`summary.TrainedSLOPE()`](https://jolars.github.io/SLOPE/reference/summary.TrainedSLOPE.md),
 [`trainSLOPE()`](https://jolars.github.io/SLOPE/reference/trainSLOPE.md)
 
 ## Examples
