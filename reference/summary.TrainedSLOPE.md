@@ -61,6 +61,7 @@ components:
 Other model-tuning:
 [`cvSLOPE()`](https://jolars.github.io/SLOPE/reference/cvSLOPE.md),
 [`plot.TrainedSLOPE()`](https://jolars.github.io/SLOPE/reference/plot.TrainedSLOPE.md),
+[`refit()`](https://jolars.github.io/SLOPE/reference/refit.md),
 [`trainSLOPE()`](https://jolars.github.io/SLOPE/reference/trainSLOPE.md)
 
 ## Examples
@@ -86,6 +87,6 @@ summary(tune)
 #> Performance measure: Mean Squared Error 
 #> 
 #> Optimal parameters:
-#>    q gamma alpha measure mean  se   lo   hi
-#>  0.1     0   2.9     mse 2080 788 -103 4270
+#>    q gamma alpha measure mean  se  lo   hi
+#>  0.1     0   2.9     mse 2060 534 575 3540
 ```

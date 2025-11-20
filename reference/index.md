@@ -35,10 +35,20 @@ and produce predictions for new data with
 
 ## Clusters
 
+Analyze the cluster strucure from SLOPE fits
+
 - [`plotClusters()`](https://jolars.github.io/SLOPE/reference/plotClusters.md)
   : Plot Cluster Structure
 
 ## Model Tuning
+
+Use [`cvSLOPE()`](https://jolars.github.io/SLOPE/reference/cvSLOPE.md)
+to perform cross-validation for selecting the optimal regularization
+parameters,
+[`plot.TrainedSLOPE()`](https://jolars.github.io/SLOPE/reference/plot.TrainedSLOPE.md)
+to visualize the results, and
+[`refit()`](https://jolars.github.io/SLOPE/reference/refit.md) to fit
+the final model to your data set.
 
 - [`cvSLOPE()`](https://jolars.github.io/SLOPE/reference/cvSLOPE.md) :
   Tune SLOPE with Cross-Validation
@@ -49,12 +59,16 @@ and produce predictions for new data with
 - [`print(`*`<SLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/print.SLOPE.md)
   [`print(`*`<TrainedSLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/print.SLOPE.md)
   : Print Results from SLOPE Fit
+- [`refit()`](https://jolars.github.io/SLOPE/reference/refit.md) : Refit
+  SLOPE Model with Optimal Parameters
 - [`summary(`*`<TrainedSLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/summary.TrainedSLOPE.md)
   : Summarize TrainedSLOPE Model
 - [`print(`*`<summary_TrainedSLOPE>`*`)`](https://jolars.github.io/SLOPE/reference/print.summary_TrainedSLOPE.md)
   : Print Summary of TrainedSLOPE Model
 
 ## Utilities
+
+Helper functions for various tasks.
 
 - [`plotDiagnostics()`](https://jolars.github.io/SLOPE/reference/plotDiagnostics.md)
   : Plot Results from Diagnostics Collected During Model Fitting
@@ -63,7 +77,9 @@ and produce predictions for new data with
 - [`sortedL1Prox()`](https://jolars.github.io/SLOPE/reference/sortedL1Prox.md)
   : Sorted L1 Proximal Operator
 
-## Datasets
+## Data Sets
+
+Data sets buddled with the package.
 
 - [`abalone`](https://jolars.github.io/SLOPE/reference/abalone.md) :
   Abalone

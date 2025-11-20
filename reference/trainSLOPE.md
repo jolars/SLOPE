@@ -103,6 +103,7 @@ is and then choose which argument to focus on in the call to
 Other model-tuning:
 [`cvSLOPE()`](https://jolars.github.io/SLOPE/reference/cvSLOPE.md),
 [`plot.TrainedSLOPE()`](https://jolars.github.io/SLOPE/reference/plot.TrainedSLOPE.md),
+[`refit()`](https://jolars.github.io/SLOPE/reference/refit.md),
 [`summary.TrainedSLOPE()`](https://jolars.github.io/SLOPE/reference/summary.TrainedSLOPE.md)
 
 ## Examples

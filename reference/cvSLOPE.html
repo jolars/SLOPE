@@ -66,6 +66,7 @@ through cross-validation.</p>
 <span>  n_folds <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  n_repeats <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  measure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mse"</span>, <span class="st">"mae"</span>, <span class="st">"deviance"</span>, <span class="st">"misclass"</span>, <span class="st">"auc"</span><span class="op">)</span>,</span>
+<span>  refit <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -107,6 +108,11 @@ implies to relaxation of the penalty.</p></dd>
 <dd><p>DEPRECATED</p></dd>
 
 
+<dt id="arg-refit">refit<a class="anchor" aria-label="anchor" href="#arg-refit"></a></dt>
+<dd><p>logical; if <code>TRUE</code>, refits the model on the full dataset using
+the optimal parameters. Default is <code>TRUE</code>.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>other arguments to pass on to <code><a href="SLOPE.html">SLOPE()</a></code></p></dd>
 
@@ -128,15 +134,19 @@ values for the different metrics and their corresponding parameter values</p></d
 <dt>measure</dt>
 <dd><p>a <code>data.frame</code> listing the used metric and its label</p></dd>
 
+<dt>model</dt>
+<dd><p>the model fit to the entire dataset using optimal parameters
+(only present if <code>refit = TRUE</code>)</p></dd>
+
 <dt>call</dt>
 <dd><p>the call</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="plot.TrainedSLOPE.html">plot.TrainedSLOPE()</a></code></p>
-<p>Other model-tuning:
+    <div class="dont-index"><p>Other model-tuning:
 <code><a href="plot.TrainedSLOPE.html">plot.TrainedSLOPE()</a></code>,
+<code><a href="refit.html">refit()</a></code>,
 <code><a href="summary.TrainedSLOPE.html">summary.TrainedSLOPE()</a></code>,
 <code><a href="trainSLOPE.html">trainSLOPE()</a></code></p></div>
     </div>
@@ -152,6 +162,154 @@ values for the different metrics and their corresponding parameter values</p></d
 <span class="r-in"><span>  n_repeats <span class="op">=</span> <span class="fl">2</span>,</span></span>
 <span class="r-in"><span>  measure <span class="op">=</span> <span class="st">"mse"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Access the refitted model</span></span></span>
+<span class="r-in"><span><span class="va">tune</span><span class="op">$</span><span class="va">model</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (function (x, y, family = c("gaussian", "binomial", "multinomial", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     "poisson"), intercept = TRUE, center = c("mean", "min", "none"), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     scale = c("sd", "l1", "l2", "max_abs", "none"), alpha = c("path", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         "estimate"), lambda = c("bh", "gaussian", "oscar", "lasso"), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     alpha_min_ratio = if (NROW(x) &lt; NCOL(x)) 0.01 else 1e-04, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     path_length = 100, q = 0.1, theta1 = 1, theta2 = 0.5, tol_dev_change = 1e-05, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     tol_dev_ratio = 0.999, max_variables = NROW(x) + 1, solver = c("auto", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         "hybrid", "pgd", "fista", "admm"), max_passes = 1e+06, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     tol = 1e-04, threads = 1, diagnostics = FALSE, patterns = FALSE, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     gamma = 1, cd_type = c("permuted", "cyclical"), tol_abs, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     tol_rel, tol_rel_gap, tol_infeas, tol_rel_coef_change, prox_method, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     screen, verbosity, screen_alg) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (!missing(tol_abs)) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         warning("`tol_abs` argument is deprecated and has no effect")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (!missing(tol_rel)) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         warning("`tol_rel` argument is deprecated and has no effect")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (!missing(tol_rel_gap)) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         warning("`tol_rel_gap` argument is deprecated and has no effect")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (!missing(tol_infeas)) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         warning("`tol_infeas` argument is deprecated and has no effect")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (!missing(tol_rel_coef_change)) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         warning("`tol_rel_coef_change` argument is deprecated and has no effect")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (!missing(screen)) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         warning("`screen` argument is deprecated and has no effect")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (!missing(screen_alg)) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         warning("`screen_alg` argument is deprecated and has no effect")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (!missing(verbosity)) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         warning("`verbosity` argument is deprecated and has no effect")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (!missing(prox_method)) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         warning("The 'method' argument is deprecated and ", "has no effect. It will be removed in a future version.")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ocall &lt;- match.call()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     control &lt;- processSlopeArgs(x, y, family, intercept, center, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         scale, alpha, lambda, alpha_min_ratio, path_length, q, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         theta1, theta2, tol_dev_change, tol_dev_ratio, max_variables, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         solver, max_passes, tol, diagnostics, patterns, threads, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         gamma, cd_type)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     x &lt;- control$x</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     y &lt;- control$y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     alpha &lt;- control$alpha</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     is_sparse &lt;- inherits(x, "sparseMatrix")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     is_big_matrix &lt;- inherits(x, "big.matrix")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     fitSLOPE &lt;- if (is_sparse) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         sparseSLOPE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     else if (is_big_matrix) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         bigSLOPE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     else {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         denseSLOPE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (is_big_matrix) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         x &lt;- x@address</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     fit &lt;- fitSLOPE(x, y, control)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     lambda &lt;- fit$lambda</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     alpha &lt;- fit$alpha</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     path_length &lt;- length(alpha)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     intercepts &lt;- fit$intercepts</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     intercepts_scaled &lt;- fit$intercepts_scaled</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     beta &lt;- fit$betas</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     beta_scaled &lt;- fit$betas_scaled</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     nonzeros &lt;- lapply(beta, function(b) abs(b) &gt; 0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     coefficients &lt;- beta</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     names(coefficients) &lt;- paste0("p", seq_along(beta))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     passes &lt;- fit$passes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     reached_max_passes &lt;- passes &gt;= max_passes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (any(reached_max_passes)) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         reached_max_passes_where &lt;- which(reached_max_passes)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         warning("maximum number of passes reached at steps ", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             paste(reached_max_passes_where, collapse = ", "), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             "!")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     diagnostics &lt;- if (diagnostics) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         setup_diagnostics(fit)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     else NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     patterns &lt;- if (control$patterns) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         fit$patterns</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     else {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     slope_class &lt;- switch(control$family, gaussian = "GaussianSLOPE", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         binomial = "BinomialSLOPE", poisson = "PoissonSLOPE", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         multinomial = "MultinomialSLOPE")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     structure(list(intercepts = intercepts, coefficients = coefficients, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         intercepts_scaled = intercepts_scaled, coefficients_scaled = beta_scaled, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         nonzeros = nonzeros, lambda = lambda, alpha = alpha[seq_along(beta)], </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         variable_names = control$variable_names, class_names = control$class_names, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         passes = passes, deviance_ratio = drop(fit$deviance_ratio), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         null_deviance = fit$null_deviance, family = control$family, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         diagnostics = diagnostics, patterns = patterns, has_intercept = control$fit_intercept, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         n_observations = NROW(x), n_predictors = NCOL(x), call = ocall), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         class = c(slope_class, "SLOPE"))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> })(x = structure(c(21, 21, 22.8, 21.4, 18.7, 18.1, 14.3, 24.4, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22.8, 19.2, 17.8, 16.4, 17.3, 15.2, 10.4, 10.4, 14.7, 32.4, 30.4, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33.9, 21.5, 15.5, 15.2, 13.3, 19.2, 27.3, 26, 30.4, 15.8, 19.7, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15, 21.4, 3.9, 3.9, 3.85, 3.08, 3.15, 2.76, 3.21, 3.69, 3.92, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3.92, 3.92, 3.07, 3.07, 3.07, 2.93, 3, 3.23, 4.08, 4.93, 4.22, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3.7, 2.76, 3.15, 3.73, 3.08, 4.08, 4.43, 3.77, 4.22, 3.62, 3.54, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4.11, 2.62, 2.875, 2.32, 3.215, 3.44, 3.46, 3.57, 3.19, 3.15, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3.44, 3.44, 4.07, 3.73, 3.78, 5.25, 5.424, 5.345, 2.2, 1.615, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.835, 2.465, 3.52, 3.435, 3.84, 3.845, 1.935, 2.14, 1.513, 3.17, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2.77, 3.57, 2.78), dim = c(32L, 3L), dimnames = list(c("Mazda RX4", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "Mazda RX4 Wag", "Datsun 710", "Hornet 4 Drive", "Hornet Sportabout", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "Valiant", "Duster 360", "Merc 240D", "Merc 230", "Merc 280", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "Merc 280C", "Merc 450SE", "Merc 450SL", "Merc 450SLC", "Cadillac Fleetwood", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "Lincoln Continental", "Chrysler Imperial", "Fiat 128", "Honda Civic", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "Toyota Corolla", "Toyota Corona", "Dodge Challenger", "AMC Javelin", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "Camaro Z28", "Pontiac Firebird", "Fiat X1-9", "Porsche 914-2", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "Lotus Europa", "Ford Pantera L", "Ferrari Dino", "Maserati Bora", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "Volvo 142E"), c("mpg", "drat", "wt"))), y = structure(c(110, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 110, 93, 110, 175, 105, 245, 62, 95, 123, 123, 180, 180, 180, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 205, 215, 230, 66, 52, 65, 97, 150, 150, 245, 175, 66, 91, 113, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 264, 175, 335, 109), dim = c(32L, 1L)), alpha = 3.48887231288147, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     q = 0.1, gamma = 0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Path summary:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      alpha deviance_ratio n_nonzero</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 3.488872      0.6024373         1</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Or use refit() to refit with different measure</span></span></span>
+<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="refit.html">refit</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">tune</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">mtcars</span>, select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mpg"</span>, <span class="st">"drat"</span>, <span class="st">"wt"</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="va">mtcars</span><span class="op">$</span><span class="va">hp</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 x 1 sparse Matrix of class "dgCMatrix"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 324.082314</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,]  -8.829731</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,]   .       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]   .       </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

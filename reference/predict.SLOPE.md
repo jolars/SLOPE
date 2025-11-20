@@ -102,8 +102,7 @@ Predictions from the model with scale determined by `type`.
 ## See also
 
 [`stats::predict()`](https://rdrr.io/r/stats/predict.html),
-[`stats::predict.glm()`](https://rdrr.io/r/stats/predict.glm.html),
-[`coef.SLOPE()`](https://jolars.github.io/SLOPE/reference/coef.SLOPE.md)
+[`stats::predict.glm()`](https://rdrr.io/r/stats/predict.glm.html)
 
 Other SLOPE-methods:
 [`coef.SLOPE()`](https://jolars.github.io/SLOPE/reference/coef.SLOPE.md),

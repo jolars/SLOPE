@@ -21,6 +21,13 @@
   [`trainSLOPE()`](https://jolars.github.io/SLOPE/reference/trainSLOPE.md)),
   which provides a concise overview of cross-validation results
   including optimal parameters and performance metrics.
+- Added [`refit()`](https://jolars.github.io/SLOPE/reference/refit.md)
+  method for `TrainedSLOPE` objects to conveniently refit models with
+  optimal parameters found through cross-validation.
+- [`cvSLOPE()`](https://jolars.github.io/SLOPE/reference/cvSLOPE.md) now
+  automatically refits the model on the full dataset using optimal
+  parameters (controlled by new `refit` argument, default `TRUE`). The
+  fitted model is stored in the `model` slot of the returned object.
 
 ### Minor Changes
 
