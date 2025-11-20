@@ -62,14 +62,6 @@ computationally so it is almost always best to leave this argument
 as it is and then choose which argument to focus on in the call
 to \code{\link[=plot.TrainedSLOPE]{plot.TrainedSLOPE()}}.
 }
-\section{Parallel operation}{
-
-This function uses the \strong{foreach} package to enable parallel
-operation. To enable this, simply register a parallel backend
-using, for instance, \code{doParallel::registerDoParallel()} from the
-\strong{doParallel} package before running this function.
-}
-
 \examples{
 # 8-fold cross-validation repeated 5 times
 tune <- trainSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),

@@ -10,12 +10,6 @@
 #' as it is and then choose which argument to focus on in the call
 #' to [plot.TrainedSLOPE()].
 #'
-#' @section Parallel operation:
-#' This function uses the **foreach** package to enable parallel
-#' operation. To enable this, simply register a parallel backend
-#' using, for instance, `doParallel::registerDoParallel()` from the
-#' **doParallel** package before running this function.
-#'
 #' @inheritParams SLOPE
 #' @param number number of folds (cross-validation)
 #' @param repeats number of repeats for each fold (for repeated *k*-fold cross
@@ -137,7 +131,6 @@ trainSLOPE <- function(
   # Initialize list to store results
   r <- vector("list", nrow(grid))
 
-  # Loop through grid rows instead of using foreach
   for (i in seq_len(nrow(grid))) {
     id <- grid[["fold"]][i]
     repetition <- grid[["repetition"]][i]
