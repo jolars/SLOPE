@@ -9,8 +9,8 @@
 #' please use [SLOPE()] to refit the model.
 #'
 #' @param object an object of class `'SLOPE'`.
-#' @param intercept whether to include the intercept in the output; only
-#'   applicable when `simplify = TRUE` and an intercept has been fit.
+#' @param intercept whether to include the intercept in the output. The
+#'   intercept is included as the first row of the returned array.
 #' @param scale whether to return the coefficients in the original scale
 #'   or in the normalized scale.
 #' @param ... arguments that are passed on to [stats::update()] (and therefore
@@ -58,9 +58,9 @@ coef.SLOPE <- function(
   penalty <- object$alpha
   value <- alpha
 
-  if (is.null(value)) {
-  } else if (all(value %in% penalty)) {
-    beta <- beta[[penalty %in% value]]
+  if (is.null(value)) {} else if (all(value %in% penalty)) {
+    beta <- beta[penalty %in% value]
+    intercepts <- intercepts[penalty %in% value]
   } else if (exact) {
     object <- stats::update(object, alpha = alpha, ...)
     beta <- switch(
@@ -82,10 +82,9 @@ coef.SLOPE <- function(
   }
 
   m <- NCOL(beta[[1]])
+  has_intercept <- getElement(object, "has_intercept")
 
   if (simplify) {
-    has_intercept <- getElement(object, "has_intercept")
-
     beta_out <- vector("list", m)
 
     for (i in seq_len(m)) {
@@ -108,6 +107,11 @@ coef.SLOPE <- function(
 
     if (m == 1) {
       beta <- beta[[1]]
+    }
+  } else if (intercept && has_intercept) {
+    # Prepend intercepts to each matrix
+    for (i in seq_along(beta)) {
+      beta[[i]] <- rbind(intercepts[[i]], beta[[i]], deparse.level = 0)
     }
   }
 

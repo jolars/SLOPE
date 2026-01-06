@@ -1,0 +1,146 @@
+---
+title: "Models in SLOPE"
+author: "Johan Larsson"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+bibliography: SLOPE.bib
+vignette: >
+  %\VignetteIndexEntry{Models in SLOPE}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.align = "center"
+)
+```
+
+## Models
+
+Sorted L-One Penalized Estimation (SLOPE) is the procedure
+of minimizing objectives of the type
+$$
+  \mathrm{minimize}\left\{F(\beta_0, \beta; X, y) + J(\beta; \alpha,\lambda) \right\},
+$$
+where 
+$$
+  J(\beta; \alpha,\lambda) =
+    \alpha \sum_{j=1}^p \lambda_j \lvert \beta \rvert_{(j)},
+$$
+with $\alpha \in \mathbb{R}_{+}$, $\lambda \in \mathbb{R}_+^p$ and
+$(j)$ represents an rank of the magnitudes of $\beta$ in descending order.
+$\lambda$ controls the shape of the penalty sequence, which needs to be
+non-increasing, and $\alpha$ controls the scale of that sequence.
+
+$X$ and $Y$ are the design matrix and response matrix, respectively, which
+are of dimensions $n \times p$ and $n \times m$ respectively. Except
+for multinomial logistic regression, $m = 1$.
+
+We assume that $F$ takes the following form:
+\[
+  F(\beta_0, \beta) = \frac{1}{n} \sum_{i=1}^n f(\beta_0 + x_i^\intercal \beta, y_i),
+\]
+where $f$ is a smooth and convex loss function from the family of
+generalized linear models (GLMs), $x_i$ is the $i$th row
+of the design matrix $X$, and $y_i$ is the $i$th row of the response matrix
+$Y$.
+
+SLOPE currently supports four different models from the family of generalized
+linear models (GLMs):
+
+- Least-squares (Gaussian) regression,
+- Logistic regression,
+- Multinomial logistic regression, and
+- Poisson regression.
+
+Due to the way GLMs are formulated, each model is defined by three components:
+a loss function \(f(\eta, y)\), a link function \(g(\mu)\), and an inverse link
+function \(g^{-1}(\eta)\). Here, \(\eta\) is the linear predictor, and \(\mu\) is the 
+mean of the response variable.
+
+
+| Model       | \(f(\eta, y)\)                                                                                       | \(g(\mu)\)                                | \(g^{-1}(\eta)\)                                       |
+|-------------|------------------------------------------------------------------------------------------------------|-------------------------------------------|--------------------------------------------------------|
+| Gaussian    | \(\frac{1}{2}(y - \eta)^2\)                                                                          | \(\mu\)                                   | \(\eta\)                                               |
+| Binomial    | \(\log(1 + e^\eta) - \eta y\)                                                                        | \(\log \left(\frac{\mu}{1 - \mu}\right)\) | \(\frac{e^\eta}{1 + e^\eta}\)                          |
+| Poisson     | \(e^\eta - \eta y\)                                                                                  | \(\log(\mu)\)                             | \(e^\eta\)                                             |
+| Multinomial | \(\sum_{k=1}^{m-1}\left( \log \left( 1 +  \sum_{j=1}^{m-1} e^{\eta_j}\right) - y_k \eta_k  \right)\) | \(\log\left(\frac{\mu}{1 - \mu}\right) \) | \(\frac{\exp(\eta)}{1 + \sum_{j=1}^{m-1} e^{\eta_j}}\) |
+
+: Loss functions, link functions, and inverse link functions for generalized
+  linear models in the SLOPE package. Note that in the case of multinomial
+  logistic regression, the input is vector-valued, and we allow \(\log\) and
+  \(\exp\) to be overloaded to apply element-wise in these cases.
+
+## Gaussian Regression
+
+Gaussian regression, also known as least-squares regression, is used for
+continuous response variables, and takes the following form:
+$$
+f(\beta, \beta_0; X, y) =
+  \frac{1}{2n} \sum_{i=1}^n \left(y_i - x_i^\intercal \beta - \beta_0\right)^2.
+$$
+
+You select it by setting `family = "gaussian"` in the `SLOPE()` function.
+In the following example, we fit a Gaussian SLOPE model to the `bodyfat` data
+set, which is included in the package:
+
+```{r}
+library(SLOPE)
+
+fit_gaussian <- SLOPE(
+  x = bodyfat$x,
+  y = bodyfat$y,
+  family = "gaussian"
+)
+```
+
+We can plot the solution path:
+
+```{r}
+#| fig-width: 5
+#| fig-height: 4
+plot(fit_gaussian)
+```
+
+We can also print a summary of the fitted model:
+
+```{r}
+summary(fit_gaussian)
+```
+
+SLOPE also contains standard methods for returning coefficients and making predictions:
+
+```{r}
+coef(fit_gaussian)
+
+y_hat <- predict(fit_gaussian, x = bodyfat$x[1:5, ], alpha = 0.01)
+
+plot(bodyfat$y[1:5], y_hat)
+```
+
+## Logistic Regression
+
+Logistic regression is used for binary classification problems, and
+takes the following form: 
+$$
+f(\beta_0, \beta; X, y) =
+  \frac{1}{n} \sum_{i=1}^n \left\{
+    \log\left(1 + \exp\left(x_i^T \beta + \beta_0\right)\right) - y_i x_i^T \beta
+  \right\},
+$$
+where $X_i$ is the $i$th row of the design matrix $X$.
+
+You select it by setting `family = "binomial"` in the `SLOPE()` function.
+
+<!-- ```{r} -->
+<!-- fit_logistic <- SLOPE( -->
+<!--   x = heart$x, -->
+<!--   y = heart$y, -->
+<!--   family = "binomial" -->
+<!-- ) -->
+<!-- ``` -->
+
+## References

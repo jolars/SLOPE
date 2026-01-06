@@ -1,4 +1,9 @@
-# SLOPE 1.3.0
+# SLOPE unreleased
+
+## Breaking Changes
+
+- `coef.SLOPE()` with `simplify = FALSE` and `intercept = TRUE` now 
+  includes the intercepts as part of the returned list of coefficient matrices.
 
 ## New Features
 

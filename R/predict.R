@@ -36,6 +36,7 @@ predict.SLOPE <- function(
   alpha = NULL,
   type = "link",
   simplify = TRUE,
+  exact = FALSE,
   sigma,
   ...
 ) {
@@ -54,13 +55,35 @@ predict.SLOPE <- function(
     alpha <- sigma
   }
 
-  beta <- getElement(object, "coefficients")
-  intercepts <- getElement(object, "intercepts")
+  # Get coefficients with intercepts using coef()
+  has_intercept <- getElement(object, "has_intercept")
+  coefs <- coef(
+    object,
+    alpha = alpha,
+    exact = exact,
+    simplify = FALSE,
+    intercept = has_intercept,
+    ...
+  )
+
+  # Extract beta and intercepts from each matrix in the list
+  n_penalties <- length(coefs)
+  beta <- vector("list", n_penalties)
+  intercepts <- vector("list", n_penalties)
+
+  for (i in seq_len(n_penalties)) {
+    if (has_intercept) {
+      intercepts[[i]] <- coefs[[i]][1, ]
+      beta[[i]] <- coefs[[i]][-1, , drop = FALSE]
+    } else {
+      intercepts[[i]] <- rep(0, NCOL(coefs[[i]]))
+      beta[[i]] <- coefs[[i]]
+    }
+  }
 
   n <- NROW(x)
   p <- NROW(beta[[1L]])
   m <- NCOL(beta[[1L]])
-  n_penalties <- length(beta)
 
   stopifnot(p == NCOL(x))
 
@@ -74,7 +97,7 @@ predict.SLOPE <- function(
 
   for (i in seq_len(n_penalties)) {
     lp <- as.matrix(x %*% beta[[i]])
-    lin_pred[,, i] <- sweep(lp, 2, intercepts[[i]], "+")
+    lin_pred[,, i] <- sweep(lp, 2, intercepts[[i]], "+") # nolint
   }
 
   lin_pred
