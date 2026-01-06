@@ -7,13 +7,13 @@
 \method{summary}{SLOPE}(object, ...)
 }
 \arguments{
-\item{object}{an object of class \code{'SLOPE'}, typically from a call to
+\item{object}{an object of class \code{"SLOPE"}, typically from a call to
 \code{\link[=SLOPE]{SLOPE()}}}
 
 \item{...}{other arguments (currently ignored)}
 }
 \value{
-An object of class \code{'summary_SLOPE'} with the following components:
+An object of class \code{"summary_SLOPE"} with the following components:
 \item{call}{the call that produced the model}
 \item{family}{the model family}
 \item{n_obs}{number of observations}

@@ -3,11 +3,11 @@
 #' Produces a summary of a fitted SLOPE model, including information about
 #' the regularization path, model family, and fitted values.
 #'
-#' @param object an object of class `'SLOPE'`, typically from a call to
+#' @param object an object of class `"SLOPE"`, typically from a call to
 #'   [SLOPE()]
 #' @param ... other arguments (currently ignored)
 #'
-#' @return An object of class `'summary_SLOPE'` with the following components:
+#' @return An object of class `"summary_SLOPE"` with the following components:
 #' \item{call}{the call that produced the model}
 #' \item{family}{the model family}
 #' \item{n_obs}{number of observations}
