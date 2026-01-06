@@ -89,6 +89,9 @@ sparseSLOPE(Eigen::SparseMatrix<double>& x,
             const Eigen::MatrixXd& y,
             const Rcpp::List& control)
 {
+  if (!y.allFinite()) {
+    throw std::invalid_argument("Response must not contain missing values");
+  }
   return callSLOPE(x, y, control);
 }
 
@@ -100,6 +103,9 @@ denseSLOPE(Eigen::MatrixXd& x,
 {
   if (!x.allFinite()) {
     throw std::invalid_argument("Input matrix must not contain missing values");
+  }
+  if (!y.allFinite()) {
+    throw std::invalid_argument("Response must not contain missing values");
   }
   return callSLOPE(x, y, control);
 }
@@ -115,6 +121,10 @@ bigSLOPE(SEXP x, const Eigen::MatrixXd& y, const Rcpp::List& control)
 
   Map<MatrixXd> x_map =
     Map<MatrixXd>((double*)bm_ptr->matrix(), bm_ptr->nrow(), bm_ptr->ncol());
+
+  if (!y.allFinite()) {
+    throw std::invalid_argument("Response must not contain missing values");
+  }
 
   return callSLOPE(x_map, y, control);
 }
