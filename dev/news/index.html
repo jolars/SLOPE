@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SLOPE</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.5.2.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.2.0.9999</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -25,6 +25,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/introduction.html">An introduction to SLOPE</a></li>
+    <li><a class="dropdown-item" href="../articles/models.html">Models in SLOPE</a></li>
     <li><a class="dropdown-item" href="../articles/solvers.html">Solvers in SLOPE</a></li>
   </ul></li>
 <li class="active nav-item dropdown">
@@ -49,11 +50,42 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.5.2.9000" id="slope-0529000">SLOPE 0.5.2.9000<a class="anchor" aria-label="anchor" href="#slope-0529000"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.2.0" id="slope-120">SLOPE 1.2.0<a class="anchor" aria-label="anchor" href="#slope-120"></a></h2><p class="text-muted">CRAN release: 2025-11-11</p>
+<div class="section level3">
+<h3 id="major-changes-1-2-0">Major Changes<a class="anchor" aria-label="anchor" href="#major-changes-1-2-0"></a></h3>
+<ul><li>The default argument for <code>threads</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> has been changed from <code>NULL</code> (half of available cores) to <code>1</code> (no multithreading). This is to avoid excessive CPU usage on systems with many cores. Users can still set <code>threads = NULL</code> to get the previous behavior, or set it to any positive integer to control the number of threads used.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="minor-changes-1-2-0">Minor Changes<a class="anchor" aria-label="anchor" href="#minor-changes-1-2-0"></a></h3>
+<ul><li>The C++ routine can now be interrupted through R’s usual interrupt mechanism (e.g., Ctrl+C in RStudio or R terminal).</li>
+<li>The citation information has been updated. Use <code>citation("SLOPE")</code> to see the correct way to cite the package.</li>
+<li>The y axis label for coefficients has changed from <code>expression(hat(beta))</code> to <code>"Coefficients"</code> to avoid issues with rendering in some environments, where the hat symbol would be cropped.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-1-2-0">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-2-0"></a></h3>
+<ul><li>In the return object from <code><a href="../reference/SLOPE.html">SLOPE()</a></code>, the <code>coefficients_scaled</code> field incorrectly contained unscaled coefficients, which also affected <code><a href="../reference/coef.SLOPE.html">coef.SLOPE()</a></code>. This has now been fixed.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.1.0" id="slope-110">SLOPE 1.1.0<a class="anchor" aria-label="anchor" href="#slope-110"></a></h2><p class="text-muted">CRAN release: 2025-10-30</p>
+<div class="section level3">
+<h3 id="new-features-1-1-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-1-0"></a></h3>
+<ul><li>A new data set, <code>glioma</code>, has been added to the package. It contains gene expression measurements for patients with glioma along with healthy controls.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.0.1" id="slope-101">SLOPE 1.0.1<a class="anchor" aria-label="anchor" href="#slope-101"></a></h2><p class="text-muted">CRAN release: 2025-07-02</p>
+<div class="section level3">
+<h3 id="bug-fixes-1-0-1">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-0-1"></a></h3>
+<ul><li>Fixed a test error on the M1mac platform.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.0.0" id="slope-100">SLOPE 1.0.0<a class="anchor" aria-label="anchor" href="#slope-100"></a></h2><p class="text-muted">CRAN release: 2025-06-30</p>
 <p>This update of SLOPE brings an entirely different C++ implementation of the underlying package based on the C++ library <a href="https://github.com/jolars/libslope" class="external-link">libslope</a>. It comes with several large and breaking changes with respect to the previous version of the package.</p>
 <p>We realized that this may throw off some users, and hope that you will be patient with dealing with the large number of breaking changes.</p>
 <div class="section level3">
-<h3 id="breaking-changes-0-5-2-9000">Breaking Changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-5-2-9000"></a></h3>
+<h3 id="breaking-changes-1-0-0">Breaking Changes<a class="anchor" aria-label="anchor" href="#breaking-changes-1-0-0"></a></h3>
 <ul><li>The <code>caretSLOPE()</code> function that was deprecated has now been removed from the package.</li>
 <li>Fields <code>unique</code>, <code>violations</code>, and <code>active_sets</code> are no longer stored in the <code>SLOPE</code> object. These fields were typically only used for debugging purposes.</li>
 <li>The <code>prox_method</code> and <code>method</code> arguments in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> and <code><a href="../reference/sortedL1Prox.html">sortedL1Prox()</a></code>, respectively, have been removed. The proximal operator is now always computed using the fast stack-based algorithm. There was never any reason to use the slower PAVA algorithm.</li>
@@ -73,14 +105,14 @@
 <li>Plots from <code><a href="../reference/plot.SLOPE.html">plot.SLOPE()</a></code> now use base R graphics rather than ggplot2. This means that the plots are more difficult to customize but plot much more faster when there are many variables and significantly reduces the dependency load of the package. For plots of trained SLOPE objects, which used to be faceted on the <code>q</code> parameter, the user now needs to use the standard base R graphics API to facet plots via <code>par(mfrow = c(1, 2))</code> or similar.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="deprecated-functionality-0-5-2-9000">Deprecated Functionality<a class="anchor" aria-label="anchor" href="#deprecated-functionality-0-5-2-9000"></a></h3>
+<h3 id="deprecated-functionality-1-0-0">Deprecated Functionality<a class="anchor" aria-label="anchor" href="#deprecated-functionality-1-0-0"></a></h3>
 <ul><li>Arguments <code>tol_rel_gap</code>, <code>tol_infeas</code>, <code>tol_abs</code>, <code>tol_rel</code>, <code>tol_rel_coef</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> are now deprecated. The solvers now all rely on the same tolerance criterion, which is set by <code>tol</code> and uses the duality gap normalized by the current primal value.</li>
 <li>Arguments <code>screen</code> and <code>screen_alg</code> are now deprecated and have no effect. Feature screening is always used. These arguments were only used for debugging.</li>
 <li>The argument <code>verbosity</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> is now defunct and has no effect.</li>
 <li>The argument <code>prox_method</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> and <code><a href="../reference/sortedL1Prox.html">sortedL1Prox()</a></code> is now defunct and has no effect.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="new-features-0-5-2-9000">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-5-2-9000"></a></h3>
+<h3 id="new-features-1-0-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-0-0"></a></h3>
 <ul><li>Centering <code>x</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code> is now allowed again, even when the matrix is sparse.</li>
 <li>Out-of-memory matrices are now allowed through the <code>bigmemory</code> package. Only support for dense matrices is available at the moment.</li>
 <li>Centers and scales can now be specified manually by providing vectors to <code>center</code> and <code>scale</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>.</li>
@@ -97,21 +129,21 @@
 <li>Relaxed SLOPE models can now be fit by specifying <code>gamma</code> in <code><a href="../reference/SLOPE.html">SLOPE()</a></code>.</li>
 <li>
 <code>plot.trainedSLOPE()</code> gains a new argument <code>index</code>, to select which of the hyperparameter combinations to plot for.</li>
-<li>There’s a new function <code><a href="../reference/plotClusters.html">plotClusters()</a></code>, which allows plotting the cluster structure in SLOPE.</li>
+<li>There’s a new function <code><a href="../reference/plotClusters.html">plotClusters()</a></code>, which allows plotting the cluster structure in SLOPE. Thanks, 1!</li>
 <li>
 <code><a href="../reference/SLOPE.html">SLOPE()</a></code> gains a new argument <code>cd_type</code>, to control the type of coordinate descent used for the hybrid solver, with options <code>"cyclical"</code> and <code>"permuted"</code>.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-0-5-2-9000">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-5-2-9000"></a></h3>
+<h3 id="bug-fixes-1-0-0">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-0-0"></a></h3>
 <ul><li>Return correct model when training for AUC in <code><a href="../reference/trainSLOPE.html">trainSLOPE()</a></code>.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="performance-improvements-0-5-2-9000">Performance Improvements<a class="anchor" aria-label="anchor" href="#performance-improvements-0-5-2-9000"></a></h3>
+<h3 id="performance-improvements-1-0-0">Performance Improvements<a class="anchor" aria-label="anchor" href="#performance-improvements-1-0-0"></a></h3>
 <p>The new hybrid algorithm that’s implemented in libslope and now used in the package constitutes a major upgrade in terms of performance.</p>
 <ul><li>The solver is now much more memory-efficient and can avoid copies of the design matrix entirely by normalizing the columns just-in-time. This is the standard behavior. Future versions of the package will allow the user to specify whether to copy (and modify) the design matrix or not.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="dependencies-0-5-2-9000">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies-0-5-2-9000"></a></h3>
+<h3 id="dependencies-1-0-0">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies-1-0-0"></a></h3>
 <p>We have made an effort to reduce the footprint of the package and reduce the number of dependencies.</p>
 <ul><li>The package now relies on Eigen (through RcppEigen) rather than Armadillo, which means that there is no longer any reliance on BLAS and LAPACK libraries.</li>
 <li>The dependency on <code>ggplot2</code> is removed.</li>
@@ -314,7 +346,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

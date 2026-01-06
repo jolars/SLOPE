@@ -21,7 +21,7 @@ in decreasing order according  to its absolute values."><meta property="og:image
 
     <a class="navbar-brand me-2" href="../index.html">SLOPE</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.5.2.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.2.0.9999</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,6 +33,7 @@ in decreasing order according  to its absolute values."><meta property="og:image
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/introduction.html">An introduction to SLOPE</a></li>
+    <li><a class="dropdown-item" href="../articles/models.html">Models in SLOPE</a></li>
     <li><a class="dropdown-item" href="../articles/solvers.html">Solvers in SLOPE</a></li>
   </ul></li>
 <li class="nav-item dropdown">
@@ -53,7 +54,7 @@ in decreasing order according  to its absolute values."><meta property="og:image
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Sorted L-One Penalized Estimation</h1>
-      <small class="dont-index">Source: <a href="https://github.com/jolars/SLOPE/blob/main/R/SLOPE.R" class="external-link"><code>R/SLOPE.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/jolars/SLOPE/blob/main/R/slope.R" class="external-link"><code>R/slope.R</code></a></small>
       <div class="d-none name"><code>SLOPE.Rd</code></div>
     </div>
 
@@ -87,7 +88,7 @@ in decreasing order according  to its absolute values.</p>
 <span>  solver <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"hybrid"</span>, <span class="st">"pgd"</span>, <span class="st">"fista"</span>, <span class="st">"admm"</span><span class="op">)</span>,</span>
 <span>  max_passes <span class="op">=</span> <span class="fl">1e+06</span>,</span>
 <span>  tol <span class="op">=</span> <span class="fl">1e-04</span>,</span>
-<span>  threads <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  threads <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  diagnostics <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  patterns <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  gamma <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -339,6 +340,12 @@ multinomial families</p></dd>
 well as a measure of the infeasibility, time, and iteration; only
 available if <code>diagnostics = TRUE</code> in the call to <code>SLOPE()</code>.</p></dd>
 
+<dt>n_observations</dt>
+<dd><p>the number of observations in the training data</p></dd>
+
+<dt>n_predictors</dt>
+<dd><p>the number of predictors in the training data</p></dd>
+
 <dt>call</dt>
 <dd><p>the call used for fitting the model</p></dd>
 
@@ -537,7 +544,7 @@ Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

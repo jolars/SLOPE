@@ -33,7 +33,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SLOPE</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.5.2.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.2.0.9999</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,6 +47,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/introduction.html">An introduction to SLOPE</a></li>
+    <li><a class="dropdown-item" href="../articles/models.html">Models in SLOPE</a></li>
     <li><a class="dropdown-item" href="../articles/solvers.html">Solvers in SLOPE</a></li>
   </ul>
 </li>
@@ -81,7 +82,7 @@
                         <h4 data-toc-skip class="author">Johan
 Larsson</h4>
             
-            <h4 data-toc-skip class="date">2025-06-23</h4>
+            <h4 data-toc-skip class="date">2026-01-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jolars/SLOPE/blob/main/vignettes/introduction.Rmd" class="external-link"><code>vignettes/introduction.Rmd</code></a></small>
       <div class="d-none name"><code>introduction.Rmd</code></div>
@@ -165,7 +166,7 @@ but it is usually more informative to study a plot of the path.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="introduction_files/figure-html/unnamed-chunk-2-1.png" alt="Regularization path for a binomial regression model fit to the heart data set." width="576"><p class="caption">
+<img src="introduction_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="Regularization path for a binomial regression model fit to the heart data set." width="576"><p class="caption">
 Regularization path for a binomial regression model fit to the heart
 data set.
 </p>
@@ -207,8 +208,8 @@ sequence using resampling. This package features the function
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Optimum values:</span></span>
 <span><span class="co">#&gt;     q       alpha measure      mean        se        lo        hi</span></span>
-<span><span class="co">#&gt; 1 0.2 0.001638533     mae  3.613622 0.1319628  3.315101  3.912142</span></span>
-<span><span class="co">#&gt; 2 0.2 0.002166044     mse 19.535776 1.1248067 16.991286 22.080265</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 0.2 0.001638533     mae  3.613623 0.1319657  3.315096  3.912151</span></span>
+<span><span class="co">#&gt; 2 0.2 0.002166044     mse 19.535805 1.1247987 16.991333 22.080276</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="false-discovery-rate">False discovery rate<a class="anchor" aria-label="anchor" href="#false-discovery-rate"></a>
@@ -256,7 +257,6 @@ which we set to 0.1 in this example.</p>
 <span>  <span class="va">fdr</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">v</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">r</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="co"># Create the plot</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
 <span>  <span class="va">q</span>,</span>
 <span>  <span class="va">fdr</span>,</span>
@@ -267,10 +267,9 @@ which we set to 0.1 in this example.</p>
 <span>  las <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Add horizontal line at 0.1</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>h <span class="op">=</span> <span class="fl">0.1</span>, lty <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="introduction_files/figure-html/unnamed-chunk-6-1.png" alt="Control of false discovery rate using SLOPE." width="384"><p class="caption">
+<img src="introduction_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="Control of false discovery rate using SLOPE." width="384"><p class="caption">
 Control of false discovery rate using SLOPE.
 </p>
 </div>
@@ -310,7 +309,7 @@ B (Methodological)</em> 58 (1): 267–88.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
