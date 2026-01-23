@@ -63,7 +63,7 @@ mean of the response variable.
 
 
 | Model       | \(f(\eta, y)\)                                                                                       | \(g(\mu)\)                                | \(g^{-1}(\eta)\)                                       |
-|-------------|------------------------------------------------------------------------------------------------------|-------------------------------------------|--------------------------------------------------------|
+|:------------|:----------------------------------------------------------------------------------------------------:|:-----------------------------------------:|:------------------------------------------------------:|
 | Gaussian    | \(\frac{1}{2}(y - \eta)^2\)                                                                          | \(\mu\)                                   | \(\eta\)                                               |
 | Binomial    | \(\log(1 + e^\eta) - \eta y\)                                                                        | \(\log \left(\frac{\mu}{1 - \mu}\right)\) | \(\frac{e^\eta}{1 + e^\eta}\)                          |
 | Poisson     | \(e^\eta - \eta y\)                                                                                  | \(\log(\mu)\)                             | \(e^\eta\)                                             |
@@ -97,11 +97,12 @@ fit_gaussian <- SLOPE(
 )
 ```
 
-We can plot the solution path:
+Often it's instructive to look at the solution path of the fitted model, which
+you can do by simply plotting the fitted object:
 
 ```{r}
-#| fig-width: 5
-#| fig-height: 4
+#| fig-width: 4.5
+#| fig-height: 5
 plot(fit_gaussian)
 ```
 
@@ -111,11 +112,20 @@ We can also print a summary of the fitted model:
 summary(fit_gaussian)
 ```
 
-SLOPE also contains standard methods for returning coefficients and making predictions:
+SLOPE also contains standard methods for returning coefficients and making predictions.
+We can use `coef()` with a specified level of regularization `alpha`, to
+obtain the coefficients at that level (or omit `alpha` to get the coefficients for the
+full path).
 
 ```{r}
-coef(fit_gaussian)
+coef(fit_gaussian, alpha = 0.05)
+```
 
+To make predictions on new data, we can use the `predict()` function, specifying
+the fitted model, new design matrix `x`, and the level of regularization
+`alpha`:
+
+```{r}
 y_hat <- predict(fit_gaussian, x = bodyfat$x[1:5, ], alpha = 0.01)
 
 plot(bodyfat$y[1:5], y_hat)
@@ -135,12 +145,20 @@ where $X_i$ is the $i$th row of the design matrix $X$.
 
 You select it by setting `family = "binomial"` in the `SLOPE()` function.
 
-<!-- ```{r} -->
-<!-- fit_logistic <- SLOPE( -->
-<!--   x = heart$x, -->
-<!--   y = heart$y, -->
-<!--   family = "binomial" -->
-<!-- ) -->
-<!-- ``` -->
+```{r}
+fit_logistic <- SLOPE(
+  x = heart$x,
+  y = heart$y,
+  family = "binomial"
+)
+```
+You can plot the solution path, print a summary, extract coefficients,
+and make predictions in the same way as for Gaussian regression:
+
+```{r}
+#| fig-width: 4.5
+#| fig-height: 5
+plot(fit_logistic)
+```
 
 ## References
