@@ -67,6 +67,7 @@ Taniskidou
 Tardivel
 Teboulle
 Teixeira
+TrainedSLOPE
 UBSAN
 UCI
 Zhong
@@ -82,7 +83,6 @@ da
 de
 dgCMatrix
 dl
-doParallel
 doi
 dummycoded
 edu
@@ -90,13 +90,14 @@ et
 fathers's
 flavanoids
 fluoroscopy
-foreach
+frac
 ggplot
 glioma
 glmnet
 http
 https
 infeasibility
+intercal
 isotonic
 larsson
 libslope
@@ -108,7 +109,6 @@ malic
 mathbb
 mathrm
 meningioma
-metabolomics
 mlr
 multithreading
 nonflavanoid
@@ -123,6 +123,7 @@ proline
 prox
 regularizations
 reimplemented
+roxygen
 rvert
 solaris
 suboptimality
