@@ -61,7 +61,7 @@ tasks:
 
   vignettes:
     cmds:
-      - "Rscript -e 'devtools::build_vignettes()'"
+      - Rscript -e 'devtools::build_vignettes()'
 
   update-libslope:
     desc: Fetch and update the latest libslope release
