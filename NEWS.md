@@ -1,4 +1,4 @@
-# SLOPE unreleased
+# SLOPE 2.0.0
 
 ## Breaking Changes
 
