@@ -335,8 +335,130 @@ regression:</p>
 <p><img src="models_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="432" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+<h2 id="poisson-regression">Poisson Regression<a class="anchor" aria-label="anchor" href="#poisson-regression"></a>
 </h2>
+<p>Poisson regression is used for count data, and takes the following
+form:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>β</mi><mn>0</mn></msub><mo>,</mo><mi>β</mi><mo>;</mo><mi>X</mi><mo>,</mo><mi>y</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mn>1</mn><mi>n</mi></mfrac><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mrow><mo stretchy="true" form="prefix">{</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>x</mi><mi>i</mi><mi>T</mi></msubsup><mi>β</mi><mo>+</mo><msub><mi>β</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><msub><mi>y</mi><mi>i</mi></msub><msubsup><mi>x</mi><mi>i</mi><mi>T</mi></msubsup><mi>β</mi><mo stretchy="true" form="postfix">}</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+f(\beta_0, \beta; X, y) =
+  \frac{1}{n} \sum_{i=1}^n \left\{
+    \exp\left(x_i^T \beta + \beta_0\right) - y_i x_i^T \beta
+  \right\}.
+</annotation></semantics></math></p>
+<p>You select it by setting <code>family = "poisson"</code> in the
+<code><a href="../reference/SLOPE.html">SLOPE()</a></code> function. Note that the solving the Poisson
+regression problem is a notoriously difficult optimization problem,
+which is not Lipschitz-smooth. As such, convergence may be slow. SLOPE
+features safeguards to ensure convergence by modifying step sizes, but
+this may lead to long computation times in some cases.</p>
+<p>In the next example, we fit a Poisson SLOPE model to the
+<code>abalone</code> data set, which consists of observations of
+abalones.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit_poisson</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SLOPE.html">SLOPE</a></span><span class="op">(</span></span>
+<span>  x <span class="op">=</span> <span class="va">abalone</span><span class="op">$</span><span class="va">x</span>,</span>
+<span>  y <span class="op">=</span> <span class="va">abalone</span><span class="op">$</span><span class="va">y</span>,</span>
+<span>  family <span class="op">=</span> <span class="st">"poisson"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit_poisson</span><span class="op">)</span></span></code></pre></div>
+<p><img src="models_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="432" style="display: block; margin: auto;"></p>
+<div class="section level3">
+<h3 id="numerical-considerations">Numerical Considerations<a class="anchor" aria-label="anchor" href="#numerical-considerations"></a>
+</h3>
+<p>Sometimes it may be beneficial to pick a gradient descent solver
+instead of the default coordinate descent solver.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="multinomial-logistic-regression">Multinomial Logistic Regression<a class="anchor" aria-label="anchor" href="#multinomial-logistic-regression"></a>
+</h2>
+<p>Multinomial logistic regression is used for multi-class
+classification problems, and takes the following form:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>β</mi><mn>0</mn></msub><mo>,</mo><mi>β</mi><mo>;</mo><mi>X</mi><mo>,</mo><mi>Y</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mn>1</mn><mi>n</mi></mfrac><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mrow><mo stretchy="true" form="prefix">{</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>+</mo><munderover><mo>∑</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mrow><mi>m</mi><mo>−</mo><mn>1</mn></mrow></munderover><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>x</mi><mi>i</mi><mi>T</mi></msubsup><msub><mi>β</mi><mi>k</mi></msub><mo>+</mo><msub><mi>β</mi><mrow><mn>0</mn><mi>k</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><munderover><mo>∑</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mrow><mi>m</mi><mo>−</mo><mn>1</mn></mrow></munderover><msub><mi>y</mi><mrow><mi>i</mi><mi>k</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>x</mi><mi>i</mi><mi>T</mi></msubsup><msub><mi>β</mi><mi>k</mi></msub><mo>+</mo><msub><mi>β</mi><mrow><mn>0</mn><mi>k</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">}</mo></mrow><mo>,</mo></mrow><annotation encoding="application/x-tex">
+f(\beta_0, \beta; X, Y) =
+  \frac{1}{n} \sum_{i=1}^n \left\{
+    \log\left(1 + \sum_{k=1}^{m-1} \exp\left(x_i^T \beta_k + \beta_{0k}\right)\right)
+    - \sum_{k=1}^{m-1} y_{ik} \left(x_i^T \beta_k + \beta_{0k}\right)
+  \right\},
+</annotation></semantics></math> where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>X</mi><mi>i</mi></msub><annotation encoding="application/x-tex">X_i</annotation></semantics></math>
+is the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>th
+row of the design matrix
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math>
+is the response matrix of dimension
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>×</mo><mi>m</mi></mrow><annotation encoding="application/x-tex">n \times m</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
+is the number of classes.</p>
+<p>In our package, we use the non-redundant formulation, where the last
+class is treated as the baseline class. Thus, only
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">m-1</annotation></semantics></math>
+sets of coefficients are estimated. This is not the case in other
+packages, such as <code>glmnet</code> <span class="citation">(Friedman,
+Hastie, and Tibshirani 2010)</span>.</p>
+<p>To select multinomial logistic regression, set
+<code>family = "multinomial"</code> in the <code><a href="../reference/SLOPE.html">SLOPE()</a></code>
+function. In the following example, we fit a multinomial logistic SLOPE
+model to the <code>wine</code> data set, which consists of 178
+observations of wines from three different cultivars. The task is to
+classify the cultivar based on 13 different chemical properties.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit_multinomial</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SLOPE.html">SLOPE</a></span><span class="op">(</span></span>
+<span>  x <span class="op">=</span> <span class="va">wine</span><span class="op">$</span><span class="va">x</span>,</span>
+<span>  y <span class="op">=</span> <span class="va">wine</span><span class="op">$</span><span class="va">y</span>,</span>
+<span>  family <span class="op">=</span> <span class="st">"multinomial"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Note that the coefficients are now a matrix. To retain sparsity, we
+have chosen to return the full set of coefficients along the path as a
+list of sparse matrices. Here we extract the coefficients for the second
+step in the solution path, which consists of one matrix, with one column
+for the coefficients of the first two classes (the third class is the
+baseline class):</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit_multinomial</span><span class="op">$</span><span class="va">coefficients</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="co">#&gt; 13 x 2 sparse Matrix of class "dgCMatrix"</span></span>
+<span><span class="co">#&gt;                               </span></span>
+<span><span class="co">#&gt;  [1,] .            -0.07330687</span></span>
+<span><span class="co">#&gt;  [2,] .             .         </span></span>
+<span><span class="co">#&gt;  [3,] .             .         </span></span>
+<span><span class="co">#&gt;  [4,] .             .         </span></span>
+<span><span class="co">#&gt;  [5,] .             .         </span></span>
+<span><span class="co">#&gt;  [6,] .             .         </span></span>
+<span><span class="co">#&gt;  [7,] 0.0259610440  .         </span></span>
+<span><span class="co">#&gt;  [8,] .             .         </span></span>
+<span><span class="co">#&gt;  [9,] .             .         </span></span>
+<span><span class="co">#&gt; [10,] .            -0.02567089</span></span>
+<span><span class="co">#&gt; [11,] .             .         </span></span>
+<span><span class="co">#&gt; [12,] .             .         </span></span>
+<span><span class="co">#&gt; [13,] 0.0003541809  .</span></span></code></pre></div>
+<p>By default, <code><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef()</a></code> simplifies the output and returns
+three lists of coefficient vectors, one for each class (excluding the
+baseline class).</p>
+<p>For similar reasons, plotting the paths is also a bit different and
+in SLOPE we plot a path for each class (excluding the baseline class),
+which resembles the result from calling <code><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef()</a></code>. Because we
+use the base R plotting system, you need to setup a multi-panel layout
+to see all the paths:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit_multinomial</span><span class="op">)</span></span></code></pre></div>
+<p><img src="models_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="" width="576" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level2 unnumbered">
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-friedman2010" class="csl-entry">
+Friedman, Jerome, Trevor Hastie, and Robert Tibshirani. 2010.
+<span>“Regularization Paths for Generalized Linear Models via Coordinate
+Descent.”</span> <em>Journal of Statistical Software</em> 33 (1): 1–22.
+<a href="https://doi.org/10.18637/jss.v033.i01" class="external-link">https://doi.org/10.18637/jss.v033.i01</a>.
+</div>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

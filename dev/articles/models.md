@@ -179,4 +179,116 @@ plot(fit_logistic)
 
 ![](models_files/figure-html/unnamed-chunk-7-1.png)
 
+## Poisson Regression
+
+Poisson regression is used for count data, and takes the following form:
+$$f\left( \beta_{0},\beta;X,y \right) = \frac{1}{n}\sum\limits_{i = 1}^{n}\left\{ \exp\left( x_{i}^{T}\beta + \beta_{0} \right) - y_{i}x_{i}^{T}\beta \right\}.$$
+
+You select it by setting `family = "poisson"` in the
+[`SLOPE()`](https://jolars.github.io/SLOPE/dev/reference/SLOPE.md)
+function. Note that the solving the Poisson regression problem is a
+notoriously difficult optimization problem, which is not
+Lipschitz-smooth. As such, convergence may be slow. SLOPE features
+safeguards to ensure convergence by modifying step sizes, but this may
+lead to long computation times in some cases.
+
+In the next example, we fit a Poisson SLOPE model to the `abalone` data
+set, which consists of observations of abalones.
+
+``` r
+fit_poisson <- SLOPE(
+  x = abalone$x,
+  y = abalone$y,
+  family = "poisson"
+)
+
+plot(fit_poisson)
+```
+
+![](models_files/figure-html/unnamed-chunk-8-1.png)
+
+### Numerical Considerations
+
+Sometimes it may be beneficial to pick a gradient descent solver instead
+of the default coordinate descent solver.
+
+## Multinomial Logistic Regression
+
+Multinomial logistic regression is used for multi-class classification
+problems, and takes the following form:
+$$f\left( \beta_{0},\beta;X,Y \right) = \frac{1}{n}\sum\limits_{i = 1}^{n}\left\{ \log\left( 1 + \sum\limits_{k = 1}^{m - 1}\exp\left( x_{i}^{T}\beta_{k} + \beta_{0k} \right) \right) - \sum\limits_{k = 1}^{m - 1}y_{ik}\left( x_{i}^{T}\beta_{k} + \beta_{0k} \right) \right\},$$
+where $X_{i}$ is the $i$th row of the design matrix $X$, and $Y$ is the
+response matrix of dimension $n \times m$, where $m$ is the number of
+classes.
+
+In our package, we use the non-redundant formulation, where the last
+class is treated as the baseline class. Thus, only $m - 1$ sets of
+coefficients are estimated. This is not the case in other packages, such
+as `glmnet` (Friedman, Hastie, and Tibshirani 2010).
+
+To select multinomial logistic regression, set `family = "multinomial"`
+in the
+[`SLOPE()`](https://jolars.github.io/SLOPE/dev/reference/SLOPE.md)
+function. In the following example, we fit a multinomial logistic SLOPE
+model to the `wine` data set, which consists of 178 observations of
+wines from three different cultivars. The task is to classify the
+cultivar based on 13 different chemical properties.
+
+``` r
+fit_multinomial <- SLOPE(
+  x = wine$x,
+  y = wine$y,
+  family = "multinomial"
+)
+```
+
+Note that the coefficients are now a matrix. To retain sparsity, we have
+chosen to return the full set of coefficients along the path as a list
+of sparse matrices. Here we extract the coefficients for the second step
+in the solution path, which consists of one matrix, with one column for
+the coefficients of the first two classes (the third class is the
+baseline class):
+
+``` r
+fit_multinomial$coefficients[[2]]
+#> 13 x 2 sparse Matrix of class "dgCMatrix"
+#>                               
+#>  [1,] .            -0.07330687
+#>  [2,] .             .         
+#>  [3,] .             .         
+#>  [4,] .             .         
+#>  [5,] .             .         
+#>  [6,] .             .         
+#>  [7,] 0.0259610440  .         
+#>  [8,] .             .         
+#>  [9,] .             .         
+#> [10,] .            -0.02567089
+#> [11,] .             .         
+#> [12,] .             .         
+#> [13,] 0.0003541809  .
+```
+
+By default, [`coef()`](https://rdrr.io/r/stats/coef.html) simplifies the
+output and returns three lists of coefficient vectors, one for each
+class (excluding the baseline class).
+
+For similar reasons, plotting the paths is also a bit different and in
+SLOPE we plot a path for each class (excluding the baseline class),
+which resembles the result from calling
+[`coef()`](https://rdrr.io/r/stats/coef.html). Because we use the base R
+plotting system, you need to setup a multi-panel layout to see all the
+paths:
+
+``` r
+par(mfrow = c(1, 2))
+plot(fit_multinomial)
+```
+
+![](models_files/figure-html/unnamed-chunk-11-1.png)
+
 ## References
+
+Friedman, Jerome, Trevor Hastie, and Robert Tibshirani. 2010.
+“Regularization Paths for Generalized Linear Models via Coordinate
+Descent.” *Journal of Statistical Software* 33 (1): 1–22.
+<https://doi.org/10.18637/jss.v033.i01>.
