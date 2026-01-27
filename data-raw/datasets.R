@@ -4,7 +4,8 @@ temp_file <- tempfile()
 
 download.file(
   "https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/regression/bodyfat",
-  temp_file
+  temp_file,
+  mode = "wb"
 )
 
 tmp <- e1071::read.matrix.csr(temp_file, fac = FALSE)
@@ -42,7 +43,8 @@ temp_file <- tempfile()
 
 download.file(
   "https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/regression/abalone",
-  temp_file
+  temp_file,
+  mode = "wb"
 )
 
 tmp <- e1071::read.matrix.csr(temp_file, fac = FALSE)
@@ -86,7 +88,8 @@ temp_file <- tempfile()
 
 download.file(
   "https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary/heart",
-  temp_file
+  temp_file,
+  mode = "wb"
 )
 
 tmp <- e1071::read.matrix.csr(temp_file, fac = FALSE)
@@ -167,7 +170,8 @@ temp_file <- tempfile(fileext = ".csv")
 
 download.file(
   "https://raw.githubusercontent.com/hadley/rminds/master/1-data/wine.csv",
-  temp_file
+  temp_file,
+  mode = "wb"
 )
 
 tmp <- read.csv(temp_file)
@@ -187,7 +191,8 @@ tmp_dir <- tempdir()
 
 download.file(
   "https://archive.ics.uci.edu/ml/machine-learning-databases/00320/student.zip",
-  tmp_file
+  tmp_file,
+  mode = "wb"
 )
 
 unzip(tmp_file, exdir = tmp_dir)
@@ -276,7 +281,8 @@ tmp_dir <- tempdir()
 
 download.file(
   "https://static-content.springer.com/esm/art%3A10.1038%2Fs41598-023-38243-1/MediaObjects/41598_2023_38243_MOESM2_ESM.xlsx",
-  tmp_file
+  tmp_file,
+  mode = "wb"
 )
 
 dat <- readxl::read_excel(tmp_file)[, -1]
