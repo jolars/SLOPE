@@ -2,8 +2,8 @@
 
 ## Breaking Changes
 
-- `coef.SLOPE()` with `simplify = FALSE` and `intercept = TRUE` now 
-  includes the intercepts as part of the returned list of coefficient matrices.
+- `coef.SLOPE()` with `simplify = FALSE` and `intercept = TRUE` now includes the
+  intercepts as part of the returned list of coefficient matrices.
 
 ## New Features
 
