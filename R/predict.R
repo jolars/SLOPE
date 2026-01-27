@@ -57,7 +57,7 @@ predict.SLOPE <- function(
 
   # Get coefficients with intercepts using coef()
   has_intercept <- getElement(object, "has_intercept")
-  coefs <- coef(
+  coefs <- stats::coef(
     object,
     alpha = alpha,
     exact = exact,

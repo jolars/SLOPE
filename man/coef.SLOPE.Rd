@@ -30,8 +30,8 @@ penalty path.}
 \item{simplify}{if \code{TRUE}, \code{\link[base:drop]{base::drop()}} will be called before returning
 the coefficients to drop extraneous dimensions}
 
-\item{intercept}{whether to include the intercept in the output; only
-applicable when \code{simplify = TRUE} and an intercept has been fit.}
+\item{intercept}{whether to include the intercept in the output. The
+intercept is included as the first row of the returned array.}
 
 \item{scale}{whether to return the coefficients in the original scale
 or in the normalized scale.}
