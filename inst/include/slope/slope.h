@@ -35,6 +35,16 @@
 namespace slope {
 
 /**
+ * @brief Default no-op interrupt checker
+ * @return Always returns false
+ */
+inline bool
+defaultInterruptChecker()
+{
+  return false;
+}
+
+/**
  * @brief The SLOPE model.
  *
  * This class implements the SLOPE algorithm for regularized regression
@@ -380,7 +390,7 @@ public:
     const Eigen::MatrixXd& y_in,
     Eigen::ArrayXd alpha = Eigen::ArrayXd::Zero(0),
     Eigen::ArrayXd lambda = Eigen::ArrayXd::Zero(0),
-    std::function<bool()> check_interrupt = []() { return false; })
+    std::function<bool()> check_interrupt = defaultInterruptChecker)
   {
     using Eigen::MatrixXd;
     using Eigen::VectorXd;
@@ -394,6 +404,14 @@ public:
     if (n != y_in.rows()) {
       throw std::invalid_argument(
         "x and y_in must have the same number of rows");
+    }
+
+    if (!isFinite(x.derived())) {
+      throw std::invalid_argument("x must not contain NA, NaN, or Inf values");
+    }
+
+    if (!y_in.array().isFinite().all()) {
+      throw std::invalid_argument("y must not contain NA, NaN, or Inf values");
     }
 
     auto jit_normalization = normalize(x.derived(),
@@ -442,6 +460,13 @@ public:
       }
       if (!lambda.isFinite().all()) {
         throw std::invalid_argument("lambda must be finite");
+      }
+      // Check that lambda is in decreasing order
+      for (int i = 1; i < lambda.size(); ++i) {
+        if (lambda(i) > lambda(i - 1)) {
+          throw std::invalid_argument(
+            "lambda must be in decreasing order");
+        }
       }
     }
 
@@ -740,7 +765,7 @@ public:
     const Eigen::MatrixXd& y_in,
     const double alpha = 1.0,
     Eigen::ArrayXd lambda = Eigen::ArrayXd::Zero(0),
-    std::function<bool()> check_interrupt = []() { return false; })
+    std::function<bool()> check_interrupt = defaultInterruptChecker)
   {
     Eigen::ArrayXd alpha_arr(1);
     alpha_arr(0) = alpha;
@@ -777,7 +802,7 @@ public:
   SlopePath estimateAlpha(
     Eigen::EigenBase<T>& x,
     Eigen::MatrixXd& y,
-    std::function<bool()> check_interrupt = []() { return false; })
+    std::function<bool()> check_interrupt = defaultInterruptChecker)
   {
     int n = x.rows();
     int p = x.cols();

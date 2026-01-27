@@ -21,8 +21,8 @@ using slope::all;
 
 /**
  * Count non-zero elements in a matrix.
- * 
- * Helper function for Eigen matrices since nonZeros() was removed from 
+ *
+ * Helper function for Eigen matrices since nonZeros() was removed from
  * dense matrices in Eigen 5.0.0, but still exists for sparse matrices.
  *
  * @param x Sparse matrix
@@ -387,6 +387,49 @@ unique(const Eigen::MatrixXd& x)
   }
 
   return unique;
+}
+
+/**
+ * @brief Check if all elements in a dense matrix are finite
+ *
+ * @param x The input dense matrix to check
+ * @return bool True if all elements are finite (not NaN or Inf), false
+ * otherwise
+ *
+ * This function checks whether all elements in a dense matrix are finite
+ * values. A value is considered finite if it is neither NaN nor infinity.
+ */
+template<typename Derived>
+inline bool
+isFinite(const Eigen::DenseBase<Derived>& x)
+{
+  return x.derived().array().isFinite().all();
+}
+
+/**
+ * @brief Check if all elements in a sparse matrix are finite
+ *
+ * @param x The input sparse matrix to check
+ * @return bool True if all elements are finite (not NaN or Inf), false
+ * otherwise
+ *
+ * This function checks whether all non-zero elements in a sparse matrix are
+ * finite values. A value is considered finite if it is neither NaN nor
+ * infinity. Note that only non-zero elements are checked since zero values are
+ * implicitly finite.
+ */
+template<typename Derived>
+inline bool
+isFinite(const Eigen::SparseMatrixBase<Derived>& x)
+{
+  for (int j = 0; j < x.cols(); ++j) {
+    for (typename Derived::InnerIterator it(x.derived(), j); it; ++it) {
+      if (!std::isfinite(it.value())) {
+        return false;
+      }
+    }
+  }
+  return true;
 }
 
 } // namespace slope
