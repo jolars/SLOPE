@@ -78,6 +78,14 @@ plot(cvfit)
 
 <img src="man/figures/README-unnamed-chunk-6-1.png" style="display: block; margin: auto;" />
 
+## Ecosystem
+
+SLOPE is also available as a
+
+- Python package: [sortedl1](https://pypi.org/project/sortedl1/)
+- Julia package: [SLOPE.jl](https://github.com/jolars/SLOPE.jl)
+- C++ library: [libslope](https://github.com/jolars/libslope)
+
 ## Versioning
 
 SLOPE uses [semantic versioning](https://semver.org).
