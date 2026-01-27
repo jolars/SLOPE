@@ -30,10 +30,9 @@
 
 #' Abalone
 #'
-#' This data set contains observations of abalones, the common
-#' name for any of a group of sea snails. The goal is to predict the
-#' age of an individual abalone given physical measurements such as
-#' sex, weight, and height.
+#' This data set contains observations of abalones. The goal is to predict the
+#' age of an individual abalone given physical measurements such as sex,
+#' weight, and height.
 #'
 #' Only a stratified sample of 211 rows of the original data set are used here.
 #'
