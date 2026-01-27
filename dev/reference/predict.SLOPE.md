@@ -7,7 +7,16 @@ Return predictions from models fit by
 
 ``` r
 # S3 method for class 'SLOPE'
-predict(object, x, alpha = NULL, type = "link", simplify = TRUE, sigma, ...)
+predict(
+  object,
+  x,
+  alpha = NULL,
+  type = "link",
+  simplify = TRUE,
+  exact = FALSE,
+  sigma,
+  ...
+)
 
 # S3 method for class 'GaussianSLOPE'
 predict(
@@ -79,14 +88,6 @@ predict(
   if `TRUE`, [`base::drop()`](https://rdrr.io/r/base/drop.html) will be
   called before returning the coefficients to drop extraneous dimensions
 
-- sigma:
-
-  deprecated. Please use `alpha` instead.
-
-- ...:
-
-  ignored and only here for method consistency
-
 - exact:
 
   if `TRUE` and the given parameter values differ from those in the
@@ -94,6 +95,14 @@ predict(
   [`stats::update()`](https://rdrr.io/r/stats/update.html) on the object
   with the new parameters. If `FALSE`, the predicted values will be
   based on interpolated coefficients from the original penalty path.
+
+- sigma:
+
+  deprecated. Please use `alpha` instead.
+
+- ...:
+
+  ignored and only here for method consistency
 
 ## Value
 

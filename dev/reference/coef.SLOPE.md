@@ -45,8 +45,8 @@ coef(
 
 - intercept:
 
-  whether to include the intercept in the output; only applicable when
-  `simplify = TRUE` and an intercept has been fit.
+  whether to include the intercept in the output. The intercept is
+  included as the first row of the returned array.
 
 - scale:
 
