@@ -14,7 +14,7 @@ summary(object, ...)
 
 - object:
 
-  an object of class `'SLOPE'`, typically from a call to
+  an object of class `"SLOPE"`, typically from a call to
   [`SLOPE()`](https://jolars.github.io/SLOPE/reference/SLOPE.md)
 
 - ...:
@@ -23,7 +23,7 @@ summary(object, ...)
 
 ## Value
 
-An object of class `'summary_SLOPE'` with the following components:
+An object of class `"summary_SLOPE"` with the following components:
 
 - call:
 

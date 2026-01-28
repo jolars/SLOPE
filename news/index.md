@@ -1,6 +1,14 @@
 # Changelog
 
-## SLOPE 1.3.0
+## SLOPE 2.0.0
+
+CRAN release: 2026-01-28
+
+### Breaking Changes
+
+- [`coef.SLOPE()`](https://jolars.github.io/SLOPE/reference/coef.SLOPE.md)
+  with `simplify = FALSE` and `intercept = TRUE` now includes the
+  intercepts as part of the returned list of coefficient matrices.
 
 ### New Features
 

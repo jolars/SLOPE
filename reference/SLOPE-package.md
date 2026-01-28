@@ -20,7 +20,7 @@ Useful links:
 
 ## Author
 
-**Maintainer**: Johan Larsson <johanlarsson@outlook.com>
+**Maintainer**: Johan Larsson <johan@jolars.co>
 ([ORCID](https://orcid.org/0000-0002-4029-5945))
 
 Authors:
