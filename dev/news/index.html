@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SLOPE</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.2.0.9999</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.0.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,6 +49,31 @@
       <small>Source: <a href="https://github.com/jolars/SLOPE/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="development version" id="slope-development-version">SLOPE (development version)<a class="anchor" aria-label="anchor" href="#slope-development-version"></a></h2>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.0.0" id="slope-200">SLOPE 2.0.0<a class="anchor" aria-label="anchor" href="#slope-200"></a></h2><p class="text-muted">CRAN release: 2026-01-28</p>
+<div class="section level3">
+<h3 id="breaking-changes-2-0-0">Breaking Changes<a class="anchor" aria-label="anchor" href="#breaking-changes-2-0-0"></a></h3>
+<ul><li>
+<code><a href="../reference/coef.SLOPE.html">coef.SLOPE()</a></code> with <code>simplify = FALSE</code> and <code>intercept = TRUE</code> now includes the intercepts as part of the returned list of coefficient matrices.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-features-2-0-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-2-0-0"></a></h3>
+<ul><li>The <code><a href="../reference/plot.SLOPE.html">plot.SLOPE()</a></code> method now plots a dot chart if there is just a single value of <code>alpha</code>, and not an empty plot (as before).</li>
+<li>The <code>SLOPE</code> object now includes <code>n_observations</code> and <code>n_predictors</code> fields, which store the number of observations and predictors in the training data.</li>
+<li>The <code><a href="../reference/summary.SLOPE.html">summary.SLOPE()</a></code> method now displays the number of observations and predictors, with improved formatting for the path summary table.</li>
+<li>Added <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> method for <code>TrainedSLOPE</code> objects (from <code><a href="../reference/cvSLOPE.html">cvSLOPE()</a></code> and <code><a href="../reference/trainSLOPE.html">trainSLOPE()</a></code>), which provides a concise overview of cross-validation results including optimal parameters and performance metrics.</li>
+<li>Added <code><a href="../reference/refit.html">refit()</a></code> method for <code>TrainedSLOPE</code> objects to conveniently refit models with optimal parameters found through cross-validation.</li>
+<li>
+<code><a href="../reference/cvSLOPE.html">cvSLOPE()</a></code> now automatically refits the model on the full dataset using optimal parameters (controlled by new <code>refit</code> argument, default <code>TRUE</code>). The fitted model is stored in the <code>model</code> slot of the returned object.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="minor-changes-2-0-0">Minor Changes<a class="anchor" aria-label="anchor" href="#minor-changes-2-0-0"></a></h3>
+<ul><li>All roxygen documentation titles have been converted to title case for consistency.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.2.0" id="slope-120">SLOPE 1.2.0<a class="anchor" aria-label="anchor" href="#slope-120"></a></h2><p class="text-muted">CRAN release: 2025-11-11</p>
 <div class="section level3">
