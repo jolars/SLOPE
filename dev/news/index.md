@@ -46,6 +46,16 @@ CRAN release: 2026-01-28
 - All roxygen documentation titles have been converted to title case for
   consistency.
 
+### Bug Fixes
+
+- Fixed
+  [`score()`](https://jolars.github.io/SLOPE/dev/reference/score.md) for
+  multinomial models so it correctly handles scoring on data subsets
+  that do not contain all response classes from the original fit.
+- Updated `refit.TrainedSLOPE()` to use the training data stored in the
+  `TrainedSLOPE` object by default, avoiding inconsistencies from
+  re-specifying `x` and `y`.
+
 ## SLOPE 1.2.0
 
 CRAN release: 2025-11-11
