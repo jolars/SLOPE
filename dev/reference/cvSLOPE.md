@@ -244,12 +244,12 @@ tune$model
 #> "Volvo 142E"), c("mpg", "drat", "wt"))), y = structure(c(110, 
 #> 110, 93, 110, 175, 105, 245, 62, 95, 123, 123, 180, 180, 180, 
 #> 205, 215, 230, 66, 52, 65, 97, 150, 150, 245, 175, 66, 91, 113, 
-#> 264, 175, 335, 109), dim = c(32L, 1L)), alpha = 3.48887231288147, 
+#> 264, 175, 335, 109), dim = c(32L, 1L)), alpha = 2.40474435342974, 
 #>     q = 0.1, gamma = 0)
 #> 
 #> Path summary:
 #>      alpha deviance_ratio n_nonzero
-#> 1 3.488872      0.6024373         1
+#> 1 2.404744      0.6024373         1
 
 # Or use refit() to refit with different measure
 fit <- refit(
