@@ -92,22 +92,34 @@ test_that("refit works for TrainedSLOPE objects", {
   
   tune <- trainSLOPE(x, y, q = c(0.1, 0.2), measure = c("mse", "mae"), number = 3)
   
-  fit1 <- refit(tune, x, y)
+  fit1 <- refit(tune)
   expect_s3_class(fit1, "SLOPE")
   expect_s3_class(fit1, "GaussianSLOPE")
   
   expect_equal(length(fit1$alpha), 1)
   
-  fit2 <- refit(tune, x, y, measure = "mae")
+  fit2 <- refit(tune, measure = "mae")
   expect_s3_class(fit2, "SLOPE")
+
+  fit3 <- refit(tune, x, y)
+  expect_s3_class(fit3, "SLOPE")
 })
 
 test_that("refit errors on invalid measure", {
   tune <- trainSLOPE(bodyfat$x, bodyfat$y, q = 0.1, measure = "mse", number = 3)
   
   expect_error(
-    refit(tune, bodyfat$x, bodyfat$y, measure = "invalid"),
+    refit(tune, measure = "invalid"),
     "measure 'invalid' not found"
+  )
+})
+
+test_that("refit validates x/y inputs", {
+  tune <- trainSLOPE(bodyfat$x, bodyfat$y, q = 0.1, measure = "mse", number = 3)
+
+  expect_error(
+    refit(tune, x = bodyfat$x),
+    "either provide both `x` and `y`, or neither"
   )
 })
 

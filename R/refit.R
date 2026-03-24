@@ -6,8 +6,10 @@
 #'
 #' @param object an object of class `'TrainedSLOPE'`, typically from a call to
 #'   [cvSLOPE()] or [trainSLOPE()]
-#' @param x the design matrix
-#' @param y the response vector
+#' @param x the design matrix. If `NULL` (default), uses the training data
+#'   stored in `object`.
+#' @param y the response vector. If `NULL` (default), uses the training data
+#'   stored in `object`.
 #' @param measure which performance measure to use for selecting optimal
 #'   parameters. If `NULL` (default), uses the first measure in the
 #'   `TrainedSLOPE` object.
@@ -28,19 +30,37 @@
 #' )
 #'
 #' # Refit with optimal parameters
-#' fit <- refit(tune, bodyfat$x, bodyfat$y)
+#' fit <- refit(tune)
 #'
 #' # Use the fitted model
 #' coef(fit)
 #' predict(fit, bodyfat$x)
 #'
 #' @export
-refit <- function(object, x, y, measure = NULL, ...) {
+refit <- function(object, x = NULL, y = NULL, measure = NULL, ...) {
   UseMethod("refit")
 }
 
 #' @export
-refit.TrainedSLOPE <- function(object, x, y, measure = NULL, ...) {
+refit.TrainedSLOPE <- function(object, x = NULL, y = NULL, measure = NULL, ...) {
+  has_x <- !is.null(x)
+  has_y <- !is.null(y)
+
+  if (xor(has_x, has_y)) {
+    stop("either provide both `x` and `y`, or neither.")
+  }
+
+  if (!has_x && !has_y) {
+    if (is.null(object$training_data)) {
+      stop(
+        "no training data stored in `object`; please provide both `x` and `y`."
+      )
+    }
+
+    x <- object$training_data$x
+    y <- object$training_data$y
+  }
+
   if (is.null(measure)) {
     measure <- object$measure$measure[1]
   }

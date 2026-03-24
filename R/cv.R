@@ -23,6 +23,7 @@
 #' \item{measure}{a `data.frame` listing the used metric and its label}
 #' \item{model}{the model fit to the entire dataset using optimal parameters
 #'   (only present if `refit = TRUE`)}
+#' \item{training_data}{the training data used for tuning (`x` and `y`)}
 #' \item{call}{the call}
 #'
 #' @export
@@ -179,6 +180,7 @@ cvSLOPE <- function(
         label = labels,
         row.names = NULL
       ),
+      training_data = list(x = x, y = y),
       call = ocall
     ),
     class = "TrainedSLOPE"
