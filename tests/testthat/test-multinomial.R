@@ -30,3 +30,19 @@ test_that("glmnet and SLOPE return same unpenalized model", {
 
   expect_equivalent(g_coef, coefs, tol = 1e-4)
 })
+
+test_that("score works for multinomial data subsets with missing classes", {
+  fit <- SLOPE(wine$x, wine$y, family = "multinomial", path_length = 5)
+
+  s1 <- score(fit, x = wine$x[1:100, ], y = wine$y[1:100])
+  s2 <- score(fit, x = wine$x[1:178, ], y = wine$y[1:178])
+  s3 <- score(fit, x = wine$x[131:178, ], y = wine$y[131:178])
+
+  expect_length(s1, 5)
+  expect_length(s2, 5)
+  expect_length(s3, 5)
+
+  expect_true(all(is.finite(s1)))
+  expect_true(all(is.finite(s2)))
+  expect_true(all(is.finite(s3)))
+})

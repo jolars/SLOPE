@@ -101,14 +101,25 @@ score.MultinomialSLOPE <- function(
   prob_min <- 1e-05
   prob_max <- 1 - prob_min
 
-  y_observed <- y
+  class_names <- object$class_names
+  y <- factor(y, levels = class_names)
+
+  if (any(is.na(y))) {
+    stop("`y` contains classes not present in `object$class_names`.")
+  }
+
   y_hat <- stats::predict(object, x, type = "response", simplify = FALSE)
-  y_hat_class <- stats::predict(object, x, type = "class", simplify = FALSE)
 
-  y <- as.factor(y)
-  n_levels <- length(unique(y))
+  if (NCOL(y_hat) == length(class_names) - 1L) {
+    n_obs <- NROW(y_hat)
+    path_length <- dim(y_hat)[3]
+    y_hat_full <- array(0, dim = c(n_obs, length(class_names), path_length))
+    y_hat_full[, 1:NCOL(y_hat), ] <- y_hat
+    y_hat_full[, length(class_names), ] <- 1 - apply(y_hat, c(1, 3), sum)
+    y_hat <- y_hat_full
+  }
 
-  y <- diag(n_levels)[as.numeric(y), ]
+  y <- diag(length(class_names))[as.numeric(y), ]
 
   switch(
     measure,
