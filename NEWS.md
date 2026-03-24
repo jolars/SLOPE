@@ -29,6 +29,14 @@
 - All roxygen documentation titles have been converted to title case for
   consistency.
 
+## Bug Fixes
+
+- Fixed `score()` for multinomial models so it correctly handles scoring on data
+  subsets that do not contain all response classes from the original fit.
+- Updated `refit.TrainedSLOPE()` to use the training data stored in the
+  `TrainedSLOPE` object by default, avoiding inconsistencies from re-specifying
+  `x` and `y`.
+
 # SLOPE 1.2.0
 
 ## Major Changes
