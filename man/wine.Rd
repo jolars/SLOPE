@@ -32,8 +32,6 @@ Dua, D. and Karra Taniskidou, E. (2017). UCI Machine Learning Repository
 School of Information and Computer Science.
 
 \url{https://raw.githubusercontent.com/hadley/rminds/master/1-data/wine.csv}
-
-\url{https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass.html#wine}
 }
 \usage{
 wine
