@@ -4,15 +4,17 @@
 \alias{refit}
 \title{Refit SLOPE Model with Optimal Parameters}
 \usage{
-refit(object, x, y, measure = NULL, ...)
+refit(object, x = NULL, y = NULL, measure = NULL, ...)
 }
 \arguments{
 \item{object}{an object of class \code{'TrainedSLOPE'}, typically from a call to
 \code{\link[=cvSLOPE]{cvSLOPE()}} or \code{\link[=trainSLOPE]{trainSLOPE()}}}
 
-\item{x}{the design matrix}
+\item{x}{the design matrix. If \code{NULL} (default), uses the training data
+stored in \code{object}.}
 
-\item{y}{the response vector}
+\item{y}{the response vector. If \code{NULL} (default), uses the training data
+stored in \code{object}.}
 
 \item{measure}{which performance measure to use for selecting optimal
 parameters. If \code{NULL} (default), uses the first measure in the
@@ -38,7 +40,7 @@ tune <- trainSLOPE(
 )
 
 # Refit with optimal parameters
-fit <- refit(tune, bodyfat$x, bodyfat$y)
+fit <- refit(tune)
 
 # Use the fitted model
 coef(fit)

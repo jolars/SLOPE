@@ -48,6 +48,7 @@ and 0.95 confidence levels}
 values for the different metrics and their corresponding parameter values}
 \item{measure}{a \code{data.frame} listing the used metrics and their labels}
 \item{model}{the model fit to the entire data set}
+\item{training_data}{the training data used for tuning (\code{x} and \code{y})}
 \item{call}{the call}
 }
 \description{

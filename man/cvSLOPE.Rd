@@ -51,6 +51,7 @@ values for the different metrics and their corresponding parameter values}
 \item{measure}{a \code{data.frame} listing the used metric and its label}
 \item{model}{the model fit to the entire dataset using optimal parameters
 (only present if \code{refit = TRUE})}
+\item{training_data}{the training data used for tuning (\code{x} and \code{y})}
 \item{call}{the call}
 }
 \description{
