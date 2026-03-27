@@ -7,7 +7,7 @@ manually extract optimal parameters and refit.
 ## Usage
 
 ``` r
-refit(object, x, y, measure = NULL, ...)
+refit(object, x = NULL, y = NULL, measure = NULL, ...)
 ```
 
 ## Arguments
@@ -21,11 +21,13 @@ refit(object, x, y, measure = NULL, ...)
 
 - x:
 
-  the design matrix
+  the design matrix. If `NULL` (default), uses the training data stored
+  in `object`.
 
 - y:
 
-  the response vector
+  the response vector. If `NULL` (default), uses the training data
+  stored in `object`.
 
 - measure:
 
@@ -63,7 +65,7 @@ tune <- trainSLOPE(
 )
 
 # Refit with optimal parameters
-fit <- refit(tune, bodyfat$x, bodyfat$y)
+fit <- refit(tune)
 
 # Use the fitted model
 coef(fit)

@@ -92,6 +92,10 @@ An object of class `"TrainedSLOPE"`, with the following slots:
   the model fit to the entire dataset using optimal parameters (only
   present if `refit = TRUE`)
 
+- training_data:
+
+  the training data used for tuning (`x` and `y`)
+
 - call:
 
   the call

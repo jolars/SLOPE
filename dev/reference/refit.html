@@ -62,7 +62,7 @@ extract optimal parameters and refit.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">refit</span><span class="op">(</span><span class="va">object</span>, <span class="va">x</span>, <span class="va">y</span>, measure <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">refit</span><span class="op">(</span><span class="va">object</span>, x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="cn">NULL</span>, measure <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -75,11 +75,13 @@ extract optimal parameters and refit.</p>
 
 
 <dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>the design matrix</p></dd>
+<dd><p>the design matrix. If <code>NULL</code> (default), uses the training data
+stored in <code>object</code>.</p></dd>
 
 
 <dt id="arg-y">y<a class="anchor" aria-label="anchor" href="#arg-y"></a></dt>
-<dd><p>the response vector</p></dd>
+<dd><p>the response vector. If <code>NULL</code> (default), uses the training data
+stored in <code>object</code>.</p></dd>
 
 
 <dt id="arg-measure">measure<a class="anchor" aria-label="anchor" href="#arg-measure"></a></dt>
@@ -117,7 +119,7 @@ parameters. If <code>NULL</code> (default), uses the first measure in the
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Refit with optimal parameters</span></span></span>
-<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">refit</span><span class="op">(</span><span class="va">tune</span>, <span class="va">bodyfat</span><span class="op">$</span><span class="va">x</span>, <span class="va">bodyfat</span><span class="op">$</span><span class="va">y</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">refit</span><span class="op">(</span><span class="va">tune</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Use the fitted model</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></span>
