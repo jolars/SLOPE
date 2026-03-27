@@ -2,6 +2,20 @@
 
 ## SLOPE (development version)
 
+### New Features
+
+- [`refit()`](https://jolars.github.io/SLOPE/dev/reference/refit.md) now
+  allows not specifying `x` and `y`, in which case the training data
+  will be used to refit the model with the optimal parameters found
+  through cross-validation.
+
+### Bug Fixes
+
+- [`score()`](https://jolars.github.io/SLOPE/dev/reference/score.md) now
+  correctly handles the case where the classes in the training and test
+  data do not match, which can happen when scoring on a subset of the
+  data set.
+
 ## SLOPE 2.0.0
 
 CRAN release: 2026-01-28

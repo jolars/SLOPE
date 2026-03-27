@@ -51,6 +51,16 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="slope-development-version">SLOPE (development version)<a class="anchor" aria-label="anchor" href="#slope-development-version"></a></h2>
+<div class="section level3">
+<h3 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<ul><li>
+<code><a href="../reference/refit.html">refit()</a></code> now allows not specifying <code>x</code> and <code>y</code>, in which case the training data will be used to refit the model with the optimal parameters found through cross-validation.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-development-version">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
+<ul><li>
+<code><a href="../reference/score.html">score()</a></code> now correctly handles the case where the classes in the training and test data do not match, which can happen when scoring on a subset of the data set.</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.0.0" id="slope-200">SLOPE 2.0.0<a class="anchor" aria-label="anchor" href="#slope-200"></a></h2><p class="text-muted">CRAN release: 2026-01-28</p>
