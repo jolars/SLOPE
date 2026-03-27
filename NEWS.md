@@ -1,4 +1,4 @@
-# SLOPE (development version)
+# SLOPE 2.1.0
 
 ## New Features
 
