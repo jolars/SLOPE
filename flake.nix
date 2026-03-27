@@ -19,6 +19,7 @@
           packages = with pkgs; [
             bashInteractive
             autoconf
+            html-tidy
             go-task
             quartoMinimal
             pandoc
@@ -47,6 +48,7 @@
                 testthat
                 tidyverse
                 usethis
+                V8
               ];
             })
           ];
