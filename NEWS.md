@@ -1,5 +1,17 @@
 # SLOPE (development version)
 
+## New Features
+
+- `refit()` now allows not specifying `x` and `y`, in which case the training
+  data will be used to refit the model with the optimal parameters found through
+  cross-validation.
+
+## Bug Fixes
+
+- `score()` now correctly handles the case where the classes in the training and
+  test data do not match, which can happen when scoring on a subset of the data
+  set.
+
 # SLOPE 2.0.0
 
 ## Breaking Changes
@@ -151,7 +163,7 @@ patient with dealing with the large number of breaking changes.
   binomial families. Use it by specifying `solver = "hybrid"`.
 - Solver can now be set to `"auto"`, in which case the package automatically
   chooses a solver.
-- The returned duality gaps when `diagnostics = TRUE` are now _true_ duality
+- The returned duality gaps when `diagnostics = TRUE` are now *true* duality
   gaps, computed by guaranteeing that the dual variable is feasible (which was
   not the case previously).
 - `scale` in `SLOPE()` gains a new option `"max_abs"` which scales the columns
@@ -229,7 +241,7 @@ number of dependencies.
 
 ## Bug Fixes
 
-- The C++ standard library _memory_ was added to a source file to fix
+- The C++ standard library *memory* was added to a source file to fix
   compilation errors on some systems.
 
 # SLOPE 0.4.0
@@ -416,5 +428,5 @@ several changes to the API, including deprecated functions.
 - a new function `plotDiagnostics()` has been included to visualize data from
   the solver (if `diagnostics = TRUE` in the call to `SLOPE()`)
 - OSCAR-type penalty sequences can be used by setting
-  `lambda = "oscar" in the call to`SLOPE()`
+  `lambda = "oscar" in the call to`SLOPE()\`
 - the test suite for the package has been greatly extended
