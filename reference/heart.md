@@ -97,8 +97,6 @@ Dua, D. and Karra Taniskidou, E. (2017). UCI Machine Learning Repository
 <http://archive.ics.uci.edu/ml/>. Irvine, CA: University of California,
 School of Information and Computer Science.
 
-<https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary.html#heart>
-
 ## Preprocessing
 
 The original dataset contained 13 variables. The nominal of these were

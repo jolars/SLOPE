@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SLOPE</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,6 +50,19 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.1.0" id="slope-210">SLOPE 2.1.0<a class="anchor" aria-label="anchor" href="#slope-210"></a></h2>
+<div class="section level3">
+<h3 id="new-features-2-1-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-2-1-0"></a></h3>
+<ul><li>
+<code><a href="../reference/refit.html">refit()</a></code> now allows not specifying <code>x</code> and <code>y</code>, in which case the training data will be used to refit the model with the optimal parameters found through cross-validation.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-2-1-0">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-2-1-0"></a></h3>
+<ul><li>
+<code><a href="../reference/score.html">score()</a></code> now correctly handles the case where the classes in the training and test data do not match, which can happen when scoring on a subset of the data set.</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.0.0" id="slope-200">SLOPE 2.0.0<a class="anchor" aria-label="anchor" href="#slope-200"></a></h2><p class="text-muted">CRAN release: 2026-01-28</p>
 <div class="section level3">
 <h3 id="breaking-changes-2-0-0">Breaking Changes<a class="anchor" aria-label="anchor" href="#breaking-changes-2-0-0"></a></h3>
@@ -69,6 +82,11 @@
 <div class="section level3">
 <h3 id="minor-changes-2-0-0">Minor Changes<a class="anchor" aria-label="anchor" href="#minor-changes-2-0-0"></a></h3>
 <ul><li>All roxygen documentation titles have been converted to title case for consistency.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-2-0-0">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-2-0-0"></a></h3>
+<ul><li>Fixed <code><a href="../reference/score.html">score()</a></code> for multinomial models so it correctly handles scoring on data subsets that do not contain all response classes from the original fit.</li>
+<li>Updated <code>refit.TrainedSLOPE()</code> to use the training data stored in the <code>TrainedSLOPE</code> object by default, avoiding inconsistencies from re-specifying <code>x</code> and <code>y</code>.</li>
 </ul></div>
 </div>
     <div class="section level2">

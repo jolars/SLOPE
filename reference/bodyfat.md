@@ -71,8 +71,6 @@ A list with two items representing 252 observations from 14 variables
 
 http://lib.stat.cmu.edu/datasets/bodyfat
 
-https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/regression.html
-
 ## See also
 
 Other datasets:

@@ -76,8 +76,6 @@ School of Information and Computer Science.
 
 <https://raw.githubusercontent.com/hadley/rminds/master/1-data/wine.csv>
 
-<https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass.html#wine>
-
 ## See also
 
 Other datasets:

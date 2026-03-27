@@ -88,5 +88,5 @@ summary(tune)
 #> 
 #> Optimal parameters:
 #>    q gamma alpha measure mean  se  lo   hi
-#>  0.1     0   2.9     mse 2060 534 575 3540
+#>  0.1     0  3.83     mse 2150 698 212 4090
 ```

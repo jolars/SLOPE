@@ -85,6 +85,10 @@ An object of class `"TrainedSLOPE"`, with the following slots:
 
   the model fit to the entire data set
 
+- training_data:
+
+  the training data used for tuning (`x` and `y`)
+
 - call:
 
   the call

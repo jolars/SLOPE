@@ -1,5 +1,21 @@
 # Changelog
 
+## SLOPE 2.1.0
+
+### New Features
+
+- [`refit()`](https://jolars.github.io/SLOPE/reference/refit.md) now
+  allows not specifying `x` and `y`, in which case the training data
+  will be used to refit the model with the optimal parameters found
+  through cross-validation.
+
+### Bug Fixes
+
+- [`score()`](https://jolars.github.io/SLOPE/reference/score.md) now
+  correctly handles the case where the classes in the training and test
+  data do not match, which can happen when scoring on a subset of the
+  data set.
+
 ## SLOPE 2.0.0
 
 CRAN release: 2026-01-28
@@ -41,6 +57,15 @@ CRAN release: 2026-01-28
 
 - All roxygen documentation titles have been converted to title case for
   consistency.
+
+### Bug Fixes
+
+- Fixed [`score()`](https://jolars.github.io/SLOPE/reference/score.md)
+  for multinomial models so it correctly handles scoring on data subsets
+  that do not contain all response classes from the original fit.
+- Updated `refit.TrainedSLOPE()` to use the training data stored in the
+  `TrainedSLOPE` object by default, avoiding inconsistencies from
+  re-specifying `x` and `y`.
 
 ## SLOPE 1.2.0
 
