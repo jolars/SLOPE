@@ -2,6 +2,8 @@
 
 ## SLOPE 2.1.0
 
+CRAN release: 2026-03-28
+
 ### New Features
 
 - [`refit()`](https://jolars.github.io/SLOPE/reference/refit.md) now
