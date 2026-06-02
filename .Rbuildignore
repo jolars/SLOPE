@@ -41,3 +41,8 @@
 ^\.clang-format$
 ^README\.html$
 ^\.lintr$
+^AGENTS\.md$
+^CLAUDE\.md$
+^panache\.toml$
+^devenv\.nix$
+^devenv\.yaml$

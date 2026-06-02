@@ -1,0 +1,6 @@
+
+flavor = "rmarkdown"
+
+[flavor-overrides]
+"README.md" = "gfm"
+"AGENTS.md" = "gfm"
