@@ -52,11 +52,11 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/jolars/SLOPE/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/jolars/SLOPE/blob/v2.1.0/inst/CITATION)
 
 Larsson J, Bogdan M, Grzesiak K, Massias M, Wallin J (2025). “Efficient
 Solvers for SLOPE in R, Python, Julia, and C++.”
-[doi:10.48550/arXiv.2511.02430](https://doi.org/10.48550/arXiv.2511.02430),
+[doi:10.48550/arXiv.2511.02430](https://doi.org/10.48550/arXiv.2511.02430).
 2511.02430.
 
     @Misc{,
@@ -71,7 +71,7 @@ Solvers for SLOPE in R, Python, Julia, and C++.”
 
 Bogdan M, van den Berg E, Sabatti C, Su W, Candès E (2015). “SLOPE –
 Adaptive Variable Selection via Convex Optimization.” *The Annals of
-Applied Statistics*, **9**(3), 1103–1140. ISSN 1932-6157,
+Applied Statistics*, **9**(3), 1103–1140. ISSN 1932-6157.
 [doi:10.1214/15-AOAS842](https://doi.org/10.1214/15-AOAS842).
 
     @Article{,

@@ -4,23 +4,32 @@
 
 Sorted L-One Penalized Estimation (SLOPE) is the procedure of minimizing
 objectives of the type
-$${minimize}\left\{ F\left( \beta_{0},\beta;X,y \right) + J(\beta;\alpha,\lambda) \right\},$$
+``` math
+  \mathrm{minimize}\left\{F(\beta_0, \beta; X, y) + J(\beta; \alpha,\lambda) \right\},
+```
 where
-$$J(\beta;\alpha,\lambda) = \alpha\sum\limits_{j = 1}^{p}\lambda_{j}|\beta|_{(j)},$$
-with $\alpha \in {\mathbb{R}}_{+}$, $\lambda \in {\mathbb{R}}_{+}^{p}$
-and $(j)$ represents an rank of the magnitudes of $\beta$ in descending
-order. $\lambda$ controls the shape of the penalty sequence, which needs
-to be non-increasing, and $\alpha$ controls the scale of that sequence.
+``` math
+  J(\beta; \alpha,\lambda) =
+    \alpha \sum_{j=1}^p \lambda_j \lvert \beta \rvert_{(j)},
+```
+with $`\alpha \in \mathbb{R}_{+}`$, $`\lambda \in \mathbb{R}_+^p`$ and
+$`(j)`$ represents an rank of the magnitudes of $`\beta`$ in descending
+order. $`\lambda`$ controls the shape of the penalty sequence, which
+needs to be non-increasing, and $`\alpha`$ controls the scale of that
+sequence.
 
-$X$ and $Y$ are the design matrix and response matrix, respectively,
-which are of dimensions $n \times p$ and $n \times m$ respectively.
-Except for multinomial logistic regression, $m = 1$.
+$`X`$ and $`Y`$ are the design matrix and response matrix, respectively,
+which are of dimensions $`n \times p`$ and $`n \times m`$ respectively.
+Except for multinomial logistic regression, $`m = 1`$.
 
-We assume that $F$ takes the following form:
-$$F\left( \beta_{0},\beta \right) = \frac{1}{n}\sum\limits_{i = 1}^{n}f\left( \beta_{0} + x_{i}^{\intercal}\beta,y_{i} \right),$$
-where $f$ is a smooth and convex loss function from the family of
-generalized linear models (GLMs), $x_{i}$ is the $i$th row of the design
-matrix $X$, and $y_{i}$ is the $i$th row of the response matrix $Y$.
+We assume that $`F`$ takes the following form:
+``` math
+  F(\beta_0, \beta) = \frac{1}{n} \sum_{i=1}^n f(\beta_0 + x_i^\intercal \beta, y_i),
+```
+where $`f`$ is a smooth and convex loss function from the family of
+generalized linear models (GLMs), $`x_i`$ is the $`i`$th row of the
+design matrix $`X`$, and $`y_i`$ is the $`i`$th row of the response
+matrix $`Y`$.
 
 SLOPE currently supports four different models from the family of
 generalized linear models (GLMs):
@@ -31,28 +40,31 @@ generalized linear models (GLMs):
 - Poisson regression.
 
 Due to the way GLMs are formulated, each model is defined by three
-components: a loss function $f(\eta,y)$, a link function $g(\mu)$, and
-an inverse link function $g^{- 1}(\eta)$. Here, $\eta$ is the linear
-predictor, and $\mu$ is the mean of the response variable.
+components: a loss function $`f(\eta, y)`$, a link function $`g(\mu)`$,
+and an inverse link function $`g^{-1}(\eta)`$. Here, $`\eta`$ is the
+linear predictor, and $`\mu`$ is the mean of the response variable.
 
-| Model       |                                                 $f(\eta,y)$                                                  |                 $g(\mu)$                 |                      $g^{- 1}(\eta)$                      |
-|:------------|:------------------------------------------------------------------------------------------------------------:|:----------------------------------------:|:---------------------------------------------------------:|
-| Gaussian    |                                         $\frac{1}{2}(y - \eta)^{2}$                                          |                  $\mu$                   |                          $\eta$                           |
-| Binomial    |                                  $\log\left( 1 + e^{\eta} \right) - \eta y$                                  | $\log\left( \frac{\mu}{1 - \mu} \right)$ |              $\frac{e^{\eta}}{1 + e^{\eta}}$              |
-| Poisson     |                                             $e^{\eta} - \eta y$                                              |               $\log(\mu)$                |                        $e^{\eta}$                         |
-| Multinomial | $\sum_{k = 1}^{m - 1}\left( \log\left( 1 + \sum_{j = 1}^{m - 1}e^{\eta_{j}} \right) - y_{k}\eta_{k} \right)$ | $\log\left( \frac{\mu}{1 - \mu} \right)$ | $\frac{\exp(\eta)}{1 + \sum_{j = 1}^{m - 1}e^{\eta_{j}}}$ |
+| Model | $`f(\eta, y)`$ | $`g(\mu)`$ | $`g^{-1}(\eta)`$ |
+|:---|:--:|:--:|:--:|
+| Gaussian | $`\frac{1}{2}(y - \eta)^2`$ | $`\mu`$ | $`\eta`$ |
+| Binomial | $`\log(1 + e^\eta) - \eta y`$ | $`\log \left(\frac{\mu}{1 - \mu}\right)`$ | $`\frac{e^\eta}{1 + e^\eta}`$ |
+| Poisson | $`e^\eta - \eta y`$ | $`\log(\mu)`$ | $`e^\eta`$ |
+| Multinomial | $`\sum_{k=1}^{m-1}\left( \log \left( 1 +  \sum_{j=1}^{m-1} e^{\eta_j}\right) - y_k \eta_k  \right)`$ | $`\log\left(\frac{\mu}{1 - \mu}\right)`$ | $`\frac{\exp(\eta)}{1 + \sum_{j=1}^{m-1} e^{\eta_j}}`$ |
 
 Loss functions, link functions, and inverse link functions for
 generalized linear models in the SLOPE package. Note that in the case of
 multinomial logistic regression, the input is vector-valued, and we
-allow $\log$ and $\exp$ to be overloaded to apply element-wise in these
-cases.
+allow $`\log`$ and $`\exp`$ to be overloaded to apply element-wise in
+these cases. {.table}
 
 ## Gaussian Regression
 
 Gaussian regression, also known as least-squares regression, is used for
 continuous response variables, and takes the following form:
-$$f\left( \beta,\beta_{0};X,y \right) = \frac{1}{2n}\sum\limits_{i = 1}^{n}\left( y_{i} - x_{i}^{\intercal}\beta - \beta_{0} \right)^{2}.$$
+``` math
+f(\beta, \beta_0; X, y) =
+  \frac{1}{2n} \sum_{i=1}^n \left(y_i - x_i^\intercal \beta - \beta_0\right)^2.
+```
 
 You select it by setting `family = "gaussian"` in the
 [`SLOPE()`](https://jolars.github.io/SLOPE/reference/SLOPE.md) function.
@@ -60,6 +72,7 @@ In the following example, we fit a Gaussian SLOPE model to the `bodyfat`
 data set, which is included in the package:
 
 ``` r
+
 library(SLOPE)
 
 fit_gaussian <- SLOPE(
@@ -73,6 +86,7 @@ Often it’s instructive to look at the solution path of the fitted model,
 which you can do by simply plotting the fitted object:
 
 ``` r
+
 plot(fit_gaussian)
 ```
 
@@ -81,6 +95,7 @@ plot(fit_gaussian)
 We can also print a summary of the fitted model:
 
 ``` r
+
 summary(fit_gaussian)
 #> 
 #> Call:
@@ -119,6 +134,7 @@ regularization `alpha`, to obtain the coefficients at that level (or
 omit `alpha` to get the coefficients for the full path).
 
 ``` r
+
 coef(fit_gaussian, alpha = 0.05)
 #> 14 x 1 sparse Matrix of class "dgCMatrix"
 #>                  
@@ -144,6 +160,7 @@ the fitted model, new design matrix `x`, and the level of regularization
 `alpha`:
 
 ``` r
+
 y_hat <- predict(fit_gaussian, x = bodyfat$x[1:5, ], alpha = 0.01)
 
 plot(bodyfat$y[1:5], y_hat)
@@ -155,13 +172,19 @@ plot(bodyfat$y[1:5], y_hat)
 
 Logistic regression is used for binary classification problems, and
 takes the following form:
-$$f\left( \beta_{0},\beta;X,y \right) = \frac{1}{n}\sum\limits_{i = 1}^{n}\left\{ \log\left( 1 + \exp\left( x_{i}^{T}\beta + \beta_{0} \right) \right) - y_{i}x_{i}^{T}\beta \right\},$$
-where $X_{i}$ is the $i$th row of the design matrix $X$.
+``` math
+f(\beta_0, \beta; X, y) =
+  \frac{1}{n} \sum_{i=1}^n \left\{
+    \log\left(1 + \exp\left(x_i^T \beta + \beta_0\right)\right) - y_i x_i^T \beta
+  \right\},
+```
+where $`X_i`$ is the $`i`$th row of the design matrix $`X`$.
 
 You select it by setting `family = "binomial"` in the
 [`SLOPE()`](https://jolars.github.io/SLOPE/reference/SLOPE.md) function.
 
 ``` r
+
 fit_logistic <- SLOPE(
   x = heart$x,
   y = heart$y,
@@ -173,6 +196,7 @@ You can plot the solution path, print a summary, extract coefficients,
 and make predictions in the same way as for Gaussian regression:
 
 ``` r
+
 plot(fit_logistic)
 ```
 
@@ -181,7 +205,12 @@ plot(fit_logistic)
 ## Poisson Regression
 
 Poisson regression is used for count data, and takes the following form:
-$$f\left( \beta_{0},\beta;X,y \right) = \frac{1}{n}\sum\limits_{i = 1}^{n}\left\{ \exp\left( x_{i}^{T}\beta + \beta_{0} \right) - y_{i}x_{i}^{T}\beta \right\}.$$
+``` math
+f(\beta_0, \beta; X, y) =
+  \frac{1}{n} \sum_{i=1}^n \left\{
+    \exp\left(x_i^T \beta + \beta_0\right) - y_i x_i^T \beta
+  \right\}.
+```
 
 You select it by setting `family = "poisson"` in the
 [`SLOPE()`](https://jolars.github.io/SLOPE/reference/SLOPE.md) function.
@@ -195,6 +224,7 @@ In the next example, we fit a Poisson SLOPE model to the `abalone` data
 set, which consists of observations of abalones.
 
 ``` r
+
 fit_poisson <- SLOPE(
   x = abalone$x,
   y = abalone$y,
@@ -215,15 +245,21 @@ of the default coordinate descent solver.
 
 Multinomial logistic regression is used for multi-class classification
 problems, and takes the following form:
-$$f\left( \beta_{0},\beta;X,Y \right) = \frac{1}{n}\sum\limits_{i = 1}^{n}\left\{ \log\left( 1 + \sum\limits_{k = 1}^{m - 1}\exp\left( x_{i}^{T}\beta_{k} + \beta_{0k} \right) \right) - \sum\limits_{k = 1}^{m - 1}y_{ik}\left( x_{i}^{T}\beta_{k} + \beta_{0k} \right) \right\},$$
-where $X_{i}$ is the $i$th row of the design matrix $X$, and $Y$ is the
-response matrix of dimension $n \times m$, where $m$ is the number of
-classes.
+``` math
+f(\beta_0, \beta; X, Y) =
+  \frac{1}{n} \sum_{i=1}^n \left\{
+    \log\left(1 + \sum_{k=1}^{m-1} \exp\left(x_i^T \beta_k + \beta_{0k}\right)\right)
+    - \sum_{k=1}^{m-1} y_{ik} \left(x_i^T \beta_k + \beta_{0k}\right)
+  \right\},
+```
+where $`X_i`$ is the $`i`$th row of the design matrix $`X`$, and $`Y`$
+is the response matrix of dimension $`n \times m`$, where $`m`$ is the
+number of classes.
 
 In our package, we use the non-redundant formulation, where the last
-class is treated as the baseline class. Thus, only $m - 1$ sets of
+class is treated as the baseline class. Thus, only $`m-1`$ sets of
 coefficients are estimated. This is not the case in other packages, such
-as `glmnet` (Friedman, Hastie, and Tibshirani 2010).
+as `glmnet` (Friedman et al. 2010).
 
 To select multinomial logistic regression, set `family = "multinomial"`
 in the [`SLOPE()`](https://jolars.github.io/SLOPE/reference/SLOPE.md)
@@ -233,6 +269,7 @@ wines from three different cultivars. The task is to classify the
 cultivar based on 13 different chemical properties.
 
 ``` r
+
 fit_multinomial <- SLOPE(
   x = wine$x,
   y = wine$y,
@@ -248,6 +285,7 @@ the coefficients of the first two classes (the third class is the
 baseline class):
 
 ``` r
+
 fit_multinomial$coefficients[[2]]
 #> 13 x 2 sparse Matrix of class "dgCMatrix"
 #>                               
@@ -278,6 +316,7 @@ plotting system, you need to setup a multi-panel layout to see all the
 paths:
 
 ``` r
+
 par(mfrow = c(1, 2))
 plot(fit_multinomial)
 ```

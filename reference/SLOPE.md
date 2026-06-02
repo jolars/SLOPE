@@ -462,6 +462,7 @@ Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
 ## Examples
 
 ``` r
+
 # Gaussian response, default lambda sequence
 fit <- SLOPE(bodyfat$x, bodyfat$y)
 

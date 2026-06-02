@@ -1,11 +1,11 @@
-pandoc: 3.1.11
+pandoc: 3.8.3
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   introduction: introduction.html
   models: models.html
   solvers: solvers.html
-last_built: 2026-03-30T08:41Z
+last_built: 2026-06-02T11:55Z
 urls:
   reference: https://jolars.github.io/SLOPE/reference
   article: https://jolars.github.io/SLOPE/articles

@@ -3,20 +3,26 @@
 ### Background
 
 The functions in this package solves problems of the type
-$${minimize}\left\{ f(\beta) + J(\beta;\alpha,\lambda) \right\},$$ where
-the second part of the objective is the sorted L1-norm
-$$J(\beta;\alpha,\lambda) = \alpha\sum\limits_{j = 1}^{p}\lambda_{j}|\beta|_{(j)},$$
-where $\alpha \in {\mathbb{R}}_{+}$, $\lambda \in {\mathbb{R}}_{+}^{p}$
-and $(j)$ represents an rank of the magnitudes of $\beta$ in descending
-order. $\lambda$ controls the shape of the penalty sequence, which needs
-to be non-increasing, and $\alpha$ controls the scale of that sequence.
+``` math
+\mathrm{minimize}\left\{f(\beta) + J(\beta; \alpha,\lambda) \right\},
+```
+where the second part of the objective is the sorted L1-norm
+``` math
+  J(\beta; \alpha,\lambda) =
+    \alpha \sum_{j=1}^p \lambda_j \lvert \beta \rvert_{(j)},
+```
+where $`\alpha \in \mathbb{R}_{+}`$, $`\lambda \in \mathbb{R}_+^p`$ and
+$`(j)`$ represents an rank of the magnitudes of $`\beta`$ in descending
+order. $`\lambda`$ controls the shape of the penalty sequence, which
+needs to be non-increasing, and $`\alpha`$ controls the scale of that
+sequence.
 
 Solving this problem is called SLOPE (Sorted L-One Penalized Estimation)
 (Bogdan et al. 2015).
 
-In this problem, $f(\beta)$ is a smooth and convex objective, which for
-this package so far includes four models from the family of generalized
-linear models:
+In this problem, $`f(\beta)`$ is a smooth and convex objective, which
+for this package so far includes four models from the family of
+generalized linear models:
 
 - Gaussian regression,
 - binomial regression,
@@ -26,12 +32,12 @@ linear models:
 SLOPE is an extension of the lasso (Tibshirani 1996) and has the ability
 to lead to sparse solutions given a sufficiently strong regularization.
 It is also easy to see that SLOPE reduces to the lasso if all elements
-of the $\lambda$ vector are equal.
+of the $`\lambda`$ vector are equal.
 
 The lasso, however, has difficulties with correlated predictors (Jia and
 Yu 2010) but this is not the case with SLOPE, which handles this issue
 by clustering predictors to the same magnitude. This effect is related
-to the consecutive differences of the $\lambda$ vector: the larger the
+to the consecutive differences of the $`\lambda`$ vector: the larger the
 steps, the more clustering behavior SLOPE exhibits.
 
 ### An example
@@ -44,12 +50,13 @@ main function of the package is
 [`SLOPE()`](https://jolars.github.io/SLOPE/reference/SLOPE.md), which,
 more or less, serves as an interface for code written in C++. There are
 many arguments in the function and most of them relate to either the
-construction of the regularization path or the penalty ($\lambda$)
+construction of the regularization path or the penalty ($`\lambda`$)
 sequence used. Here we will use the option `lambda = "bh"`, which used
 the BH method detailed in Bogdan et al. (2015) to select the sequence.
 (Note that it is also possible to manually insert a sequence.)
 
 ``` r
+
 library(SLOPE)
 
 x <- heart$x
@@ -62,6 +69,7 @@ The default print method gives a summary of the regularization path but
 it is usually more informative to study a plot of the path.
 
 ``` r
+
 plot(fit)
 ```
 
@@ -74,14 +82,15 @@ data set.
 ### Cross-validation
 
 To determine the strength of regularization, it is almost always
-necessary to tune the $\lambda$ sequence using resampling. This package
-features the function
+necessary to tune the $`\lambda`$ sequence using resampling. This
+package features the function
 [`trainSLOPE()`](https://jolars.github.io/SLOPE/reference/trainSLOPE.md)
 to do this. We will give an example of
 [`trainSLOPE()`](https://jolars.github.io/SLOPE/reference/trainSLOPE.md)
 here.
 
 ``` r
+
 set.seed(924)
 
 x <- bodyfat$x
@@ -99,6 +108,7 @@ tune <- trainSLOPE(
 As before, the plot method offers the best summary.
 
 ``` r
+
 plot(tune, measure = "mae") # plot mean absolute error
 #> Warning: `measure` is deprecated, and will be removed in a future version. the
 #> measure will instead be taken from the `TrainedSLOPE` object
@@ -107,6 +117,7 @@ plot(tune, measure = "mae") # plot mean absolute error
 Printing the resulting object will display the optimum values
 
 ``` r
+
 tune
 #> 
 #> Call:
@@ -128,11 +139,12 @@ Benjamini–Hochberg procedure for multiple comparisons.
 Let’s set up a simple experiment to see how SLOPE controls the FDR. We
 randomly generate data sets with various proportions of true signals.
 Under this Gaussian design with independently and identically
-distributed columns in $X$, SLOPE should asymptotically control FDR at
-the level given by the shape parameter $q$, which we set to 0.1 in this
-example.
+distributed columns in $`X`$, SLOPE should asymptotically control FDR at
+the level given by the shape parameter $`q`$, which we set to 0.1 in
+this example.
 
 ``` r
+
 # proportion of real signals
 q <- seq(0.05, 0.5, length.out = 20)
 fdr <- double(length(q))
@@ -188,7 +200,7 @@ Emmanuel J. Candès. 2015. “SLOPE - Adaptive Variable Selection via
 Convex Optimization.” *The Annals of Applied Statistics* 9 (3): 1103–40.
 
 Jia, J., and B. Yu. 2010. “On Model Selection Consistency of the Elastic
-Net When p $> >$ n.” *Statistica Sinica* 20 (2): 595–611.
+Net When p $`>>`$ n.” *Statistica Sinica* 20 (2): 595–611.
 
 Tibshirani, Robert. 1996. “Regression Shrinkage and Selection via the
 Lasso.” *Journal of the Royal Statistical Society: Series B
