@@ -21,6 +21,7 @@ You can install the current stable release from
 [CRAN](https://cran.r-project.org/) with the following command:
 
 ``` r
+
 install.packages("SLOPE")
 ```
 
@@ -28,6 +29,7 @@ Alternatively, you can install the development version from
 [GitHub](https://github.com/) with the following command:
 
 ``` r
+
 # install.packages("pak")
 pak::pak("jolars/SLOPE")
 ```
@@ -39,6 +41,7 @@ Here is an example of fitting a logistic SLOPE model to the built-in
 `heart` dataset.
 
 ``` r
+
 library(SLOPE)
 
 fit <- SLOPE(heart$x, heart$y, family = "binomial")
@@ -47,6 +50,7 @@ fit <- SLOPE(heart$x, heart$y, family = "binomial")
 We can plot the resulting regularization path:
 
 ``` r
+
 plot(fit)
 ```
 
@@ -56,6 +60,7 @@ We can also perform cross-validation to select optimal scaling of the
 regularization sequence:
 
 ``` r
+
 set.seed(18)
 
 cvfit <- cvSLOPE(heart$x, heart$y, family = "binomial")

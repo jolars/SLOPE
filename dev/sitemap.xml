@@ -1,4 +1,6 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://jolars.github.io/SLOPE/dev/AGENTS.html</loc></url>
+<url><loc>https://jolars.github.io/SLOPE/dev/CLAUDE.html</loc></url>
 <url><loc>https://jolars.github.io/SLOPE/dev/CODE_OF_CONDUCT.html</loc></url>
 <url><loc>https://jolars.github.io/SLOPE/dev/LICENSE.html</loc></url>
 <url><loc>https://jolars.github.io/SLOPE/dev/articles/index.html</loc></url>
@@ -6,7 +8,6 @@
 <url><loc>https://jolars.github.io/SLOPE/dev/articles/models.html</loc></url>
 <url><loc>https://jolars.github.io/SLOPE/dev/articles/solvers.html</loc></url>
 <url><loc>https://jolars.github.io/SLOPE/dev/authors.html</loc></url>
-<url><loc>https://jolars.github.io/SLOPE/dev/copilot-instructions.html</loc></url>
 <url><loc>https://jolars.github.io/SLOPE/dev/index.html</loc></url>
 <url><loc>https://jolars.github.io/SLOPE/dev/news/index.html</loc></url>
 <url><loc>https://jolars.github.io/SLOPE/dev/reference/SLOPE-package.html</loc></url>

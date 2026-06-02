@@ -34,6 +34,7 @@ and dual values in order to compute duality gaps (upper bounds on
 suboptimality) for the different solvers.
 
 ``` r
+
 library(SLOPE)
 
 response <- "binomial"
@@ -56,6 +57,7 @@ fits <- lapply(solvers, function(solver) {
 First, we just compute the total time spent in each solver.
 
 ``` r
+
 total_time <- sapply(
   fits,
   function(x) {
@@ -77,6 +79,7 @@ To see how the solvers compare for a single objective along the path, we
 collect the gaps at step 40 for each solver.
 
 ``` r
+
 pen_minmax <- min(
   vapply(fits, function(fit) {
     max(fit$diagnostics$penalty)
@@ -98,6 +101,7 @@ res <- lapply(seq_along(fits), function(i) {
 Then we plot progress on the objective for each solver.
 
 ``` r
+
 ylim <- range(unlist(lapply(res, function(x) x$gap)))
 
 colors <- palette.colors(
@@ -130,6 +134,5 @@ Larsson, Johan, Quentin Klopfenstein, Mathurin Massias, and Jonas
 Wallin. 2023. “Coordinate Descent for SLOPE.” In *Proceedings of the
 26th International Conference on Artificial Intelligence and
 Statistics*, edited by Francisco Ruiz, Jennifer Dy, and Jan-Willem van
-de Meent, 206:4802–21. Proceedings of Machine Learning Research.
-Valencia, Spain: PMLR.
+de Meent, vol. 206. Proceedings of Machine Learning Research. PMLR.
 <https://proceedings.mlr.press/v206/larsson23a.html>.
