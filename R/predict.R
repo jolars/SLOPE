@@ -41,7 +41,6 @@ predict.SLOPE <- function(
   ...
 ) {
   # This method (the base method) only generates linear predictors
-
   if (inherits(x, "sparseMatrix")) {
     x <- as_dgCMatrix(x)
   }
@@ -89,10 +88,7 @@ predict.SLOPE <- function(
 
   lin_pred <- array(
     dim = c(n, m, n_penalties),
-    dimnames = list(
-      rownames(x),
-      dimnames(beta[[1L]])[[2]]
-    )
+    dimnames = list(rownames(x), dimnames(beta[[1L]])[[2]])
   )
 
   for (i in seq_len(n_penalties)) {
@@ -212,11 +208,7 @@ predict.MultinomialSLOPE <- function(
       tmp[, 1:m, ] <- lin_pred
 
       aperm(
-        apply(
-          tmp,
-          c(1, 3),
-          function(x) exp(x) / sum(1 + exp(x))
-        ),
+        apply(tmp, c(1, 3), function(x) exp(x) / sum(1 + exp(x))),
         c(2, 1, 3)
       )
     },
@@ -226,12 +218,11 @@ predict.MultinomialSLOPE <- function(
       tmp <- apply(response, c(1, 3), which.max)
       class_names <- object$class_names
 
-      predicted_classes <-
-        apply(
-          tmp,
-          2,
-          function(a) factor(a, levels = 1:(m + 1), labels = class_names)
-        )
+      predicted_classes <- apply(
+        tmp,
+        2,
+        function(a) factor(a, levels = 1:(m + 1), labels = class_names)
+      )
       colnames(predicted_classes) <- dimnames(lin_pred)[[3]]
       predicted_classes
     }
