@@ -204,7 +204,7 @@ predict.MultinomialSLOPE <- function(
       path_length <- dim(lin_pred)[3]
 
       tmp <- array(0, c(n, m, path_length))
-      tmp[, 1:m, ] <- lin_pred
+      tmp[, seq_len(m), ] <- lin_pred
 
       aperm(
         apply(tmp, c(1, 3), function(x) exp(x) / sum(1 + exp(x))),
