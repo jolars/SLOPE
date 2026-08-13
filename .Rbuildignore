@@ -26,7 +26,7 @@
 ^CRAN-SUBMISSION$
 ^\.prettierrc\.toml$
 ^CITATION\.cff$
-^\.direnv
+^\.direnv$
 ^flake\.lock$
 ^flake\.nix$
 ^\.envrc$
@@ -46,3 +46,5 @@
 ^panache\.toml$
 ^devenv\.nix$
 ^devenv\.yaml$
+^\.devenv$
+^devenv\.lock$
