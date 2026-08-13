@@ -49,7 +49,7 @@ randomProblem <- function(
       beta <- matrix(beta, p, m)
       lin_pred_exp <- exp(x %*% beta)
       prob <- lin_pred_exp / rowSums(lin_pred_exp)
-      y <- apply(prob, 1, function(x) sample(1:m, 1, prob = x))
+      y <- apply(prob, 1, function(x) sample(seq_len(m), 1, prob = x))
     },
     poisson = {
       lambda <- as.double(exp(0.1 * x %*% beta))
