@@ -215,8 +215,8 @@ task check      # Full R CMD check (~1.5 minutes)
 
 - **Unit Tests:** Comprehensive testthat suite (162 tests) covers all
   major functions
-- **Test Helper:** Use `dont_plot()` and `dont_print()` from
-  `tests/testthat/setup.R` for testing without output
+- **Test Helper:** Use `dont_plot()`from `tests/testthat/setup.R` for
+  testing without output
 - **Integration Tests:** R CMD check includes example execution and
   vignette building
 - **Coverage:** Tracked via codecov (target \>80%)
