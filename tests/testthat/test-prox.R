@@ -25,8 +25,6 @@ test_that("Prox and isotonic regression agree", {
   out_isotone_ref <- prox_sorted_l1_isotone(x, lambda)
   out_stack <- sortedL1Prox(x, lambda)
 
-  tol <- .Machine$double.eps^0.95
-
   expect_equal(out_isotone_ref, out_stack)
 })
 

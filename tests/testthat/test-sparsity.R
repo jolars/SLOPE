@@ -8,7 +8,6 @@ test_that("sparse and dense implementations give equivalent results", {
     sparse_x <- d$x
     dense_x <- as.matrix(sparse_x)
     y <- d$y
-    beta <- d$beta
 
     sparse_fit <- SLOPE(sparse_x, y, family = family, tol = 1e-8)
     dense_fit <- SLOPE(dense_x, y, family = family, tol = 1e-8)

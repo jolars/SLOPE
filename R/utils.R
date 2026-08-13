@@ -1,17 +1,3 @@
-firstUpper <- function(x) {
-  substr(x, 1, 1) <- toupper(substr(x, 1, 1))
-  x
-}
-
-camelCase <- function(x) {
-  s <- strsplit(x, "[^[:alnum:]]")
-
-  sapply(s, function(y) {
-    first <- toupper(substring(y, 1, 1))
-    paste(first, substring(y, 2), sep = "", collapse = "")
-  })
-}
-
 randomProblem <- function(
   n = 1000,
   p = 100,

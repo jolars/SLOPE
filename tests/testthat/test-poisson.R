@@ -37,7 +37,6 @@ test_that("SLOPE reproduces lasso fit when all lambda are equal", {
 
   x <- scale(x)
 
-  n <- nrow(x)
   p <- ncol(x)
 
   alpha <- 0.01

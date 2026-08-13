@@ -282,7 +282,6 @@ unlink(tmp_file)
 # glioma (binary) -------------------------------------------------------
 
 tmp_file <- tempfile()
-tmp_dir <- tempdir()
 
 download.file(
   "https://static-content.springer.com/esm/art%3A10.1038%2Fs41598-023-38243-1/MediaObjects/41598_2023_38243_MOESM2_ESM.xlsx",
@@ -292,7 +291,6 @@ download.file(
 
 dat <- readxl::read_excel(tmp_file)[, -1]
 colnames(dat)[1] <- "group"
-metabolites <- colnames(dat)[-1]
 
 glioma_data <- dat |>
   dplyr::filter(group != "Meningioma") |>

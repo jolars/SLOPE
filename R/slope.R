@@ -562,7 +562,6 @@ processSlopeArgs <- function(
   solver <- match.arg(solver)
   cd_type <- match.arg(cd_type)
 
-  n <- NROW(x)
   p <- NCOL(x)
 
   stopifnot(

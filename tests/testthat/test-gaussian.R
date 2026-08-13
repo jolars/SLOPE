@@ -28,7 +28,7 @@ test_that("wide and tall inputs work correctly", {
 })
 
 test_that("diagonal X, known solution", {
-  n <- p <- 4
+  n <- 4
 
   x <- diag(n)
   y <- c(8, 6, 4, 2)
