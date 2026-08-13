@@ -123,13 +123,10 @@ dependencies but critical if running R commands directly.
 
 ### Code Formatting Tools
 
-- **air.toml:** R code formatter configuration (80 char width, 2-space
-  indent)
-  - Format R code with: `air` (if available in environment)
+- **panache.toml:** Markdown, R Markdown, and Quarto formatting config
 - **.clang-format:** C++ code formatting (Mozilla style)
   - Used for C++ code in `src/` directory
-- **.prettierrc.toml:** Markdown/YAML formatting (prose wrap always)
-  - Used for documentation files
+- Format R code with: `air` (if available in environment)
 
 ### Data Management
 
