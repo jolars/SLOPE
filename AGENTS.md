@@ -12,7 +12,7 @@ fast solutions to high-dimensional problems.
 **Repository Stats:**
 
 - **Languages:** R (20 files), C++ (68 files with C++17 requirement)
-- **Size:** Medium-sized package (~52.5MB installed, mainly due to compiled C++
+- **Size:** Medium-sized package (\~52.5MB installed, mainly due to compiled C++
   libraries)
 - **Dependencies:** Matrix, Rcpp, RcppEigen, BH, bigmemory
 - **Build System:** Task runner (Taskfile.yml) + standard R package tools
@@ -71,7 +71,7 @@ critical if running R commands directly.
 - **OpenMP:** Required for parallel compilation (handled in Makevars)
 - **Installation Location:** Package installs to `_libs/` directory for
   development
-- **Timing:** Most builds complete in under 2 minutes; tests run in ~2 seconds
+- **Timing:** Most builds complete in under 2 minutes; tests run in \~2 seconds
 
 **Build Warnings to Expect (non-critical):**
 
@@ -116,12 +116,10 @@ SLOPE/
 
 ### Code Formatting Tools
 
-- **air.toml:** R code formatter configuration (80 char width, 2-space indent)
-  - Format R code with: `air` (if available in environment)
+- **panache.toml:** Markdown, R Markdown, and Quarto formatting config
 - **.clang-format:** C++ code formatting (Mozilla style)
   - Used for C++ code in `src/` directory
-- **.prettierrc.toml:** Markdown/YAML formatting (prose wrap always)
-  - Used for documentation files
+- Format R code with: `air` (if available in environment)
 
 ### Data Management
 
@@ -152,7 +150,8 @@ validation as `task check` locally.
 - **pkgdown**: Package website automatically generated and deployed
   - Configuration: `_pkgdown.yml`
   - Site URL: https://jolars.github.io/SLOPE/
-  - Organized reference sections: Main Functionality, Clusters, Model Tuning, Utilities, Datasets
+  - Organized reference sections: Main Functionality, Clusters, Model Tuning,
+    Utilities, Datasets
   - Includes vignettes, function reference, and news
   - Build locally with: `pkgdown::build_site()` (requires pkgdown package)
 
@@ -214,7 +213,8 @@ task check      # Full R CMD check (~1.5 minutes)
 - **Documentation:** Always document exported functions with roxygen2
 - **Examples:** Include runnable examples in roxygen2 `@examples` sections
 - **Families:** Use `@family` tags to group related functions in documentation
-- **Code Formatting:** Use `air` to format R code (80 char width, 2-space indent)
+- **Code Formatting:** Use `air` to format R code (80 char width, 2-space
+  indent)
 
 ### Commit Message Conventions
 
