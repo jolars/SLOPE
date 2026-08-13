@@ -2,22 +2,21 @@
 #'
 #' Return predictions from models fit by [SLOPE()].
 #'
-#' @param object an object of class `"SLOPE"`, typically the result of
-#'   a call to [SLOPE()]
+#' @param object an object of class `"SLOPE"`, typically the result of a call to
+#'   [SLOPE()]
 #' @param x new data
 #' @param type type of prediction; `"link"` returns the linear predictors,
-#'   `"response"` returns the result of applying the link function,
-#'    and `"class"` returns class predictions.
+#'   `"response"` returns the result of applying the link function, and
+#'   `"class"` returns class predictions.
 #' @param ... ignored and only here for method consistency
-#' @param alpha penalty parameter for SLOPE models; if `NULL`, the
-#'   values used in the original fit will be used
-#' @param simplify if `TRUE`, [base::drop()] will be called before returning
-#'   the coefficients to drop extraneous dimensions
+#' @param alpha penalty parameter for SLOPE models; if `NULL`, the values used
+#'   in the original fit will be used
+#' @param simplify if `TRUE`, [base::drop()] will be called before returning the
+#'   coefficients to drop extraneous dimensions
 #' @param exact if `TRUE` and the given parameter values differ from those in
 #'   the original fit, the model will be refit by calling [stats::update()] on
-#'   the object with the new parameters. If `FALSE`, the predicted values
-#'   will be based on interpolated coefficients from the original
-#'   penalty path.
+#'   the object with the new parameters. If `FALSE`, the predicted values will
+#'   be based on interpolated coefficients from the original penalty path.
 #' @param sigma deprecated. Please use `alpha` instead.
 #'
 #' @seealso [stats::predict()], [stats::predict.glm()]

@@ -2,20 +2,19 @@
 #'
 #' This function returns coefficients from a model fit by [SLOPE()].
 #'
-#' If `exact = FALSE` and `alpha` is not in `object`,
-#' then the returned coefficients will be approximated by linear interpolation.
-#' If coefficients from another type of penalty sequence
-#' (with a different `lambda`) are required, however,
-#' please use [SLOPE()] to refit the model.
+#' If `exact = FALSE` and `alpha` is not in `object`, then the returned
+#' coefficients will be approximated by linear interpolation. If coefficients
+#' from another type of penalty sequence (with a different `lambda`) are
+#' required, however, please use [SLOPE()] to refit the model.
 #'
 #' @param object an object of class `'SLOPE'`.
 #' @param intercept whether to include the intercept in the output. The
 #'   intercept is included as the first row of the returned array.
-#' @param scale whether to return the coefficients in the original scale
-#'   or in the normalized scale.
+#' @param scale whether to return the coefficients in the original scale or in
+#'   the normalized scale.
 #' @param ... arguments that are passed on to [stats::update()] (and therefore
-#'   also to [SLOPE()]) if `exact = TRUE` and the given penalty
-#'   is not in `object`
+#'   also to [SLOPE()]) if `exact = TRUE` and the given penalty is not in
+#'   `object`
 #' @inheritParams predict.SLOPE
 #'
 #' @seealso [predict.SLOPE()], [SLOPE()]
@@ -95,11 +94,7 @@ coef.SLOPE <- function(
 
       if (intercept && has_intercept) {
         intercepts_i <- as.vector(do.call(cbind, lapply(intercepts, "[", i)))
-        beta_out[[i]] <- rbind(
-          intercepts_i,
-          beta_out[[i]],
-          deparse.level = 0
-        )
+        beta_out[[i]] <- rbind(intercepts_i, beta_out[[i]], deparse.level = 0)
       }
     }
 

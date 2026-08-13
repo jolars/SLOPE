@@ -1,5 +1,4 @@
 test_that("patterns", {
-
   set.seed(8)
 
   x <- as.matrix(abalone$x)

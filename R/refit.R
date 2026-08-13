@@ -22,12 +22,7 @@
 #'
 #' @examples
 #' # Cross-validation
-#' tune <- trainSLOPE(
-#'   bodyfat$x,
-#'   bodyfat$y,
-#'   q = c(0.1, 0.2),
-#'   measure = "mse"
-#' )
+#' tune <- trainSLOPE(bodyfat$x, bodyfat$y, q = c(0.1, 0.2), measure = "mse")
 #'
 #' # Refit with optimal parameters
 #' fit <- refit(tune)
@@ -42,7 +37,13 @@ refit <- function(object, x = NULL, y = NULL, measure = NULL, ...) {
 }
 
 #' @export
-refit.TrainedSLOPE <- function(object, x = NULL, y = NULL, measure = NULL, ...) {
+refit.TrainedSLOPE <- function(
+  object,
+  x = NULL,
+  y = NULL,
+  measure = NULL,
+  ...
+) {
   has_x <- !is.null(x)
   has_y <- !is.null(y)
 
@@ -91,9 +92,6 @@ refit.TrainedSLOPE <- function(object, x = NULL, y = NULL, measure = NULL, ...) 
   } else {
     gamma_opt <- 0
   }
-
-  # Get additional arguments from the original call if available
-  original_call <- as.list(object$call)
 
   # Build argument list for SLOPE
   slope_args <- list(

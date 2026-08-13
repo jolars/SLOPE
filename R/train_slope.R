@@ -3,23 +3,23 @@
 #' This function trains a model fit by [SLOPE()] by tuning its parameters
 #' through cross-validation.
 #'
-#' Note that by default this method matches all of the available metrics
-#' for the given model family against those provided in the argument
-#' `measure`. Collecting these measures is not particularly demanding
-#' computationally so it is almost always best to leave this argument
-#' as it is and then choose which argument to focus on in the call
-#' to [plot.TrainedSLOPE()].
+#' Note that by default this method matches all of the available metrics for the
+#' given model family against those provided in the argument `measure`.
+#' Collecting these measures is not particularly demanding computationally so it
+#' is almost always best to leave this argument as it is and then choose which
+#' argument to focus on in the call to [plot.TrainedSLOPE()].
 #'
 #' @inheritParams SLOPE
 #' @param number number of folds (cross-validation)
 #' @param repeats number of repeats for each fold (for repeated *k*-fold cross
 #'   validation)
-#' @param measure measure to try to optimize; note that you may
-#'   supply *multiple* values here and that, by default,
-#'   all the possible measures for the given model will be used.
+#' @param measure measure to try to optimize; note that you may supply
+#'   *multiple* values here and that, by default, all the possible measures for
+#'   the given model will be used.
 #' @param ... other arguments to pass on to [SLOPE()]
 #'
-#' @return An object of class `"TrainedSLOPE"`, with the following slots:
+#' @return
+#' An object of class `"TrainedSLOPE"`, with the following slots:
 #' \item{summary}{a summary of the results with means, standard errors,
 #'                and 0.95 confidence levels}
 #' \item{data}{the raw data from the model training}
@@ -35,7 +35,8 @@
 #'
 #' @examples
 #' # 8-fold cross-validation repeated 5 times
-#' tune <- trainSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
+#' tune <- trainSLOPE(
+#'   subset(mtcars, select = c("mpg", "drat", "wt")),
 #'   mtcars$hp,
 #'   q = c(0.1, 0.2),
 #'   number = 8,
@@ -48,13 +49,7 @@ trainSLOPE <- function(
   q = 0.2,
   number = 10,
   repeats = 1,
-  measure = c(
-    "mse",
-    "mae",
-    "deviance",
-    "misclass",
-    "auc"
-  ),
+  measure = c("mse", "mae", "deviance", "misclass", "auc"),
   ...
 ) {
   ocall <- match.call()
@@ -75,11 +70,7 @@ trainSLOPE <- function(
 
   y <- as.matrix(y)
 
-  stopifnot(
-    NROW(x) > number,
-    number > 1,
-    repeats >= 1
-  )
+  stopifnot(NROW(x) > number, number > 1, repeats >= 1)
 
   # get initial penalty sequence
   fit <- SLOPE(x, y, ...)
@@ -146,21 +137,17 @@ trainSLOPE <- function(
 
     # arguments for SLOPE
     args <- utils::modifyList(
-      list(
-        x = x_train,
-        y = y_train,
-        q = q,
-        alpha = alpha
-      ),
+      list(x = x_train, y = y_train, q = q, alpha = alpha),
       list(...)
     )
 
     # fitting model
     fit_id <- do.call(SLOPE::SLOPE, args)
 
-    s <- lapply(measure, function(m) {
-      SLOPE::score(fit_id, x_test, y_test, measure = m)
-    })
+    s <- lapply(
+      measure,
+      function(m) SLOPE::score(fit_id, x_test, y_test, measure = m)
+    )
 
     r[[i]] <- unlist(s)
   }
@@ -186,17 +173,13 @@ trainSLOPE <- function(
 
   optima <- do.call(
     rbind,
-    by(
-      summary,
-      as.factor(summary$measure),
-      function(x) {
-        if (x$measure[1] == "auc") {
-          x[which.max(x$mean), ]
-        } else {
-          x[which.min(x$mean), ]
-        }
+    by(summary, as.factor(summary$measure), function(x) {
+      if (x$measure[1] == "auc") {
+        x[which.max(x$mean), ]
+      } else {
+        x[which.min(x$mean), ]
       }
-    )
+    })
   )
 
   labels <- vapply(

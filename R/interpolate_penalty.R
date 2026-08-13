@@ -27,9 +27,5 @@ interpolatePenalty <- function(penalty, x) {
     xfrac[abs(penalty[left] - penalty[right]) < .Machine$double.eps] <- 1
   }
 
-  list(
-    left = left,
-    right = right,
-    frac = xfrac
-  )
+  list(left = left, right = right, frac = xfrac)
 }

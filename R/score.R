@@ -7,11 +7,12 @@
 #' @param x feature matrix
 #' @param y response
 #' @param measure type of target measure. `"mse"` returns mean squared error.
-#'   `"mae"` returns mean absolute error, `"misclass"` returns
-#'   misclassification rate, and `"auc"` returns area under the ROC curve.
+#'   `"mae"` returns mean absolute error, `"misclass"` returns misclassification
+#'   rate, and `"auc"` returns area under the ROC curve.
 #'
-#' @return The measure along the regularization path depending on the
-#'   value in `measure`.#'
+#' @return
+#' The measure along the regularization path depending on the value in
+#' `measure`.#'
 #'
 #' @export
 #'
@@ -24,9 +25,7 @@
 #'
 #' fit <- SLOPE(x, y, family = "binomial")
 #' score(fit, x, y, measure = "auc")
-score <- function(object, x, y, measure) {
-  UseMethod("score")
-}
+score <- function(object, x, y, measure) UseMethod("score")
 
 #' @rdname score
 #' @export
@@ -49,13 +48,7 @@ score.BinomialSLOPE <- function(
   object,
   x,
   y,
-  measure = c(
-    "mse",
-    "mae",
-    "deviance",
-    "misclass",
-    "auc"
-  )
+  measure = c("mse", "mae", "deviance", "misclass", "auc")
 ) {
   measure <- match.arg(measure)
 
@@ -90,12 +83,7 @@ score.MultinomialSLOPE <- function(
   object,
   x,
   y,
-  measure = c(
-    "mse",
-    "mae",
-    "deviance",
-    "misclass"
-  )
+  measure = c("mse", "mae", "deviance", "misclass")
 ) {
   measure <- match.arg(measure)
   prob_min <- 1e-05
@@ -128,9 +116,7 @@ score.MultinomialSLOPE <- function(
     deviance = {
       y_hat <- pmin(pmax(y_hat, prob_min), prob_max)
 
-      apply(y_hat, 3, function(p_hat) {
-        -2 * sum(y * log(p_hat))
-      })
+      apply(y_hat, 3, function(p_hat) -2 * sum(y * log(p_hat)))
     },
     misclass = apply(y_hat, 3, function(x) {
       n_obs <- nrow(x)

@@ -183,7 +183,6 @@ wine <- list(x = x, y = y)
 
 usethis::use_data(wine, overwrite = TRUE)
 
-
 # Student (multi-task) ----------------------------------------------------
 
 tmp_file <- tempfile()
@@ -197,10 +196,16 @@ download.file(
 
 unzip(tmp_file, exdir = tmp_dir)
 
-d1 <-
-  read.table(file.path(tmp_dir, "student-mat.csv"), sep = ";", header = TRUE)
-d2 <-
-  read.table(file.path(tmp_dir, "student-por.csv"), sep = ";", header = TRUE)
+d1 <- read.table(
+  file.path(tmp_dir, "student-mat.csv"),
+  sep = ";",
+  header = TRUE
+)
+d2 <- read.table(
+  file.path(tmp_dir, "student-por.csv"),
+  sep = ";",
+  header = TRUE
+)
 d3 <- merge(
   d1,
   d2,

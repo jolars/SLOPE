@@ -89,15 +89,21 @@ test_that("print.summary_TrainedSLOPE runs without error", {
 test_that("refit works for TrainedSLOPE objects", {
   x <- bodyfat$x
   y <- bodyfat$y
-  
-  tune <- trainSLOPE(x, y, q = c(0.1, 0.2), measure = c("mse", "mae"), number = 3)
-  
+
+  tune <- trainSLOPE(
+    x,
+    y,
+    q = c(0.1, 0.2),
+    measure = c("mse", "mae"),
+    number = 3
+  )
+
   fit1 <- refit(tune)
   expect_s3_class(fit1, "SLOPE")
   expect_s3_class(fit1, "GaussianSLOPE")
-  
+
   expect_equal(length(fit1$alpha), 1)
-  
+
   fit2 <- refit(tune, measure = "mae")
   expect_s3_class(fit2, "SLOPE")
 
@@ -107,11 +113,8 @@ test_that("refit works for TrainedSLOPE objects", {
 
 test_that("refit errors on invalid measure", {
   tune <- trainSLOPE(bodyfat$x, bodyfat$y, q = 0.1, measure = "mse", number = 3)
-  
-  expect_error(
-    refit(tune, measure = "invalid"),
-    "measure 'invalid' not found"
-  )
+
+  expect_error(refit(tune, measure = "invalid"), "measure 'invalid' not found")
 })
 
 test_that("refit validates x/y inputs", {
@@ -131,7 +134,7 @@ test_that("cvSLOPE stores refitted model when refit = TRUE", {
     n_folds = 3,
     refit = TRUE
   )
-  
+
   expect_true("model" %in% names(tune))
   expect_s3_class(tune$model, "SLOPE")
 })
@@ -144,13 +147,13 @@ test_that("cvSLOPE does not store model when refit = FALSE", {
     n_folds = 3,
     refit = FALSE
   )
-  
+
   expect_false("model" %in% names(tune))
 })
 
 test_that("trainSLOPE still stores model", {
   tune <- trainSLOPE(bodyfat$x, bodyfat$y, q = 0.1, number = 3)
-  
+
   expect_true("model" %in% names(tune))
   expect_s3_class(tune$model, "SLOPE")
 })

@@ -1,10 +1,9 @@
 #' Sorted L-One Penalized Estimation
 #'
-#' Fit a generalized linear model regularized with the
-#' sorted L1 norm, which applies a
-#' non-increasing regularization sequence to the
-#' coefficient vector (\eqn{\beta}) after having sorted it
-#' in decreasing order according  to its absolute values.
+#' Fit a generalized linear model regularized with the sorted L1 norm, which
+#' applies a non-increasing regularization sequence to the coefficient vector
+#' (\eqn{\beta}) after having sorted it in decreasing order according to its
+#' absolute values.
 #'
 #' `SLOPE()` solves the convex minimization problem
 #' \deqn{
@@ -12,23 +11,20 @@
 #' }{
 #'   f(\beta) + \alpha \sum \lambda_j |\beta|_(j),
 #' }
-#' where \eqn{f(\beta)} is a smooth and convex function and
-#' the second part is the sorted L1-norm.
-#' In ordinary least-squares regression,
-#' \eqn{f(\beta)} is simply the squared norm of the least-squares residuals.
-#' See section **Families** for specifics regarding the various types of
-#' \eqn{f(\beta)} (model families) that are allowed in `SLOPE()`.
+#' where \eqn{f(\beta)} is a smooth and convex function and the second part is
+#' the sorted L1-norm. In ordinary least-squares regression, \eqn{f(\beta)} is
+#' simply the squared norm of the least-squares residuals. See section
+#' **Families** for specifics regarding the various types of \eqn{f(\beta)}
+#' (model families) that are allowed in `SLOPE()`.
 #'
-#' By default, `SLOPE()` fits a path of models, each corresponding to
-#' a separate regularization sequence, starting from
-#' the null (intercept-only) model to an almost completely unregularized
-#' model. These regularization sequences are parameterized using
-#' \eqn{\lambda} and \eqn{\alpha}, with only \eqn{\alpha} varying along the
-#' path. The length of the path can be manually, but will terminate
-#' prematurely depending on
-#' arguments `tol_dev_change`, `tol_dev_ratio`, and `max_variables`.
-#' This means that unless these arguments are modified, the path is not
-#' guaranteed to be of length `path_length`.
+#' By default, `SLOPE()` fits a path of models, each corresponding to a separate
+#' regularization sequence, starting from the null (intercept-only) model to an
+#' almost completely unregularized model. These regularization sequences are
+#' parameterized using \eqn{\lambda} and \eqn{\alpha}, with only \eqn{\alpha}
+#' varying along the path. The length of the path can be manually, but will
+#' terminate prematurely depending on arguments `tol_dev_change`,
+#' `tol_dev_ratio`, and `max_variables`. This means that unless these arguments
+#' are modified, the path is not guaranteed to be of length `path_length`.
 #'
 #' @section Families:
 #'
@@ -81,27 +77,24 @@
 #' \eqn{m} is the number of classes in the response.
 #'
 #' @section Regularization Sequences:
-#' There are multiple ways of specifying the `lambda` sequence
-#' in `SLOPE()`. It is, first of all, possible to select the sequence manually
-#' by
-#' using a non-increasing
-#' numeric vector, possibly of length one, as argument instead of a character.
-#' The greater the differences are between
-#' consecutive values along the sequence, the more clustering behavior
-#' will the model exhibit. Note, also, that the scale of the \eqn{\lambda}
-#' vector makes no difference if `alpha = NULL`, since `alpha` will be
-#' selected automatically to ensure that the model is completely sparse at the
-#' beginning and almost unregularized at the end. If, however, both
-#' `alpha` and `lambda` are manually specified, then the scales of both do
-#' matter, so make sure to choose them wisely.
+#' There are multiple ways of specifying the `lambda` sequence in `SLOPE()`. It
+#' is, first of all, possible to select the sequence manually by using a
+#' non-increasing numeric vector, possibly of length one, as argument instead of
+#' a character. The greater the differences are between consecutive values along
+#' the sequence, the more clustering behavior will the model exhibit. Note,
+#' also, that the scale of the \eqn{\lambda} vector makes no difference if
+#' `alpha = NULL`, since `alpha` will be selected automatically to ensure that
+#' the model is completely sparse at the beginning and almost unregularized at
+#' the end. If, however, both `alpha` and `lambda` are manually specified, then
+#' the scales of both do matter, so make sure to choose them wisely.
 #'
-#' Instead of choosing the sequence manually, one of the following
-#' automatically generated sequences may be chosen.
+#' Instead of choosing the sequence manually, one of the following automatically
+#' generated sequences may be chosen.
 #'
 #' **BH (Benjamini--Hochberg)**
 #'
-#' If `lambda = "bh"`, the sequence used is that referred to
-#' as \eqn{\lambda^{(\mathrm{BH})}}{\lambda^(BH)} by Bogdan et al, which sets
+#' If `lambda = "bh"`, the sequence used is that referred to as
+#' \eqn{\lambda^{(\mathrm{BH})}}{\lambda^(BH)} by Bogdan et al, which sets
 #' \eqn{\lambda} according to
 #' \deqn{
 #'   \lambda_i = \Phi^{-1}(1 - iq/(2p)),
@@ -109,8 +102,8 @@
 #'   \lambda_i = \Phi^-1(1 - iq/(2p)),
 #' }
 #' for \eqn{i=1,\dots,p}, where \eqn{\Phi^{-1}}{\Phi^-1} is the quantile
-#' function for the standard normal distribution and \eqn{q} is a parameter
-#' that can be set by the user in the call to `SLOPE()`.
+#' function for the standard normal distribution and \eqn{q} is a parameter that
+#' can be set by the user in the call to `SLOPE()`.
 #'
 #' **Gaussian**
 #'
@@ -123,10 +116,9 @@
 #' }
 #' for \eqn{i=1,\dots,p}, where \eqn{w(k) = 1/(n-k-1)}. We let
 #' \eqn{\lambda_1 = \lambda^{(\mathrm{BH})}_1}{\lambda_1 = \lambda^(BH)_1} and
-#' adjust the sequence to make sure that it's non-increasing.
-#' Note that if \eqn{p} is large relative
-#' to \eqn{n}, this option will result in a constant sequence, which is
-#' usually not what you would want.
+#' adjust the sequence to make sure that it's non-increasing. Note that if
+#' \eqn{p} is large relative to \eqn{n}, this option will result in a constant
+#' sequence, which is usually not what you would want.
 #'
 #' **OSCAR**
 #'
@@ -141,38 +133,37 @@
 #'
 #' **lasso**
 #'
-#' SLOPE is exactly equivalent to the
-#' lasso when the sequence of regularization weights is constant, i.e.
+#' SLOPE is exactly equivalent to the lasso when the sequence of regularization
+#' weights is constant, i.e.
 #' \deqn{
 #'   \lambda_i = 1
 #' }
-#' for \eqn{i = 1,\dots,p}. Here, again, we stress that the fact that
-#' all \eqn{\lambda} are equal to one does not matter as long as
-#' `alpha == NULL` since we scale the vector automatically.
-#' Note that this option is only here for academic interest and
-#' to highlight the fact that SLOPE is
-#' a generalization of the lasso. There are more efficient packages, such as
+#' for \eqn{i = 1,\dots,p}. Here, again, we stress that the fact that all
+#' \eqn{\lambda} are equal to one does not matter as long as `alpha == NULL`
+#' since we scale the vector automatically. Note that this option is only here
+#' for academic interest and to highlight the fact that SLOPE is a
+#' generalization of the lasso. There are more efficient packages, such as
 #' **glmnet** and **biglasso**, for fitting the lasso.
 #'
 #' @section Solvers:
 #'
 #' There are currently three solvers available for SLOPE: Hybrid (Beck and
 #' Teboulle 2009), proximal gradient descent (PGD), and FISTA (Beck and
-#' Teboulle, 2009). The hybrid method is the preferred and generally
-#' fastest method and is therefore the default for the Gaussian and
-#' binomial families, but not currently available for multinomial and
-#' disabled for Poisson due to convergence issues.
+#' Teboulle, 2009). The hybrid method is the preferred and generally fastest
+#' method and is therefore the default for the Gaussian and binomial families,
+#' but not currently available for multinomial and disabled for Poisson due to
+#' convergence issues.
 #'
-#' @param x the design matrix, which can be either a dense
-#'   matrix of the standard *matrix* class, or a sparse matrix
-#'   inheriting from [Matrix::sparseMatrix]. Data frames will
-#'   be converted to matrices internally.
+#' @param x the design matrix, which can be either a dense matrix of the
+#'   standard *matrix* class, or a sparse matrix inheriting from
+#'   [Matrix::sparseMatrix]. Data frames will be converted to matrices
+#'   internally.
 #' @param y the response, which for `family = "gaussian"` must be numeric; for
 #'   `family = "binomial"` or `family = "multinomial"`, it can be a factor.
 #' @param family model family (objective); see **Families** for details.
 #' @param intercept whether to fit an intercept
-#' @param center whether to center predictors or not by their mean. Defaults
-#'   to `TRUE` if `x` is dense and `FALSE` otherwise.
+#' @param center whether to center predictors or not by their mean. Defaults to
+#'   `TRUE` if `x` is dense and `FALSE` otherwise.
 #' @param scale type of scaling to apply to predictors.
 #'   - `"l1"` scales predictors to have L1 norms of one.
 #'   - `"l2"` scales predictors to have L2 norms of one.#'
@@ -187,77 +178,77 @@
 #'   - `"estimate"`, which estimates a *single* `alpha`
 #'     using Algorithm 5 in Bogdan et al. (2015).
 #'
-#'   When a value is manually entered for `alpha`, it will be scaled based
-#'   on the type of standardization that is applied to `x`. For `scale = "l2"`,
-#'   `alpha` will be scaled by \eqn{\sqrt n}. For `scale = "sd"` or `"none"`,
-#'   alpha will be scaled by \eqn{n}, and for `scale = "l1"` no scaling is
-#'   applied. Note, however, that the `alpha` that is returned in the
-#'   resulting value is the **unstandardized** alpha.
-#' @param path_length length of regularization path; note that the path
-#'   returned may still be shorter due to the early termination criteria
-#'   given by `tol_dev_change`, `tol_dev_ratio`, and `max_variables`.
-#' @param lambda either a character vector indicating the method used
-#'   to construct the lambda path or a numeric non-decreasing
-#'   vector with length equal to the number
-#'   of coefficients in the model; see section **Regularization sequences**
-#'   for details.
+#' When a value is manually entered for `alpha`, it will be scaled based on the
+#' type of standardization that is applied to `x`. For `scale = "l2"`, `alpha`
+#' will be scaled by \eqn{\sqrt n}. For `scale = "sd"` or `"none"`, alpha will
+#' be scaled by \eqn{n}, and for `scale = "l1"` no scaling is applied. Note,
+#' however, that the `alpha` that is returned in the resulting value is the
+#' **unstandardized** alpha.
+#' @param path_length length of regularization path; note that the path returned
+#'   may still be shorter due to the early termination criteria given by
+#'   `tol_dev_change`, `tol_dev_ratio`, and `max_variables`.
+#' @param lambda either a character vector indicating the method used to
+#'   construct the lambda path or a numeric non-decreasing vector with length
+#'   equal to the number of coefficients in the model; see section
+#'   **Regularization sequences** for details.
 #' @param alpha_min_ratio smallest value for `lambda` as a fraction of
 #'   `lambda_max`; used in the selection of `alpha` when `alpha = "path"`.
-#' @param q parameter controlling the shape of the lambda sequence, with
-#'   usage varying depending on the type of path used and has no effect
-#'   is a custom `lambda` sequence is used. Must be greater than `1e-6` and
-#'   smaller than 1.
-#' @param theta1 parameter controlling the shape of the lambda sequence
-#'   when `lambda == "OSCAR"`. This parameter basically sets the intercept
-#'   for the lambda sequence and is equivalent to \eqn{\lambda_1} in the
-#'   original OSCAR formulation.
-#' @param theta2 parameter controlling the shape of the lambda sequence
-#'   when `lambda == "OSCAR"`. This parameter basically sets the slope
-#'   for the lambda sequence and is equivalent to \eqn{\lambda_2} in the
-#'   original OSCAR formulation.
+#' @param q parameter controlling the shape of the lambda sequence, with usage
+#'   varying depending on the type of path used and has no effect is a custom
+#'   `lambda` sequence is used. Must be greater than `1e-6` and smaller than 1.
+#' @param theta1 parameter controlling the shape of the lambda sequence when
+#'   `lambda == "OSCAR"`. This parameter basically sets the intercept for the
+#'   lambda sequence and is equivalent to \eqn{\lambda_1} in the original OSCAR
+#'   formulation.
+#' @param theta2 parameter controlling the shape of the lambda sequence when
+#'   `lambda == "OSCAR"`. This parameter basically sets the slope for the lambda
+#'   sequence and is equivalent to \eqn{\lambda_2} in the original OSCAR
+#'   formulation.
 #' @param max_passes maximum number of passes (outer iterations) for solver
-#' @param diagnostics whether to save diagnostics from the solver
-#'   (timings and other values depending on type of solver)
-#' @param patterns whether to return the SLOPE pattern
-#'   (cluster, ordering, and sign information) as a list of sparse
-#'   matrices, one for each step on the path.
-#' @param tol_dev_change the regularization path is stopped if the
-#'   fractional change in deviance falls below this value; note that this is
-#'   automatically set to 0 if a alpha is manually entered
-#' @param tol_dev_ratio the regularization path is stopped if the
-#'   deviance ratio \eqn{1 - \mathrm{deviance}/\mathrm{(null-deviance)}
-#'   }{1 - deviance/(null deviance)} is above this threshold
-#' @param max_variables criterion for stopping the path in terms of the
-#'   maximum number of unique, nonzero coefficients in absolute value in model.
-#'   For the multinomial family, this value will be multiplied internally with
-#'   the number of levels of the response minus one.
+#' @param diagnostics whether to save diagnostics from the solver (timings and
+#'   other values depending on type of solver)
+#' @param patterns whether to return the SLOPE pattern (cluster, ordering, and
+#'   sign information) as a list of sparse matrices, one for each step on the
+#'   path.
+#' @param tol_dev_change the regularization path is stopped if the fractional
+#'   change in deviance falls below this value; note that this is automatically
+#'   set to 0 if a alpha is manually entered
+#' @param tol_dev_ratio the regularization path is stopped if the deviance ratio
+#'   \eqn{1 - \mathrm{deviance}/\mathrm{(null-deviance)}
+#'   }{1 - deviance/(null deviance)}
+#' is above this threshold
+#' @param max_variables criterion for stopping the path in terms of the maximum
+#'   number of unique, nonzero coefficients in absolute value in model. For the
+#'   multinomial family, this value will be multiplied internally with the
+#'   number of levels of the response minus one.
 #' @param tol stopping criterion for the solvers in terms of the relative
 #'   duality gap
-#' @param threads number of threads to use in the solver; if `NULL`, half
-#'   of the available (logical) threads will be used
+#' @param threads number of threads to use in the solver; if `NULL`, half of the
+#'   available (logical) threads will be used
 #' @param cd_type Type of coordinate descent to use, either `"cyclical"` or
-#'  `"permuted"`. The former means that the cluster are cycled through
-#'  in descending order of their coefficients' magnitudes, while the
-#'  latter means that the clusters are permuted randomly for each pass.
+#'   `"permuted"`. The former means that the cluster are cycled through in
+#'   descending order of their coefficients' magnitudes, while the latter means
+#'   that the clusters are permuted randomly for each pass.
 #' @param verbosity DEPRECATED
 #' @param prox_method DEPRECATED
 #' @param screen DEPRECATED
 #' @param screen_alg DEPRECATED
 #' @param gamma relaxation mixing parameter, between 0 and 1. Has no effect if
-#'   set to 0. If larger than 0, the solver will mix the coefficients
-#'   from the ordinary SLOPE solutions with the coefficients from the
-#'   relaxed solutions (fitting OLS on the SLOPE pattern).
+#'   set to 0. If larger than 0, the solver will mix the coefficients from the
+#'   ordinary SLOPE solutions with the coefficients from the relaxed solutions
+#'   (fitting OLS on the SLOPE pattern).
 #' @param tol_rel_gap DEPRECATED
 #' @param tol_infeas DEPRECATED
 #' @param tol_abs DEPRECATED
 #' @param tol_rel relative DEPRECATED
 #' @param tol_rel_coef_change DEPRECATED
 #' @param solver type of solver use, either `"auto"`, `"hybrid"`, `"pgd"`, or
-#'   `"fista"`; `"auto"` means that the solver is automatically selected,
-#'   which currently means that `"hybrid"` is used for all objectives
-#'   except multinomial ones, in which case FISTA (`"fista"`) is used.
+#'   `"fista"`; `"auto"` means that the solver is automatically selected, which
+#'   currently means that `"hybrid"` is used for all objectives except
+#'   multinomial ones, in which case FISTA (`"fista"`) is used.
 #'
-#' @return An object of class `"SLOPE"` with the following slots:
+#' @return
+#' An object of class `"SLOPE"` with the following slots:
 #' \item{coefficients}{
 #'   a list of the coefficients from the
 #'   model fit, not including the intercept.
@@ -303,9 +294,10 @@
 #' \item{call}{the call used for fitting the model}
 #' @export
 #'
-#' @seealso [plot.SLOPE()], [plotDiagnostics()], [score()], [predict.SLOPE()],
-#'   [trainSLOPE()], [coef.SLOPE()], [print.SLOPE()], [print.SLOPE()],
-#'   [deviance.SLOPE()], [sortedL1Prox()]
+#' @seealso
+#' [plot.SLOPE()], [plotDiagnostics()], [score()], [predict.SLOPE()],
+#' [trainSLOPE()], [coef.SLOPE()], [print.SLOPE()], [print.SLOPE()],
+#' [deviance.SLOPE()], [sortedL1Prox()]
 #'
 #' @references
 #' Bogdan, M., van den Berg, E., Sabatti, C., Su, W., & Candès, E. J. (2015).
@@ -314,8 +306,8 @@
 #'
 #' Larsson, J., Klopfenstein, Q., Massias, M., & Wallin, J. (2023). Coordinate
 #' descent for SLOPE. In F. Ruiz, J. Dy, & J.-W. van de Meent (Eds.),
-#' Proceedings of the 26th international conference on artificial
-#' intelligence and statistics (Vol. 206, pp. 4802–4821). PMLR.
+#' Proceedings of the 26th international conference on artificial intelligence
+#' and statistics (Vol. 206, pp. 4802–4821). PMLR.
 #' https://proceedings.mlr.press/v206/larsson23a.html
 #'
 #' Bondell, H. D., & Reich, B. J. (2008). Simultaneous Regression Shrinkage,
@@ -332,7 +324,6 @@
 #' 2(1), 183–202.
 #'
 #' @examples
-#'
 #' # Gaussian response, default lambda sequence
 #' fit <- SLOPE(bodyfat$x, bodyfat$y)
 #'
@@ -476,7 +467,6 @@ SLOPE <- function(
 
   lambda <- fit$lambda
   alpha <- fit$alpha
-  path_length <- length(alpha)
   intercepts <- fit$intercepts
   intercepts_scaled <- fit$intercepts_scaled
   beta <- fit$betas
@@ -576,8 +566,7 @@ processSlopeArgs <- function(
   p <- NCOL(x)
 
   stopifnot(
-    is.null(alpha_min_ratio) ||
-      (alpha_min_ratio > 0 && alpha_min_ratio < 1),
+    is.null(alpha_min_ratio) || (alpha_min_ratio > 0 && alpha_min_ratio < 1),
     max_passes > 0,
     q > 1e-6,
     q < 1,

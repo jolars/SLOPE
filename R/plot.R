@@ -1,19 +1,19 @@
 #' Plot Coefficients
 #'
-#' Plot the fitted model's regression
-#' coefficients along the regularization path. When the path contains a single
-#' solution (only one alpha value), a dot chart is displayed showing the
-#' coefficient values. When the path contains multiple solutions, a line plot
-#' is displayed showing how coefficients evolve along the regularization path.
+#' Plot the fitted model's regression coefficients along the regularization
+#' path. When the path contains a single solution (only one alpha value), a dot
+#' chart is displayed showing the coefficient values. When the path contains
+#' multiple solutions, a line plot is displayed showing how coefficients evolve
+#' along the regularization path.
 #'
 #' @param x an object of class `"SLOPE"`
 #' @param intercept whether to plot the intercept
-#' @param x_variable what to plot on the x axis. `"alpha"` plots
-#'   the scaling parameter for the sequence, `"deviance_ratio"` plots
-#'   the fraction of deviance explained, and `"step"` plots step number.
+#' @param x_variable what to plot on the x axis. `"alpha"` plots the scaling
+#'   parameter for the sequence, `"deviance_ratio"` plots the fraction of
+#'   deviance explained, and `"step"` plots step number.
 #' @param magnitudes whether to plot the magnitudes of the coefficients
-#' @param add_labels whether to add labels (numbers) on the right side
-#'   of the plot for each coefficient (only used when the path contains multiple
+#' @param add_labels whether to add labels (numbers) on the right side of the
+#'   plot for each coefficient (only used when the path contains multiple
 #'   solutions)
 #' @param mark_zero whether to add a vertical line at zero in the dot chart
 #'   (only used when the path contains a single solution)
@@ -23,8 +23,9 @@
 #' @seealso [SLOPE()], [plotDiagnostics()]
 #' @family SLOPE-methods
 #'
-#' @return Invisibly returns NULL. The function is called for its
-#'   side effect of producing a plot.
+#' @return
+#' Invisibly returns NULL. The function is called for its side effect of
+#' producing a plot.
 #' @export
 #'
 #' @examples
@@ -42,11 +43,7 @@
 plot.SLOPE <- function(
   x,
   intercept = FALSE,
-  x_variable = c(
-    "alpha",
-    "deviance_ratio",
-    "step"
-  ),
+  x_variable = c("alpha", "deviance_ratio", "step"),
   magnitudes = FALSE,
   add_labels = FALSE,
   mark_zero = TRUE,
@@ -132,10 +129,7 @@ plot.SLOPE <- function(
     )
   }
 
-  plot_args <- utils::modifyList(
-    default_plot_args,
-    list(...)
-  )
+  plot_args <- utils::modifyList(default_plot_args, list(...))
 
   if (m == 1) {
     coefs_k <- t(coefs)
@@ -177,10 +171,7 @@ plot.SLOPE <- function(
       colnames(coefs_k) <- class_names
       plot_args_k <- utils::modifyList(
         plot_args,
-        list(
-          x = coefs_k,
-          xlim = grDevices::extendrange(as.vector(coefs_k))
-        )
+        list(x = coefs_k, xlim = grDevices::extendrange(as.vector(coefs_k)))
       )
       do.call(graphics::dotchart, plot_args_k)
 
@@ -193,11 +184,7 @@ plot.SLOPE <- function(
 
         plot_args_k <- utils::modifyList(
           plot_args,
-          list(
-            x = x,
-            y = coefs_k,
-            main = paste0("Response: ", k)
-          )
+          list(x = x, y = coefs_k, main = paste0("Response: ", k))
         )
         do.call(graphics::matplot, plot_args_k)
 
@@ -223,28 +210,28 @@ addCoefLabels <- function(coef_matrix, x) {
 
 #' Plot Results from Cross-Validation
 #'
-#' @param x an object of class `'TrainedSLOPE'`, typically from a call
-#'   to [cvSLOPE()]
+#' @param x an object of class `'TrainedSLOPE'`, typically from a call to
+#'   [cvSLOPE()]
 #' @param measure any of the measures used in the call to [trainSLOPE()]. If
 #'   `measure = "auto"` then deviance will be used for binomial and multinomial
 #'   models, whilst mean-squared error will be used for Gaussian and Poisson
 #'   models.
 #' @param ci_alpha alpha (opacity) for fill in confidence limits
 #' @param ci_col color for border of confidence limits
-#' @param plot_min whether to mark the location of the penalty corresponding
-#'   to the best prediction score
+#' @param plot_min whether to mark the location of the penalty corresponding to
+#'   the best prediction score
 #' @param ci_border color (or flag to turn off and on) the border of the
 #'   confidence limits
-#' @param plot_args list of additional arguments to pass to [plot()],
-#'   which sets up the plot frame
+#' @param plot_args list of additional arguments to pass to [plot()], which sets
+#'   up the plot frame
 #' @param polygon_args list of additional arguments to pass to
 #'   [graphics::polygon()], which fills the confidence limits
 #' @param lines_args list of additional arguments to pass to
-#'  [graphics::lines()], which plots the mean
+#'   [graphics::lines()], which plots the mean
 #' @param abline_args list of additional arguments to pass to
 #'   [graphics::abline()], which plots the minimum
-#' @param index an optional index, to plot only one (the index-th) set
-#'   of the parameter combinations.
+#' @param index an optional index, to plot only one (the index-th) set of the
+#'   parameter combinations.
 #' @param ... ignored
 #'
 #' @family model-tuning
@@ -303,47 +290,28 @@ plot.TrainedSLOPE <- function(
   ylim <- range(c(summary[["lo"]], summary[["hi"]]))
 
   plot_args <- utils::modifyList(
-    list(
-      xlab = xlab,
-      ylab = measure_label,
-      log = "x",
-      type = "n",
-      ylim = ylim
-    ),
+    list(xlab = xlab, ylab = measure_label, log = "x", type = "n", ylim = ylim),
     plot_args
   )
 
   polygon_args <- utils::modifyList(
-    list(
-      col = ci_col,
-      border = ci_border
-    ),
+    list(col = ci_col, border = ci_border),
     polygon_args
   )
 
   lines_args <- utils::modifyList(list(), lines_args)
 
   abline_args <- utils::modifyList(
-    list(
-      v = optimum[["alpha"]],
-      lty = 2
-    ),
+    list(v = optimum[["alpha"]], lty = 2),
     abline_args
   )
 
-  grid <- expand.grid(
-    q = q,
-    gamma = gamma
-  )
+  grid <- expand.grid(q = q, gamma = gamma)
 
   multi_param <- nrow(grid) > 1
 
   if (!is.null(index)) {
-    stopifnot(
-      is.numeric(index),
-      index >= 1,
-      index <= nrow(grid)
-    )
+    stopifnot(is.numeric(index), index >= 1, index <= nrow(grid))
     grid <- grid[index, , drop = FALSE]
   }
 
@@ -351,8 +319,7 @@ plot.TrainedSLOPE <- function(
     g <- grid[i, ]
 
     ind <- which(
-      summary[["q"]] == g[["q"]] &
-        summary[["gamma"]] == g[["gamma"]]
+      summary[["q"]] == g[["q"]] & summary[["gamma"]] == g[["gamma"]]
     )
     summary_i <- summary[ind, ]
 
@@ -360,11 +327,7 @@ plot.TrainedSLOPE <- function(
     x <- summary_i[["alpha"]]
     plot_args <- utils::modifyList(
       plot_args,
-      list(
-        x = x,
-        xlim = rev(range(x)),
-        y = summary_i[["mean"]]
-      )
+      list(x = x, xlim = rev(range(x)), y = summary_i[["mean"]])
     )
 
     do.call(plot, plot_args)
@@ -404,10 +367,7 @@ plot.TrainedSLOPE <- function(
 
     lines_args <- utils::modifyList(
       lines_args,
-      list(
-        x = summary_i[["alpha"]],
-        y = summary_i[["mean"]]
-      )
+      list(x = summary_i[["alpha"]], y = summary_i[["mean"]])
     )
     do.call(graphics::lines, lines_args)
 
@@ -423,32 +383,32 @@ plot.TrainedSLOPE <- function(
   invisible()
 }
 
-
 #' Plot Cluster Structure
 #'
-#' Note that this function requires the `patterns` argument to be set to
-#' `TRUE` in the call to [SLOPE()]. Calling this function on a
-#' `SLOPE` object without patterns will result in an error.
+#' Note that this function requires the `patterns` argument to be set to `TRUE`
+#' in the call to [SLOPE()]. Calling this function on a `SLOPE` object without
+#' patterns will result in an error.
 #'
 #' @param x an object of class `'SLOPE'`
 #' @param plot_signs logical, indicating whether to plot signs of estimated
-#' coefficients on the plot
+#'   coefficients on the plot
 #' @param color_clusters logical, indicating whether the clusters should have
-#' different colors
+#'   different colors
 #' @param include_zeroes logical, indicating whether zero variables should be
-#' plotted. Default to TRUE
+#'   plotted. Default to TRUE
 #' @param show_alpha logical, indicating whether labels with alpha values or
-#' steps in the path should be plotted.
-#' @param alpha_steps a vector of integer alpha steps to plot. If `NULL`,
-#' all the steps are plotted.
-#' @param palette a character string specifying the color palette to use for
-#' the clusters. This is passed to [grDevices::hcl.colors()].
+#'   steps in the path should be plotted.
+#' @param alpha_steps a vector of integer alpha steps to plot. If `NULL`, all
+#'   the steps are plotted.
+#' @param palette a character string specifying the color palette to use for the
+#'   clusters. This is passed to [grDevices::hcl.colors()].
 #' @param ... additional arguments passed to [graphics::image()].
 #'
 #' @seealso [SLOPE()], [graphics::image()], [graphics::text()].
 #'
-#' @return Invisibly returns NULL. The function is called for its
-#'   side effect of producing a plot.
+#' @return
+#' Invisibly returns NULL. The function is called for its side effect of
+#' producing a plot.
 #'
 #' @export
 #'
@@ -497,9 +457,10 @@ plotClusters <- function(
     )
   }
 
-  mat <- sapply(pat[alpha_steps], function(m) {
-    rowSums(t(t(as.matrix(m)) * seq_len(ncol(as.matrix(m)))))
-  })
+  mat <- sapply(
+    pat[alpha_steps],
+    function(m) rowSums(t(t(as.matrix(m)) * seq_len(ncol(as.matrix(m)))))
+  )
 
   rownames(mat) <- seq_len(nrow(mat))
 

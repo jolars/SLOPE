@@ -35,24 +35,25 @@ test_that("specifying alpha estimation throws if not gaussian", {
   x <- matrix(1, 3, 3)
   y <- double(3)
 
-  expect_error(
-    SLOPE(x, y, alpha = "estimate", family = "binomial", path_length = 1)
-  )
+  expect_error(SLOPE(
+    x,
+    y,
+    alpha = "estimate",
+    family = "binomial",
+    path_length = 1
+  ))
 })
 
 test_that("SLOPE returns an error for empty `y`", {
   expect_error(SLOPE(x = NULL, y = NULL, q = 0.1), "`y` is empty")
 })
 
-
-test_that("SLOPE returns an error for `alpha='estimate'` and `family='gaussian'`", {
-  expect_error(
-    SLOPE(
-      bodyfat$x,
-      bodyfat$y,
-      alpha = "estimate",
-      family = "poisson"
-    ),
-    "`alpha = 'estimate'` can only be used if `family = 'gaussian'`"
-  )
-})
+test_that(
+  "SLOPE returns an error for `alpha='estimate'` and `family='gaussian'`",
+  {
+    expect_error(
+      SLOPE(bodyfat$x, bodyfat$y, alpha = "estimate", family = "poisson"),
+      "`alpha = 'estimate'` can only be used if `family = 'gaussian'`"
+    )
+  }
+)

@@ -1,16 +1,16 @@
 #' Plot Results from Diagnostics Collected During Model Fitting
 #'
-#' This function plots various diagnostics collected during
-#' the model fitting resulting from a call to [SLOPE()] *provided that
-#' `diagnostics = TRUE`*.
+#' This function plots various diagnostics collected during the model fitting
+#' resulting from a call to [SLOPE()] *provided that `diagnostics = TRUE`*.
 #'
 #' @param object an object of class `"SLOPE"`.
 #' @param ind either "last"
 #' @param xvar what to place on the x axis. `iteration` plots each iteration,
 #'   `time` plots the wall-clock time.
 #'
-#' @return Invisibly returns NULL. The function is called for its
-#'   side effect of producing a plot.
+#' @return
+#' Invisibly returns NULL. The function is called for its side effect of
+#' producing a plot.
 #'
 #' @seealso [SLOPE()]
 #'
@@ -24,11 +24,7 @@ plotDiagnostics <- function(
   ind = max(object$diagnostics$penalty),
   xvar = c("time", "iteration")
 ) {
-  stopifnot(
-    inherits(object, "SLOPE"),
-    is.numeric(ind),
-    length(ind) == 1
-  )
+  stopifnot(inherits(object, "SLOPE"), is.numeric(ind), length(ind) == 1)
 
   xvar <- match.arg(xvar)
 

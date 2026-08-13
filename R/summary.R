@@ -1,15 +1,15 @@
 #' Summarize SLOPE Model
 #'
-#' Produces a summary of a fitted SLOPE model, including information about
-#' the regularization path, model family, and fitted values.
+#' Produces a summary of a fitted SLOPE model, including information about the
+#' regularization path, model family, and fitted values.
 #'
 #' @param object an object of class `"SLOPE"`, typically from a call to
 #'   [SLOPE()]
 #' @param ... other arguments (currently ignored)
 #'
-#' @return An object of class `"summary_SLOPE"` with the following components:
-#' \item{call}{the call that produced the model}
-#' \item{family}{the model family}
+#' @return
+#' An object of class `"summary_SLOPE"` with the following components:
+#' \item{call}{the call that produced the model} \item{family}{the model family}
 #' \item{n_obs}{number of observations}
 #' \item{n_predictors}{number of predictors}
 #' \item{has_intercept}{whether an intercept was fit}
@@ -137,15 +137,15 @@ print.summary_SLOPE <- function(x, digits = 3, ...) {
 
 #' Summarize TrainedSLOPE Model
 #'
-#' Produces a summary of a trained SLOPE model from cross-validation,
-#' including information about the optimal parameters and performance metrics.
+#' Produces a summary of a trained SLOPE model from cross-validation, including
+#' information about the optimal parameters and performance metrics.
 #'
 #' @param object an object of class `'TrainedSLOPE'`, typically from a call to
 #'   [cvSLOPE()] or [trainSLOPE()]
 #' @param ... other arguments (currently ignored)
 #'
-#' @return An object of class `'summary_TrainedSLOPE'` with the following
-#'   components:
+#' @return
+#' An object of class `'summary_TrainedSLOPE'` with the following components:
 #' \item{call}{the call that produced the model}
 #' \item{measure}{the performance measure(s) used}
 #' \item{optima}{optimal parameter values and corresponding performance}

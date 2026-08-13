@@ -18,7 +18,6 @@ test_that("cross-validation for gaussian and binomial", {
   }
 })
 
-
 test_that("cvSLOPE works properly for binomial family", {
   set.seed(1454)
   xy <- SLOPE:::randomProblem(200, p = 10, q = 0.5, response = "binomial")
@@ -36,7 +35,6 @@ test_that("cvSLOPE works properly for binomial family", {
 
   expect_true(!anyNA(fit$data$mean))
 })
-
 
 test_that("cvSLOPE works properly for gaussian family", {
   set.seed(42)
@@ -74,7 +72,6 @@ test_that("cvSLOPE works properly for poisson family", {
   expect_true(!anyNA(fit$optima))
 })
 
-
 test_that("cvSLOPE works properly for multinomial family", {
   set.seed(42)
   xy <- SLOPE:::randomProblem(200, p = 5, q = 0.5, response = "multinomial")
@@ -94,23 +91,20 @@ test_that("cvSLOPE works properly for multinomial family", {
   expect_true(!anyNA(fit$optima))
 })
 
-
 test_that("cvSLOPE returns error in the case of invalid measures", {
   set.seed(42)
   xy <- SLOPE:::randomProblem(200, p = 100, q = 0.5, response = "gaussian")
   x <- xy$x
   y <- xy$y
 
-  expect_error(
-    cvSLOPE(
-      x,
-      y,
-      q = c(0.1, 0.2),
-      measure = "misclass",
-      family = "gaussian",
-      path_length = 20
-    )
-  )
+  expect_error(cvSLOPE(
+    x,
+    y,
+    q = c(0.1, 0.2),
+    measure = "misclass",
+    family = "gaussian",
+    path_length = 20
+  ))
 })
 
 # TODO: Find out why this test fails
@@ -139,12 +133,7 @@ test_that("Cross-validating on gamma works", {
   x <- xy$x
   y <- xy$y
 
-  tuned <- cvSLOPE(
-    x,
-    y,
-    q = c(0.1, 0.2),
-    gamma = c(0.0, 1.0),
-  )
+  tuned <- cvSLOPE(x, y, q = c(0.1, 0.2), gamma = c(0.0, 1.0), )
 
   expect_gte(tuned$optima$mean[1], 0)
   expect_lte(tuned$optima$mean[1], 1)

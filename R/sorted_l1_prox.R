@@ -11,9 +11,8 @@
 #' where \eqn{J(x, \lambda)} is the Sorted L1 Norm.
 #'
 #' @param x A vector. In SLOPE, this is the vector of coefficients.
-#' @param lambda A non-negative and decreasing sequence
-#'   of weights for the Sorted L1 Norm. Needs to be the same length as
-#'   `x`.
+#' @param lambda A non-negative and decreasing sequence of weights for the
+#'   Sorted L1 Norm. Needs to be the same length as `x`.
 #' @param method DEPRECATED
 #' @return An evaluation of the proximal operator at `x` and `lambda`.
 #'

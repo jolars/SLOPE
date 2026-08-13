@@ -3,8 +3,9 @@
 #' @param object an object of class `'SLOPE'`.
 #' @param ... ignored
 #'
-#' @return For Gaussian models this is twice the residual sums of squares. For
-#'   all other models, two times the negative loglikelihood is returned.
+#' @return
+#' For Gaussian models this is twice the residual sums of squares. For all other
+#' models, two times the negative loglikelihood is returned.
 #' @export
 #'
 #' @seealso [SLOPE()]

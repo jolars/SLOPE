@@ -62,9 +62,11 @@ test_that("coefficient rescaling", {
 
   expect_false(all(coefs_original[-1, ] == coefs_unscaled[-1, ]))
 
-  sds <- apply(xy$x, 2, function(x) {
-    sqrt((length(x) - 1) / length(x)) * stats::sd(x)
-  })
+  sds <- apply(
+    xy$x,
+    2,
+    function(x) sqrt((length(x) - 1) / length(x)) * stats::sd(x)
+  )
 
   expect_equal(
     as.vector(coefs_original[-1, ] * sds),

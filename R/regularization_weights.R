@@ -6,15 +6,15 @@
 #' Please see [SLOPE()] for detailed information regarding the parameters in
 #' this function, in particular the section *Regularization Sequences*.
 #'
-#' Note that these sequences are automatically scaled (unless a value for
-#' the `alpha` parameter is manually supplied) when using [SLOPE()]. In this
+#' Note that these sequences are automatically scaled (unless a value for the
+#' `alpha` parameter is manually supplied) when using [SLOPE()]. In this
 #' function, no such scaling is attempted.
 #'
-#' @param n_lambda The number of lambdas to generate. This should typically
-#'   be equal to the number of predictors in your data set.
+#' @param n_lambda The number of lambdas to generate. This should typically be
+#'   equal to the number of predictors in your data set.
 #' @param n The number of rows (observations) in the design matrix.
-#' @param type The type of lambda sequence to use. See documentation for
-#'   in [SLOPE()], including that related to the `lambda` parameter in that
+#' @param type The type of lambda sequence to use. See documentation for in
+#'   [SLOPE()], including that related to the `lambda` parameter in that
 #'   function.
 #' @inheritParams SLOPE
 #'
@@ -28,12 +28,7 @@
 #' # compute different penalization sequences
 #' bh <- regularizationWeights(100, q = 0.2, type = "bh")
 #'
-#' gaussian <- regularizationWeights(
-#'   100,
-#'   q = 0.2,
-#'   n = 300,
-#'   type = "gaussian"
-#' )
+#' gaussian <- regularizationWeights(100, q = 0.2, n = 300, type = "gaussian")
 #'
 #' oscar <- regularizationWeights(
 #'   100,

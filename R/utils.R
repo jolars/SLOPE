@@ -21,12 +21,7 @@ randomProblem <- function(
   density = 1,
   amplitude = if (match.arg(response) == "poisson") 1 else 3,
   alpha = 1,
-  response = c(
-    "gaussian",
-    "binomial",
-    "poisson",
-    "multinomial"
-  ),
+  response = c("gaussian", "binomial", "poisson", "multinomial"),
   rho = 0
 ) {
   m <- n_targets
@@ -76,10 +71,7 @@ randomProblem <- function(
     }
   )
 
-  dimnames(x) <- list(
-    seq_len(nrow(x)),
-    paste0("V", seq_len(ncol(x)))
-  )
+  dimnames(x) <- list(seq_len(nrow(x)), paste0("V", seq_len(ncol(x))))
 
   list(
     x = x,
@@ -93,13 +85,7 @@ randomProblem <- function(
 
 as_dgCMatrix <- function(x) {
   methods::as(
-    methods::as(
-      methods::as(
-        x,
-        "dgCMatrix"
-      ),
-      "sparseMatrix"
-    ),
+    methods::as(methods::as(x, "dgCMatrix"), "sparseMatrix"),
     "CsparseMatrix"
   )
 }

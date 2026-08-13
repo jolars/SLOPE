@@ -5,8 +5,8 @@
 #'
 #' @inheritParams SLOPE
 #' @param q a vector of quantiles for the `q` parameter in SLOPE
-#' @param gamma relaxation parameter for SLOPE. Default is `0.0`, which
-#'   implies to relaxation of the penalty.
+#' @param gamma relaxation parameter for SLOPE. Default is `0.0`, which implies
+#'   to relaxation of the penalty.
 #' @param n_folds number of folds (cross-validation)
 #' @param n_repeats number of folds (cross-validation)
 #' @param measure DEPRECATED
@@ -14,7 +14,8 @@
 #'   the optimal parameters. Default is `TRUE`.
 #' @param ... other arguments to pass on to [SLOPE()]
 #'
-#' @return An object of class `"TrainedSLOPE"`, with the following slots:
+#' @return
+#' An object of class `"TrainedSLOPE"`, with the following slots:
 #' \item{summary}{a summary of the results with means, standard errors,
 #'                and 0.95 confidence levels}
 #' \item{data}{the raw data from the model training}
@@ -58,13 +59,7 @@ cvSLOPE <- function(
   gamma = 0.0,
   n_folds = 10,
   n_repeats = 1,
-  measure = c(
-    "mse",
-    "mae",
-    "deviance",
-    "misclass",
-    "auc"
-  ),
+  measure = c("mse", "mae", "deviance", "misclass", "auc"),
   refit = TRUE,
   ...
 ) {
@@ -74,10 +69,7 @@ cvSLOPE <- function(
 
   measure <- match.arg(measure)
 
-  stopifnot(
-    NROW(x) > n_folds,
-    n_folds > 1
-  )
+  stopifnot(NROW(x) > n_folds, n_folds > 1)
 
   slope_args <- utils::modifyList(list(...), list(x = x, y = y))
   model_args <- do.call(processSlopeArgs, slope_args)
@@ -175,11 +167,7 @@ cvSLOPE <- function(
       summary = summary,
       data = res$results,
       optima = optima,
-      measure = data.frame(
-        measure = measure,
-        label = labels,
-        row.names = NULL
-      ),
+      measure = data.frame(measure = measure, label = labels, row.names = NULL),
       training_data = list(x = x, y = y),
       call = ocall
     ),
@@ -216,9 +204,10 @@ cvSLOPE <- function(
 #' @param n_repeats Integer. Number of times to repeat the cross-validation
 #'   process with different fold assignments. Default is 1.
 #'
-#' @return A list of length `n_repeats`. Each element contains a list of
-#'   `n_folds` integer vectors representing the indices (0-based)
-#'   of observations in each fold.
+#' @return
+#' A list of length `n_repeats`. Each element contains a list of `n_folds`
+#' integer vectors representing the indices (0-based) of observations in each
+#' fold.
 #'
 #' @keywords internal
 createFolds <- function(n, n_folds, n_repeats = 1) {

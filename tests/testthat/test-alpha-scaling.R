@@ -9,12 +9,7 @@ test_that("penalty strength is invariant to number of observations", {
 
   for (family in c("gaussian", "poisson")) {
     for (scale in c("none", "sd", "l1", "l2")) {
-      alpha <- switch(scale,
-        none = 0.1,
-        sd = 0.3,
-        l1 = 0.5,
-        l2 = 0.3
-      )
+      alpha <- switch(scale, none = 0.1, sd = 0.3, l1 = 0.5, l2 = 0.3)
 
       for (center in c(TRUE, FALSE)) {
         f0 <- SLOPE(
