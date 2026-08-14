@@ -77,37 +77,37 @@ Authors@R:
     )
 Description: Efficient implementations for Sorted L-One Penalized Estimation
     (SLOPE): generalized linear models regularized with the sorted L1-norm
-    (Bogdan et al. 2015). Supported models include
-    ordinary least-squares regression, binomial regression, multinomial
-    regression, and Poisson regression. Both dense and sparse  predictor
-    matrices are supported. In addition, the package features predictor
-    screening rules that enable fast and efficient solutions to high-dimensional
-    problems.
+    (Bogdan et al. 2015). Supported models include ordinary least-squares
+    regression, binomial regression, multinomial regression, and Poisson
+    regression. Both dense and sparse predictor matrices are supported. In
+    addition, the package features predictor screening rules that enable fast
+    and efficient solutions to high-dimensional problems.
 License: GPL-3
-LazyData: true
+URL: https://jolars.github.io/SLOPE/, https://github.com/jolars/SLOPE
+BugReports: https://github.com/jolars/SLOPE/issues
 Depends:
     R (>= 4.1.0)
 Imports:
     Matrix,
     methods,
     Rcpp
-LinkingTo:
-    Rcpp,
-    RcppEigen (>= 0.3.4.0.0),
-    BH,
-    bigmemory
 Suggests:
+    bigmemory,
     covr,
     knitr,
     rmarkdown,
     spelling,
-    testthat (>= 2.1.0),
-    bigmemory
-SystemRequirements: C++17
+    testthat (>= 2.1.0)
+LinkingTo:
+    BH,
+    bigmemory,
+    Rcpp,
+    RcppEigen (>= 0.3.4.0.0)
+VignetteBuilder:
+    knitr
+Encoding: UTF-8
+Language: en-US
+LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
-Language: en-US
-Encoding: UTF-8
-URL: https://jolars.github.io/SLOPE/, https://github.com/jolars/SLOPE
-BugReports: https://github.com/jolars/SLOPE/issues
-VignetteBuilder: knitr
+SystemRequirements: C++17
