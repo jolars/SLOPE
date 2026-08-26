@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+project_root=$(cd "$script_dir/.." && pwd)
+
+usage() {
+  cat <<'EOF'
+Usage: tools/verify-libslope [--root PATH]
+
+Verify the vendored file set, checksums, provenance, and Makevars source list.
+EOF
+}
+
+die() {
+  echo "verify-libslope: $*" >&2
+  exit 1
+}
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --root)
+      [[ $# -ge 2 ]] || die '--root requires a path'
+      project_root=$2
+      shift 2
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      die "unknown option: $1"
+      ;;
+  esac
+done
+
+project_root=$(cd "$project_root" && pwd)
+manifest="$project_root/src/slope/VENDORED"
+checksums="$project_root/tools/libslope.sha256"
+
+[[ -f $manifest ]] || die 'src/slope/VENDORED is missing'
+[[ -f $checksums ]] || die 'tools/libslope.sha256 is missing'
+[[ -f $project_root/inst/licenses/libslope/LICENSE ]] ||
+  die 'the vendored libslope license is missing'
+
+manifest_value() {
+  local key=$1
+  awk -v key="$key" '$1 == key { print $2 }' "$manifest"
+}
+
+version=$(manifest_value version)
+commit=$(manifest_value commit)
+source_url=$(manifest_value source)
+archive_sha256=$(manifest_value archive_sha256)
+
+[[ $version =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]] ||
+  die "invalid vendored version: $version"
+[[ $commit =~ ^[0-9a-f]{40}$ ]] || die "invalid vendored commit: $commit"
+[[ $source_url == https://github.com/jolars/libslope ]] ||
+  die "unexpected vendored source: $source_url"
+[[ $archive_sha256 =~ ^[0-9a-f]{64}$ ]] ||
+  die "invalid archive checksum: $archive_sha256"
+
+if command -v sha256sum >/dev/null 2>&1; then
+  (cd "$project_root" && sha256sum --check --quiet tools/libslope.sha256) ||
+    die 'a vendored file differs from its recorded checksum'
+elif command -v shasum >/dev/null 2>&1; then
+  (cd "$project_root" && shasum -a 256 --check tools/libslope.sha256 \
+    >/dev/null) || die 'a vendored file differs from its recorded checksum'
+else
+  die 'neither sha256sum nor shasum is available'
+fi
+
+workspace=$(mktemp -d "${TMPDIR:-/tmp}/verify-libslope.XXXXXXXX")
+trap 'rm -rf "$workspace"' EXIT
+expected_files="$workspace/expected-files"
+actual_files="$workspace/actual-files"
+expected_sources="$workspace/expected-sources"
+declared_sources="$workspace/declared-sources"
+
+awk '{ print $2 }' "$checksums" | LC_ALL=C sort >"$expected_files"
+(
+  cd "$project_root"
+  find \
+    src/slope \
+    inst/include/slope \
+    inst/licenses/libslope \
+    -type f \
+    ! -name '*.o' \
+    ! -name '*.a' \
+    ! -name '*.so' \
+    ! -name '*.dll' \
+    ! -name '*.dylib' \
+    ! -name '*.d' \
+    -print
+  printf '%s\n' inst/include/slope.h
+) | LC_ALL=C sort >"$actual_files"
+
+diff -u "$expected_files" "$actual_files" >/dev/null ||
+  die 'the vendored file set differs from tools/libslope.sha256'
+
+(
+  cd "$project_root"
+  find src/slope -type f -name '*.cpp' -print | sed 's#^src/##'
+) | LC_ALL=C sort >"$expected_sources"
+
+sed -n '/^SOURCES[[:space:]]*=/,/^[[:space:]]*$/p' \
+  "$project_root/src/Makevars" |
+  sed -n 's/^[[:space:]]*\([^[:space:]\\]*\.cpp\).*$/\1/p' |
+  sed -n '/^slope\//p' |
+  LC_ALL=C sort >"$declared_sources"
+
+diff -u "$expected_sources" "$declared_sources" >/dev/null ||
+  die 'the libslope sources and src/Makevars SOURCES disagree'
+
+echo "Verified libslope $version ($commit)."

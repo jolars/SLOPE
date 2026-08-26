@@ -1,0 +1,254 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+repository=jolars/libslope
+source_url=https://github.com/jolars/libslope
+script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+default_root=$(cd "$script_dir/.." && pwd)
+
+usage() {
+  cat <<'EOF'
+Usage: tools/vendor-libslope VERSION [OPTIONS]
+
+Vendor an exact libslope release into SLOPE without staging or committing it.
+
+Options:
+  --archive PATH  Import a local release archive instead of downloading one.
+  --commit SHA    Commit represented by a local archive (required with --archive).
+  --root PATH     Project root (used by the integration test).
+  -h, --help      Show this help.
+EOF
+}
+
+die() {
+  echo "vendor-libslope: $*" >&2
+  exit 1
+}
+
+sha256_file() {
+  if command -v sha256sum >/dev/null 2>&1; then
+    sha256sum "$1" | awk '{ print $1 }'
+  elif command -v shasum >/dev/null 2>&1; then
+    shasum -a 256 "$1" | awk '{ print $1 }'
+  else
+    die 'neither sha256sum nor shasum is available'
+  fi
+}
+
+if [[ ${1:-} == -h || ${1:-} == --help ]]; then
+  usage
+  exit 0
+fi
+
+[[ $# -gt 0 ]] || {
+  usage >&2
+  exit 2
+}
+
+version=$1
+shift
+archive_arg=
+commit=
+project_root=$default_root
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --archive)
+      [[ $# -ge 2 ]] || die '--archive requires a path'
+      archive_arg=$2
+      shift 2
+      ;;
+    --commit)
+      [[ $# -ge 2 ]] || die '--commit requires a SHA'
+      commit=$2
+      shift 2
+      ;;
+    --root)
+      [[ $# -ge 2 ]] || die '--root requires a path'
+      project_root=$2
+      shift 2
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      die "unknown option: $1"
+      ;;
+  esac
+done
+
+[[ $version =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]] ||
+  die "invalid release version: $version"
+
+project_root=$(cd "$project_root" && pwd)
+git -C "$project_root" rev-parse --is-inside-work-tree >/dev/null 2>&1 ||
+  die "not a Git worktree: $project_root"
+
+vendor_paths=(
+  src/slope
+  inst/include/slope
+  inst/include/slope.h
+  inst/licenses/libslope
+  tools/libslope.sha256
+)
+
+dirty=$(git -C "$project_root" status --porcelain --untracked-files=all -- \
+  "${vendor_paths[@]}")
+[[ -z $dirty ]] ||
+  die $'vendored paths contain local changes; commit or restore them first:\n'"$dirty"
+
+if [[ -n $archive_arg ]]; then
+  [[ -f $archive_arg ]] || die "archive does not exist: $archive_arg"
+  [[ $commit =~ ^[0-9a-fA-F]{40}$ ]] ||
+    die '--commit must be a full 40-character SHA when using --archive'
+  archive_arg=$(cd "$(dirname "$archive_arg")" && pwd)/$(basename "$archive_arg")
+elif [[ -n $commit ]]; then
+  die '--commit may only be used with --archive'
+fi
+
+workspace=$(mktemp -d "$project_root/.vendor-libslope.XXXXXXXX")
+new_root="$workspace/new"
+backup_root="$workspace/backup"
+installed_paths=()
+success=false
+
+rollback() {
+  local index path target backup
+
+  for ((index = ${#installed_paths[@]} - 1; index >= 0; index--)); do
+    path=${installed_paths[index]}
+    target="$project_root/$path"
+    backup="$backup_root/$path"
+    rm -rf "$target"
+    if [[ -e $backup || -L $backup ]]; then
+      mkdir -p "$(dirname "$target")"
+      mv "$backup" "$target"
+    fi
+  done
+}
+
+cleanup() {
+  local status=$?
+  trap - EXIT
+  if [[ $success != true ]]; then
+    rollback
+  fi
+  rm -rf "$workspace"
+  exit "$status"
+}
+trap cleanup EXIT
+
+if [[ -z $archive_arg ]]; then
+  command -v gh >/dev/null 2>&1 || die 'gh is required to download libslope'
+
+  release_tag=$(gh release view "$version" --repo "$repository" \
+    --json tagName --jq .tagName)
+  [[ $release_tag == "$version" ]] ||
+    die "release tag mismatch: expected $version, received $release_tag"
+
+  read -r object_type object_sha < <(
+    gh api "repos/$repository/git/ref/tags/$version" \
+      --jq '[.object.type, .object.sha] | @tsv'
+  )
+
+  while [[ $object_type == tag ]]; do
+    read -r object_type object_sha < <(
+      gh api "repos/$repository/git/tags/$object_sha" \
+        --jq '[.object.type, .object.sha] | @tsv'
+    )
+  done
+
+  [[ $object_type == commit && $object_sha =~ ^[0-9a-f]{40}$ ]] ||
+    die "release tag did not resolve to a commit: $object_type $object_sha"
+  commit=$object_sha
+  archive_path="$workspace/libslope-$version.tar.gz"
+  gh api "repos/$repository/tarball/$commit" >"$archive_path"
+else
+  archive_path=$archive_arg
+  commit=${commit,,}
+fi
+
+archive_sha256=$(sha256_file "$archive_path")
+extract_root="$workspace/extract"
+mkdir -p "$extract_root"
+unsafe_entry=$(tar -tzf "$archive_path" |
+  awk '$0 ~ /^\// || $0 ~ /(^|\/)\.\.(\/|$)/ { print; exit }')
+[[ -z $unsafe_entry ]] || die "archive contains an unsafe path: $unsafe_entry"
+tar -xzf "$archive_path" -C "$extract_root" --strip-components=1
+
+[[ -d $extract_root/src/slope ]] || die 'archive lacks src/slope'
+[[ -d $extract_root/include/slope ]] || die 'archive lacks include/slope'
+[[ -f $extract_root/include/slope.h ]] || die 'archive lacks include/slope.h'
+[[ -f $extract_root/LICENSE ]] || die 'archive lacks LICENSE'
+[[ -f $extract_root/version.txt ]] || die 'archive lacks version.txt'
+
+archive_version=$(tr -d '[:space:]' <"$extract_root/version.txt")
+[[ $archive_version == "${version#v}" ]] ||
+  die "archive version $archive_version does not match $version"
+
+symlink=$(find \
+  "$extract_root/src/slope" \
+  "$extract_root/include/slope" \
+  -type l -print -quit)
+[[ -z $symlink ]] || die "archive contains a symlink: $symlink"
+[[ ! -L $extract_root/include/slope.h ]] ||
+  die 'archive contains a symlink: include/slope.h'
+[[ ! -L $extract_root/LICENSE ]] || die 'archive contains a symlink: LICENSE'
+
+mkdir -p \
+  "$new_root/src" \
+  "$new_root/inst/include" \
+  "$new_root/inst/licenses/libslope" \
+  "$new_root/tools"
+cp -R "$extract_root/src/slope" "$new_root/src/"
+cp -R "$extract_root/include/slope" "$new_root/inst/include/"
+cp "$extract_root/include/slope.h" "$new_root/inst/include/slope.h"
+cp "$extract_root/LICENSE" "$new_root/inst/licenses/libslope/LICENSE"
+
+cat >"$new_root/src/slope/VENDORED" <<EOF
+# This directory is generated by tools/vendor-libslope. Do not edit it directly.
+version $version
+commit $commit
+source $source_url
+archive_sha256 $archive_sha256
+EOF
+
+file_list="$workspace/files"
+find \
+  "$new_root/src/slope" \
+  "$new_root/inst/include/slope" \
+  "$new_root/inst/licenses/libslope" \
+  -type f -print >"$file_list"
+printf '%s\n' "$new_root/inst/include/slope.h" >>"$file_list"
+LC_ALL=C sort -o "$file_list" "$file_list"
+
+while IFS= read -r file; do
+  relative_path=${file#"$new_root/"}
+  printf '%s  %s\n' "$(sha256_file "$file")" "$relative_path"
+done <"$file_list" >"$new_root/tools/libslope.sha256"
+
+swap_path() {
+  local path=$1
+  local target="$project_root/$path"
+  local replacement="$new_root/$path"
+  local backup="$backup_root/$path"
+
+  mkdir -p "$(dirname "$target")" "$(dirname "$backup")"
+  if [[ -e $target || -L $target ]]; then
+    mv "$target" "$backup"
+  fi
+  installed_paths+=("$path")
+  mv "$replacement" "$target"
+}
+
+for path in "${vendor_paths[@]}"; do
+  swap_path "$path"
+done
+
+"$script_dir/verify-libslope" --root "$project_root"
+success=true
+
+echo "Vendored libslope $version ($commit)."
+echo 'Review and validate the changes before committing them.'

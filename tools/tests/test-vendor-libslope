@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
+importer="$repo_root/tools/vendor-libslope"
+verifier="$repo_root/tools/verify-libslope"
+test_root=$(mktemp -d "${TMPDIR:-/tmp}/test-vendor-libslope.XXXXXXXX")
+trap 'rm -rf "$test_root"' EXIT
+
+fail() {
+  echo "test-vendor-libslope: $*" >&2
+  exit 1
+}
+
+project="$test_root/project"
+release="$test_root/libslope-1.2.3"
+archive="$test_root/libslope-v1.2.3.tar.gz"
+commit=0123456789abcdef0123456789abcdef01234567
+
+mkdir -p \
+  "$project/src/slope" \
+  "$project/inst/include/slope" \
+  "$project/tools" \
+  "$release/src/slope" \
+  "$release/include/slope"
+
+printf '%s\n' 'old source' >"$project/src/slope/old.cpp"
+printf '%s\n' 'old header' >"$project/inst/include/slope/old.h"
+printf '%s\n' 'old umbrella header' >"$project/inst/include/slope.h"
+printf '%s\n' 'SOURCES = \' '    slope/missing.cpp' '' >"$project/src/Makevars"
+
+printf '%s\n' 'int foo() { return 1; }' >"$release/src/slope/foo.cpp"
+printf '%s\n' '#pragma once' >"$release/include/slope/foo.h"
+printf '%s\n' '#include <slope/foo.h>' >"$release/include/slope.h"
+printf '%s\n' 'GPL-3 test license' >"$release/LICENSE"
+printf '%s\n' '1.2.3' >"$release/version.txt"
+tar -czf "$archive" -C "$test_root" "$(basename "$release")"
+
+git -C "$project" init -q
+git -C "$project" config user.email test@example.com
+git -C "$project" config user.name Test
+git -C "$project" add .
+git -C "$project" commit -qm 'test: add fixture'
+
+if "$importer" \
+  v1.2.3 \
+  --root "$project" \
+  --archive "$archive" \
+  --commit "$commit" >/dev/null 2>&1; then
+  fail 'importer accepted a mismatched Makevars source list'
+fi
+[[ -f "$project/src/slope/old.cpp" ]] ||
+  fail 'failed import did not restore the old source tree'
+[[ -f "$project/inst/include/slope/old.h" ]] ||
+  fail 'failed import did not restore the old header tree'
+
+printf '%s\n' 'SOURCES = \' '    slope/foo.cpp' '' >"$project/src/Makevars"
+git -C "$project" add src/Makevars
+git -C "$project" commit -qm 'test: correct fixture sources'
+initial_commit=$(git -C "$project" rev-parse HEAD)
+
+"$importer" \
+  v1.2.3 \
+  --root "$project" \
+  --archive "$archive" \
+  --commit "$commit"
+
+[[ -f "$project/src/slope/foo.cpp" ]] || fail 'source was not imported'
+[[ ! -e "$project/src/slope/old.cpp" ]] || fail 'stale source was retained'
+[[ -f "$project/inst/include/slope/foo.h" ]] || fail 'header was not imported'
+[[ -f "$project/inst/licenses/libslope/LICENSE" ]] || fail 'license was not imported'
+[[ -f "$project/tools/libslope.sha256" ]] || fail 'checksums were not generated'
+grep -qx 'version v1.2.3' "$project/src/slope/VENDORED" ||
+  fail 'version was not recorded'
+grep -qx "commit $commit" "$project/src/slope/VENDORED" ||
+  fail 'commit was not recorded'
+[[ $(git -C "$project" rev-parse HEAD) == "$initial_commit" ]] ||
+  fail 'importer created a commit'
+[[ -n $(git -C "$project" status --porcelain) ]] ||
+  fail 'imported changes were unexpectedly clean'
+
+"$verifier" --root "$project"
+
+printf '%s\n' '// local drift' >>"$project/src/slope/foo.cpp"
+if "$verifier" --root "$project" >/dev/null 2>&1; then
+  fail 'verifier accepted modified vendored source'
+fi
+
+if "$importer" \
+  v1.2.3 \
+  --root "$project" \
+  --archive "$archive" \
+  --commit "$commit" >/dev/null 2>&1; then
+  fail 'importer overwrote dirty vendored paths'
+fi
+
+echo 'Vendoring tests passed.'

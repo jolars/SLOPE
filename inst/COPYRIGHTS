@@ -22,6 +22,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 --------------------------------------------------------------------------------
 
+Files: src/slope/*
+       inst/include/slope.h
+       inst/include/slope/*
+
+contain code from the libslope project.
+
+    libslope: Sorted L-One Penalized Estimation C++ library
+    Copyright (C) 2023-2026 Johan Larsson and contributors
+    Source: https://github.com/jolars/libslope
+
+libslope is free software: you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version. A copy of the license is installed at
+licenses/libslope/LICENSE.
+
+--------------------------------------------------------------------------------
+
 Files: R/utils.R
        R/trainSLOPE.R
        R/score.R
