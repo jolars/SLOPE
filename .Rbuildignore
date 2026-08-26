@@ -48,3 +48,5 @@
 ^devenv\.yaml$
 ^\.devenv$
 ^devenv\.lock$
+^versionary\.jsonc$
+^\.versionary-manifest\.json$
