@@ -188,9 +188,8 @@ same validation as `task check` locally.
 6.  **Website:** pkgdown website auto-updates on push to main, or build
     locally with
     [`pkgdown::build_site()`](https://pkgdown.r-lib.org/reference/build_site.html)
-7.  **NEWS.md:** For all significant changes (new features, breaking
-    changes, major bug fixes), manually update `NEWS.md` under the
-    appropriate version header.
+7.  **NEWS.md:** Versionary generates release notes from conventional
+    commits; do not edit `NEWS.md` manually.
 
 ### Validation Sequence
 
