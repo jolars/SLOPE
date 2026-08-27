@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Eigen/Core>
+#include <vector>
 
 namespace slope {
 
@@ -35,5 +36,13 @@ kktCheck(const Eigen::VectorXd& gradient,
          const Eigen::VectorXd& beta,
          const Eigen::ArrayXd& lambda,
          const std::vector<int>& strong_set);
+
+/**
+ * @brief Checks KKT conditions for every coefficient.
+ */
+std::vector<int>
+kktCheck(const Eigen::VectorXd& gradient,
+         const Eigen::VectorXd& beta,
+         const Eigen::ArrayXd& lambda);
 
 } // namespace slope

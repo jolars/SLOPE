@@ -12,7 +12,12 @@ namespace slope {
 
 /**
  * @class Clusters
- * @brief Representation of the clusters in SLOPE
+ * @brief Representation of the nonzero clusters in SLOPE
+ *
+ * A cluster contains coefficients with the same absolute value. Clusters are
+ * ordered by decreasing absolute value. Zero coefficients are omitted from the
+ * stored coefficients, indices, and pointers; algorithms that need the zero
+ * cluster treat the position returned by size() as its implicit index.
  */
 class Clusters
 {
@@ -29,8 +34,8 @@ public:
   Clusters(const Eigen::VectorXd& beta);
 
   /**
-   * @brief Returns the number of clusters.
-   * @return The size of the cluster.
+   * @brief Returns the number of stored nonzero clusters.
+   * @return The number of stored nonzero clusters.
    */
   std::size_t size() { return c.size(); }
 
@@ -81,8 +86,8 @@ public:
   int pointer(const int i) const;
 
   /**
-   * @brief Returns the number of clusters.
-   * @return The number of clusters.
+   * @brief Returns the number of stored nonzero clusters.
+   * @return The number of stored nonzero clusters.
    */
   int size() const;
 
@@ -95,26 +100,31 @@ public:
 
   /**
    * @brief Sets the coefficient of the cluster with the given index.
+   *
+   * This low-level operation does not reorder, merge, or remove clusters. The
+   * caller is responsible for preserving strictly decreasing, nonzero cluster
+   * coefficients. Use update() when the new value can violate that invariant.
+   *
    * @param i The index of the cluster.
    * @param x The new coefficient value.
    */
   void setCoeff(const int i, const double x);
 
   /**
-   * @brief Returns a vector containing the coefficients of all clusters.
-   * @return A vector containing the coefficients.
+   * @brief Returns the coefficients of all stored nonzero clusters.
+   * @return The nonzero cluster coefficients in decreasing order.
    */
   const std::vector<double>& coeffs() const;
 
   /**
-   * @brief Returns a vector containing the indices of all clusters.
-   * @return A vector containing the indices.
+   * @brief Returns the feature indices of all stored nonzero clusters.
+   * @return The feature indices, grouped in cluster order.
    */
   const std::vector<int>& indices() const;
 
   /**
-   * @brief Returns a vector containing the pointers of all clusters.
-   * @return A vector containing the pointers.
+   * @brief Returns the pointers of all stored nonzero clusters.
+   * @return The cluster pointers into indices().
    */
   const std::vector<int>& pointers() const;
 

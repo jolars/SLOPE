@@ -7,6 +7,7 @@
 #pragma once
 
 #include "ols.h"
+#include <cassert>
 
 namespace slope {
 

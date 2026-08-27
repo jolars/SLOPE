@@ -13,6 +13,7 @@
 #include "slope_fit.h"
 #include <Eigen/Dense>
 #include <Eigen/SparseCore>
+#include <cassert>
 
 namespace slope {
 

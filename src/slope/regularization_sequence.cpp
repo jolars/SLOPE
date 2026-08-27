@@ -86,6 +86,10 @@ regularizationPath(const Eigen::ArrayXd& alpha_in,
     return alpha_in;
   }
 
+  if (alpha_max == 0.0) {
+    return Eigen::ArrayXd::Zero(path_length);
+  }
+
   Eigen::ArrayXd alpha =
     geomSpace(alpha_max, alpha_max * alpha_min_ratio, path_length);
 

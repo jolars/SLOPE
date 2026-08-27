@@ -45,6 +45,10 @@ public:
               const Eigen::MatrixXd& y,
               const Eigen::VectorXd& w);
 
+  Eigen::MatrixXd dualPoint(const Eigen::MatrixXd& eta,
+                            const Eigen::MatrixXd& y,
+                            bool fit_intercept) override;
+
   /**
    * @brief Preprocesses the response for the Multinomial model
    * @param y Vector of class labels (n x 1). Each entry is an integer

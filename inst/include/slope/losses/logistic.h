@@ -42,6 +42,10 @@ public:
               const Eigen::MatrixXd& y,
               const Eigen::VectorXd& w);
 
+  Eigen::MatrixXd dualPoint(const Eigen::MatrixXd& eta,
+                            const Eigen::MatrixXd& y,
+                            bool fit_intercept) override;
+
   /**
    * @brief Calculates hessian diagonal
    *

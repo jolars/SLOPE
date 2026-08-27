@@ -23,8 +23,9 @@ namespace slope {
  * @param loss Loss type
  * @param jit_normalization Type of JIT normalization
  * @param intercept Whether to fit an intercept term
- * @param update_clusters Whether to update cluster assignments during
- * optimization (Hybrid solver)
+ * @param update_clusters Whether to maintain cluster ordering and membership
+ * during hybrid optimization. False is intended for benchmarking because later
+ * cluster-coordinate updates may no longer satisfy their invariants.
  * @param cd_iterations Frequency of proximal gradient descent updates (Hybrid
  * solver)
  * @param cd_type Type of coordinate descent to use ("cyclical" or "permuted")

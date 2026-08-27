@@ -1,8 +1,23 @@
+#include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <limits>
 #include <slope/constants.h>
 #include <slope/losses/multinomial.h>
 #include <slope/math.h>
 #include <slope/utils.h>
+#include <stdexcept>
 #include <unordered_set>
+
+namespace {
+
+double
+xLogX(const double x)
+{
+  return x == 0.0 ? 0.0 : x * std::log(x);
+}
+
+} // namespace
 
 namespace slope {
 
@@ -26,16 +41,83 @@ Multinomial::dual(const Eigen::MatrixXd& theta,
                   const Eigen::MatrixXd& y,
                   const Eigen::VectorXd&)
 {
-  int n = y.rows();
-  int p = y.cols();
+  if (theta.rows() != y.rows() || theta.cols() != y.cols()) {
+    throw std::invalid_argument(
+      "Multinomial dual point and response dimensions must match");
+  }
 
-  Eigen::ArrayXXd eta = link(theta + y);
+  const Eigen::ArrayXXd mean = theta.array() + y.array();
+  double entropy = 0.0;
 
-  // TODO: Find out if this formulation can be improved numerically
-  double out =
-    logSumExp(eta).mean() - (eta * (y.array() + theta.array())).sum() / n;
+  for (Eigen::Index i = 0; i < mean.rows(); ++i) {
+    double reference = 1.0;
+    for (Eigen::Index k = 0; k < mean.cols(); ++k) {
+      const double value = mean(i, k);
+      if (!std::isfinite(value) || value < 0.0) {
+        throw std::domain_error(
+          "Multinomial dual rows must be finite and lie in the simplex");
+      }
+      entropy += xLogX(value);
+      reference -= value;
+    }
+    if (!std::isfinite(reference) || reference < 0.0) {
+      throw std::domain_error(
+        "Multinomial dual rows must be finite and lie in the simplex");
+    }
+    entropy += xLogX(reference);
+  }
 
-  return out;
+  return -entropy / y.rows();
+}
+
+Eigen::MatrixXd
+Multinomial::dualPoint(const Eigen::MatrixXd& eta,
+                       const Eigen::MatrixXd& y,
+                       const bool fit_intercept)
+{
+  Eigen::MatrixXd theta = residual(eta, y);
+  if (!fit_intercept) {
+    return theta;
+  }
+  if (eta.rows() != y.rows() || eta.cols() != y.cols()) {
+    throw std::invalid_argument(
+      "Multinomial dual point and response dimensions must match");
+  }
+
+  theta.rowwise() -= theta.colwise().mean();
+  const Eigen::RowVectorXd proportions = y.colwise().mean();
+  const double reference_proportion = 1.0 - proportions.sum();
+  double step = 1.0;
+
+  for (Eigen::Index i = 0; i < theta.rows(); ++i) {
+    double target_reference = 1.0;
+    for (Eigen::Index k = 0; k < theta.cols(); ++k) {
+      const double target = y(i, k) + theta(i, k);
+      const double direction = target - proportions(k);
+      if (direction < 0.0) {
+        step = std::min(step, proportions(k) / -direction);
+      }
+      target_reference -= target;
+    }
+    const double reference_direction = target_reference - reference_proportion;
+    if (reference_direction < 0.0) {
+      step = std::min(step, reference_proportion / -reference_direction);
+    }
+  }
+
+  step = std::clamp(step, 0.0, 1.0);
+  if (step > 0.0 && step < 1.0) {
+    step *= 1.0 - std::sqrt(std::numeric_limits<double>::epsilon());
+  }
+
+  for (Eigen::Index i = 0; i < theta.rows(); ++i) {
+    for (Eigen::Index k = 0; k < theta.cols(); ++k) {
+      const double anchor = proportions(k) - y(i, k);
+      theta(i, k) = anchor + step * (theta(i, k) - anchor);
+    }
+  }
+
+  return theta;
 }
 
 Eigen::MatrixXd

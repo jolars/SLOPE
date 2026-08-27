@@ -70,6 +70,22 @@ public:
   // g^{-1}(eta) - y for all families
 
   /**
+   * @brief Constructs a dual candidate from a linear predictor.
+   *
+   * When an intercept is fitted, the candidate must satisfy the corresponding
+   * zero-sum constraint. Losses with restricted conjugate domains override
+   * this method to preserve those domains while enforcing the constraint.
+   *
+   * @param eta Linear predictor.
+   * @param y Response.
+   * @param fit_intercept Whether the model has an unpenalized intercept.
+   * @return A candidate dual point before regularizer scaling.
+   */
+  virtual Eigen::MatrixXd dualPoint(const Eigen::MatrixXd& eta,
+                                    const Eigen::MatrixXd& y,
+                                    bool fit_intercept);
+
+  /**
    * @brief Calculates the hessian diagonal of the loss function
    *
    * This function calculates the hessian diagonal, with respect to
@@ -168,6 +184,19 @@ protected:
     : lipschitz_constant(lipschitz_constant)
   {
   }
+
+  /**
+   * @brief Enforces scalar intercept stationarity without leaving a mean
+   * domain.
+   *
+   * The construction blends the centered residual with the intercept-only
+   * feasible point. It is used as a numerical repair after conditional
+   * intercept minimization and as a fallback for degenerate responses.
+   */
+  Eigen::MatrixXd domainSafePoint(const Eigen::MatrixXd& mean,
+                                  const Eigen::MatrixXd& y,
+                                  double lower,
+                                  double upper) const;
 
 private:
   const double lipschitz_constant;

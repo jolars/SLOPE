@@ -65,11 +65,12 @@ tasks:
 
   vendor-libslope:
     aliases: [update-libslope]
-    desc: Vendor an exact libslope release (VERSION=vX.Y.Z)
-    requires:
-      vars: [VERSION]
+    desc: Vendor the latest libslope release
+    vars:
+      LATEST_VERSION:
+        sh: gh release view --repo jolars/libslope --json tagName --jq .tagName
     cmds:
-      - tools/vendor-libslope "{{.VERSION}}"
+      - tools/vendor-libslope "{{.LATEST_VERSION}}"
     silent: true
 
   verify-libslope:

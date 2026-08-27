@@ -6,15 +6,60 @@
 
 #pragma once
 
-#include "../eigen_compat.h"
 #include "../clusters.h"
+#include "../eigen_compat.h"
 #include "../math.h"
 #include "slope_threshold.h"
 #include <Eigen/Core>
+#include <cassert>
 #include <random>
 #include <vector>
 
 namespace slope {
+
+namespace detail {
+
+class SparseClusterWorkspace
+{
+public:
+  SparseClusterWorkspace() = default;
+
+  SparseClusterWorkspace(const int n, const int m) { resize(n, m); }
+
+  void resize(const int n, const int m)
+  {
+    if (values.rows() != n || values.cols() != m) {
+      values = Eigen::MatrixXd::Zero(n, m);
+      active.assign(values.size(), false);
+      touched.clear();
+    }
+  }
+
+  void add(const int row, const int col, const double value)
+  {
+    const Eigen::Index index = row + values.rows() * col;
+    if (!active[index]) {
+      active[index] = true;
+      touched.emplace_back(index);
+    }
+    values.data()[index] += value;
+  }
+
+  void clear()
+  {
+    for (const Eigen::Index index : touched) {
+      values.data()[index] = 0.0;
+      active[index] = false;
+    }
+    touched.clear();
+  }
+
+  Eigen::MatrixXd values;
+  std::vector<unsigned char> active;
+  std::vector<Eigen::Index> touched;
+};
+
+} // namespace detail
 
 /**
  * Computes the gradient and Hessian for coordinate descent optimization with
@@ -33,6 +78,7 @@ namespace slope {
  * @param jit_normalization Normalization strategy (Both, Center, Scale, or
  * None)
  * @param n Number of samples
+ * @param weight_sums Sum of the working weights for each response
  *
  * @return std::pair<double, double> containing:
  *         - first: gradient of the loss function
@@ -40,7 +86,7 @@ namespace slope {
  */
 template<typename T>
 std::pair<double, double>
-computeGradientAndHessian(const T& x,
+computeGradientAndHessian(const Eigen::MatrixBase<T>& x,
                           const int ind,
                           const Eigen::MatrixXd& w,
                           const Eigen::MatrixXd& residual,
@@ -48,7 +94,8 @@ computeGradientAndHessian(const T& x,
                           const Eigen::VectorXd& x_scales,
                           const double s,
                           const JitNormalization jit_normalization,
-                          const int n)
+                          const int n,
+                          const Eigen::VectorXd& weight_sums)
 {
   double gradient = 0.0;
   double hessian = 0.0;
@@ -57,7 +104,7 @@ computeGradientAndHessian(const T& x,
 
   auto [k, j] = std::div(ind, p);
 
-  // TODO: Avoid these copies
+  // TODO: Benchmark avoiding these copies in the dense path.
   Eigen::VectorXd residual_v = residual.col(k);
   Eigen::VectorXd w_v = w.col(k);
 
@@ -69,7 +116,7 @@ computeGradientAndHessian(const T& x,
                  (n * x_scales(j));
       hessian =
         (x.col(j).cwiseAbs2().dot(w_v) - 2 * x_centers(j) * x.col(j).dot(w_v) +
-         std::pow(x_centers(j), 2) * w_v.sum()) /
+         std::pow(x_centers(j), 2) * weight_sums(k)) /
         (std::pow(x_scales(j), 2) * n);
       break;
 
@@ -80,7 +127,7 @@ computeGradientAndHessian(const T& x,
                  n;
       hessian =
         (x.col(j).cwiseAbs2().dot(w_v) - 2 * x_centers(j) * x.col(j).dot(w_v) +
-         std::pow(x_centers(j), 2) * w_v.sum()) /
+         std::pow(x_centers(j), 2) * weight_sums(k)) /
         n;
       break;
 
@@ -97,6 +144,107 @@ computeGradientAndHessian(const T& x,
   }
 
   return { gradient, hessian };
+}
+
+template<typename T>
+std::pair<double, double>
+computeGradientAndHessian(const Eigen::MatrixBase<T>& x,
+                          const int ind,
+                          const Eigen::MatrixXd& w,
+                          const Eigen::MatrixXd& residual,
+                          const Eigen::VectorXd& x_centers,
+                          const Eigen::VectorXd& x_scales,
+                          const double s,
+                          const JitNormalization jit_normalization,
+                          const int n)
+{
+  const Eigen::VectorXd weight_sums = w.colwise().sum().transpose();
+  return computeGradientAndHessian(x,
+                                   ind,
+                                   w,
+                                   residual,
+                                   x_centers,
+                                   x_scales,
+                                   s,
+                                   jit_normalization,
+                                   n,
+                                   weight_sums);
+}
+
+template<typename T>
+std::pair<double, double>
+computeGradientAndHessian(const Eigen::SparseMatrixBase<T>& x,
+                          const int ind,
+                          const Eigen::MatrixXd& w,
+                          const Eigen::MatrixXd& residual,
+                          const Eigen::VectorXd& x_centers,
+                          const Eigen::VectorXd& x_scales,
+                          const double s,
+                          const JitNormalization jit_normalization,
+                          const int n,
+                          const Eigen::VectorXd& weight_sums)
+{
+  const int p = x.cols();
+  auto [k, j] = std::div(ind, p);
+
+  double weighted_x_residual_sum = 0.0;
+  double weighted_x_sum = 0.0;
+  double weighted_x_squared_sum = 0.0;
+
+  for (typename T::InnerIterator it(x.derived(), j); it; ++it) {
+    const int i = it.row();
+    const double value = it.value();
+    const double weight = w(i, k);
+
+    weighted_x_residual_sum += value * weight * residual(i, k);
+    weighted_x_sum += value * weight;
+    weighted_x_squared_sum += value * value * weight;
+  }
+
+  const bool center = jit_normalization == JitNormalization::Center ||
+                      jit_normalization == JitNormalization::Both;
+  const bool scale = jit_normalization == JitNormalization::Scale ||
+                     jit_normalization == JitNormalization::Both;
+  const double offset = center ? x_centers(j) : 0.0;
+  const double feature_scale = scale ? x_scales(j) : 1.0;
+
+  if (center) {
+    weighted_x_residual_sum -=
+      offset * w.col(k).cwiseProduct(residual.col(k)).sum();
+    weighted_x_squared_sum +=
+      offset * offset * weight_sums(k) - 2.0 * offset * weighted_x_sum;
+  }
+
+  const double gradient = s * weighted_x_residual_sum / (n * feature_scale);
+  const double hessian =
+    weighted_x_squared_sum / (n * feature_scale * feature_scale);
+
+  return { gradient, hessian };
+}
+
+template<typename T>
+std::pair<double, double>
+computeGradientAndHessian(const Eigen::SparseMatrixBase<T>& x,
+                          const int ind,
+                          const Eigen::MatrixXd& w,
+                          const Eigen::MatrixXd& residual,
+                          const Eigen::VectorXd& x_centers,
+                          const Eigen::VectorXd& x_scales,
+                          const double s,
+                          const JitNormalization jit_normalization,
+                          const int n)
+{
+  const Eigen::VectorXd weight_sums = w.colwise().sum().transpose();
+  return computeGradientAndHessian(x,
+                                   ind,
+                                   w,
+                                   residual,
+                                   x_centers,
+                                   x_scales,
+                                   s,
+                                   jit_normalization,
+                                   n,
+                                   weight_sums);
 }
 
 /**
@@ -202,25 +350,28 @@ computeClusterGradientAndHessian(const Eigen::MatrixBase<T>& x,
  *         - first: Hessian of the loss function for the cluster
  *         - second: gradient of the loss function for the cluster
  */
+namespace detail {
+
 template<typename T>
 std::pair<double, double>
-computeClusterGradientAndHessian(const Eigen::SparseMatrixBase<T>& x,
-                                 const int c_ind,
-                                 const std::vector<int>& s,
-                                 const Clusters& clusters,
-                                 const Eigen::MatrixXd& w,
-                                 const Eigen::MatrixXd& residual,
-                                 const Eigen::VectorXd& x_centers,
-                                 const Eigen::VectorXd& x_scales,
-                                 const JitNormalization jit_normalization)
+computeSparseClusterGradientAndHessian(const Eigen::SparseMatrixBase<T>& x,
+                                       const int c_ind,
+                                       const std::vector<int>& s,
+                                       const Clusters& clusters,
+                                       const Eigen::MatrixXd& w,
+                                       const Eigen::MatrixXd& residual,
+                                       const Eigen::VectorXd& weight_sums,
+                                       const Eigen::VectorXd& x_centers,
+                                       const Eigen::VectorXd& x_scales,
+                                       const JitNormalization jit_normalization,
+                                       SparseClusterWorkspace& workspace)
 {
   int n = x.rows();
   int p = x.cols();
   int m = residual.cols();
 
-  std::vector<Eigen::Triplet<double>> triplets;
+  workspace.resize(n, m);
 
-  Eigen::SparseMatrix<double> x_s(n, m);
   Eigen::ArrayXd offset = Eigen::ArrayXd::Zero(m);
 
   auto s_it = s.cbegin();
@@ -244,59 +395,120 @@ computeClusterGradientAndHessian(const Eigen::SparseMatrixBase<T>& x,
         break;
     }
 
-    double v = 0;
+    double scale = s_ind;
+    if (jit_normalization == JitNormalization::Scale ||
+        jit_normalization == JitNormalization::Both) {
+      scale /= x_scales(j);
+    }
 
     for (typename T::InnerIterator it(x.derived(), j); it; ++it) {
-      switch (jit_normalization) {
-        case JitNormalization::Center:
-          [[fallthrough]];
-        case JitNormalization::None:
-          v = it.value() * s_ind;
-          break;
-
-        case JitNormalization::Scale:
-          [[fallthrough]];
-        case JitNormalization::Both:
-          v = it.value() * s_ind / x_scales(j);
-          break;
-      }
-
-      triplets.emplace_back(it.row(), k, v);
+      workspace.add(it.row(), k, it.value() * scale);
     }
   }
-
-  x_s.setFromTriplets(triplets.begin(), triplets.end());
-  assert(slope::nonZeros(x_s) > 0);
 
   double hess = 0;
   double grad = 0;
+  Eigen::ArrayXd weighted_sum = Eigen::ArrayXd::Zero(m);
 
-  for (int k = 0; k < m; ++k) {
-    Eigen::VectorXd weighted_residual = w.col(k).cwiseProduct(residual.col(k));
+  for (const Eigen::Index index : workspace.touched) {
+    const int k = index / n;
+    const int i = index - k * n;
+    const double value = workspace.values.data()[index];
+    const double weight = w(i, k);
 
-    switch (jit_normalization) {
-      case JitNormalization::Center:
-        [[fallthrough]];
-      case JitNormalization::Both:
-        hess += (x_s.col(k).cwiseAbs2().dot(w.col(k)) -
-                 2 * offset(k) * x_s.col(k).dot(w.col(k)) +
-                 std::pow(offset(k), 2) * w.col(k).sum()) /
-                n;
-        grad += x_s.col(k).dot(weighted_residual) / n -
-                offset(k) * weighted_residual.sum() / n;
-        break;
+    hess += value * value * weight;
+    grad += value * weight * residual(i, k);
+    weighted_sum(k) += value * weight;
+  }
 
-      case JitNormalization::Scale:
-        [[fallthrough]];
-      case JitNormalization::None:
-        hess += x_s.col(k).cwiseAbs2().dot(w.col(k)) / n;
-        grad += x_s.col(k).dot(weighted_residual) / n;
-
-        break;
+  if (jit_normalization == JitNormalization::Center ||
+      jit_normalization == JitNormalization::Both) {
+    for (int k = 0; k < m; ++k) {
+      hess += -2 * offset(k) * weighted_sum(k) +
+              std::pow(offset(k), 2) * weight_sums(k);
+      grad -= offset(k) * w.col(k).cwiseProduct(residual.col(k)).sum();
     }
   }
 
-  return { hess, grad };
+  workspace.clear();
+
+  return { hess / n, grad / n };
+}
+
+template<typename T>
+std::pair<double, double>
+computeClusterGradientAndHessianWithWorkspace(
+  const Eigen::MatrixBase<T>& x,
+  const int c_ind,
+  const std::vector<int>& s,
+  const Clusters& clusters,
+  const Eigen::MatrixXd& w,
+  const Eigen::MatrixXd& residual,
+  const Eigen::VectorXd&,
+  const Eigen::VectorXd& x_centers,
+  const Eigen::VectorXd& x_scales,
+  const JitNormalization jit_normalization,
+  SparseClusterWorkspace&)
+{
+  return computeClusterGradientAndHessian(
+    x, c_ind, s, clusters, w, residual, x_centers, x_scales, jit_normalization);
+}
+
+template<typename T>
+std::pair<double, double>
+computeClusterGradientAndHessianWithWorkspace(
+  const Eigen::SparseMatrixBase<T>& x,
+  const int c_ind,
+  const std::vector<int>& s,
+  const Clusters& clusters,
+  const Eigen::MatrixXd& w,
+  const Eigen::MatrixXd& residual,
+  const Eigen::VectorXd& weight_sums,
+  const Eigen::VectorXd& x_centers,
+  const Eigen::VectorXd& x_scales,
+  const JitNormalization jit_normalization,
+  SparseClusterWorkspace& workspace)
+{
+  return computeSparseClusterGradientAndHessian(x,
+                                                c_ind,
+                                                s,
+                                                clusters,
+                                                w,
+                                                residual,
+                                                weight_sums,
+                                                x_centers,
+                                                x_scales,
+                                                jit_normalization,
+                                                workspace);
+}
+
+} // namespace detail
+
+template<typename T>
+std::pair<double, double>
+computeClusterGradientAndHessian(const Eigen::SparseMatrixBase<T>& x,
+                                 const int c_ind,
+                                 const std::vector<int>& s,
+                                 const Clusters& clusters,
+                                 const Eigen::MatrixXd& w,
+                                 const Eigen::MatrixXd& residual,
+                                 const Eigen::VectorXd& x_centers,
+                                 const Eigen::VectorXd& x_scales,
+                                 const JitNormalization jit_normalization)
+{
+  detail::SparseClusterWorkspace workspace(x.rows(), residual.cols());
+  const Eigen::VectorXd weight_sums = w.colwise().sum().transpose();
+  return detail::computeSparseClusterGradientAndHessian(x,
+                                                        c_ind,
+                                                        s,
+                                                        clusters,
+                                                        w,
+                                                        residual,
+                                                        weight_sums,
+                                                        x_centers,
+                                                        x_scales,
+                                                        jit_normalization,
+                                                        workspace);
 }
 
 /**
@@ -314,13 +526,15 @@ computeClusterGradientAndHessian(const Eigen::SparseMatrixBase<T>& x,
  * @param lambda_cumsum Cumulative sum of the lambda sequence.
  * @param x The design matrix
  * @param w Working weights
+ * @param weight_sums Sum of the working weights for each response
  * @param x_centers The center values of the data matrix columns
  * @param x_scales The scale values of the data matrix columns
  * @param intercept Shuold an intervept be fit?
  * @param jit_normalization Type o fJIT normalization.
  * @param rng Random number generator for shuffling indices in permuted CD.
- * @param update_clusters Flag indicating whether to update the clusters
- *   after each uupdate.
+ * @param update_clusters Whether to maintain cluster ordering and membership
+ *   after each update. If false, later cluster-coordinate updates may no longer
+ *   satisfy their required invariants.
  * @param cd_type Type of coordinate descent to use ("cyclical" or "permuted")
  *
  * @see Clusters
@@ -336,6 +550,7 @@ coordinateDescent(Eigen::VectorXd& beta0,
                   const Eigen::ArrayXd& lambda_cumsum,
                   const T& x,
                   const Eigen::MatrixXd& w,
+                  const Eigen::VectorXd& weight_sums,
                   const Eigen::VectorXd& x_centers,
                   const Eigen::VectorXd& x_scales,
                   const bool intercept,
@@ -351,6 +566,7 @@ coordinateDescent(Eigen::VectorXd& beta0,
   const int m = residual.cols();
 
   double max_abs_gradient = 0;
+  detail::SparseClusterWorkspace sparse_workspace;
 
   // Create a vector of indices to process
   std::vector<int> indices;
@@ -397,19 +613,29 @@ coordinateDescent(Eigen::VectorXd& beta0,
 
     if (cluster_size == 1) {
       int ind = *clusters.cbegin(c_ind);
-      std::tie(grad, hess) = computeGradientAndHessian(
-        x, ind, w, residual, x_centers, x_scales, s[0], jit_normalization, n);
+      std::tie(grad, hess) = computeGradientAndHessian(x,
+                                                       ind,
+                                                       w,
+                                                       residual,
+                                                       x_centers,
+                                                       x_scales,
+                                                       s[0],
+                                                       jit_normalization,
+                                                       n,
+                                                       weight_sums);
     } else {
       std::tie(hess, grad) =
-        computeClusterGradientAndHessian(x,
-                                         c_ind,
-                                         s,
-                                         clusters,
-                                         w,
-                                         residual,
-                                         x_centers,
-                                         x_scales,
-                                         jit_normalization);
+        detail::computeClusterGradientAndHessianWithWorkspace(x,
+                                                              c_ind,
+                                                              s,
+                                                              clusters,
+                                                              w,
+                                                              residual,
+                                                              weight_sums,
+                                                              x_centers,
+                                                              x_scales,
+                                                              jit_normalization,
+                                                              sparse_workspace);
     }
 
     max_abs_gradient = std::max(max_abs_gradient, std::abs(grad));
@@ -417,8 +643,9 @@ coordinateDescent(Eigen::VectorXd& beta0,
     double c_tilde;
     int new_index;
 
-    std::tie(c_tilde, new_index) = slopeThreshold(
-      c_old - grad / hess, c_ind, lambda_cumsum / hess, clusters);
+    const double gamma = hess * c_old - grad;
+    std::tie(c_tilde, new_index) =
+      slopeThreshold(gamma, hess, c_ind, lambda_cumsum, clusters);
 
     assert(c_tilde == 0 || new_index < clusters.size());
     assert(new_index >= 0 && new_index <= clusters.size());

@@ -55,13 +55,12 @@ public:
   /**
    * @brief Initialize the screening rule at the start of the path algorithm.
    *
-   * @param full_set The full set of feature indices
+   * @param feature_count The total number of coefficients
    * @param alpha_max_ind The index of the feature with maximum absolute
    * gradient
    * @return The initial working set
    */
-  virtual std::vector<int> initialize(const std::vector<int>& full_set,
-                                      int alpha_max_ind) = 0;
+  virtual std::vector<int> initialize(int feature_count, int alpha_max_ind) = 0;
 
   /**
    * @brief Screen for the next path step.
@@ -70,14 +69,13 @@ public:
    * @param lambda_curr Current lambda values
    * @param lambda_prev Previous lambda values
    * @param beta Current beta coefficients
-   * @param full_set Full set of features
-   * @return Working set for the current path step
+   * @param working_set Working set to update for the current path step
    */
-  virtual std::vector<int> screen(Eigen::VectorXd& gradient,
-                                  const Eigen::ArrayXd& lambda_curr,
-                                  const Eigen::ArrayXd& lambda_prev,
-                                  const Eigen::VectorXd& beta,
-                                  const std::vector<int>& full_set) = 0;
+  virtual void screen(std::vector<int>& working_set,
+                      Eigen::VectorXd& gradient,
+                      const Eigen::ArrayXd& lambda_curr,
+                      const Eigen::ArrayXd& lambda_prev,
+                      const Eigen::VectorXd& beta) = 0;
 
   /**
    * @brief Check for KKT violations and update working set if necessary.
@@ -92,7 +90,6 @@ public:
    * @param x_centers Centers for normalization
    * @param x_scales Scales for normalization
    * @param jit_normalization Whether to use JIT normalization
-   * @param full_set Full set of features
    * @return True if no violations found, false otherwise
    */
   virtual bool checkKktViolations(Eigen::VectorXd& gradient,
@@ -103,8 +100,7 @@ public:
                                   const Eigen::MatrixXd& residual,
                                   const Eigen::VectorXd& x_centers,
                                   const Eigen::VectorXd& x_scales,
-                                  JitNormalization jit_normalization,
-                                  const std::vector<int>& full_set) = 0;
+                                  JitNormalization jit_normalization) = 0;
   /**
    * @brief Check for KKT violations with sparse matrix input
    * @param gradient The gradient vector
@@ -117,7 +113,6 @@ public:
    * @param x_centers Centers for normalization
    * @param x_scales Scales for normalization
    * @param jit_normalization Whether to use JIT normalization
-   * @param full_set Full set of features
    * @return True if no violations found, false otherwise
    */
   virtual bool checkKktViolations(Eigen::VectorXd& gradient,
@@ -128,8 +123,7 @@ public:
                                   const Eigen::MatrixXd& residual,
                                   const Eigen::VectorXd& x_centers,
                                   const Eigen::VectorXd& x_scales,
-                                  JitNormalization jit_normalization,
-                                  const std::vector<int>& full_set) = 0;
+                                  JitNormalization jit_normalization) = 0;
 
   /**
    * @brief Check for KKT violations with sparse matrix input
@@ -143,7 +137,6 @@ public:
    * @param x_centers Centers for normalization
    * @param x_scales Scales for normalization
    * @param jit_normalization Whether to use JIT normalization
-   * @param full_set Full set of features
    * @return True if no violations found, false otherwise
    */
   virtual bool checkKktViolations(Eigen::VectorXd& gradient,
@@ -154,8 +147,7 @@ public:
                                   const Eigen::MatrixXd& residual,
                                   const Eigen::VectorXd& x_centers,
                                   const Eigen::VectorXd& x_scales,
-                                  JitNormalization jit_normalization,
-                                  const std::vector<int>& full_set) = 0;
+                                  JitNormalization jit_normalization) = 0;
 
   /**
    * @brief Check for KKT violations with sparse matrix input
@@ -169,7 +161,6 @@ public:
    * @param x_centers Centers for normalization
    * @param x_scales Scales for normalization
    * @param jit_normalization Whether to use JIT normalization
-   * @param full_set Full set of features
    * @return True if no violations found, false otherwise
    */
   virtual bool checkKktViolations(
@@ -181,8 +172,7 @@ public:
     const Eigen::MatrixXd& residual,
     const Eigen::VectorXd& x_centers,
     const Eigen::VectorXd& x_scales,
-    JitNormalization jit_normalization,
-    const std::vector<int>& full_set) = 0;
+    JitNormalization jit_normalization) = 0;
 
   /**
    * @brief Get string representation of the screening rule
@@ -202,14 +192,13 @@ protected:
 class NoScreening : public ScreeningRule
 {
 public:
-  std::vector<int> initialize(const std::vector<int>& full_set,
-                              int alpha_max_ind) override;
+  std::vector<int> initialize(int feature_count, int alpha_max_ind) override;
 
-  std::vector<int> screen(Eigen::VectorXd& gradient,
-                          const Eigen::ArrayXd& lambda_curr,
-                          const Eigen::ArrayXd& lambda_prev,
-                          const Eigen::VectorXd& beta,
-                          const std::vector<int>& full_set) override;
+  void screen(std::vector<int>& working_set,
+              Eigen::VectorXd& gradient,
+              const Eigen::ArrayXd& lambda_curr,
+              const Eigen::ArrayXd& lambda_prev,
+              const Eigen::VectorXd& beta) override;
 
   bool checkKktViolations(Eigen::VectorXd& gradient,
                           const Eigen::VectorXd& beta,
@@ -219,8 +208,7 @@ public:
                           const Eigen::MatrixXd& residual,
                           const Eigen::VectorXd& x_centers,
                           const Eigen::VectorXd& x_scales,
-                          JitNormalization jit_normalization,
-                          const std::vector<int>& full_set) override;
+                          JitNormalization jit_normalization) override;
 
   bool checkKktViolations(Eigen::VectorXd& gradient,
                           const Eigen::VectorXd& beta,
@@ -230,8 +218,7 @@ public:
                           const Eigen::MatrixXd& residual,
                           const Eigen::VectorXd& x_centers,
                           const Eigen::VectorXd& x_scales,
-                          JitNormalization jit_normalization,
-                          const std::vector<int>& full_set) override;
+                          JitNormalization jit_normalization) override;
 
   bool checkKktViolations(Eigen::VectorXd& gradient,
                           const Eigen::VectorXd& beta,
@@ -241,8 +228,7 @@ public:
                           const Eigen::MatrixXd& residual,
                           const Eigen::VectorXd& x_centers,
                           const Eigen::VectorXd& x_scales,
-                          JitNormalization jit_normalization,
-                          const std::vector<int>& full_set) override;
+                          JitNormalization jit_normalization) override;
 
   bool checkKktViolations(Eigen::VectorXd& gradient,
                           const Eigen::VectorXd& beta,
@@ -252,8 +238,7 @@ public:
                           const Eigen::MatrixXd& residual,
                           const Eigen::VectorXd& x_centers,
                           const Eigen::VectorXd& x_scales,
-                          JitNormalization jit_normalization,
-                          const std::vector<int>& full_set) override;
+                          JitNormalization jit_normalization) override;
 
   std::string toString() const override;
 };
@@ -265,14 +250,13 @@ public:
 class StrongScreening : public ScreeningRule
 {
 public:
-  std::vector<int> initialize(const std::vector<int>& full_set,
-                              int alpha_max_ind) override;
+  std::vector<int> initialize(int feature_count, int alpha_max_ind) override;
 
-  std::vector<int> screen(Eigen::VectorXd& gradient,
-                          const Eigen::ArrayXd& lambda_curr,
-                          const Eigen::ArrayXd& lambda_prev,
-                          const Eigen::VectorXd& beta,
-                          const std::vector<int>& full_set) override;
+  void screen(std::vector<int>& working_set,
+              Eigen::VectorXd& gradient,
+              const Eigen::ArrayXd& lambda_curr,
+              const Eigen::ArrayXd& lambda_prev,
+              const Eigen::VectorXd& beta) override;
 
   bool checkKktViolations(Eigen::VectorXd& gradient,
                           const Eigen::VectorXd& beta,
@@ -282,8 +266,7 @@ public:
                           const Eigen::MatrixXd& residual,
                           const Eigen::VectorXd& x_centers,
                           const Eigen::VectorXd& x_scales,
-                          JitNormalization jit_normalization,
-                          const std::vector<int>& full_set) override;
+                          JitNormalization jit_normalization) override;
 
   bool checkKktViolations(Eigen::VectorXd& gradient,
                           const Eigen::VectorXd& beta,
@@ -293,8 +276,7 @@ public:
                           const Eigen::MatrixXd& residual,
                           const Eigen::VectorXd& x_centers,
                           const Eigen::VectorXd& x_scales,
-                          JitNormalization jit_normalization,
-                          const std::vector<int>& full_set) override;
+                          JitNormalization jit_normalization) override;
 
   bool checkKktViolations(Eigen::VectorXd& gradient,
                           const Eigen::VectorXd& beta,
@@ -304,8 +286,7 @@ public:
                           const Eigen::MatrixXd& residual,
                           const Eigen::VectorXd& x_centers,
                           const Eigen::VectorXd& x_scales,
-                          JitNormalization jit_normalization,
-                          const std::vector<int>& full_set) override;
+                          JitNormalization jit_normalization) override;
 
   bool checkKktViolations(Eigen::VectorXd& gradient,
                           const Eigen::VectorXd& beta,
@@ -315,8 +296,7 @@ public:
                           const Eigen::MatrixXd& residual,
                           const Eigen::VectorXd& x_centers,
                           const Eigen::VectorXd& x_scales,
-                          JitNormalization jit_normalization,
-                          const std::vector<int>& full_set) override;
+                          JitNormalization jit_normalization) override;
 
   std::string toString() const override;
 
@@ -330,8 +310,7 @@ private:
                               const Eigen::MatrixXd& residual,
                               const Eigen::VectorXd& x_centers,
                               const Eigen::VectorXd& x_scales,
-                              JitNormalization jit_normalization,
-                              const std::vector<int>& full_set);
+                              JitNormalization jit_normalization);
 };
 
 /**

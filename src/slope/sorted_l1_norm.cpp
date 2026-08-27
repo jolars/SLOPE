@@ -1,3 +1,6 @@
+#include <algorithm>
+#include <cassert>
+#include <limits>
 #include <slope/constants.h>
 #include <slope/math.h>
 #include <slope/sorted_l1_norm.h>
@@ -75,14 +78,37 @@ double
 SortedL1Norm::dualNorm(const Eigen::VectorXd& gradient,
                        const Eigen::ArrayXd& lambda) const
 {
+  return dualNorm(gradient, lambda, 0.0);
+}
+
+double
+SortedL1Norm::dualNorm(const Eigen::VectorXd& gradient,
+                       const Eigen::ArrayXd& lambda,
+                       const double denominator_floor) const
+{
   Eigen::ArrayXd abs_gradient = gradient.cwiseAbs();
   sort(abs_gradient, true);
 
   assert(lambda.size() == gradient.size() &&
          "Gradient and lambda sizes must agree");
 
-  return (cumSum(abs_gradient) / (cumSum(lambda).cwiseMax(constants::MAX_DIV)))
-    .maxCoeff();
+  const Eigen::ArrayXd cumulative_gradient = cumSum(abs_gradient);
+  const Eigen::ArrayXd cumulative_lambda = cumSum(lambda);
+  double result = 0.0;
+
+  for (Eigen::Index i = 0; i < gradient.size(); ++i) {
+    const double denominator =
+      std::max(cumulative_lambda(i), denominator_floor);
+    if (denominator == 0.0) {
+      if (cumulative_gradient(i) > constants::MAX_DIV) {
+        return std::numeric_limits<double>::infinity();
+      }
+      continue;
+    }
+    result = std::max(result, cumulative_gradient(i) / denominator);
+  }
+
+  return result;
 }
 
 } // namspace slope

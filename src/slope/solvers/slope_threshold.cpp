@@ -1,3 +1,4 @@
+#include <cassert>
 #include <slope/math.h>
 #include <slope/solvers/slope_threshold.h>
 
@@ -9,13 +10,28 @@ slopeThreshold(const double x,
                const Eigen::ArrayXd& lambda_cumsum,
                const Clusters& clusters)
 {
+  return slopeThreshold(x, 1.0, j, lambda_cumsum, clusters);
+}
+
+std::tuple<double, int>
+slopeThreshold(const double gamma,
+               const double omega,
+               const int j,
+               const Eigen::ArrayXd& lambda_cumsum,
+               const Clusters& clusters)
+{
   using std::size_t;
 
   assert(j >= 0 && j < clusters.size());
+  assert(omega > 0);
 
-  const size_t cluster_size = clusters.cluster_size(j);
-  const double abs_x = std::abs(x);
-  const int sign_x = sign(x);
+  const auto& coeffs = clusters.coeffs();
+  const auto& pointers = clusters.pointers();
+  const int n_clusters = coeffs.size();
+  const size_t ptr_j = pointers[j];
+  const size_t cluster_size = pointers[j + 1] - pointers[j];
+  const double abs_gamma = std::abs(gamma);
+  const int sign_gamma = sign(gamma);
 
   // getLambdaSum(start, len) returns sum of lambdas from start to start+len-1
   auto getLambdaSum = [&](size_t start, size_t len) -> double {
@@ -23,60 +39,57 @@ slopeThreshold(const double x,
   };
 
   // Determine whether the update moves upward.
-  int ptr_j = clusters.pointer(j);
-  const bool direction_up =
-    abs_x - getLambdaSum(ptr_j, cluster_size) > clusters.coeff(j);
+  const double current_lambda_sum = getLambdaSum(ptr_j, cluster_size);
+  const bool direction_up = abs_gamma - current_lambda_sum > omega * coeffs[j];
 
   if (direction_up) {
-    size_t start = clusters.pointer(j);
-    double lo = getLambdaSum(start, cluster_size);
+    double lo = current_lambda_sum;
 
     for (int k = j - 1; k >= 0; --k) {
-      double c_k = clusters.coeff(k);
+      const double c_k = coeffs[k];
 
-      if (abs_x - lo < c_k && k < j) {
-        return { x - sign_x * lo, k + 1 };
+      if (abs_gamma - lo < omega * c_k) {
+        return { (gamma - sign_gamma * lo) / omega, k + 1 };
       }
 
-      start = clusters.pointer(k);
-      double hi = getLambdaSum(start, cluster_size);
+      const size_t start = pointers[k];
+      const double hi = getLambdaSum(start, cluster_size);
 
-      if (abs_x - hi <= c_k) {
-        return { sign_x * c_k, k };
+      if (abs_gamma - hi <= omega * c_k) {
+        return { sign_gamma * c_k, k };
       }
 
       lo = hi;
     }
 
-    return { x - sign_x * lo, 0 };
+    return { (gamma - sign_gamma * lo) / omega, 0 };
   } else {
     // Moving down in the cluster ordering
-    int end = clusters.pointer(j + 1);
-    double hi = getLambdaSum(end - cluster_size, cluster_size);
+    double hi = current_lambda_sum;
 
-    for (int k = j + 1; k < clusters.size(); ++k) {
-      end = clusters.pointer(k + 1);
+    for (int k = j + 1; k < n_clusters; ++k) {
+      const size_t end = pointers[k + 1];
 
-      double c_k = clusters.coeff(k);
+      const double c_k = coeffs[k];
 
-      if (abs_x > hi + c_k) {
-        return { x - sign_x * hi, k - 1 };
+      if (abs_gamma > hi + omega * c_k) {
+        return { (gamma - sign_gamma * hi) / omega, k - 1 };
       }
 
-      double lo = getLambdaSum(end - cluster_size, cluster_size);
+      const double lo = getLambdaSum(end - cluster_size, cluster_size);
 
-      if (abs_x >= lo + c_k) {
-        return { sign_x * c_k, k };
+      if (abs_gamma >= lo + omega * c_k) {
+        return { sign_gamma * c_k, k };
       }
 
       hi = lo;
     }
 
-    if (abs_x > hi) {
-      return { x - sign_x * hi, clusters.size() - 1 };
+    if (abs_gamma > hi) {
+      return { (gamma - sign_gamma * hi) / omega, n_clusters - 1 };
     } else {
       // Zero cluster case
-      return { 0, clusters.size() };
+      return { 0, n_clusters };
     }
   }
 }

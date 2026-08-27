@@ -1,3 +1,5 @@
+#include <cassert>
+#include <iterator>
 #include <slope/constants.h>
 #include <slope/math.h>
 
@@ -6,27 +8,18 @@ namespace slope {
 Eigen::VectorXd
 logSumExp(const Eigen::MatrixXd& a)
 {
-  Eigen::ArrayXd max_vals = a.rowwise().maxCoeff();
-  Eigen::ArrayXd sum_exp = (-max_vals).min(constants::MAX_EXP).exp() +
-                           (a.colwise() - max_vals.matrix())
-                             .array()
-                             .min(constants::MAX_EXP)
-                             .exp()
-                             .rowwise()
-                             .sum();
+  Eigen::ArrayXd max_vals = a.rowwise().maxCoeff().array().max(0.0);
+  Eigen::ArrayXd sum_exp =
+    (-max_vals).exp() +
+    (a.colwise() - max_vals.matrix()).array().exp().rowwise().sum();
 
-  return max_vals + sum_exp.max(constants::P_MIN).log();
+  return max_vals + sum_exp.log();
 }
 
 Eigen::MatrixXd
 softmax(const Eigen::MatrixXd& eta)
 {
-  return (eta.colwise() - logSumExp(eta))
-    .array()
-    .min(constants::MAX_EXP)
-    .exp()
-    .max(constants::P_MIN)
-    .min(constants::P_MAX);
+  return (eta.colwise() - logSumExp(eta)).array().exp();
 }
 
 std::vector<int>

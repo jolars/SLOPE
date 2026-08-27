@@ -1,3 +1,4 @@
+#include <cassert>
 #include <slope/clusters.h>
 #include <slope/math.h>
 #include <slope/utils.h>

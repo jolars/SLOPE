@@ -25,8 +25,9 @@
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <cassert>
+#include <cmath>
+#include <limits>
 #include <memory>
-#include <numeric>
 #include <optional>
 
 /** @namespace slope
@@ -91,8 +92,12 @@ public:
   /**
    * @brief Sets the update clusters flag.
    *
-   * @param update_clusters Selects whether the coordinate descent keeps the
-   * clusters updated.
+   * Disabling cluster updates is intended for benchmarking and experimental
+   * use. A coordinate update can then invalidate the ordering and uniqueness
+   * assumptions required by later cluster-coordinate updates.
+   *
+   * @param update_clusters Whether coordinate descent maintains cluster
+   * ordering and membership after each update.
    */
   void setUpdateClusters(bool update_clusters);
 
@@ -427,9 +432,6 @@ public:
 
     const int m = y.cols();
 
-    std::vector<int> full_set(p * m);
-    std::iota(full_set.begin(), full_set.end(), 0);
-
     VectorXd beta0 = VectorXd::Zero(m);
     VectorXd beta = VectorXd::Zero(p * m);
 
@@ -464,8 +466,7 @@ public:
       // Check that lambda is in decreasing order
       for (int i = 1; i < lambda.size(); ++i) {
         if (lambda(i) > lambda(i - 1)) {
-          throw std::invalid_argument(
-            "lambda must be in decreasing order");
+          throw std::invalid_argument("lambda must be in decreasing order");
         }
       }
     }
@@ -486,14 +487,17 @@ public:
     updateGradient(gradient,
                    x.derived(),
                    residual,
-                   full_set,
                    this->x_centers,
                    this->x_scales,
                    Eigen::VectorXd::Ones(n),
                    jit_normalization);
 
     int alpha_max_ind = whichMax(gradient.cwiseAbs());
-    double alpha_max = sl1_norm.dualNorm(gradient, lambda);
+    double alpha_max =
+      lambda.maxCoeff() == 0.0 ? 0.0 : sl1_norm.dualNorm(gradient, lambda);
+    const double numerical_stationarity_tol =
+      std::sqrt(std::numeric_limits<double>::epsilon()) *
+      std::max(1.0, gradient.cwiseAbs().maxCoeff());
 
     if (alpha_type == "path" ||
         (alpha_type == "estimate" && alpha_estimate != 1)) {
@@ -515,7 +519,7 @@ public:
     std::unique_ptr<ScreeningRule> screening_rule =
       createScreeningRule(this->screening_type);
     std::vector<int> working_set =
-      screening_rule->initialize(full_set, alpha_max_ind);
+      screening_rule->initialize(static_cast<int>(beta.size()), alpha_max_ind);
 
     // Path variables
     double null_deviance = loss->deviance(eta, y);
@@ -526,6 +530,7 @@ public:
     double alpha_prev = std::max(alpha_max, alpha(0));
 
     std::vector<SlopeFit> fits;
+    std::optional<MatrixXd> quadratic_ols_dual_point;
 
     // Regularization path loop
     for (int path_step = 0; path_step < this->path_length; ++path_step) {
@@ -549,6 +554,41 @@ public:
       Eigen::ArrayXd lambda_curr = alpha_curr * lambda;
       Eigen::ArrayXd lambda_prev = alpha_prev * lambda;
 
+      const bool near_unregularized =
+        lambda_curr.maxCoeff() == 0.0 ||
+        (alpha_max > 0.0 &&
+         alpha_curr <=
+           std::sqrt(std::numeric_limits<double>::epsilon()) * alpha_max);
+      // The QR residual avoids amplifying roundoff in the loss gradient when
+      // the penalty is below numerical resolution. It remains only a candidate
+      // until computeDualFromPoint checks and, if necessary, scales it below.
+      if (loss_type == "quadratic" && near_unregularized &&
+          !quadratic_ols_dual_point.has_value()) {
+        quadratic_ols_dual_point =
+          detail::quadraticOlsDualPoint(x.derived(),
+                                        y,
+                                        this->x_centers,
+                                        this->x_scales,
+                                        jit_normalization,
+                                        this->intercept);
+      }
+
+      std::optional<double> quadratic_ols_dual;
+      if (quadratic_ols_dual_point.has_value()) {
+        quadratic_ols_dual = lambda_curr.maxCoeff() == 0.0
+                               ? 0.0
+                               : computeDualFromPoint(beta,
+                                                      *quadratic_ols_dual_point,
+                                                      loss,
+                                                      sl1_norm,
+                                                      lambda_curr,
+                                                      x.derived(),
+                                                      y,
+                                                      this->x_centers,
+                                                      this->x_scales,
+                                                      jit_normalization);
+      }
+
       std::vector<double> duals, primals, time;
       timer.start();
 
@@ -558,14 +598,13 @@ public:
       updateGradient(gradient,
                      x.derived(),
                      residual,
-                     full_set,
                      x_centers,
                      x_scales,
                      Eigen::VectorXd::Ones(x.rows()),
                      jit_normalization);
 
-      working_set = screening_rule->screen(
-        gradient, lambda_curr, lambda_prev, beta, full_set);
+      screening_rule->screen(
+        working_set, gradient, lambda_curr, lambda_prev, beta);
 
       int it = 0;
       int total_it = 0;
@@ -585,52 +624,58 @@ public:
                         sl1_norm.eval(beta(working_set),
                                       lambda_curr.head(working_set.size()));
 
-        MatrixXd theta = residual;
+        // The OLS bound can be loose on correlated designs, so it may certify
+        // convergence only after the loss itself is numerically stationary.
+        const bool numerically_stationary =
+          gradient(working_set).cwiseAbs().maxCoeff() <=
+            numerical_stationarity_tol &&
+          (!this->intercept ||
+           residual.colwise().mean().cwiseAbs().maxCoeff() <=
+             numerical_stationarity_tol);
 
-        // First compute gradient with potential offset for intercept case
-        VectorXd dual_gradient = gradient;
-
-        // TODO: Can we avoid this copy? Maybe revert offset afterwards or,
-        // alternatively, solve intercept until convergence and then no longer
-        // need the offset at all.
-        if (this->intercept) {
-          VectorXd theta_mean = theta.colwise().mean();
-          theta.rowwise() -= theta_mean.transpose();
-
-          offsetGradient(dual_gradient,
-                         x.derived(),
-                         theta_mean,
-                         working_set,
-                         this->x_centers,
-                         this->x_scales,
-                         jit_normalization);
+        MatrixXd dual_point = loss->dualPoint(eta, y, this->intercept);
+        MatrixXd theta = dual_point;
+        VectorXd dual_gradient = VectorXd::Zero(beta.size());
+        updateGradient(dual_gradient,
+                       x.derived(),
+                       theta,
+                       working_set,
+                       this->x_centers,
+                       this->x_scales,
+                       Eigen::VectorXd::Ones(n),
+                       jit_normalization);
+        double dual_norm =
+          sl1_norm.dualNorm(dual_gradient(working_set),
+                            lambda_curr.head(working_set.size()),
+                            constants::MAX_DIV);
+        theta.array() /= std::max(1.0, dual_norm);
+        double dual = loss->dual(theta, y, Eigen::VectorXd::Ones(n));
+        if (quadratic_ols_dual.has_value() && numerically_stationary) {
+          dual = std::max(dual, *quadratic_ols_dual);
         }
 
-        // Common scaling operation
-        double dual_norm = sl1_norm.dualNorm(
-          dual_gradient(working_set), lambda_curr.head(working_set.size()));
-        theta.array() /= std::max(1.0, dual_norm);
-
-        double dual = loss->dual(theta, y, Eigen::VectorXd::Ones(n));
+        double full_dual = std::numeric_limits<double>::quiet_NaN();
 
         if (collect_diagnostics) {
           timer.pause();
-          double true_dual = computeDual(beta,
-                                         residual,
-                                         loss,
-                                         sl1_norm,
-                                         lambda_curr,
-                                         x.derived(),
-                                         y,
-                                         this->x_centers,
-                                         this->x_scales,
-                                         jit_normalization,
-                                         this->intercept);
+          full_dual = computeDualFromPoint(beta,
+                                           dual_point,
+                                           loss,
+                                           sl1_norm,
+                                           lambda_curr,
+                                           x.derived(),
+                                           y,
+                                           this->x_centers,
+                                           this->x_scales,
+                                           jit_normalization);
+          if (quadratic_ols_dual.has_value() && numerically_stationary) {
+            full_dual = std::max(full_dual, *quadratic_ols_dual);
+          }
           timer.resume();
 
           time.emplace_back(timer.elapsed());
           primals.emplace_back(primal);
-          duals.emplace_back(true_dual);
+          duals.emplace_back(full_dual);
         }
 
         double dual_gap = primal - dual;
@@ -638,8 +683,12 @@ public:
         assert(dual_gap > -1e-6 && "Dual gap should be positive");
 
         double tol_scaled = (std::abs(primal) + constants::EPSILON) * this->tol;
+        const bool unregularized_stationary = loss_type == "quadratic" &&
+                                              lambda_curr.maxCoeff() == 0.0 &&
+                                              numerically_stationary;
 
-        if (dual_gap <= tol_scaled || it == this->max_it) {
+        if (dual_gap <= tol_scaled || unregularized_stationary ||
+            it == this->max_it) {
           bool no_violations =
             screening_rule->checkKktViolations(gradient,
                                                beta,
@@ -649,10 +698,26 @@ public:
                                                residual,
                                                this->x_centers,
                                                this->x_scales,
-                                               jit_normalization,
-                                               full_set);
+                                               jit_normalization);
           if (no_violations) {
-            break;
+            if (!std::isfinite(full_dual)) {
+              full_dual = computeDualFromPoint(beta,
+                                               dual_point,
+                                               loss,
+                                               sl1_norm,
+                                               lambda_curr,
+                                               x.derived(),
+                                               y,
+                                               this->x_centers,
+                                               this->x_scales,
+                                               jit_normalization);
+              if (quadratic_ols_dual.has_value() && numerically_stationary) {
+                full_dual = std::max(full_dual, *quadratic_ols_dual);
+              }
+            }
+            if (primal - full_dual <= tol_scaled || unregularized_stationary) {
+              break;
+            }
           } else {
             it = 0; // Restart if there are KKT violations
           }
@@ -760,12 +825,11 @@ public:
    * returning coefficients and optimization details in a SlopeFit object.
    */
   template<typename T>
-  SlopeFit fit(
-    Eigen::EigenBase<T>& x,
-    const Eigen::MatrixXd& y_in,
-    const double alpha = 1.0,
-    Eigen::ArrayXd lambda = Eigen::ArrayXd::Zero(0),
-    std::function<bool()> check_interrupt = defaultInterruptChecker)
+  SlopeFit fit(Eigen::EigenBase<T>& x,
+               const Eigen::MatrixXd& y_in,
+               const double alpha = 1.0,
+               Eigen::ArrayXd lambda = Eigen::ArrayXd::Zero(0),
+               std::function<bool()> check_interrupt = defaultInterruptChecker)
   {
     Eigen::ArrayXd alpha_arr(1);
     alpha_arr(0) = alpha;
@@ -971,6 +1035,7 @@ public:
 
       loss->updateWeightsAndWorkingResponse(w, z, eta, y);
       working_residual = eta - z;
+      const VectorXd weight_sums = w.colwise().sum().transpose();
 
       for (int inner_it = 0; inner_it < max_it_inner_relax; ++inner_it) {
         passes++;
@@ -982,6 +1047,7 @@ public:
                                                     lambda_cumsum_relax,
                                                     x,
                                                     w,
+                                                    weight_sums,
                                                     x_centers,
                                                     x_scales,
                                                     intercept,

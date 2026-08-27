@@ -5,12 +5,13 @@
 
 #pragma once
 
-#include "eigen_compat.h"
 #include "clusters.h"
+#include "eigen_compat.h"
 #include "jit_normalization.h"
 #include "utils.h"
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
+#include <cassert>
 #include <numeric>
 #include <vector>
 
@@ -134,7 +135,7 @@ logSumExp(const Eigen::MatrixXd& a);
 Eigen::MatrixXd
 softmax(const Eigen::MatrixXd& x);
 
-/**
+/*
  * Computes the gradient of the loss with respect to \f(\beta\f).
  *
  * @tparam T The type of the input matrix.
@@ -229,16 +230,19 @@ linearPredictor(const T& x,
  * @param jit_normalization Type of JIT normalization
  * just-in-time.
  */
-template<typename T>
+namespace detail {
+
+template<typename T, typename IndexAt>
 void
-updateGradient(Eigen::VectorXd& gradient,
-               const T& x,
-               const Eigen::MatrixXd& residual,
-               const std::vector<int>& active_set,
-               const Eigen::VectorXd& x_centers,
-               const Eigen::VectorXd& x_scales,
-               const Eigen::VectorXd& w,
-               const JitNormalization jit_normalization)
+updateGradientImpl(Eigen::VectorXd& gradient,
+                   const T& x,
+                   const Eigen::MatrixXd& residual,
+                   const int active_size,
+                   const IndexAt& index_at,
+                   const Eigen::VectorXd& x_centers,
+                   const Eigen::VectorXd& x_scales,
+                   const Eigen::VectorXd& w,
+                   const JitNormalization jit_normalization)
 {
   const int n = x.rows();
   const int p = x.cols();
@@ -251,7 +255,8 @@ updateGradient(Eigen::VectorXd& gradient,
   Eigen::ArrayXd wr_sums(m);
 
 #ifdef _OPENMP
-  bool large_problem = active_set.size() > 100 && n * active_set.size() > 1e5;
+  bool large_problem =
+    active_size > 100 && static_cast<long long>(n) * active_size > 1e5;
 #pragma omp parallel for num_threads(Threads::get()) if (large_problem)
 #endif
   for (int k = 0; k < m; ++k) {
@@ -262,8 +267,8 @@ updateGradient(Eigen::VectorXd& gradient,
 #ifdef _OPENMP
 #pragma omp parallel for num_threads(Threads::get()) if (large_problem)
 #endif
-  for (int i = 0; i < static_cast<int>(active_set.size()); ++i) {
-    int ind = active_set[i];
+  for (int i = 0; i < active_size; ++i) {
+    int ind = index_at(i);
     auto [k, j] = std::div(ind, p);
 
     switch (jit_normalization) {
@@ -288,7 +293,70 @@ updateGradient(Eigen::VectorXd& gradient,
   }
 }
 
+} // namespace detail
+
 /**
+ * @brief Computes the gradient for selected coefficients.
+ * @param gradient Gradient vector to update.
+ * @param x Design matrix.
+ * @param residual Residual matrix.
+ * @param active_set Coefficient indices to update.
+ * @param x_centers Feature centers.
+ * @param x_scales Feature scales.
+ * @param w Working weights.
+ * @param jit_normalization Just-in-time normalization type.
+ */
+template<typename T>
+void
+updateGradient(Eigen::VectorXd& gradient,
+               const T& x,
+               const Eigen::MatrixXd& residual,
+               const std::vector<int>& active_set,
+               const Eigen::VectorXd& x_centers,
+               const Eigen::VectorXd& x_scales,
+               const Eigen::VectorXd& w,
+               const JitNormalization jit_normalization)
+{
+  detail::updateGradientImpl(
+    gradient,
+    x,
+    residual,
+    static_cast<int>(active_set.size()),
+    [&active_set](int i) { return active_set[i]; },
+    x_centers,
+    x_scales,
+    w,
+    jit_normalization);
+}
+
+/**
+ * @brief Computes the gradient for every coefficient.
+ * @details This overload avoids materializing a vector containing every
+ * coefficient index.
+ */
+template<typename T>
+void
+updateGradient(Eigen::VectorXd& gradient,
+               const T& x,
+               const Eigen::MatrixXd& residual,
+               const Eigen::VectorXd& x_centers,
+               const Eigen::VectorXd& x_scales,
+               const Eigen::VectorXd& w,
+               const JitNormalization jit_normalization)
+{
+  detail::updateGradientImpl(
+    gradient,
+    x,
+    residual,
+    static_cast<int>(gradient.size()),
+    [](int i) { return i; },
+    x_centers,
+    x_scales,
+    w,
+    jit_normalization);
+}
+
+/*
  * Computes the gradient of the loss with respect to \f(\beta\f).
  *
  * @tparam T The type of the input matrix.
@@ -301,21 +369,24 @@ updateGradient(Eigen::VectorXd& gradient,
  * @param jit_normalization Type of JIT normalization
  * just-in-time.
  */
-template<typename T>
+namespace detail {
+
+template<typename T, typename IndexAt>
 void
-offsetGradient(Eigen::VectorXd& gradient,
-               const T& x,
-               const Eigen::VectorXd& offset,
-               const std::vector<int>& active_set,
-               const Eigen::VectorXd& x_centers,
-               const Eigen::VectorXd& x_scales,
-               const JitNormalization jit_normalization)
+offsetGradientImpl(Eigen::VectorXd& gradient,
+                   const T& x,
+                   const Eigen::VectorXd& offset,
+                   const int active_size,
+                   const IndexAt& index_at,
+                   const Eigen::VectorXd& x_centers,
+                   const Eigen::VectorXd& x_scales,
+                   const JitNormalization jit_normalization)
 {
   const int n = x.rows();
   const int p = x.cols();
 
-  for (size_t i = 0; i < active_set.size(); ++i) {
-    int ind = active_set[i];
+  for (int i = 0; i < active_size; ++i) {
+    int ind = index_at(i);
     auto [k, j] = std::div(ind, p);
 
     switch (jit_normalization) {
@@ -334,6 +405,64 @@ offsetGradient(Eigen::VectorXd& gradient,
         break;
     }
   }
+}
+
+} // namespace detail
+
+/**
+ * @brief Offsets the gradient for selected coefficients.
+ * @param gradient Gradient vector to update.
+ * @param x Design matrix.
+ * @param offset Gradient offset for each response.
+ * @param active_set Coefficient indices to update.
+ * @param x_centers Feature centers.
+ * @param x_scales Feature scales.
+ * @param jit_normalization Just-in-time normalization type.
+ */
+template<typename T>
+void
+offsetGradient(Eigen::VectorXd& gradient,
+               const T& x,
+               const Eigen::VectorXd& offset,
+               const std::vector<int>& active_set,
+               const Eigen::VectorXd& x_centers,
+               const Eigen::VectorXd& x_scales,
+               const JitNormalization jit_normalization)
+{
+  detail::offsetGradientImpl(
+    gradient,
+    x,
+    offset,
+    static_cast<int>(active_set.size()),
+    [&active_set](int i) { return active_set[i]; },
+    x_centers,
+    x_scales,
+    jit_normalization);
+}
+
+/**
+ * @brief Offsets the gradient for every coefficient.
+ * @details This overload avoids materializing a vector containing every
+ * coefficient index.
+ */
+template<typename T>
+void
+offsetGradient(Eigen::VectorXd& gradient,
+               const T& x,
+               const Eigen::VectorXd& offset,
+               const Eigen::VectorXd& x_centers,
+               const Eigen::VectorXd& x_scales,
+               const JitNormalization jit_normalization)
+{
+  detail::offsetGradientImpl(
+    gradient,
+    x,
+    offset,
+    static_cast<int>(gradient.size()),
+    [](int i) { return i; },
+    x_centers,
+    x_scales,
+    jit_normalization);
 }
 
 /**
@@ -794,7 +923,8 @@ mins(const Eigen::MatrixBase<T>& x)
  * @param x Input feature matrix
  * @param w Weight matrix for observations
  * @param x_centers Vector of feature centers (means) for normalization
- * @param x_scales Vector of feature scales (standard deviations) for normalization
+ * @param x_scales Vector of feature scales (standard deviations) for
+ * normalization
  * @param jit_normalization Normalization strategy applied to features
  *
  * @return Gradient vector with respect to cluster coefficients

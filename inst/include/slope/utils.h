@@ -9,6 +9,7 @@
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <algorithm>
+#include <cassert>
 #include <numeric>
 #include <set>
 #include <string>
