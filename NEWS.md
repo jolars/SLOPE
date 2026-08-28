@@ -1,4 +1,11 @@
-# SLOPE (development version)
+# SLOPE 2.1
+
+## Bug fixes
+
+- update libslope to 6.5.4 ([`cde01a8`](https://github.com/jolars/SLOPE/commit/cde01a81bec769394a0e7e969d0dccea9e84a468))
+- update libslope to 6.5.3 ([`80ffa0a`](https://github.com/jolars/SLOPE/commit/80ffa0a15a1a6cc40fa2dc748b9d720a1d0180f5))
+- update libslope to 6.5.2 ([`4604aaf`](https://github.com/jolars/SLOPE/commit/4604aaf141f77ca0aa262d443d5eaca59fa0bfe1))
+- raise R dep to 4.1.0 for native pipes ([`60616ed`](https://github.com/jolars/SLOPE/commit/60616ed531873466faf69fc4106e773970cf80da))
 
 # SLOPE 2.1.0
 
