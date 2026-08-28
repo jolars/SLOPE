@@ -14,6 +14,7 @@
 #include "folds.h"
 #include "score.h"
 #include "slope.h"
+#include <atomic>
 #include <vector>
 
 #ifdef _OPENMP
@@ -300,10 +301,16 @@ crossValidate(Slope model,
 
     // Thread-safety for exceptions
     std::vector<std::string> thread_errors(n_evals);
-    bool had_exception = false;
+    std::atomic<bool> had_exception{ false };
 
 #ifdef _OPENMP
+    // omp_set_max_active_levels() is OpenMP 3.0; MSVC's vcomp runtime only
+    // implements 2.0, where omp_set_nested() is the way to stop nesting.
+#if _OPENMP >= 200805
     omp_set_max_active_levels(1);
+#else
+    omp_set_nested(0);
+#endif
 #pragma omp parallel for num_threads(Threads::get())                           \
   shared(scores, thread_errors, had_exception)
 #endif
@@ -327,15 +334,9 @@ crossValidate(Slope model,
 
       } catch (const std::exception& e) {
         thread_errors[i] = e.what();
-#ifdef _OPENMP
-#pragma omp atomic write
-#endif
         had_exception = true;
       } catch (...) {
         thread_errors[i] = "Unknown exception";
-#ifdef _OPENMP
-#pragma omp atomic write
-#endif
         had_exception = true;
       }
     }
