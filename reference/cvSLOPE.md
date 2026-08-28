@@ -191,7 +191,6 @@ tune$model
 #>     fit <- fitSLOPE(x, y, control)
 #>     lambda <- fit$lambda
 #>     alpha <- fit$alpha
-#>     path_length <- length(alpha)
 #>     intercepts <- fit$intercepts
 #>     intercepts_scaled <- fit$intercepts_scaled
 #>     beta <- fit$betas

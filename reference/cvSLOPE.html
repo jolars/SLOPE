@@ -15,7 +15,7 @@ through cross-validation."><meta property="og:image" content="https://jolars.git
 
     <a class="navbar-brand me-2" href="../index.html">SLOPE</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,7 +48,7 @@ through cross-validation."><meta property="og:image" content="https://jolars.git
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Tune SLOPE with Cross-Validation</h1>
-      <small class="dont-index">Source: <a href="https://github.com/jolars/SLOPE/blob/v2.1.0/R/cv.R" class="external-link"><code>R/cv.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/jolars/SLOPE/blob/main/R/cv.R" class="external-link"><code>R/cv.R</code></a></small>
       <div class="d-none name"><code>cvSLOPE.Rd</code></div>
     </div>
 
@@ -237,7 +237,6 @@ values for the different metrics and their corresponding parameter values</p></d
 <span class="r-out co"><span class="r-pr">#&gt;</span>     fit &lt;- fitSLOPE(x, y, control)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     lambda &lt;- fit$lambda</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     alpha &lt;- fit$alpha</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     path_length &lt;- length(alpha)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     intercepts &lt;- fit$intercepts</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     intercepts_scaled &lt;- fit$intercepts_scaled</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     beta &lt;- fit$betas</span>
@@ -325,7 +324,7 @@ values for the different metrics and their corresponding parameter values</p></d
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>
