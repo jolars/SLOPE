@@ -32,7 +32,7 @@ public:
    * memberships).
    * @return The loss value.
    */
-  double loss(const Eigen::MatrixXd& eta, const Eigen::MatrixXd& y);
+  double loss(const Eigen::MatrixXd& eta, const Eigen::MatrixXd& y) override;
 
   /**
    * @brief Calculates the dual for the multinomial loss function.
@@ -43,7 +43,7 @@ public:
    */
   double dual(const Eigen::MatrixXd& theta,
               const Eigen::MatrixXd& y,
-              const Eigen::VectorXd& w);
+              const Eigen::VectorXd& w) override;
 
   Eigen::MatrixXd dualPoint(const Eigen::MatrixXd& eta,
                             const Eigen::MatrixXd& y,
@@ -55,7 +55,7 @@ public:
    * representing the class label from 0 to m.
    * @return Matrix of response (n x m)
    */
-  Eigen::MatrixXd preprocessResponse(const Eigen::MatrixXd& y);
+  Eigen::MatrixXd preprocessResponse(const Eigen::MatrixXd& y) override;
 
   /**
    * @brief Calculates the hessian diagonal
@@ -63,14 +63,14 @@ public:
    * @param eta Linear predictor
    * @return The hessian diagonal, a matrix of size (n x m)
    */
-  Eigen::MatrixXd hessianDiagonal(const Eigen::MatrixXd& eta);
+  Eigen::MatrixXd hessianDiagonal(const Eigen::MatrixXd& eta) override;
 
   /**
    * @brief The link function
    * @param mu Mean.
    * @return The result of applying the link function.
    */
-  Eigen::MatrixXd link(const Eigen::MatrixXd& mu);
+  Eigen::MatrixXd link(const Eigen::MatrixXd& mu) override;
 
   /**
    * @brief The inverse link function
@@ -78,7 +78,7 @@ public:
    * @return The modified softmax of the linear predictor: \f$
    * \frac{e^{\eta}}{1 + \sum_{j=1}^{k} e^{\eta_j}} \f$
    */
-  Eigen::MatrixXd inverseLink(const Eigen::MatrixXd& eta);
+  Eigen::MatrixXd inverseLink(const Eigen::MatrixXd& eta) override;
 
   /**
    * @brief Return predicted response, which is an integer class label based on
@@ -86,7 +86,7 @@ public:
    * @param eta The linear predictor
    * @return The predicted response
    */
-  Eigen::MatrixXd predict(const Eigen::MatrixXd& eta);
+  Eigen::MatrixXd predict(const Eigen::MatrixXd& eta) override;
 };
 
 } // namespace slope

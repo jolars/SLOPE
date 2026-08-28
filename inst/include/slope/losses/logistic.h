@@ -29,7 +29,7 @@ public:
    * @param y The true labels.
    * @return The loss value.
    */
-  double loss(const Eigen::MatrixXd& eta, const Eigen::MatrixXd& y);
+  double loss(const Eigen::MatrixXd& eta, const Eigen::MatrixXd& y) override;
 
   /**
    * @brief Calculates the dual for the logistic loss function.
@@ -40,7 +40,7 @@ public:
    */
   double dual(const Eigen::MatrixXd& theta,
               const Eigen::MatrixXd& y,
-              const Eigen::VectorXd& w);
+              const Eigen::VectorXd& w) override;
 
   Eigen::MatrixXd dualPoint(const Eigen::MatrixXd& eta,
                             const Eigen::MatrixXd& y,
@@ -52,7 +52,7 @@ public:
    * @param eta Linear predictor
    * @return A matrix of ones (n x m)
    */
-  Eigen::MatrixXd hessianDiagonal(const Eigen::MatrixXd& eta);
+  Eigen::MatrixXd hessianDiagonal(const Eigen::MatrixXd& eta) override;
 
   /**
    * @brief Preprocesses the response for the quadratic model
@@ -61,21 +61,21 @@ public:
    * @param y Response vector (in {0,1})
    * @return Modified response.
    */
-  Eigen::MatrixXd preprocessResponse(const Eigen::MatrixXd& y);
+  Eigen::MatrixXd preprocessResponse(const Eigen::MatrixXd& y) override;
 
   /**
    * @brief The link function
    * @param mu Mean
    * @return \f$ \log(\frac{\mu}{1 - \mu}) \f$
    */
-  Eigen::MatrixXd link(const Eigen::MatrixXd& mu);
+  Eigen::MatrixXd link(const Eigen::MatrixXd& mu) override;
 
   /**
    * @brief The inverse link function, also known as the mean function.
    * @param eta Mean
    * @return \f$ \frac{1}{1 + \exp(-\eta)} \f$
    */
-  Eigen::MatrixXd inverseLink(const Eigen::MatrixXd& eta);
+  Eigen::MatrixXd inverseLink(const Eigen::MatrixXd& eta) override;
 
   /**
    * @brief Return predicted response, that is 0 or 1 depending on
@@ -83,7 +83,7 @@ public:
    * @param eta The linear predictor
    * @return The predicted response
    */
-  Eigen::MatrixXd predict(const Eigen::MatrixXd& eta);
+  Eigen::MatrixXd predict(const Eigen::MatrixXd& eta) override;
 };
 
 } // namespace slope

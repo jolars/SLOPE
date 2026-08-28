@@ -43,7 +43,7 @@ public:
    * @note The loss is calculated as: \f$ \frac{1}{2n} \sum_{i=1}^n (\eta_i -
    * y_i)^2 \f$
    */
-  double loss(const Eigen::MatrixXd& eta, const Eigen::MatrixXd& y);
+  double loss(const Eigen::MatrixXd& eta, const Eigen::MatrixXd& y) override;
 
   /**
    * @brief Computes the dual function for the quadratic loss
@@ -58,7 +58,7 @@ public:
    */
   double dual(const Eigen::MatrixXd& theta,
               const Eigen::MatrixXd& y,
-              const Eigen::VectorXd& w);
+              const Eigen::VectorXd& w) override;
 
   /**
    * @brief Calculates hessian diagonal
@@ -66,7 +66,7 @@ public:
    * @param eta Linear predictor
    * @return A matrix of ones (n x m)
    */
-  Eigen::MatrixXd hessianDiagonal(const Eigen::MatrixXd& eta);
+  Eigen::MatrixXd hessianDiagonal(const Eigen::MatrixXd& eta) override;
 
   /**
    * @brief Preprocesses the response for the quadratic model
@@ -75,7 +75,7 @@ public:
    * @param y Responnse vector (n x 1)
    * @return Modified response
    */
-  Eigen::MatrixXd preprocessResponse(const Eigen::MatrixXd& y);
+  Eigen::MatrixXd preprocessResponse(const Eigen::MatrixXd& y) override;
 
   /**
    * @brief Updates weights and working response for IRLS algorithm
@@ -94,28 +94,28 @@ public:
   void updateWeightsAndWorkingResponse(Eigen::MatrixXd& w,
                                        Eigen::MatrixXd& z,
                                        const Eigen::MatrixXd& eta,
-                                       const Eigen::MatrixXd& y);
+                                       const Eigen::MatrixXd& y) override;
 
   /**
    * @brief The link function
    * @param mu Mean of the distribution.
    * @return The identity function.
    */
-  Eigen::MatrixXd link(const Eigen::MatrixXd& mu);
+  Eigen::MatrixXd link(const Eigen::MatrixXd& mu) override;
 
   /**
    * @brief The link function, also known as the mean function.
    * @param eta Linear predictor.
    * @return The identity function.
    */
-  Eigen::MatrixXd inverseLink(const Eigen::MatrixXd& eta);
+  Eigen::MatrixXd inverseLink(const Eigen::MatrixXd& eta) override;
 
   /**
    * @brief Return predicted response, which is the same as the linear predictor
    * @param eta The linear predictor
    * @return The predicted response.
    */
-  Eigen::MatrixXd predict(const Eigen::MatrixXd& eta);
+  Eigen::MatrixXd predict(const Eigen::MatrixXd& eta) override;
 };
 
 } // namespace slope
