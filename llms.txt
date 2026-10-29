@@ -77,6 +77,22 @@ SLOPE is also available as a
 - Julia package: [SLOPE.jl](https://github.com/jolars/SLOPE.jl)
 - C++ library: [libslope](https://github.com/jolars/libslope)
 
+## Citation
+
+If you use SLOPE in your research, please cite [Efficient Solvers for
+SLOPE in R, Python, Julia, and
+C++](https://doi.org/10.48550/arXiv.2511.02430).
+
+For reproducibility, also cite the software release you used. Select
+that release in the [Zenodo
+archive](https://doi.org/10.5281/zenodo.17475844) and export its
+citation. The concept DOI `10.5281/zenodo.17475844` identifies SLOPE
+across all releases.
+
+Machine-readable software metadata and the preferred paper citation are
+available in
+[CITATION.cff](https://jolars.github.io/SLOPE/CITATION.cff).
+
 ## Versioning
 
 SLOPE uses [semantic versioning](https://semver.org).

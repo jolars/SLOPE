@@ -230,6 +230,8 @@ fit_poisson <- SLOPE(
   y = abalone$y,
   family = "poisson"
 )
+#> Warning in SLOPE(x = abalone$x, y = abalone$y, family = "poisson"): maximum
+#> number of passes reached at steps 16, 18, 22!
 
 plot(fit_poisson)
 ```
