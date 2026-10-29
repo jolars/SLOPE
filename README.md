@@ -11,7 +11,8 @@ status](https://github.com/jolars/SLOPE/workflows/R-CMD-check/badge.svg)](https:
 status](https://www.r-pkg.org/badges/version/SLOPE)](https://CRAN.R-project.org/package=SLOPE)
 [![Code
 coverage](https://codecov.io/gh/jolars/SLOPE/graph/badge.svg)](https://app.codecov.io/gh/jolars/SLOPE)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17475845.svg)](https://doi.org/10.5281/zenodo.17475845)
+[![Software
+DOI](https://img.shields.io/badge/Software_DOI-10.5281%2Fzenodo.17475844-blue)](https://doi.org/10.5281/zenodo.17475844)
 <!-- badges: end -->
 
 Efficient implementations for Sorted L-One Penalized Estimation (SLOPE):
@@ -85,6 +86,21 @@ SLOPE is also available as a
 - Python package: [sortedl1](https://pypi.org/project/sortedl1/)
 - Julia package: [SLOPE.jl](https://github.com/jolars/SLOPE.jl)
 - C++ library: [libslope](https://github.com/jolars/libslope)
+
+## Citation
+
+If you use SLOPE in your research, please cite [Efficient Solvers for
+SLOPE in R, Python, Julia, and
+C++](https://doi.org/10.48550/arXiv.2511.02430).
+
+For reproducibility, also cite the software release you used. Select
+that release in the [Zenodo
+archive](https://doi.org/10.5281/zenodo.17475844) and export its
+citation. The concept DOI `10.5281/zenodo.17475844` identifies SLOPE
+across all releases.
+
+Machine-readable software metadata and the preferred paper citation are
+available in [CITATION.cff](CITATION.cff).
 
 ## Versioning
 
