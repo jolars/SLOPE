@@ -1,4 +1,4 @@
-# SLOPE 2.1
+# SLOPE 2.1.1
 
 ## Bug fixes
 
