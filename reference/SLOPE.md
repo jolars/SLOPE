@@ -41,7 +41,9 @@ SLOPE(
   prox_method,
   screen,
   verbosity,
-  screen_alg
+  screen_alg,
+  weights = NULL,
+  alpha_scale = c("absolute", "relative")
 )
 ```
 
@@ -97,14 +99,6 @@ SLOPE(
 
   - `"estimate"`, which estimates a *single* `alpha` using Algorithm 5
     in Bogdan et al. (2015).
-
-  When a value is manually entered for `alpha`, it will be scaled based
-  on the type of standardization that is applied to `x`. For
-  `scale = "l2"`, `alpha` will be scaled by \\\sqrt n\\. For
-  `scale = "sd"` or `"none"`, alpha will be scaled by \\n\\, and for
-  `scale = "l1"` no scaling is applied. Note, however, that the `alpha`
-  that is returned in the resulting value is the **unstandardized**
-  alpha.
 
 - lambda:
 
@@ -245,6 +239,24 @@ SLOPE(
 
   DEPRECATED
 
+- weights:
+
+  observation weights. Supply one finite, nonnegative number per row of
+  `x`, with at least one positive weight. `NULL` (the default) gives
+  every observation equal weight. Multiplying all weights by a positive
+  constant leaves the fit unchanged. Nonuniform weights require an alpha
+  path or supplied alpha values and a lambda sequence other than
+  `"gaussian"`.
+
+- alpha_scale:
+
+  scale of numeric `alpha` values. With `"absolute"` (the default),
+  `alpha` multiplies the lambda sequence directly. With `"relative"`,
+  each value is multiplied by the smallest absolute alpha that sets
+  every predictor coefficient to zero, given the data, observation
+  weights, predictor normalization, and lambda sequence. Relative values
+  can exceed one. Automatic paths and estimates use absolute alphas.
+
 ## Value
 
 An object of class `"SLOPE"` with the following slots:
@@ -266,7 +278,11 @@ An object of class `"SLOPE"` with the following slots:
 
 - alpha:
 
-  vector giving the (unstandardized) scaling of the lambda sequence
+  the absolute multipliers of the lambda sequence
+
+- weights:
+
+  the supplied observation weights, or `NULL` for equal weights
 
 - class_names:
 
@@ -462,9 +478,11 @@ Algorithm for Linear Inverse Problems. SIAM Journal on Imaging Sciences,
 ## Examples
 
 ``` r
-
 # Gaussian response, default lambda sequence
 fit <- SLOPE(bodyfat$x, bodyfat$y)
+
+# Use 20% of the penalty that sets all predictor coefficients to zero
+fit <- SLOPE(bodyfat$x, bodyfat$y, alpha = 0.2, alpha_scale = "relative")
 
 # Multinomial response, custom alpha and lambda
 m <- length(unique(wine$y)) - 1

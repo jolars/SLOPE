@@ -2,7 +2,9 @@
 
 This function trains a model fit by
 [`SLOPE()`](https://jolars.github.io/SLOPE/reference/SLOPE.md) by tuning
-its parameters through cross-validation.
+its parameters through cross-validation. Cross-validation generates its
+alpha path on the full data and uses the resulting absolute alphas in
+every fold and in the final refit.
 
 ## Usage
 
@@ -16,7 +18,8 @@ cvSLOPE(
   n_repeats = 1,
   measure = c("mse", "mae", "deviance", "misclass", "auc"),
   refit = TRUE,
-  ...
+  ...,
+  weights = NULL
 )
 ```
 
@@ -65,6 +68,14 @@ cvSLOPE(
   other arguments to pass on to
   [`SLOPE()`](https://jolars.github.io/SLOPE/reference/SLOPE.md)
 
+- weights:
+
+  observation weights as in
+  [`SLOPE()`](https://jolars.github.io/SLOPE/reference/SLOPE.md). Each
+  training and validation fold must have positive total weight. Weights
+  apply to both fitting and scoring within folds. The fold scores are
+  averaged equally.
+
 ## Value
 
 An object of class `"TrainedSLOPE"`, with the following slots:
@@ -94,7 +105,11 @@ An object of class `"TrainedSLOPE"`, with the following slots:
 
 - training_data:
 
-  the training data used for tuning (`x` and `y`)
+  the training data used for tuning (`x`, `y`, and `weights`)
+
+- family:
+
+  the model family used for tuning
 
 - call:
 
@@ -136,7 +151,8 @@ tune$model
 #>     tol = 1e-04, threads = 1, diagnostics = FALSE, patterns = FALSE, 
 #>     gamma = 1, cd_type = c("permuted", "cyclical"), tol_abs, 
 #>     tol_rel, tol_rel_gap, tol_infeas, tol_rel_coef_change, prox_method, 
-#>     screen, verbosity, screen_alg) 
+#>     screen, verbosity, screen_alg, weights = NULL, alpha_scale = c("absolute", 
+#>         "relative")) 
 #> {
 #>     if (!missing(tol_abs)) {
 #>         warning("`tol_abs` argument is deprecated and has no effect")
@@ -170,7 +186,7 @@ tune$model
 #>         scale, alpha, lambda, alpha_min_ratio, path_length, q, 
 #>         theta1, theta2, tol_dev_change, tol_dev_ratio, max_variables, 
 #>         solver, max_passes, tol, diagnostics, patterns, threads, 
-#>         gamma, cd_type)
+#>         gamma, cd_type, weights = weights, alpha_scale = alpha_scale)
 #>     x <- control$x
 #>     y <- control$y
 #>     alpha <- control$alpha
@@ -221,22 +237,22 @@ tune$model
 #>     structure(list(intercepts = intercepts, coefficients = coefficients, 
 #>         intercepts_scaled = intercepts_scaled, coefficients_scaled = beta_scaled, 
 #>         nonzeros = nonzeros, lambda = lambda, alpha = alpha[seq_along(beta)], 
-#>         variable_names = control$variable_names, class_names = control$class_names, 
-#>         passes = passes, deviance_ratio = drop(fit$deviance_ratio), 
+#>         weights = weights, variable_names = control$variable_names, 
+#>         class_names = control$class_names, passes = passes, deviance_ratio = drop(fit$deviance_ratio), 
 #>         null_deviance = fit$null_deviance, family = control$family, 
 #>         diagnostics = diagnostics, patterns = patterns, has_intercept = control$fit_intercept, 
 #>         n_observations = NROW(x), n_predictors = NCOL(x), call = ocall), 
 #>         class = c(slope_class, "SLOPE"))
-#> })(x = structure(c(21, 21, 22.8, 21.4, 18.7, 18.1, 14.3, 24.4, 
-#> 22.8, 19.2, 17.8, 16.4, 17.3, 15.2, 10.4, 10.4, 14.7, 32.4, 30.4, 
-#> 33.9, 21.5, 15.5, 15.2, 13.3, 19.2, 27.3, 26, 30.4, 15.8, 19.7, 
-#> 15, 21.4, 3.9, 3.9, 3.85, 3.08, 3.15, 2.76, 3.21, 3.69, 3.92, 
-#> 3.92, 3.92, 3.07, 3.07, 3.07, 2.93, 3, 3.23, 4.08, 4.93, 4.22, 
-#> 3.7, 2.76, 3.15, 3.73, 3.08, 4.08, 4.43, 3.77, 4.22, 3.62, 3.54, 
-#> 4.11, 2.62, 2.875, 2.32, 3.215, 3.44, 3.46, 3.57, 3.19, 3.15, 
-#> 3.44, 3.44, 4.07, 3.73, 3.78, 5.25, 5.424, 5.345, 2.2, 1.615, 
-#> 1.835, 2.465, 3.52, 3.435, 3.84, 3.845, 1.935, 2.14, 1.513, 3.17, 
-#> 2.77, 3.57, 2.78), dim = c(32L, 3L), dimnames = list(c("Mazda RX4", 
+#> })(x = structure(list(mpg = c(21, 21, 22.8, 21.4, 18.7, 18.1, 
+#> 14.3, 24.4, 22.8, 19.2, 17.8, 16.4, 17.3, 15.2, 10.4, 10.4, 14.7, 
+#> 32.4, 30.4, 33.9, 21.5, 15.5, 15.2, 13.3, 19.2, 27.3, 26, 30.4, 
+#> 15.8, 19.7, 15, 21.4), drat = c(3.9, 3.9, 3.85, 3.08, 3.15, 2.76, 
+#> 3.21, 3.69, 3.92, 3.92, 3.92, 3.07, 3.07, 3.07, 2.93, 3, 3.23, 
+#> 4.08, 4.93, 4.22, 3.7, 2.76, 3.15, 3.73, 3.08, 4.08, 4.43, 3.77, 
+#> 4.22, 3.62, 3.54, 4.11), wt = c(2.62, 2.875, 2.32, 3.215, 3.44, 
+#> 3.46, 3.57, 3.19, 3.15, 3.44, 3.44, 4.07, 3.73, 3.78, 5.25, 5.424, 
+#> 5.345, 2.2, 1.615, 1.835, 2.465, 3.52, 3.435, 3.84, 3.845, 1.935, 
+#> 2.14, 1.513, 3.17, 2.77, 3.57, 2.78)), row.names = c("Mazda RX4", 
 #> "Mazda RX4 Wag", "Datsun 710", "Hornet 4 Drive", "Hornet Sportabout", 
 #> "Valiant", "Duster 360", "Merc 240D", "Merc 230", "Merc 280", 
 #> "Merc 280C", "Merc 450SE", "Merc 450SL", "Merc 450SLC", "Cadillac Fleetwood", 
@@ -244,11 +260,10 @@ tune$model
 #> "Toyota Corolla", "Toyota Corona", "Dodge Challenger", "AMC Javelin", 
 #> "Camaro Z28", "Pontiac Firebird", "Fiat X1-9", "Porsche 914-2", 
 #> "Lotus Europa", "Ford Pantera L", "Ferrari Dino", "Maserati Bora", 
-#> "Volvo 142E"), c("mpg", "drat", "wt"))), y = structure(c(110, 
-#> 110, 93, 110, 175, 105, 245, 62, 95, 123, 123, 180, 180, 180, 
-#> 205, 215, 230, 66, 52, 65, 97, 150, 150, 245, 175, 66, 91, 113, 
-#> 264, 175, 335, 109), dim = c(32L, 1L)), alpha = 2.40474435342974, 
-#>     q = 0.1, gamma = 0)
+#> "Volvo 142E"), class = "data.frame"), y = c(110, 110, 93, 110, 
+#> 175, 105, 245, 62, 95, 123, 123, 180, 180, 180, 205, 215, 230, 
+#> 66, 52, 65, 97, 150, 150, 245, 175, 66, 91, 113, 264, 175, 335, 
+#> 109), alpha = 2.40474435342974, q = 0.1, gamma = 0, alpha_scale = "absolute")
 #> 
 #> Path summary:
 #>      alpha deviance_ratio n_nonzero

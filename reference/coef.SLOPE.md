@@ -27,8 +27,8 @@ coef(
 
 - alpha:
 
-  penalty parameter for SLOPE models; if `NULL`, the values used in the
-  original fit will be used
+  absolute penalty parameter for SLOPE models. `NULL` uses the values
+  stored in the original fit.
 
 - exact:
 

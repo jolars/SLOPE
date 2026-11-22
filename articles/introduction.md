@@ -124,9 +124,9 @@ tune
 #> trainSLOPE(x = x, y = y, q = c(0.1, 0.2), number = 5, repeats = 2)
 #> 
 #> Optimum values:
-#>     q       alpha measure      mean        se        lo        hi
-#> 1 0.2 0.001638533     mae  3.613619 0.1319654  3.315092  3.912145
-#> 2 0.2 0.001973619     mse 19.535853 1.1259011 16.988887 22.082818
+#>     q       alpha measure      mean       se        lo        hi
+#> 1 0.2 0.001638533     mae  3.613617 0.131966  3.315089  3.912144
+#> 2 0.2 0.001973619     mse 19.535837 1.125909 16.988853 22.082821
 ```
 
 ### False discovery rate

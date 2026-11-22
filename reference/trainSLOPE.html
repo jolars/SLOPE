@@ -66,7 +66,8 @@ through cross-validation.</p>
 <span>  number <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  repeats <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  measure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mse"</span>, <span class="st">"mae"</span>, <span class="st">"deviance"</span>, <span class="st">"misclass"</span>, <span class="st">"auc"</span><span class="op">)</span>,</span>
-<span>  <span class="va">...</span></span>
+<span>  <span class="va">...</span>,</span>
+<span>  weights <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -75,10 +76,10 @@ through cross-validation.</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>the design matrix, which can be either a dense
-matrix of the standard <em>matrix</em> class, or a sparse matrix
-inheriting from <a href="https://rdrr.io/pkg/Matrix/man/sparseMatrix.html" class="external-link">Matrix::sparseMatrix</a>. Data frames will
-be converted to matrices internally.</p></dd>
+<dd><p>the design matrix, which can be either a dense matrix of the
+standard <em>matrix</em> class, or a sparse matrix inheriting from
+<a href="https://rdrr.io/pkg/Matrix/man/sparseMatrix.html" class="external-link">Matrix::sparseMatrix</a>. Data frames will be converted to matrices
+internally.</p></dd>
 
 
 <dt id="arg-y">y<a class="anchor" aria-label="anchor" href="#arg-y"></a></dt>
@@ -111,6 +112,12 @@ all the possible measures for the given model will be used.</p></dd>
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>other arguments to pass on to <code><a href="SLOPE.html">SLOPE()</a></code></p></dd>
 
+
+<dt id="arg-weights">weights<a class="anchor" aria-label="anchor" href="#arg-weights"></a></dt>
+<dd><p>observation weights as in <code><a href="SLOPE.html">SLOPE()</a></code>. Each training and
+validation fold must have positive total weight. Weights apply to both
+fitting and scoring within folds. The fold scores are averaged equally.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -133,7 +140,10 @@ values for the different metrics and their corresponding parameter values</p></d
 <dd><p>the model fit to the entire data set</p></dd>
 
 <dt>training_data</dt>
-<dd><p>the training data used for tuning (<code>x</code> and <code>y</code>)</p></dd>
+<dd><p>the training data used for tuning (<code>x</code>, <code>y</code>, and <code>weights</code>)</p></dd>
+
+<dt>family</dt>
+<dd><p>the model family used for tuning</p></dd>
 
 <dt>call</dt>
 <dd><p>the call</p></dd>
@@ -141,12 +151,13 @@ values for the different metrics and their corresponding parameter values</p></d
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Note that by default this method matches all of the available metrics
-for the given model family against those provided in the argument
-<code>measure</code>. Collecting these measures is not particularly demanding
-computationally so it is almost always best to leave this argument
-as it is and then choose which argument to focus on in the call
-to <code><a href="plot.TrainedSLOPE.html">plot.TrainedSLOPE()</a></code>.</p>
+    <p>Note that by default this method matches all of the available metrics for the
+given model family against those provided in the argument <code>measure</code>.
+Collecting these measures is not particularly demanding computationally so it
+is almost always best to leave this argument as it is and then choose which
+argument to focus on in the call to <code><a href="plot.TrainedSLOPE.html">plot.TrainedSLOPE()</a></code>.
+The initial fit on the full data supplies the absolute alphas used in
+every fold.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -160,7 +171,8 @@ to <code><a href="plot.TrainedSLOPE.html">plot.TrainedSLOPE()</a></code>.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># 8-fold cross-validation repeated 5 times</span></span></span>
-<span class="r-in"><span><span class="va">tune</span> <span class="op">&lt;-</span> <span class="fu">trainSLOPE</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">mtcars</span>, select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mpg"</span>, <span class="st">"drat"</span>, <span class="st">"wt"</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span><span class="va">tune</span> <span class="op">&lt;-</span> <span class="fu">trainSLOPE</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">mtcars</span>, select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mpg"</span>, <span class="st">"drat"</span>, <span class="st">"wt"</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  <span class="va">mtcars</span><span class="op">$</span><span class="va">hp</span>,</span></span>
 <span class="r-in"><span>  q <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.2</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  number <span class="op">=</span> <span class="fl">8</span>,</span></span>

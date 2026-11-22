@@ -7,19 +7,31 @@ a model fit with
 ## Usage
 
 ``` r
-score(object, x, y, measure)
+score(object, x, y, measure, weights = NULL)
 
 # S3 method for class 'GaussianSLOPE'
-score(object, x, y, measure = c("mse", "mae"))
+score(object, x, y, measure = c("mse", "mae"), weights = NULL)
 
 # S3 method for class 'BinomialSLOPE'
-score(object, x, y, measure = c("mse", "mae", "deviance", "misclass", "auc"))
+score(
+  object,
+  x,
+  y,
+  measure = c("mse", "mae", "deviance", "misclass", "auc"),
+  weights = NULL
+)
 
 # S3 method for class 'MultinomialSLOPE'
-score(object, x, y, measure = c("mse", "mae", "deviance", "misclass"))
+score(
+  object,
+  x,
+  y,
+  measure = c("mse", "mae", "deviance", "misclass"),
+  weights = NULL
+)
 
 # S3 method for class 'PoissonSLOPE'
-score(object, x, y, measure = c("mse", "mae"))
+score(object, x, y, measure = c("mse", "mae"), weights = NULL)
 ```
 
 ## Arguments
@@ -42,10 +54,16 @@ score(object, x, y, measure = c("mse", "mae"))
   returns mean absolute error, `"misclass"` returns misclassification
   rate, and `"auc"` returns area under the ROC curve.
 
+- weights:
+
+  observation weights as in
+  [`SLOPE()`](https://jolars.github.io/SLOPE/reference/SLOPE.md),
+  applied to the rows of the data being scored.
+
 ## Value
 
 The measure along the regularization path depending on the value in
-`measure`.#'
+`measure`.
 
 ## See also
 

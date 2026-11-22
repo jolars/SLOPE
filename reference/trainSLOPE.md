@@ -14,7 +14,8 @@ trainSLOPE(
   number = 10,
   repeats = 1,
   measure = c("mse", "mae", "deviance", "misclass", "auc"),
-  ...
+  ...,
+  weights = NULL
 )
 ```
 
@@ -59,6 +60,14 @@ trainSLOPE(
   other arguments to pass on to
   [`SLOPE()`](https://jolars.github.io/SLOPE/reference/SLOPE.md)
 
+- weights:
+
+  observation weights as in
+  [`SLOPE()`](https://jolars.github.io/SLOPE/reference/SLOPE.md). Each
+  training and validation fold must have positive total weight. Weights
+  apply to both fitting and scoring within folds. The fold scores are
+  averaged equally.
+
 ## Value
 
 An object of class `"TrainedSLOPE"`, with the following slots:
@@ -87,7 +96,11 @@ An object of class `"TrainedSLOPE"`, with the following slots:
 
 - training_data:
 
-  the training data used for tuning (`x` and `y`)
+  the training data used for tuning (`x`, `y`, and `weights`)
+
+- family:
+
+  the model family used for tuning
 
 - call:
 
@@ -101,6 +114,8 @@ for the given model family against those provided in the argument
 computationally so it is almost always best to leave this argument as it
 is and then choose which argument to focus on in the call to
 [`plot.TrainedSLOPE()`](https://jolars.github.io/SLOPE/reference/plot.TrainedSLOPE.md).
+The initial fit on the full data supplies the absolute alphas used in
+every fold.
 
 ## See also
 
@@ -114,7 +129,8 @@ Other model-tuning:
 
 ``` r
 # 8-fold cross-validation repeated 5 times
-tune <- trainSLOPE(subset(mtcars, select = c("mpg", "drat", "wt")),
+tune <- trainSLOPE(
+  subset(mtcars, select = c("mpg", "drat", "wt")),
   mtcars$hp,
   q = c(0.1, 0.2),
   number = 8,

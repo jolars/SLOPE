@@ -125,8 +125,8 @@ a call to <code><a href="SLOPE.html">SLOPE()</a></code></p></dd>
 
 
 <dt id="arg-alpha">alpha<a class="anchor" aria-label="anchor" href="#arg-alpha"></a></dt>
-<dd><p>penalty parameter for SLOPE models; if <code>NULL</code>, the
-values used in the original fit will be used</p></dd>
+<dd><p>absolute penalty parameter for SLOPE models. <code>NULL</code> uses the
+values stored in the original fit.</p></dd>
 
 
 <dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
@@ -208,7 +208,7 @@ penalty path.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [523] "0" "0" "0" "0" "0" "0" "0" "1" "1" "1" "1" "0" "0" "0" "0" "1" "1" "1"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [541] "0" "0" "0" "1" "1" "1" "1" "1" "0" "1" "0" "1" "1" "0" "0" "0" "0" "0"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [559] "0" "0" "0" "1" "1" "1" "1" "0" "0" "0" "0" "1" "1" "1" "0" "0" "0" "1"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [577] "1" "1" "1" "1" "0" "1" "0" "1" "1" "0" "0" "0" "0" "0" "0" "0" "0" "1"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [577] "1" "1" "1" "1" "0" "1" "0" "1" "1" "1" "0" "0" "0" "0" "0" "0" "0" "1"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [595] "1" "1" "1" "0" "0" "0" "0" "1" "1" "1" "0" "0" "0" "1" "1" "1" "1" "1"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [613] "0" "1" "0" "1" "1" "1" "0" "0" "0" "0" "0" "0" "0" "1" "1" "1" "1" "0"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [631] "0" "0" "0" "1" "1" "1" "0" "0" "0" "1" "1" "1" "1" "1" "0" "1" "0" "1"</span>
