@@ -51,6 +51,10 @@ public:
               const Eigen::MatrixXd& y,
               const Eigen::VectorXd& observation_weights) override;
 
+  double lossWithNormalizedWeights(const Eigen::MatrixXd& eta,
+                                   const Eigen::MatrixXd& y,
+                                   const Eigen::VectorXd& weights) override;
+
   /**
    * @brief Computes the dual function for the quadratic loss
    * @details Calculates the Fenchel conjugate of the quadratic loss function

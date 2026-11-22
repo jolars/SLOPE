@@ -12,15 +12,14 @@ uniformObservationWeights(const Eigen::VectorXd& weights)
          (weights(0) > 0.0 && (weights.array() == weights(0)).all());
 }
 
-/** Validate and normalize row weights to have mean one. */
-inline Eigen::VectorXd
-normalizeObservationWeights(const Eigen::VectorXd& weights, Eigen::Index n)
+inline void
+validateObservationWeights(const Eigen::VectorXd& weights, Eigen::Index n)
 {
   if (n <= 0) {
     throw std::invalid_argument("Observation weights require at least one row");
   }
   if (weights.size() == 0) {
-    return Eigen::VectorXd::Ones(n);
+    return;
   }
   if (weights.size() != n) {
     throw std::invalid_argument(
@@ -34,6 +33,13 @@ normalizeObservationWeights(const Eigen::VectorXd& weights, Eigen::Index n)
     throw std::invalid_argument(
       "Observation weights must have positive total weight");
   }
+}
+
+/** Validate and normalize row weights to have mean one. */
+inline Eigen::VectorXd
+normalizeObservationWeights(const Eigen::VectorXd& weights, Eigen::Index n)
+{
+  validateObservationWeights(weights, n);
   if (uniformObservationWeights(weights)) {
     return Eigen::VectorXd::Ones(n);
   }
@@ -41,6 +47,21 @@ normalizeObservationWeights(const Eigen::VectorXd& weights, Eigen::Index n)
   Eigen::VectorXd normalized = weights / weights.maxCoeff();
   normalized *= static_cast<double>(n) / normalized.sum();
   return normalized;
+}
+
+inline void
+validateBinomialClassWeights(const Eigen::MatrixXd& y,
+                             const Eigen::VectorXd& weights)
+{
+  for (Eigen::Index j = 0; j < y.cols(); ++j) {
+    const auto positive_weight = weights.array() > 0.0;
+    if (!(positive_weight && (y.col(j).array() == 0.0)).any() ||
+        !(positive_weight && (y.col(j).array() == 1.0)).any()) {
+      throw std::invalid_argument(
+        "Binomial fits with an intercept require positive total weight in "
+        "both classes");
+    }
+  }
 }
 
 inline Eigen::Index

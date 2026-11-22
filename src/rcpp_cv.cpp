@@ -41,6 +41,10 @@ cvImpl(T& x,
   }
 
   auto cv_config = slope::CvConfig();
+  if (as<std::string>(model_args["alpha_type"]) == "path") {
+    cv_config.alphas = as<ArrayXd>(model_args["alpha"]);
+  }
+  cv_config.lambda = as<ArrayXd>(model_args["lambda"]);
 
   std::map<std::string, std::vector<double>> hyperparams;
   hyperparams["q"] = as<std::vector<double>>(cv_args["q"]);

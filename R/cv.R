@@ -2,8 +2,9 @@
 #'
 #' This function trains a model fit by [SLOPE()] by tuning its parameters
 #' through cross-validation.
-#' Cross-validation generates its alpha path on the full data and uses the
-#' resulting absolute alphas in every fold and in the final refit.
+#' Cross-validation generates the alpha path or converts supplied relative
+#' alphas on the full data for each grid point. It uses the absolute alpha
+#' candidates in every fold and the selected absolute alpha in the final refit.
 #'
 #' @inheritParams SLOPE
 #' @param q a vector of quantiles for the `q` parameter in SLOPE

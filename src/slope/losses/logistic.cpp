@@ -49,6 +49,14 @@ Logistic::loss(const Eigen::MatrixXd& eta,
 {
   const Eigen::VectorXd weights =
     detail::normalizeObservationWeights(observation_weights, y.rows());
+  return lossWithNormalizedWeights(eta, y, weights);
+}
+
+double
+Logistic::lossWithNormalizedWeights(const Eigen::MatrixXd& eta,
+                                    const Eigen::MatrixXd& y,
+                                    const Eigen::VectorXd& weights)
+{
   double value = 0.0;
   for (Eigen::Index i = 0; i < y.rows(); ++i) {
     if (weights(i) > 0.0) {

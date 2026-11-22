@@ -15,6 +15,7 @@
 #include <Eigen/SparseCore>
 #include <algorithm>
 #include <memory>
+#include <optional>
 
 namespace slope {
 
@@ -162,7 +163,7 @@ quadraticOlsDualPoint(
 }
 
 template<typename T>
-Eigen::MatrixXd
+std::optional<Eigen::MatrixXd>
 quadraticOlsDualPoint(
   const Eigen::SparseMatrixBase<T>& x,
   const Eigen::MatrixXd& y,
@@ -172,13 +173,19 @@ quadraticOlsDualPoint(
   const bool intercept,
   const Eigen::VectorXd& observation_weights = Eigen::VectorXd())
 {
-  const Eigen::VectorXd weights =
-    normalizeObservationWeights(observation_weights, y.rows());
   const bool center = jit_normalization == JitNormalization::Center ||
                       jit_normalization == JitNormalization::Both;
   const bool scale = jit_normalization == JitNormalization::Scale ||
                      jit_normalization == JitNormalization::Both;
 
+  if (center && !intercept && !uniformObservationWeights(observation_weights)) {
+    // The weighted, centered design would be dense. Skip the optional QR
+    // certificate and let the main solver use implicit centering.
+    return std::nullopt;
+  }
+
+  const Eigen::VectorXd weights =
+    normalizeObservationWeights(observation_weights, y.rows());
   Eigen::SparseMatrix<double> x_effective = x;
   for (int k = 0; k < x_effective.outerSize(); ++k) {
     for (Eigen::SparseMatrix<double>::InnerIterator it(x_effective, k); it;
@@ -199,21 +206,6 @@ quadraticOlsDualPoint(
   Eigen::VectorXd effective_centers = x_centers;
   if (scale) {
     effective_centers.array() /= x_scales.array();
-  }
-
-  if (!uniformObservationWeights(observation_weights)) {
-    // Without an intercept, explicit centering changes the constrained design.
-    // Fit that design directly rather than adding a free intercept to sparse
-    // QR.
-    Eigen::MatrixXd centered =
-      Eigen::MatrixXd(x_effective).rowwise() - effective_centers.transpose();
-    for (Eigen::Index i = 0; i < weights.size(); ++i) {
-      if (weights(i) == 0.0) {
-        centered.row(i).setZero();
-      }
-    }
-    return quadraticOlsDualPointFromDesign(
-      centered, y, false, observation_weights);
   }
 
   Eigen::MatrixXd theta(y.rows(), y.cols());

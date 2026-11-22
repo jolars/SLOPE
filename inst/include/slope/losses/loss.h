@@ -197,6 +197,11 @@ public:
                           const Eigen::MatrixXd& y,
                           const Eigen::VectorXd& observation_weights);
 
+  /** @brief Evaluates loss with validated weights that have mean one. */
+  virtual double lossWithNormalizedWeights(const Eigen::MatrixXd& eta,
+                                           const Eigen::MatrixXd& y,
+                                           const Eigen::VectorXd& weights);
+
 protected:
   /** @brief Evaluates family residuals only on positive-weight observations. */
   Eigen::MatrixXd residualOnSupport(const Eigen::MatrixXd& eta,

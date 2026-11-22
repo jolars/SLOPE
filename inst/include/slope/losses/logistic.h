@@ -35,6 +35,10 @@ public:
               const Eigen::MatrixXd& y,
               const Eigen::VectorXd& observation_weights) override;
 
+  double lossWithNormalizedWeights(const Eigen::MatrixXd& eta,
+                                   const Eigen::MatrixXd& y,
+                                   const Eigen::VectorXd& weights) override;
+
   /**
    * @brief Calculates the dual for the logistic loss function.
    * @param theta The dual variables.

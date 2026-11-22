@@ -22,6 +22,14 @@ Loss::loss(const Eigen::MatrixXd& eta,
   return loss(eta, y);
 }
 
+double
+Loss::lossWithNormalizedWeights(const Eigen::MatrixXd& eta,
+                                const Eigen::MatrixXd& y,
+                                const Eigen::VectorXd& weights)
+{
+  return loss(eta, y, weights);
+}
+
 void
 Loss::updateWeightsAndWorkingResponse(Eigen::MatrixXd& w,
                                       Eigen::MatrixXd& z,

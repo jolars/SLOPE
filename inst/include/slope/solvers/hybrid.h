@@ -179,7 +179,7 @@ private:
                    x_centers,
                    x_scales,
                    y,
-                   weights);
+                   observation_weights);
 
     Clusters clusters(beta);
 

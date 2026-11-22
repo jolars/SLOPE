@@ -138,3 +138,79 @@ test_that("Cross-validating on gamma works", {
   expect_gte(tuned$optima$mean[1], 0)
   expect_lte(tuned$optima$mean[1], 1)
 })
+
+test_that("cross-validation uses supplied alpha candidates and refits the winner", {
+  x <- cbind(1:18, cos(1:18))
+  y <- 3 + 2 * x[, 1] - x[, 2] + sin(x[, 1])
+  weights <- rep(c(0, 1, 3), 6)
+  candidates <- c(0.6, 0.2, 0)
+
+  for (design in list(x, Matrix::Matrix(x, sparse = TRUE))) {
+    set.seed(42)
+    folds <- createFolds(nrow(x), 3)[[1]]
+    set.seed(42)
+    tune <- cvSLOPE(
+      design,
+      y,
+      q = c(0.1, 0.2),
+      alpha = candidates,
+      alpha_scale = "relative",
+      n_folds = 3,
+      gamma = 1,
+      weights = weights,
+      tol = 1e-9
+    )
+
+    for (grid in tune$data) {
+      q <- grid$params[["q"]]
+      full_fit <- SLOPE(
+        design,
+        y,
+        q = q,
+        alpha = candidates,
+        alpha_scale = "relative",
+        weights = weights,
+        tol = 1e-9
+      )
+      expect_equal(grid$alphas, full_fit$alpha)
+
+      expected <- lapply(folds, function(fold) {
+        test <- fold + 1L
+        fit <- SLOPE(
+          design[-test, , drop = FALSE],
+          y[-test],
+          q = q,
+          alpha = full_fit$alpha,
+          weights = weights[-test],
+          tol = 1e-9
+        )
+        errors <- (predict(fit, design[test, , drop = FALSE]) - y[test])^2
+        apply(errors, 2, stats::weighted.mean, w = weights[test])
+      })
+      expect_equal(grid$score, do.call(rbind, expected), tolerance = 1e-6)
+    }
+
+    expect_equal(tune$model$alpha, tune$optima$alpha)
+  }
+
+  absolute <- cvSLOPE(x, y, alpha = 0.123, n_folds = 3, gamma = 1)
+  expect_equal(absolute$data[[1]]$alphas, 0.123)
+  expect_equal(absolute$model$alpha, 0.123)
+})
+
+test_that("relative CV alpha uses the supplied lambda sequence", {
+  x <- cbind(1:18, cos(1:18))
+  y <- 3 + 2 * x[, 1] - x[, 2] + sin(x[, 1])
+  args <- list(x = x, y = y, alpha = c(0.6, 0.2), lambda = c(4, 2), gamma = 1)
+  fit <- do.call(SLOPE, c(args, list(alpha_scale = "relative")))
+
+  set.seed(42)
+  relative <- do.call(cvSLOPE, c(args, list(alpha_scale = "relative")))
+  set.seed(42)
+  args$alpha <- fit$alpha
+  absolute <- do.call(cvSLOPE, args)
+
+  expect_equal(relative$data[[1]]$alphas, fit$alpha)
+  expect_equal(relative$summary, absolute$summary)
+  expect_equal(coef(relative$model), coef(absolute$model))
+})

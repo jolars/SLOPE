@@ -66,6 +66,15 @@ test_that("observation weights are validated", {
   )
 })
 
+test_that("binomial fits with an intercept need positive weight in both classes", {
+  x <- matrix(1:8)
+  y <- rep(c(0, 1), 4)
+  expect_error(
+    SLOPE(x, y, family = "binomial", weights = 1 - y, alpha = 0.1),
+    "positive total weight in both classes"
+  )
+})
+
 test_that("cross-validation weights the fits and held-out errors", {
   x <- cbind(1:18, cos(1:18))
   y <- 3 + 2 * x[, 1] - x[, 2] + sin(x[, 1])

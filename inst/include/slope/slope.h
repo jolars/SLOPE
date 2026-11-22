@@ -449,10 +449,10 @@ private:
     const int p = x.cols();
     const VectorXd weights =
       detail::normalizeObservationWeights(observation_weights, n);
+    const bool weighted = !detail::uniformObservationWeights(weights);
     const int n_positive = detail::positiveWeightCount(weights);
-    if (!detail::uniformObservationWeights(weights) &&
-        (this->alpha_type == "estimate" ||
-         (lambda.size() == 0 && this->lambda_type == "gaussian"))) {
+    if (weighted && (this->alpha_type == "estimate" ||
+                     (lambda.size() == 0 && this->lambda_type == "gaussian"))) {
       throw std::invalid_argument(
         "Nonuniform observation weights are not supported for noise-based "
         "alpha estimation or automatic Gaussian lambda correction");
@@ -474,6 +474,12 @@ private:
       throw std::invalid_argument("y must not contain NA, NaN, or Inf values");
     }
 
+    std::unique_ptr<Loss> loss = setupLoss(this->loss_type);
+    MatrixXd y = response_prepared ? y_in : loss->preprocessResponse(y_in);
+    if (this->intercept && this->loss_type == "logistic") {
+      detail::validateBinomialClassWeights(y, weights);
+    }
+
     auto jit_normalization = normalize(x.derived(),
                                        this->x_centers,
                                        this->x_scales,
@@ -481,10 +487,6 @@ private:
                                        this->scaling_type,
                                        this->modify_x,
                                        weights);
-
-    std::unique_ptr<Loss> loss = setupLoss(this->loss_type);
-
-    MatrixXd y = response_prepared ? y_in : loss->preprocessResponse(y_in);
 
     const int m = y.cols();
 
@@ -597,6 +599,8 @@ private:
 
     std::vector<SlopeFit> fits;
     std::optional<MatrixXd> quadratic_ols_dual_point;
+    bool tried_quadratic_ols_dual_point = false;
+    const VectorXd no_weights;
 
     // Regularization path loop
     for (int path_step = 0; path_step < this->path_length; ++path_step) {
@@ -629,7 +633,8 @@ private:
       // the penalty is below numerical resolution. It remains only a candidate
       // until computeDualFromPoint checks and, if necessary, scales it below.
       if (loss_type == "quadratic" && near_unregularized &&
-          !quadratic_ols_dual_point.has_value()) {
+          !tried_quadratic_ols_dual_point) {
+        tried_quadratic_ols_dual_point = true;
         quadratic_ols_dual_point =
           detail::quadraticOlsDualPoint(x.derived(),
                                         y,
@@ -689,9 +694,12 @@ private:
                        weights,
                        jit_normalization);
 
-        double primal = loss->loss(eta, y, weights) +
-                        sl1_norm.eval(beta(working_set),
-                                      lambda_curr.head(working_set.size()));
+        const double loss_value =
+          weighted ? loss->lossWithNormalizedWeights(eta, y, weights)
+                   : loss->loss(eta, y);
+        double primal =
+          loss_value + sl1_norm.eval(beta(working_set),
+                                     lambda_curr.head(working_set.size()));
 
         // The OLS bound can be loose on correlated designs, so it may certify
         // convergence only after the loss itself is numerically stationary.
@@ -828,7 +836,7 @@ private:
                     this->x_centers,
                     this->x_scales,
                     y,
-                    weights);
+                    weighted ? weights : no_weights);
       }
 
       if (total_it == this->max_it) {
@@ -1092,6 +1100,12 @@ private:
       return fit;
     }
 
+    std::unique_ptr<Loss> loss = setupLoss(this->loss_type);
+    MatrixXd y = response_prepared ? y_in : loss->preprocessResponse(y_in);
+    if (this->intercept && this->loss_type == "logistic") {
+      detail::validateBinomialClassWeights(y, weights);
+    }
+
     if (beta0.size() == 0) {
       beta0 = fit.getIntercepts(false);
     }
@@ -1128,14 +1142,11 @@ private:
 
     bool update_clusters = false;
 
-    std::unique_ptr<Loss> loss = setupLoss(this->loss_type);
-
-    MatrixXd y = response_prepared ? y_in : loss->preprocessResponse(y_in);
-
     int m = y.cols();
 
     MatrixXd eta;
     int passes = 0;
+    bool converged = false;
 
     if (!reuse_solution) {
       Eigen::ArrayXd lambda_cumsum_relax = Eigen::ArrayXd::Zero(p * m + 1);
@@ -1186,13 +1197,15 @@ private:
                                                            jit_normalization);
 
         double norm_grad = cluster_gradient.lpNorm<Eigen::Infinity>();
+        bool finite_gradient = cluster_gradient.allFinite();
         if (intercept) {
-          norm_grad = std::max(
-            norm_grad,
-            detail::weightedMean(residual, weights).cwiseAbs().maxCoeff());
+          const auto intercept_grad = detail::weightedMean(residual, weights);
+          finite_gradient = finite_gradient && intercept_grad.allFinite();
+          norm_grad = std::max(norm_grad, intercept_grad.cwiseAbs().maxCoeff());
         }
 
-        if (norm_grad < tol_relax) {
+        if (finite_gradient && norm_grad < tol_relax) {
+          converged = true;
           break;
         }
 
@@ -1226,20 +1239,16 @@ private:
         }
 
         eta = working_residual + z;
-
-        if (irls_it == max_it_outer_relax) {
-          WarningLogger::addWarning(
-            WarningCode::MAXIT_REACHED,
-            "Maximum number of IRLS iterations reached.");
-        }
       }
     }
 
     if (state != nullptr && !reuse_solution) {
       // Cache before blending so later steps use their own penalized fit.
-      state->beta0 = beta0;
-      state->beta = beta;
-      state->initialized = true;
+      state->initialized = converged && beta0.allFinite() && beta.allFinite();
+      if (state->initialized) {
+        state->beta0 = beta0;
+        state->beta = beta;
+      }
     }
 
     if (gamma > 0) {
@@ -1306,9 +1315,9 @@ public:
   /**
    * @brief Relaxes a fitted SLOPE path
    *
-   * Reuses the unpenalized fit at consecutive steps with the same signed
-   * cluster pattern. Reused steps have zero optimization passes and empty
-   * diagnostic histories.
+   * Reuses finite, converged unpenalized fits at consecutive steps with the
+   * same signed cluster pattern. Reused steps have zero optimization passes
+   * and empty diagnostic histories.
    *
    * @tparam T Matrix type for feature input (supports dense or sparse matrices)
    * @param path Previously fitted SLOPE path
@@ -1381,10 +1390,11 @@ struct SlopeAccess
                         Eigen::EigenBase<T>& x,
                         const Eigen::MatrixXd& y,
                         const Eigen::ArrayXd& alphas,
-                        const Eigen::VectorXd& weights)
+                        const Eigen::VectorXd& weights,
+                        const Eigen::ArrayXd& lambda = Eigen::ArrayXd())
   {
     return model.pathImpl(
-      x, y, alphas, {}, defaultInterruptChecker, weights, true);
+      x, y, alphas, lambda, defaultInterruptChecker, weights, true);
   }
 
   template<typename T>

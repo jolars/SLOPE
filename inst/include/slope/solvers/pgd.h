@@ -129,8 +129,16 @@ private:
     using Eigen::MatrixXd;
     using Eigen::VectorXd;
 
-    const VectorXd weights =
-      detail::normalizeObservationWeights(observation_weights, y.rows());
+    VectorXd weights;
+    if (observation_weights.size() != 0) {
+      weights =
+        detail::normalizeObservationWeights(observation_weights, y.rows());
+    }
+    const bool weighted = !detail::uniformObservationWeights(weights);
+    const auto evaluate_loss = [&](const MatrixXd& predictor) {
+      return weighted ? loss->lossWithNormalizedWeights(predictor, y, weights)
+                      : loss->loss(predictor, y);
+    };
 
     int n_working = working_set.size();
 
@@ -138,13 +146,18 @@ private:
     Eigen::VectorXd beta_diff(n_working);
     Eigen::VectorXd beta0_old = beta0;
 
-    double g_old = loss->loss(eta, y, weights);
+    double g_old = evaluate_loss(eta);
     double t_old = t;
 
-    Eigen::MatrixXd residual = loss->residual(eta, y);
-    detail::maskZeroWeightRows(residual, weights);
-    Eigen::VectorXd intercept_grad =
-      detail::weightedMean(residual, weights).transpose();
+    VectorXd intercept_grad;
+    if (intercept) {
+      const MatrixXd residual = loss->residual(eta, y);
+      if (weighted) {
+        intercept_grad = detail::weightedMean(residual, weights).transpose();
+      } else {
+        intercept_grad = residual.colwise().mean().transpose();
+      }
+    }
     Eigen::VectorXd grad_working = gradient(working_set);
 
     int line_search_iter = 0;
@@ -181,7 +194,7 @@ private:
                             jit_normalization,
                             intercept);
 
-      double g = loss->loss(eta, y, weights);
+      double g = evaluate_loss(eta);
       double q = g_old + beta_diff_norm;
 
       if (q >= g * (1 - 1e-12) || this->learning_rate < 1e-12) {
