@@ -8,15 +8,27 @@
 \alias{score.PoissonSLOPE}
 \title{Compute One of Several Loss Metrics on a New Data Set}
 \usage{
-score(object, x, y, measure)
+score(object, x, y, measure, weights = NULL)
 
-\method{score}{GaussianSLOPE}(object, x, y, measure = c("mse", "mae"))
+\method{score}{GaussianSLOPE}(object, x, y, measure = c("mse", "mae"), weights = NULL)
 
-\method{score}{BinomialSLOPE}(object, x, y, measure = c("mse", "mae", "deviance", "misclass", "auc"))
+\method{score}{BinomialSLOPE}(
+  object,
+  x,
+  y,
+  measure = c("mse", "mae", "deviance", "misclass", "auc"),
+  weights = NULL
+)
 
-\method{score}{MultinomialSLOPE}(object, x, y, measure = c("mse", "mae", "deviance", "misclass"))
+\method{score}{MultinomialSLOPE}(
+  object,
+  x,
+  y,
+  measure = c("mse", "mae", "deviance", "misclass"),
+  weights = NULL
+)
 
-\method{score}{PoissonSLOPE}(object, x, y, measure = c("mse", "mae"))
+\method{score}{PoissonSLOPE}(object, x, y, measure = c("mse", "mae"), weights = NULL)
 }
 \arguments{
 \item{object}{an object of class \code{"SLOPE"}}
@@ -26,12 +38,15 @@ score(object, x, y, measure)
 \item{y}{response}
 
 \item{measure}{type of target measure. \code{"mse"} returns mean squared error.
-\code{"mae"} returns mean absolute error, \code{"misclass"} returns
-misclassification rate, and \code{"auc"} returns area under the ROC curve.}
+\code{"mae"} returns mean absolute error, \code{"misclass"} returns misclassification
+rate, and \code{"auc"} returns area under the ROC curve.}
+
+\item{weights}{observation weights as in \code{\link[=SLOPE]{SLOPE()}}, applied to the rows
+of the data being scored.}
 }
 \value{
-The measure along the regularization path depending on the
-value in \code{measure}.#'
+The measure along the regularization path depending on the value in
+\code{measure}.
 }
 \description{
 This function is a unified interface to return various types of loss for a

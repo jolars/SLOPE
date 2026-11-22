@@ -25,6 +25,12 @@ namespace slope {
 double
 binaryRocAuc(const Eigen::VectorXd& scores, const Eigen::VectorXd& labels);
 
+/** Computes binary ROC AUC with nonnegative observation weights. */
+double
+binaryRocAuc(const Eigen::VectorXd& scores,
+             const Eigen::VectorXd& labels,
+             const Eigen::VectorXd& observation_weights);
+
 /**
  * Computes the Area Under the ROC Curve (AUC-ROC) for binary and multi-class
  * classification.
@@ -40,6 +46,12 @@ binaryRocAuc(const Eigen::VectorXd& scores, const Eigen::VectorXd& labels);
  */
 double
 rocAuc(const Eigen::MatrixXd& scores, const Eigen::MatrixXd& labels);
+
+/** Computes macro-average ROC AUC with nonnegative observation weights. */
+double
+rocAuc(const Eigen::MatrixXd& scores,
+       const Eigen::MatrixXd& labels,
+       const Eigen::VectorXd& observation_weights);
 
 /**
  * @brief Base class for scoring metrics used in regularized generalized linear
@@ -84,6 +96,18 @@ public:
   virtual double eval(const Eigen::MatrixXd& eta,
                       const Eigen::MatrixXd& y,
                       const std::unique_ptr<Loss>& loss) const = 0;
+
+  /**
+   * Evaluates the metric with observation weights. Empty weights select the
+   * unweighted metric. Weights must be finite and nonnegative, and their sum
+   * must be positive. Multiplying every weight by a positive constant leaves
+   * the score unchanged. Custom metrics can override this overload; the
+   * default implementation accepts uniform weights only.
+   */
+  virtual double eval(const Eigen::MatrixXd& eta,
+                      const Eigen::MatrixXd& y,
+                      const std::unique_ptr<Loss>& loss,
+                      const Eigen::VectorXd& observation_weights) const;
 
   /**
    * Factory method to create specific Score implementations.
@@ -168,6 +192,11 @@ public:
   double eval(const Eigen::MatrixXd& eta,
               const Eigen::MatrixXd& y,
               const std::unique_ptr<Loss>&) const override;
+
+  double eval(const Eigen::MatrixXd& eta,
+              const Eigen::MatrixXd& y,
+              const std::unique_ptr<Loss>& loss,
+              const Eigen::VectorXd& observation_weights) const override;
 };
 
 /**
@@ -198,6 +227,11 @@ public:
   double eval(const Eigen::MatrixXd& eta,
               const Eigen::MatrixXd& y,
               const std::unique_ptr<Loss>&) const override;
+
+  double eval(const Eigen::MatrixXd& eta,
+              const Eigen::MatrixXd& y,
+              const std::unique_ptr<Loss>& loss,
+              const Eigen::VectorXd& observation_weights) const override;
 };
 
 /**
@@ -226,6 +260,11 @@ public:
   double eval(const Eigen::MatrixXd& eta,
               const Eigen::MatrixXd& y,
               const std::unique_ptr<Loss>& loss) const override;
+
+  double eval(const Eigen::MatrixXd& eta,
+              const Eigen::MatrixXd& y,
+              const std::unique_ptr<Loss>& loss,
+              const Eigen::VectorXd& observation_weights) const override;
 };
 
 /**
@@ -256,6 +295,11 @@ public:
   double eval(const Eigen::MatrixXd& eta,
               const Eigen::MatrixXd& y,
               const std::unique_ptr<Loss>& loss) const override;
+
+  double eval(const Eigen::MatrixXd& eta,
+              const Eigen::MatrixXd& y,
+              const std::unique_ptr<Loss>& loss,
+              const Eigen::VectorXd& observation_weights) const override;
 };
 
 /**
@@ -282,6 +326,11 @@ public:
   double eval(const Eigen::MatrixXd& eta,
               const Eigen::MatrixXd& y,
               const std::unique_ptr<Loss>& loss) const override;
+
+  double eval(const Eigen::MatrixXd& eta,
+              const Eigen::MatrixXd& y,
+              const std::unique_ptr<Loss>& loss,
+              const Eigen::VectorXd& observation_weights) const override;
 };
 
 /**
@@ -314,6 +363,11 @@ public:
   double eval(const Eigen::MatrixXd& eta,
               const Eigen::MatrixXd& y,
               const std::unique_ptr<Loss>& loss) const override;
+
+  double eval(const Eigen::MatrixXd& eta,
+              const Eigen::MatrixXd& y,
+              const std::unique_ptr<Loss>& loss,
+              const Eigen::VectorXd& observation_weights) const override;
 };
 
 } // namespace slope

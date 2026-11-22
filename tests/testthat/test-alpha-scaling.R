@@ -34,3 +34,34 @@ test_that("penalty strength is invariant to number of observations", {
     }
   }
 })
+
+test_that("relative alpha uses the weighted null-model penalty", {
+  x <- cbind(1:10, sin(1:10))
+  y <- 2 * x[, 1] - x[, 2]
+  weights <- c(0, 1:9)
+  max_alpha <- SLOPE(x, y, path_length = 2, weights = weights)$alpha[1]
+  fractions <- c(1.1, 0.4, 0.1)
+
+  fit <- do.call(
+    SLOPE,
+    list(
+      x = x,
+      y = y,
+      alpha = fractions,
+      weights = weights,
+      alpha_scale = "relative"
+    )
+  )
+  absolute <- SLOPE(x, y, alpha = fractions * max_alpha, weights = weights)
+
+  expect_equal(fit$alpha, fractions * max_alpha)
+  expect_equal(coef(fit), coef(absolute), tolerance = 1e-5)
+
+  new_alpha <- 0.3 * max_alpha
+  expected <- SLOPE(x, y, alpha = new_alpha, weights = weights)
+  expect_equal(
+    coef(fit, alpha = new_alpha, exact = TRUE),
+    coef(expected),
+    tolerance = 1e-5
+  )
+})

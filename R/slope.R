@@ -161,6 +161,12 @@
 #' @param y the response, which for `family = "gaussian"` must be numeric; for
 #'   `family = "binomial"` or `family = "multinomial"`, it can be a factor.
 #' @param family model family (objective); see **Families** for details.
+#' @param weights observation weights. Supply one finite, nonnegative number
+#'   per row of `x`, with at least one positive weight. `NULL` (the default)
+#'   gives every observation equal weight. Multiplying all weights by a
+#'   positive constant leaves the fit unchanged. Nonuniform weights require an
+#'   alpha path or supplied alpha values and a lambda sequence other than
+#'   `"gaussian"`.
 #' @param intercept whether to fit an intercept
 #' @param center whether to center predictors or not by their mean. Defaults to
 #'   `TRUE` if `x` is dense and `FALSE` otherwise.
@@ -177,13 +183,12 @@
 #'     the last to the almost-saturated model, and
 #'   - `"estimate"`, which estimates a *single* `alpha`
 #'     using Algorithm 5 in Bogdan et al. (2015).
-#'
-#' When a value is manually entered for `alpha`, it will be scaled based on the
-#' type of standardization that is applied to `x`. For `scale = "l2"`, `alpha`
-#' will be scaled by \eqn{\sqrt n}. For `scale = "sd"` or `"none"`, alpha will
-#' be scaled by \eqn{n}, and for `scale = "l1"` no scaling is applied. Note,
-#' however, that the `alpha` that is returned in the resulting value is the
-#' **unstandardized** alpha.
+#' @param alpha_scale scale of numeric `alpha` values. With `"absolute"` (the
+#'   default), `alpha` multiplies the lambda sequence directly. With `"relative"`,
+#'   each value is multiplied by the smallest absolute alpha that sets every
+#'   predictor coefficient to zero, given the data, observation weights,
+#'   predictor normalization, and lambda sequence. Relative values can exceed
+#'   one. Automatic paths and estimates use absolute alphas.
 #' @param path_length length of regularization path; note that the path returned
 #'   may still be shorter due to the early termination criteria given by
 #'   `tol_dev_change`, `tol_dev_ratio`, and `max_variables`.
@@ -264,8 +269,9 @@
 #'   path
 #' }
 #' \item{alpha}{
-#'   vector giving the (unstandardized) scaling of the lambda sequence
+#'   the absolute multipliers of the lambda sequence
 #' }
+#' \item{weights}{the supplied observation weights, or `NULL` for equal weights}
 #' \item{class_names}{
 #'   a character vector giving the names of the classes for binomial and
 #'   multinomial families
@@ -327,6 +333,9 @@
 #' # Gaussian response, default lambda sequence
 #' fit <- SLOPE(bodyfat$x, bodyfat$y)
 #'
+#' # Use 20% of the penalty that sets all predictor coefficients to zero
+#' fit <- SLOPE(bodyfat$x, bodyfat$y, alpha = 0.2, alpha_scale = "relative")
+#'
 #' # Multinomial response, custom alpha and lambda
 #' m <- length(unique(wine$y)) - 1
 #' p <- ncol(wine$x)
@@ -374,7 +383,9 @@ SLOPE <- function(
   prox_method,
   screen,
   verbosity,
-  screen_alg
+  screen_alg,
+  weights = NULL,
+  alpha_scale = c("absolute", "relative")
 ) {
   if (!missing(tol_abs)) {
     warning("`tol_abs` argument is deprecated and has no effect")
@@ -441,7 +452,9 @@ SLOPE <- function(
     patterns,
     threads,
     gamma,
-    cd_type
+    cd_type,
+    weights = weights,
+    alpha_scale = alpha_scale
   )
 
   x <- control$x
@@ -515,6 +528,7 @@ SLOPE <- function(
       nonzeros = nonzeros,
       lambda = lambda,
       alpha = alpha[seq_along(beta)],
+      weights = weights,
       variable_names = control$variable_names,
       class_names = control$class_names,
       passes = passes,
@@ -556,9 +570,12 @@ processSlopeArgs <- function(
   patterns = TRUE,
   threads = NULL,
   gamma = 1,
-  cd_type = c("permuted", "cyclical")
+  cd_type = c("permuted", "cyclical"),
+  weights = NULL,
+  alpha_scale = c("absolute", "relative")
 ) {
   family <- match.arg(family)
+  alpha_scale <- match.arg(alpha_scale)
   solver <- match.arg(solver)
   cd_type <- match.arg(cd_type)
 
@@ -630,6 +647,8 @@ processSlopeArgs <- function(
   if (NROW(x) == 0) {
     stop("`x` is empty")
   }
+
+  weights <- validateObservationWeights(weights, NROW(x))
 
   if (is_sparse) {
     x <- as_dgCMatrix(x)
@@ -703,6 +722,7 @@ processSlopeArgs <- function(
     x = x,
     y = as.matrix(y),
     alpha = alpha,
+    alpha_scale = alpha_scale,
     alpha_min_ratio = alpha_min_ratio,
     alpha_type = alpha_type,
     centering_type = center,
@@ -730,8 +750,29 @@ processSlopeArgs <- function(
     tol_dev_ratio = tol_dev_ratio,
     variable_names = variable_names,
     threads = threads,
-    cd_type = cd_type
+    cd_type = cd_type,
+    weights = as.double(weights)
   )
 
   control
+}
+
+validateObservationWeights <- function(weights, n) {
+  if (is.null(weights)) {
+    return(NULL)
+  }
+
+  if (!is.numeric(weights) || !is.null(dim(weights)) || length(weights) != n) {
+    stop("`weights` must be a numeric vector with one entry per row of `x`")
+  }
+
+  if (any(!is.finite(weights) | weights < 0)) {
+    stop("`weights` must be finite and nonnegative")
+  }
+
+  if (!any(weights > 0)) {
+    stop("`weights` must have positive total weight")
+  }
+
+  weights
 }

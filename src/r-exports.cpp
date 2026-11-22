@@ -1,4 +1,5 @@
 #include "slope/regularization_sequence.h"
+#include "slope/score.h"
 #include "slope/sorted_l1_norm.h"
 #include <RcppEigen.h>
 
@@ -23,4 +24,13 @@ lambdaSequenceCpp(const int n_lambda,
                   const int n)
 {
   return slope::lambdaSequence(n_lambda, q, lambda_type, n, theta1, theta2);
+}
+
+// [[Rcpp::export]]
+double
+weightedBinaryAucCpp(const Eigen::VectorXd& scores,
+                     const Eigen::VectorXd& labels,
+                     const Eigen::VectorXd& weights)
+{
+  return slope::binaryRocAuc(scores, labels, weights);
 }

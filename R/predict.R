@@ -9,8 +9,8 @@
 #'   `"response"` returns the result of applying the link function, and
 #'   `"class"` returns class predictions.
 #' @param ... ignored and only here for method consistency
-#' @param alpha penalty parameter for SLOPE models; if `NULL`, the values used
-#'   in the original fit will be used
+#' @param alpha absolute penalty parameter for SLOPE models. `NULL` uses the
+#'   values stored in the original fit.
 #' @param simplify if `TRUE`, [base::drop()] will be called before returning the
 #'   coefficients to drop extraneous dimensions
 #' @param exact if `TRUE` and the given parameter values differ from those in

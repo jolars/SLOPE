@@ -13,7 +13,11 @@
 #' @param measure which performance measure to use for selecting optimal
 #'   parameters. If `NULL` (default), uses the first measure in the
 #'   `TrainedSLOPE` object.
-#' @param ... additional arguments passed to [SLOPE()]
+#' @param ... additional arguments passed to [SLOPE()]. When refitting on the
+#'   stored data, `weights` defaults to the original observation weights.
+#'   Supply `weights = NULL` for equal weights or pass new observation weights.
+#'   The selected alpha is absolute. To use a relative alpha, supply both
+#'   `alpha` and `alpha_scale = "relative"`.
 #'
 #' @return An object of class `'SLOPE'` fit with the optimal parameters
 #'
@@ -46,6 +50,7 @@ refit.TrainedSLOPE <- function(
 ) {
   has_x <- !is.null(x)
   has_y <- !is.null(y)
+  weights <- NULL
 
   if (xor(has_x, has_y)) {
     stop("either provide both `x` and `y`, or neither.")
@@ -60,6 +65,7 @@ refit.TrainedSLOPE <- function(
 
     x <- object$training_data$x
     y <- object$training_data$y
+    weights <- object$training_data$weights
   }
 
   if (is.null(measure)) {
@@ -97,13 +103,19 @@ refit.TrainedSLOPE <- function(
   slope_args <- list(
     x = x,
     y = y,
+    weights = weights,
     q = q_opt,
     alpha = alpha_opt,
     gamma = gamma_opt
   )
+  slope_args$family <- object$family
 
   # Merge with user-provided arguments (user arguments take precedence)
-  slope_args <- utils::modifyList(slope_args, list(...))
+  extra_args <- list(...)
+  slope_args <- utils::modifyList(slope_args, extra_args)
+  if (is.null(extra_args[["alpha"]])) {
+    slope_args$alpha_scale <- "absolute"
+  }
 
   # Call SLOPE with optimal parameters
   do.call(SLOPE, slope_args)

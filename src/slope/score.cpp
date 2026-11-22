@@ -1,6 +1,7 @@
 #include <Eigen/Core>
 #include <memory>
 #include <slope/constants.h>
+#include <slope/observation_weights.h>
 #include <slope/score.h>
 #include <vector>
 
@@ -93,6 +94,117 @@ rocAuc(const Eigen::MatrixXd& scores, const Eigen::MatrixXd& labels)
   return valid_classes > 0 ? total_auc / valid_classes : 0.5;
 }
 
+double
+binaryRocAuc(const Eigen::VectorXd& scores,
+             const Eigen::VectorXd& labels,
+             const Eigen::VectorXd& observation_weights)
+{
+  if (scores.size() != labels.size()) {
+    throw std::invalid_argument("scores and labels dimensions must match");
+  }
+  const Eigen::VectorXd weights =
+    detail::normalizeObservationWeights(observation_weights, scores.size());
+  if (detail::uniformObservationWeights(observation_weights)) {
+    return binaryRocAuc(scores, labels);
+  }
+
+  struct Observation
+  {
+    double score;
+    bool positive;
+    double weight;
+  };
+  std::vector<Observation> observations;
+  observations.reserve(scores.size());
+  double positive_weight = 0;
+  double negative_weight = 0;
+  for (Eigen::Index i = 0; i < scores.size(); ++i) {
+    if (weights(i) == 0) {
+      continue;
+    }
+    const bool positive = labels(i) > 0.5;
+    observations.push_back({ scores(i), positive, weights(i) });
+    (positive ? positive_weight : negative_weight) += weights(i);
+  }
+  if (positive_weight == 0 || negative_weight == 0) {
+    return 0.5;
+  }
+  std::sort(observations.begin(),
+            observations.end(),
+            [](const auto& a, const auto& b) { return a.score > b.score; });
+
+  double area = 0;
+  double positives = 0;
+  double negatives = 0;
+  size_t begin = 0;
+  while (begin < observations.size()) {
+    size_t end = begin;
+    const double previous_positives = positives;
+    const double previous_negatives = negatives;
+    do {
+      const auto& observation = observations[end];
+      (observation.positive ? positives : negatives) += observation.weight;
+      ++end;
+    } while (end < observations.size() &&
+             observations[end].score == observations[begin].score);
+    area +=
+      (negatives - previous_negatives) * (positives + previous_positives) * 0.5;
+    begin = end;
+  }
+  return area / positive_weight / negative_weight;
+}
+
+double
+rocAuc(const Eigen::MatrixXd& scores,
+       const Eigen::MatrixXd& labels,
+       const Eigen::VectorXd& observation_weights)
+{
+  if (scores.rows() != labels.rows() || scores.cols() != labels.cols()) {
+    throw std::invalid_argument("scores and labels dimensions must match");
+  }
+  const Eigen::VectorXd weights =
+    detail::normalizeObservationWeights(observation_weights, scores.rows());
+  if (detail::uniformObservationWeights(observation_weights)) {
+    return rocAuc(scores, labels);
+  }
+  if (scores.cols() == 1) {
+    return binaryRocAuc(scores, labels, weights);
+  }
+
+  double total_auc = 0;
+  int valid_classes = 0;
+  for (Eigen::Index c = 0; c < scores.cols(); ++c) {
+    Eigen::VectorXd binary_labels =
+      (labels.col(c).array() > 0.5).cast<double>();
+    double positive_weight = 0;
+    double negative_weight = 0;
+    for (Eigen::Index i = 0; i < labels.rows(); ++i) {
+      (binary_labels(i) > 0.5 ? positive_weight : negative_weight) +=
+        weights(i);
+    }
+    if (positive_weight == 0 || negative_weight == 0) {
+      continue;
+    }
+    total_auc += binaryRocAuc(scores.col(c), binary_labels, weights);
+    ++valid_classes;
+  }
+  return valid_classes > 0 ? total_auc / valid_classes : 0.5;
+}
+
+double
+Score::eval(const Eigen::MatrixXd& eta,
+            const Eigen::MatrixXd& y,
+            const std::unique_ptr<Loss>& loss,
+            const Eigen::VectorXd& observation_weights) const
+{
+  detail::normalizeObservationWeights(observation_weights, y.rows());
+  if (!detail::uniformObservationWeights(observation_weights)) {
+    throw std::invalid_argument(
+      "This scoring metric does not support nonuniform observation weights");
+  }
+  return eval(eta, y, loss);
+}
+
 std::function<bool(double, double)>
 Score::getComparator() const
 {
@@ -176,6 +288,109 @@ AUC::eval(const Eigen::MatrixXd& eta,
 {
   Eigen::MatrixXd probs = loss->inverseLink(eta);
   return rocAuc(probs, y);
+}
+
+double
+MSE::eval(const Eigen::MatrixXd& eta,
+          const Eigen::MatrixXd& y,
+          const std::unique_ptr<Loss>& loss,
+          const Eigen::VectorXd& observation_weights) const
+{
+  if (eta.rows() != y.rows() || eta.cols() != y.cols()) {
+    throw std::invalid_argument(
+      "predictions and responses dimensions must match");
+  }
+  const Eigen::VectorXd weights =
+    detail::normalizeObservationWeights(observation_weights, y.rows());
+  if (detail::uniformObservationWeights(observation_weights)) {
+    return eval(eta, y, loss);
+  }
+  double result = 0;
+  for (Eigen::Index i = 0; i < y.rows(); ++i) {
+    if (weights(i) > 0) {
+      result += weights(i) * (y.row(i) - eta.row(i)).squaredNorm();
+    }
+  }
+  return result / weights.sum();
+}
+
+double
+MAE::eval(const Eigen::MatrixXd& eta,
+          const Eigen::MatrixXd& y,
+          const std::unique_ptr<Loss>& loss,
+          const Eigen::VectorXd& observation_weights) const
+{
+  if (eta.rows() != y.rows() || eta.cols() != y.cols()) {
+    throw std::invalid_argument(
+      "predictions and responses dimensions must match");
+  }
+  const Eigen::VectorXd weights =
+    detail::normalizeObservationWeights(observation_weights, y.rows());
+  if (detail::uniformObservationWeights(observation_weights)) {
+    return eval(eta, y, loss);
+  }
+  double result = 0;
+  for (Eigen::Index i = 0; i < y.rows(); ++i) {
+    if (weights(i) > 0) {
+      result += weights(i) * (y.row(i) - eta.row(i)).cwiseAbs().sum();
+    }
+  }
+  return result / weights.sum() / y.cols();
+}
+
+double
+Accuracy::eval(const Eigen::MatrixXd& eta,
+               const Eigen::MatrixXd& y,
+               const std::unique_ptr<Loss>& loss,
+               const Eigen::VectorXd& observation_weights) const
+{
+  const Eigen::VectorXd weights =
+    detail::normalizeObservationWeights(observation_weights, y.rows());
+  const Eigen::MatrixXd predictions = loss->predict(eta);
+  if (predictions.rows() != y.rows() || predictions.cols() != y.cols()) {
+    throw std::invalid_argument("predicted and true class labels must match");
+  }
+  if (detail::uniformObservationWeights(observation_weights)) {
+    return eval(eta, y, loss);
+  }
+  double correct = 0;
+  for (Eigen::Index i = 0; i < y.rows(); ++i) {
+    if (weights(i) > 0) {
+      correct +=
+        weights(i) *
+        (predictions.row(i).array() == y.row(i).array()).cast<double>().sum();
+    }
+  }
+  return correct / weights.sum();
+}
+
+double
+MisClass::eval(const Eigen::MatrixXd& eta,
+               const Eigen::MatrixXd& y,
+               const std::unique_ptr<Loss>& loss,
+               const Eigen::VectorXd& observation_weights) const
+{
+  return 1.0 - Accuracy().eval(eta, y, loss, observation_weights);
+}
+
+double
+Deviance::eval(const Eigen::MatrixXd& eta,
+               const Eigen::MatrixXd& y,
+               const std::unique_ptr<Loss>& loss,
+               const Eigen::VectorXd& observation_weights) const
+{
+  detail::normalizeObservationWeights(observation_weights, y.rows());
+  return loss->deviance(eta, y, observation_weights);
+}
+
+double
+AUC::eval(const Eigen::MatrixXd& eta,
+          const Eigen::MatrixXd& y,
+          const std::unique_ptr<Loss>& loss,
+          const Eigen::VectorXd& observation_weights) const
+{
+  const Eigen::MatrixXd probabilities = loss->inverseLink(eta);
+  return rocAuc(probabilities, y, observation_weights);
 }
 
 std::unique_ptr<Score>

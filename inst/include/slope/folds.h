@@ -49,7 +49,8 @@ public:
    *
    * Creates k-fold partitions by randomly assigning samples to folds.
    * When n_repeats > 1, multiple sets of folds are created with different
-   * random seeds.
+   * random seeds. The same arguments produce identical fold assignments
+   * across platforms, using all 64 bits of the seed.
    */
   Folds(int n_samples, int n_folds, int n_repeats = 1, uint64_t seed = 42)
     : n_folds(n_folds)
@@ -181,8 +182,8 @@ private:
    * for each fold
    *
    * @internal
-   * Implements stratified fold assignment by shuffling indices and
-   * distributing them evenly across folds.
+   * Uses a deterministic Fisher-Yates shuffle with rejection sampling and
+   * distributes indices evenly across folds.
    * @endinternal
    */
   static std::vector<std::vector<int>> createFolds(int n_samples,

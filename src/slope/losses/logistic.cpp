@@ -3,6 +3,7 @@
 #include <slope/constants.h>
 #include <slope/losses/logistic.h>
 #include <slope/math.h>
+#include <slope/observation_weights.h>
 #include <stdexcept>
 
 namespace {
@@ -42,20 +43,44 @@ Logistic::loss(const Eigen::MatrixXd& eta, const Eigen::MatrixXd& y)
 }
 
 double
+Logistic::loss(const Eigen::MatrixXd& eta,
+               const Eigen::MatrixXd& y,
+               const Eigen::VectorXd& observation_weights)
+{
+  const Eigen::VectorXd weights =
+    detail::normalizeObservationWeights(observation_weights, y.rows());
+  double value = 0.0;
+  for (Eigen::Index i = 0; i < y.rows(); ++i) {
+    if (weights(i) > 0.0) {
+      for (Eigen::Index k = 0; k < y.cols(); ++k) {
+        value += weights(i) * (softplus(eta(i, k)) - y(i, k) * eta(i, k));
+      }
+    }
+  }
+  return value / y.rows();
+}
+
+double
 Logistic::dual(const Eigen::MatrixXd& theta,
                const Eigen::MatrixXd& y,
-               const Eigen::VectorXd&)
+               const Eigen::VectorXd& observation_weights)
 {
-  const Eigen::ArrayXXd mean = theta.array() + y.array();
+  const Eigen::VectorXd weights =
+    detail::normalizeObservationWeights(observation_weights, y.rows());
   double entropy = 0.0;
 
-  for (Eigen::Index i = 0; i < mean.size(); ++i) {
-    const double value = mean(i);
-    if (!std::isfinite(value) || value < 0.0 || value > 1.0) {
-      throw std::domain_error(
-        "Logistic dual means must be finite and lie in [0, 1]");
+  for (Eigen::Index i = 0; i < y.rows(); ++i) {
+    if (weights(i) == 0.0) {
+      continue;
     }
-    entropy += xLogX(value) + xLogX(1.0 - value);
+    for (Eigen::Index k = 0; k < y.cols(); ++k) {
+      const double value = theta(i, k) + y(i, k);
+      if (!std::isfinite(value) || value < 0.0 || value > 1.0) {
+        throw std::domain_error(
+          "Logistic dual means must be finite and lie in [0, 1]");
+      }
+      entropy += weights(i) * (xLogX(value) + xLogX(1.0 - value));
+    }
   }
 
   return -entropy / y.rows();
@@ -66,32 +91,53 @@ Logistic::dualPoint(const Eigen::MatrixXd& eta,
                     const Eigen::MatrixXd& y,
                     const bool fit_intercept)
 {
+  return dualPoint(eta, y, fit_intercept, Eigen::VectorXd());
+}
+
+Eigen::MatrixXd
+Logistic::dualPoint(const Eigen::MatrixXd& eta,
+                    const Eigen::MatrixXd& y,
+                    const bool fit_intercept,
+                    const Eigen::VectorXd& observation_weights)
+{
+  const Eigen::VectorXd weights =
+    detail::normalizeObservationWeights(observation_weights, y.rows());
   if (!fit_intercept) {
-    return residual(eta, y);
+    return residualOnSupport(eta, y, weights);
   }
   if (eta.cols() != 1 || y.cols() != 1 || eta.rows() != y.rows()) {
     throw std::invalid_argument(
       "Logistic dual points require matching column vectors");
   }
-  if (!eta.allFinite()) {
+  Eigen::MatrixXd safe_eta = eta;
+  for (Eigen::Index i = 0; i < weights.size(); ++i) {
+    if (weights(i) == 0.0) {
+      safe_eta.row(i).setZero();
+    }
+  }
+  if (!safe_eta.allFinite()) {
     throw std::invalid_argument("Logistic linear predictors must be finite");
   }
 
-  const double response_mean = y.mean();
+  const double response_mean = detail::weightedMean(y, weights)(0);
   if (response_mean <= 0.0 || response_mean >= 1.0) {
     return domainSafePoint(
-      Eigen::MatrixXd::Constant(y.rows(), 1, response_mean), y, 0.0, 1.0);
+      Eigen::MatrixXd::Constant(y.rows(), 1, response_mean),
+      y,
+      0.0,
+      1.0,
+      weights);
   }
 
   const double target = std::log(response_mean) - std::log1p(-response_mean);
-  double lower = target - eta.maxCoeff();
-  double upper = target - eta.minCoeff();
+  double lower = target - safe_eta.maxCoeff();
+  double upper = target - safe_eta.minCoeff();
   double shift = std::clamp(0.0, lower, upper);
   Eigen::MatrixXd mean(eta.rows(), 1);
 
   for (int iteration = 0; iteration < 40; ++iteration) {
-    mean = inverseLink((eta.array() + shift).matrix());
-    const double gradient = mean.sum() - y.sum();
+    mean = inverseLink((safe_eta.array() + shift).matrix());
+    const double gradient = weights.dot((mean - y).col(0));
     if (std::abs(gradient) <=
         16.0 * std::numeric_limits<double>::epsilon() * y.rows()) {
       break;
@@ -103,15 +149,17 @@ Logistic::dualPoint(const Eigen::MatrixXd& eta,
       upper = shift;
     }
 
-    const double hessian = (mean.array() * (1.0 - mean.array())).sum();
+    const double hessian =
+      (weights.array() * mean.col(0).array() * (1.0 - mean.col(0).array()))
+        .sum();
     const double newton = shift - gradient / hessian;
     shift = std::isfinite(newton) && newton > lower && newton < upper
               ? newton
               : 0.5 * (lower + upper);
   }
 
-  mean = inverseLink((eta.array() + shift).matrix());
-  return domainSafePoint(mean, y, 0.0, 1.0);
+  mean = inverseLink((safe_eta.array() + shift).matrix());
+  return domainSafePoint(mean, y, 0.0, 1.0, weights);
 }
 
 Eigen::MatrixXd

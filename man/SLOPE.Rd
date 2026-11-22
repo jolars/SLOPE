@@ -37,14 +37,16 @@ SLOPE(
   prox_method,
   screen,
   verbosity,
-  screen_alg
+  screen_alg,
+  weights = NULL,
+  alpha_scale = c("absolute", "relative")
 )
 }
 \arguments{
-\item{x}{the design matrix, which can be either a dense
-matrix of the standard \emph{matrix} class, or a sparse matrix
-inheriting from \link[Matrix:sparseMatrix]{Matrix::sparseMatrix}. Data frames will
-be converted to matrices internally.}
+\item{x}{the design matrix, which can be either a dense matrix of the
+standard \emph{matrix} class, or a sparse matrix inheriting from
+\link[Matrix:sparseMatrix]{Matrix::sparseMatrix}. Data frames will be converted to matrices
+internally.}
 
 \item{y}{the response, which for \code{family = "gaussian"} must be numeric; for
 \code{family = "binomial"} or \code{family = "multinomial"}, it can be a factor.}
@@ -73,14 +75,7 @@ where the first value corresponds to the intercept-only (null) model and
 the last to the almost-saturated model, and
 \item \code{"estimate"}, which estimates a \emph{single} \code{alpha}
 using Algorithm 5 in Bogdan et al. (2015).
-}
-
-When a value is manually entered for \code{alpha}, it will be scaled based
-on the type of standardization that is applied to \code{x}. For \code{scale = "l2"},
-\code{alpha} will be scaled by \eqn{\sqrt n}. For \code{scale = "sd"} or \code{"none"},
-alpha will be scaled by \eqn{n}, and for \code{scale = "l1"} no scaling is
-applied. Note, however, that the \code{alpha} that is returned in the
-resulting value is the \strong{unstandardized} alpha.}
+}}
 
 \item{lambda}{either a character vector indicating the method used
 to construct the lambda path or a numeric non-decreasing
@@ -170,6 +165,20 @@ latter means that the clusters are permuted randomly for each pass.}
 \item{verbosity}{DEPRECATED}
 
 \item{screen_alg}{DEPRECATED}
+
+\item{weights}{observation weights. Supply one finite, nonnegative number
+per row of \code{x}, with at least one positive weight. \code{NULL} (the default)
+gives every observation equal weight. Multiplying all weights by a
+positive constant leaves the fit unchanged. Nonuniform weights require an
+alpha path or supplied alpha values and a lambda sequence other than
+\code{"gaussian"}.}
+
+\item{alpha_scale}{scale of numeric \code{alpha} values. With \code{"absolute"} (the
+default), \code{alpha} multiplies the lambda sequence directly. With \code{"relative"},
+each value is multiplied by the smallest absolute alpha that sets every
+predictor coefficient to zero, given the data, observation weights,
+predictor normalization, and lambda sequence. Relative values can exceed
+one. Automatic paths and estimates use absolute alphas.}
 }
 \value{
 An object of class \code{"SLOPE"} with the following slots:
@@ -188,8 +197,9 @@ gives the penalty vector at that point along the regularization
 path
 }
 \item{alpha}{
-vector giving the (unstandardized) scaling of the lambda sequence
+the absolute multipliers of the lambda sequence
 }
+\item{weights}{the supplied observation weights, or \code{NULL} for equal weights}
 \item{class_names}{
 a character vector giving the names of the classes for binomial and
 multinomial families
@@ -218,11 +228,10 @@ the number of predictors in the training data
 \item{call}{the call used for fitting the model}
 }
 \description{
-Fit a generalized linear model regularized with the
-sorted L1 norm, which applies a
-non-increasing regularization sequence to the
-coefficient vector (\eqn{\beta}) after having sorted it
-in decreasing order according  to its absolute values.
+Fit a generalized linear model regularized with the sorted L1 norm, which
+applies a non-increasing regularization sequence to the coefficient vector
+(\eqn{\beta}) after having sorted it in decreasing order according to its
+absolute values.
 }
 \details{
 \code{SLOPE()} solves the convex minimization problem
@@ -231,12 +240,11 @@ in decreasing order according  to its absolute values.
 }{
   f(\beta) + \alpha \sum \lambda_j |\beta|_(j),
 }
-where \eqn{f(\beta)} is a smooth and convex function and
-the second part is the sorted L1-norm.
-In ordinary least-squares regression,
-\eqn{f(\beta)} is simply the squared norm of the least-squares residuals.
-See section \strong{Families} for specifics regarding the various types of
-\eqn{f(\beta)} (model families) that are allowed in \code{SLOPE()}.
+where \eqn{f(\beta)} is a smooth and convex function and the second part is
+the sorted L1-norm. In ordinary least-squares regression, \eqn{f(\beta)} is
+simply the squared norm of the least-squares residuals. See section
+\strong{Families} for specifics regarding the various types of \eqn{f(\beta)}
+(model families) that are allowed in \code{SLOPE()}.
 
 By default, \code{SLOPE()} fits a path of models, each corresponding to
 a separate regularization sequence, starting from
@@ -250,7 +258,6 @@ This means that unless these arguments are modified, the path is not
 guaranteed to be of length \code{path_length}.
 }
 \section{Families}{
-
 
 \strong{Gaussian}
 
@@ -389,9 +396,11 @@ disabled for Poisson due to convergence issues.
 }
 
 \examples{
-
 # Gaussian response, default lambda sequence
 fit <- SLOPE(bodyfat$x, bodyfat$y)
+
+# Use 20\% of the penalty that sets all predictor coefficients to zero
+fit <- SLOPE(bodyfat$x, bodyfat$y, alpha = 0.2, alpha_scale = "relative")
 
 # Multinomial response, custom alpha and lambda
 m <- length(unique(wine$y)) - 1

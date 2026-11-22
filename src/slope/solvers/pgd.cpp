@@ -25,7 +25,8 @@ PGD::run(Eigen::VectorXd& beta0,
          const Eigen::MatrixXd& x,
          const Eigen::VectorXd& x_centers,
          const Eigen::VectorXd& x_scales,
-         const Eigen::MatrixXd& y)
+         const Eigen::MatrixXd& y,
+         const Eigen::VectorXd& observation_weights)
 {
   runImpl(beta0,
           beta,
@@ -38,7 +39,8 @@ PGD::run(Eigen::VectorXd& beta0,
           x,
           x_centers,
           x_scales,
-          y);
+          y,
+          observation_weights);
 }
 
 // Override for sparse matrices
@@ -54,7 +56,8 @@ PGD::run(Eigen::VectorXd& beta0,
          const Eigen::SparseMatrix<double>& x,
          const Eigen::VectorXd& x_centers,
          const Eigen::VectorXd& x_scales,
-         const Eigen::MatrixXd& y)
+         const Eigen::MatrixXd& y,
+         const Eigen::VectorXd& observation_weights)
 {
   runImpl(beta0,
           beta,
@@ -67,7 +70,8 @@ PGD::run(Eigen::VectorXd& beta0,
           x,
           x_centers,
           x_scales,
-          y);
+          y,
+          observation_weights);
 }
 
 void
@@ -82,7 +86,8 @@ PGD::run(Eigen::VectorXd& beta0,
          const Eigen::Map<Eigen::MatrixXd>& x,
          const Eigen::VectorXd& x_centers,
          const Eigen::VectorXd& x_scales,
-         const Eigen::MatrixXd& y)
+         const Eigen::MatrixXd& y,
+         const Eigen::VectorXd& observation_weights)
 {
   runImpl(beta0,
           beta,
@@ -95,7 +100,8 @@ PGD::run(Eigen::VectorXd& beta0,
           x,
           x_centers,
           x_scales,
-          y);
+          y,
+          observation_weights);
 }
 
 void
@@ -110,7 +116,8 @@ PGD::run(Eigen::VectorXd& beta0,
          const Eigen::Map<Eigen::SparseMatrix<double>>& x,
          const Eigen::VectorXd& x_centers,
          const Eigen::VectorXd& x_scales,
-         const Eigen::MatrixXd& y)
+         const Eigen::MatrixXd& y,
+         const Eigen::VectorXd& observation_weights)
 {
   runImpl(beta0,
           beta,
@@ -123,7 +130,8 @@ PGD::run(Eigen::VectorXd& beta0,
           x,
           x_centers,
           x_scales,
-          y);
+          y,
+          observation_weights);
 }
 
 } // namespace slope

@@ -1,4 +1,5 @@
 #include <slope/losses/quadratic.h>
+#include <slope/observation_weights.h>
 
 namespace slope {
 
@@ -9,13 +10,36 @@ Quadratic::loss(const Eigen::MatrixXd& eta, const Eigen::MatrixXd& y)
 }
 
 double
+Quadratic::loss(const Eigen::MatrixXd& eta,
+                const Eigen::MatrixXd& y,
+                const Eigen::VectorXd& observation_weights)
+{
+  const Eigen::VectorXd weights =
+    detail::normalizeObservationWeights(observation_weights, y.rows());
+  double value = 0.0;
+  for (Eigen::Index i = 0; i < y.rows(); ++i) {
+    if (weights(i) > 0.0) {
+      value += weights(i) * (eta.row(i) - y.row(i)).squaredNorm();
+    }
+  }
+  return value / (2.0 * y.rows());
+}
+
+double
 Quadratic::dual(const Eigen::MatrixXd& theta,
                 const Eigen::MatrixXd& y,
-                const Eigen::VectorXd&)
+                const Eigen::VectorXd& observation_weights)
 {
-  const int n = y.rows();
-
-  return (y.squaredNorm() - (theta + y).squaredNorm()) / (2.0 * n);
+  const Eigen::VectorXd weights =
+    detail::normalizeObservationWeights(observation_weights, y.rows());
+  double value = 0.0;
+  for (Eigen::Index i = 0; i < y.rows(); ++i) {
+    if (weights(i) > 0.0) {
+      value -= weights(i) *
+               (theta.row(i).squaredNorm() + 2.0 * theta.row(i).dot(y.row(i)));
+    }
+  }
+  return value / (2.0 * y.rows());
 }
 
 Eigen::MatrixXd
@@ -36,7 +60,8 @@ Quadratic::updateWeightsAndWorkingResponse(Eigen::MatrixXd& w,
                                            const Eigen::MatrixXd&,
                                            const Eigen::MatrixXd& y)
 {
-  // Do nothing since weights are already one and working response is y.
+  w = Eigen::MatrixXd::Ones(y.rows(), y.cols());
+  z = y;
 }
 
 Eigen::MatrixXd

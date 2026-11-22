@@ -34,6 +34,10 @@ public:
    */
   double loss(const Eigen::MatrixXd& eta, const Eigen::MatrixXd& y) override;
 
+  double loss(const Eigen::MatrixXd& eta,
+              const Eigen::MatrixXd& y,
+              const Eigen::VectorXd& observation_weights) override;
+
   /**
    * @brief Calculates the dual for the multinomial loss function.
    * @param theta The dual variables (n x m matrix).
@@ -48,6 +52,12 @@ public:
   Eigen::MatrixXd dualPoint(const Eigen::MatrixXd& eta,
                             const Eigen::MatrixXd& y,
                             bool fit_intercept) override;
+
+  Eigen::MatrixXd dualPoint(
+    const Eigen::MatrixXd& eta,
+    const Eigen::MatrixXd& y,
+    bool fit_intercept,
+    const Eigen::VectorXd& observation_weights) override;
 
   /**
    * @brief Preprocesses the response for the Multinomial model

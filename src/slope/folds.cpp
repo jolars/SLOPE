@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <numeric>
 #include <random>
 #include <slope/folds.h>
 
@@ -26,13 +27,23 @@ Folds::getTrainingIndices(size_t fold_idx, size_t rep_idx) const
 std::vector<std::vector<int>>
 Folds::createFolds(int n, int n_folds, uint64_t random_seed)
 {
-  // Initialize random number generator
-  std::mt19937 generator(random_seed);
+  std::mt19937_64 generator(random_seed);
 
-  // Create and shuffle indices
   std::vector<int> indices(n);
   std::iota(indices.begin(), indices.end(), 0);
-  std::shuffle(indices.begin(), indices.end(), generator);
+
+  // Fix the Fisher-Yates shuffle and bounded draws because std::shuffle and
+  // std::uniform_int_distribution can differ between standard libraries.
+  for (uint64_t i = indices.size(); i > 1; --i) {
+    // Unsigned wraparound gives 2^64 % i. Rejecting this incomplete block
+    // makes every remaining residue equally likely.
+    const uint64_t threshold = (uint64_t{ 0 } - i) % i;
+    uint64_t value;
+    do {
+      value = generator();
+    } while (value < threshold);
+    std::swap(indices[i - 1], indices[value % i]);
+  }
 
   // Create folds
   std::vector<std::vector<int>> folds(n_folds);

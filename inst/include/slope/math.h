@@ -11,7 +11,9 @@
 #include "utils.h"
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
+#include <algorithm>
 #include <cassert>
+#include <limits>
 #include <numeric>
 #include <vector>
 
@@ -261,6 +263,11 @@ updateGradientImpl(Eigen::VectorXd& gradient,
 #endif
   for (int k = 0; k < m; ++k) {
     weighted_residual.col(k) = residual.col(k).cwiseProduct(w);
+    for (int i = 0; i < n; ++i) {
+      if (w(i) == 0.0) {
+        weighted_residual(i, k) = 0.0;
+      }
+    }
     wr_sums(k) = weighted_residual.col(k).sum();
   }
 
@@ -755,17 +762,29 @@ stdDevs(const Eigen::SparseMatrixBase<T>& x)
   for (int j = 0; j < p; ++j) {
     double sum_sq_diff = 0.0;
     const double mean = x_means(j);
+    double minimum = std::numeric_limits<double>::infinity();
+    double maximum = -std::numeric_limits<double>::infinity();
 
     // Process non-zero elements
     for (typename T::InnerIterator it(x.derived(), j); it; ++it) {
       double diff = it.value() - mean;
       sum_sq_diff += diff * diff;
+      minimum = std::min(minimum, it.value());
+      maximum = std::max(maximum, it.value());
     }
 
     // Account for zeros
     int nz_count = slope::nonZeros(x.col(j));
     if (nz_count < n) {
       sum_sq_diff += (n - nz_count) * mean * mean;
+      minimum = std::min(minimum, 0.0);
+      maximum = std::max(maximum, 0.0);
+    }
+
+    // Rounding in the mean must not give constant columns a nonzero scale.
+    if (minimum == maximum) {
+      out(j) = 0.0;
+      continue;
     }
 
     // Standard deviation is sqrt of the average of squared differences
@@ -798,7 +817,12 @@ stdDevs(const Eigen::MatrixBase<T>& x)
   Eigen::VectorXd out(p);
 
   for (int j = 0; j < p; ++j) {
-    out(j) = (x.col(j).array() - x_means(j)).matrix().norm();
+    // Rounding in the mean must not give constant columns a nonzero scale.
+    if (n > 0 && x.col(j).minCoeff() == x.col(j).maxCoeff()) {
+      out(j) = 0.0;
+    } else {
+      out(j) = (x.col(j).array() - x_means(j)).matrix().norm();
+    }
   }
 
   out.array() /= std::sqrt(n);

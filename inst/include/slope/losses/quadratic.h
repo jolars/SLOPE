@@ -27,6 +27,8 @@ namespace slope {
 class Quadratic : public Loss
 {
 public:
+  using Loss::updateWeightsAndWorkingResponse;
+
   explicit Quadratic()
     : Loss(1.00)
   {
@@ -44,6 +46,10 @@ public:
    * y_i)^2 \f$
    */
   double loss(const Eigen::MatrixXd& eta, const Eigen::MatrixXd& y) override;
+
+  double loss(const Eigen::MatrixXd& eta,
+              const Eigen::MatrixXd& y,
+              const Eigen::VectorXd& observation_weights) override;
 
   /**
    * @brief Computes the dual function for the quadratic loss

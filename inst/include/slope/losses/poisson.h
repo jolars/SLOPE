@@ -35,10 +35,15 @@ public:
    * regression.
    * @param eta The linear predictor vector \f$\eta\f$
    * @param y The observed counts vector \f$y\f$
-   * @return The negative log-likelihood: \f$-\sum_i(y_i\eta_i - e^{\eta_i})\f$
-   * (ignoring constant terms)
+   * @return The negative log-likelihood averaged over all response entries,
+   * ignoring constant terms.
    */
   double loss(const Eigen::MatrixXd& eta, const Eigen::MatrixXd& y) override;
+
+  /** @brief Averages the loss over response columns and weighted rows. */
+  double loss(const Eigen::MatrixXd& eta,
+              const Eigen::MatrixXd& y,
+              const Eigen::VectorXd& observation_weights) override;
 
   /**
    * @brief Calculates the Fenchel conjugate (dual) of the Poisson loss.
@@ -54,6 +59,12 @@ public:
   Eigen::MatrixXd dualPoint(const Eigen::MatrixXd& eta,
                             const Eigen::MatrixXd& y,
                             bool fit_intercept) override;
+
+  Eigen::MatrixXd dualPoint(
+    const Eigen::MatrixXd& eta,
+    const Eigen::MatrixXd& y,
+    bool fit_intercept,
+    const Eigen::VectorXd& observation_weights) override;
 
   /**
    * @brief Calculates hessian diagonal

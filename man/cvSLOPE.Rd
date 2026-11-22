@@ -13,14 +13,15 @@ cvSLOPE(
   n_repeats = 1,
   measure = c("mse", "mae", "deviance", "misclass", "auc"),
   refit = TRUE,
-  ...
+  ...,
+  weights = NULL
 )
 }
 \arguments{
-\item{x}{the design matrix, which can be either a dense
-matrix of the standard \emph{matrix} class, or a sparse matrix
-inheriting from \link[Matrix:sparseMatrix]{Matrix::sparseMatrix}. Data frames will
-be converted to matrices internally.}
+\item{x}{the design matrix, which can be either a dense matrix of the
+standard \emph{matrix} class, or a sparse matrix inheriting from
+\link[Matrix:sparseMatrix]{Matrix::sparseMatrix}. Data frames will be converted to matrices
+internally.}
 
 \item{y}{the response, which for \code{family = "gaussian"} must be numeric; for
 \code{family = "binomial"} or \code{family = "multinomial"}, it can be a factor.}
@@ -40,6 +41,10 @@ implies to relaxation of the penalty.}
 the optimal parameters. Default is \code{TRUE}.}
 
 \item{...}{other arguments to pass on to \code{\link[=SLOPE]{SLOPE()}}}
+
+\item{weights}{observation weights as in \code{\link[=SLOPE]{SLOPE()}}. Each training and
+validation fold must have positive total weight. Weights apply to both
+fitting and scoring within folds. The fold scores are averaged equally.}
 }
 \value{
 An object of class \code{"TrainedSLOPE"}, with the following slots:
@@ -51,12 +56,15 @@ values for the different metrics and their corresponding parameter values}
 \item{measure}{a \code{data.frame} listing the used metric and its label}
 \item{model}{the model fit to the entire dataset using optimal parameters
 (only present if \code{refit = TRUE})}
-\item{training_data}{the training data used for tuning (\code{x} and \code{y})}
+\item{training_data}{the training data used for tuning (\code{x}, \code{y}, and \code{weights})}
+\item{family}{the model family used for tuning}
 \item{call}{the call}
 }
 \description{
 This function trains a model fit by \code{\link[=SLOPE]{SLOPE()}} by tuning its parameters
 through cross-validation.
+Cross-validation generates its alpha path on the full data and uses the
+resulting absolute alphas in every fold and in the final refit.
 }
 \examples{
 # 8-fold cross-validation

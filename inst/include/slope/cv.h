@@ -12,6 +12,7 @@
 
 #include "eigen_compat.h"
 #include "folds.h"
+#include "observation_weights.h"
 #include "score.h"
 #include "slope.h"
 #include <atomic>
@@ -98,7 +99,7 @@ struct CvConfig
   /// Evaluation metric used for model assessment (default: "mse")
   std::string metric = "mse";
 
-  /// Seed for random number generator to ensure reproducibility (default: 42)
+  /// Seed for reproducible fold assignments across platforms (default: 42).
   uint64_t random_seed = 42;
 
   /// Whether to copy the design matrix for each fold (default: true)
@@ -127,6 +128,28 @@ findBestParameters(CvResult& cv_result, const std::unique_ptr<Score>& scorer);
 
 template<typename T>
 Eigen::ArrayXd
+scoreFoldPath(const SlopePath& path,
+              Eigen::EigenBase<T>& x_test,
+              const Eigen::MatrixXd& y_test,
+              const std::unique_ptr<Loss>& loss,
+              const std::unique_ptr<Score>& scorer,
+              const Eigen::VectorXd& observation_weights,
+              const bool score_class_labels)
+{
+  Eigen::MatrixXd targets = y_test;
+  if (score_class_labels) {
+    targets = loss->predict(loss->link(y_test));
+  }
+  Eigen::ArrayXd scores(path.size());
+  for (int j = 0; j < path.size(); ++j) {
+    const auto eta = path(j).predict(x_test, "linear");
+    scores(j) = scorer->eval(eta, targets, loss, observation_weights);
+  }
+  return scores;
+}
+
+template<typename T>
+Eigen::ArrayXd
 fitToFold(Eigen::MatrixBase<T>& x,
           const Eigen::MatrixXd& y,
           const Folds& folds,
@@ -136,53 +159,43 @@ fitToFold(Eigen::MatrixBase<T>& x,
           Slope& thread_model,
           const int fold,
           const int rep,
-          const double gamma = 0.0,
-          const bool copy_x = true)
+          const double gamma,
+          const bool copy_x,
+          const Eigen::VectorXd& observation_weights,
+          const bool score_class_labels)
 {
-  Eigen::ArrayXd scores = Eigen::ArrayXd::Zero(alphas.size());
+  const auto train_idx = folds.getTrainingIndices(fold, rep);
+  const auto test_idx = folds.getTestIndices(fold, rep);
+  const Eigen::VectorXd train_weights = observation_weights(train_idx);
+  const Eigen::VectorXd test_weights = observation_weights(test_idx);
 
   if (copy_x) {
-    thread_model.setModifyX(true);
-
+    // Relaxation must reuse the original predictors and their normalization.
+    thread_model.setModifyX(gamma == 0);
     auto [x_train, y_train, x_test, y_test] = folds.split(x, y, fold, rep);
-
-    auto path = thread_model.path(x_train, y_train, alphas);
-
+    auto path =
+      SlopeAccess::path(thread_model, x_train, y_train, alphas, train_weights);
     if (gamma > 0) {
-      path = thread_model.relax(path, x_train, y_train, gamma);
+      path = SlopeAccess::relax(
+        thread_model, path, x_train, y_train, gamma, train_weights);
     }
-
-    for (int j = 0; j < path.size(); ++j) {
-      auto eta = path(j).predict(x_test, "linear");
-      scores(j) = scorer->eval(eta, y_test, loss);
-    }
-
-  } else {
-    thread_model.setModifyX(false);
-
-    auto train_idx = folds.getTrainingIndices(fold, rep);
-    auto test_idx = folds.getTestIndices(fold, rep);
-
-    // Create views
-    auto x_train = x(train_idx, all);
-    auto x_test = x(test_idx, all);
-
-    Eigen::MatrixXd y_train = y(train_idx, all);
-    Eigen::MatrixXd y_test = y(test_idx, all);
-
-    auto path = thread_model.path(x_train, y_train, alphas);
-
-    if (gamma > 0) {
-      path = thread_model.relax(path, x_train, y_train, gamma);
-    }
-
-    for (int j = 0; j < path.size(); ++j) {
-      auto eta = path(j).predict(x_test, "linear");
-      scores(j) = scorer->eval(eta, y_test, loss);
-    }
+    return scoreFoldPath(
+      path, x_test, y_test, loss, scorer, test_weights, score_class_labels);
   }
 
-  return scores;
+  thread_model.setModifyX(false);
+  auto x_train = x(train_idx, all);
+  auto x_test = x(test_idx, all);
+  Eigen::MatrixXd y_train = y(train_idx, all);
+  Eigen::MatrixXd y_test = y(test_idx, all);
+  auto path =
+    SlopeAccess::path(thread_model, x_train, y_train, alphas, train_weights);
+  if (gamma > 0) {
+    path = SlopeAccess::relax(
+      thread_model, path, x_train, y_train, gamma, train_weights);
+  }
+  return scoreFoldPath(
+    path, x_test, y_test, loss, scorer, test_weights, score_class_labels);
 }
 
 template<typename T>
@@ -196,27 +209,25 @@ fitToFold(Eigen::SparseMatrixBase<T>& x,
           Slope& thread_model,
           const int fold,
           const int rep,
-          const double gamma = 0.0,
-          const bool copy_x = true)
+          const double gamma,
+          const bool copy_x,
+          const Eigen::VectorXd& observation_weights,
+          const bool score_class_labels)
 {
-  thread_model.setModifyX(true);
-
+  thread_model.setModifyX(gamma == 0);
+  const auto train_idx = folds.getTrainingIndices(fold, rep);
+  const auto test_idx = folds.getTestIndices(fold, rep);
+  const Eigen::VectorXd train_weights = observation_weights(train_idx);
+  const Eigen::VectorXd test_weights = observation_weights(test_idx);
   auto [x_train, y_train, x_test, y_test] = folds.split(x, y, fold, rep);
-
-  auto path = thread_model.path(x_train, y_train, alphas);
-
+  auto path =
+    SlopeAccess::path(thread_model, x_train, y_train, alphas, train_weights);
   if (gamma > 0) {
-    path = thread_model.relax(path, x_train, y_train, gamma);
+    path = SlopeAccess::relax(
+      thread_model, path, x_train, y_train, gamma, train_weights);
   }
-
-  Eigen::ArrayXd scores = Eigen::ArrayXd::Zero(path.size());
-
-  for (int j = 0; j < path.size(); ++j) {
-    auto eta = path(j).predict(x_test, "linear");
-    scores(j) = scorer->eval(eta, y_test, loss);
-  }
-
-  return scores;
+  return scoreFoldPath(
+    path, x_test, y_test, loss, scorer, test_weights, score_class_labels);
 }
 
 } // namespace detail
@@ -230,6 +241,10 @@ fitToFold(Eigen::SparseMatrixBase<T>& x,
  * @param x The design matrix containing predictors
  * @param y_in The response matrix
  * @param config Configuration parameters for cross-validation (optional)
+ * @param observation_weights Optional finite, nonnegative weights, one per row.
+ * Training and validation subsets must each have positive total weight.
+ * Weights are normalized separately within each subset. Fold scores retain
+ * equal weight when computing their mean and standard error.
  * @return CvResult Object containing cross-validation results, including best
  * parameters, regularization paths, and performance metrics across folds
  *
@@ -249,11 +264,23 @@ CvResult
 crossValidate(Slope model,
               Eigen::EigenBase<T>& x,
               const Eigen::MatrixXd& y_in,
-              const CvConfig& config = CvConfig())
+              const CvConfig& config = CvConfig(),
+              const Eigen::VectorXd& observation_weights = Eigen::VectorXd(0))
 {
   CvResult cv_result;
 
   int n = y_in.rows();
+  if (x.rows() != n) {
+    throw std::invalid_argument("x and y must have the same number of rows");
+  }
+  if (!isFinite(x.derived())) {
+    throw std::invalid_argument("x must not contain NA, NaN, or Inf values");
+  }
+  if (!y_in.allFinite()) {
+    throw std::invalid_argument("y must not contain NA, NaN, or Inf values");
+  }
+  const Eigen::VectorXd weights =
+    detail::normalizeObservationWeights(observation_weights, n);
 
   auto loss = setupLoss(model.getLossType());
 
@@ -276,7 +303,29 @@ crossValidate(Slope model,
       : Folds(n, config.n_folds, config.n_repeats, config.random_seed);
 
   int n_evals = folds.numEvals();
+  for (int rep = 0; rep < folds.numRepetitions(); ++rep) {
+    for (int fold = 0; fold < folds.numFolds(); ++fold) {
+      const auto train_indices = folds.getTrainingIndices(fold, rep);
+      const auto test_indices = folds.getTestIndices(fold, rep);
+      const Eigen::VectorXd train_weights = weights(train_indices);
+      const Eigen::VectorXd test_weights = weights(test_indices);
+      const std::string fold_context = "fold " + std::to_string(fold + 1) +
+                                       " in repeat " + std::to_string(rep + 1);
+      if (train_weights.sum() <= 0) {
+        throw std::invalid_argument("Training " + fold_context +
+                                    " has zero total observation weight");
+      }
+      if (test_weights.sum() <= 0) {
+        throw std::invalid_argument("Validation " + fold_context +
+                                    " has zero total observation weight");
+      }
+    }
+  }
+  const bool score_class_labels =
+    config.metric == "accuracy" || config.metric == "misclass";
 
+  // Full-data alpha generation must leave predictors available for each fold.
+  model.setModifyX(false);
   for (const auto& params : grid) {
     GridResult result;
     result.params = params;
@@ -286,7 +335,8 @@ crossValidate(Slope model,
 
     model.setQ(q);
 
-    auto initial_path = model.path(x, y);
+    auto initial_path =
+      detail::SlopeAccess::path(model, x, y, Eigen::ArrayXd(0), weights);
 
     result.alphas = initial_path.getAlpha();
     int n_alpha = result.alphas.size();
@@ -319,6 +369,9 @@ crossValidate(Slope model,
         auto [rep, fold] = std::div(i, folds.numFolds());
 
         Slope thread_model = model;
+        // The full-data path has already converted its alphas to absolute
+        // values.
+        thread_model.setAlphaScale("absolute");
 
         scores.row(i) = detail::fitToFold(x.derived(),
                                           y,
@@ -330,7 +383,9 @@ crossValidate(Slope model,
                                           fold,
                                           rep,
                                           gamma,
-                                          config.copy_x);
+                                          config.copy_x,
+                                          weights,
+                                          score_class_labels);
 
       } catch (const std::exception& e) {
         thread_errors[i] = e.what();

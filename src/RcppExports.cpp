@@ -39,6 +39,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// weightedBinaryAucCpp
+double weightedBinaryAucCpp(const Eigen::VectorXd& scores, const Eigen::VectorXd& labels, const Eigen::VectorXd& weights);
+RcppExport SEXP _SLOPE_weightedBinaryAucCpp(SEXP scoresSEXP, SEXP labelsSEXP, SEXP weightsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Eigen::VectorXd& >::type scores(scoresSEXP);
+    Rcpp::traits::input_parameter< const Eigen::VectorXd& >::type labels(labelsSEXP);
+    Rcpp::traits::input_parameter< const Eigen::VectorXd& >::type weights(weightsSEXP);
+    rcpp_result_gen = Rcpp::wrap(weightedBinaryAucCpp(scores, labels, weights));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cvSparseCpp
 Rcpp::List cvSparseCpp(Eigen::SparseMatrix<double>& x, const Eigen::MatrixXd& y, const Rcpp::List& cv_args, const Rcpp::List& model_args);
 RcppExport SEXP _SLOPE_cvSparseCpp(SEXP xSEXP, SEXP ySEXP, SEXP cv_argsSEXP, SEXP model_argsSEXP) {
@@ -110,6 +123,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_SLOPE_sortedL1ProxCpp", (DL_FUNC) &_SLOPE_sortedL1ProxCpp, 2},
     {"_SLOPE_lambdaSequenceCpp", (DL_FUNC) &_SLOPE_lambdaSequenceCpp, 6},
+    {"_SLOPE_weightedBinaryAucCpp", (DL_FUNC) &_SLOPE_weightedBinaryAucCpp, 3},
     {"_SLOPE_cvSparseCpp", (DL_FUNC) &_SLOPE_cvSparseCpp, 4},
     {"_SLOPE_cvDenseCpp", (DL_FUNC) &_SLOPE_cvDenseCpp, 4},
     {"_SLOPE_sparseSLOPE", (DL_FUNC) &_SLOPE_sparseSLOPE, 3},

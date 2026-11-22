@@ -61,7 +61,12 @@ coef.SLOPE <- function(
     beta <- beta[penalty %in% value]
     intercepts <- intercepts[penalty %in% value]
   } else if (exact) {
-    object <- stats::update(object, alpha = alpha, ...)
+    object <- stats::update(
+      object,
+      alpha = alpha,
+      alpha_scale = "absolute",
+      ...
+    )
     beta <- switch(
       scale,
       original = getElement(object, "coefficients"),

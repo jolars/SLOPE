@@ -37,6 +37,11 @@ public:
    */
   virtual double loss(const Eigen::MatrixXd& eta, const Eigen::MatrixXd& y) = 0;
 
+  /** @brief Calculates the loss averaged by observation weights. */
+  virtual double loss(const Eigen::MatrixXd& eta,
+                      const Eigen::MatrixXd& y,
+                      const Eigen::VectorXd& observation_weights);
+
   /**
    * @brief Calculates the dual loss
    *
@@ -85,6 +90,13 @@ public:
                                     const Eigen::MatrixXd& y,
                                     bool fit_intercept);
 
+  /** @brief Constructs a dual candidate with weighted intercept stationarity.
+   */
+  virtual Eigen::MatrixXd dualPoint(const Eigen::MatrixXd& eta,
+                                    const Eigen::MatrixXd& y,
+                                    bool fit_intercept,
+                                    const Eigen::VectorXd& observation_weights);
+
   /**
    * @brief Calculates the hessian diagonal of the loss function
    *
@@ -111,6 +123,14 @@ public:
                                                Eigen::MatrixXd& z,
                                                const Eigen::MatrixXd& eta,
                                                const Eigen::MatrixXd& y);
+
+  /** @brief Updates the IRLS approximation including observation weights. */
+  virtual void updateWeightsAndWorkingResponse(
+    Eigen::MatrixXd& w,
+    Eigen::MatrixXd& z,
+    const Eigen::MatrixXd& eta,
+    const Eigen::MatrixXd& y,
+    const Eigen::VectorXd& observation_weights);
 
   /**
    * @brief Preprocess response
@@ -172,7 +192,17 @@ public:
     return 2.0 * (loss(eta, y) - loss(link(y), y));
   }
 
+  /** @brief Computes deviance averaged by observation weights. */
+  virtual double deviance(const Eigen::MatrixXd& eta,
+                          const Eigen::MatrixXd& y,
+                          const Eigen::VectorXd& observation_weights);
+
 protected:
+  /** @brief Evaluates family residuals only on positive-weight observations. */
+  Eigen::MatrixXd residualOnSupport(const Eigen::MatrixXd& eta,
+                                    const Eigen::MatrixXd& y,
+                                    const Eigen::VectorXd& observation_weights);
+
   /**
    * @brief Constructs an loss function with specified Lipschitz constant
    * @param lipschitz_constant The Lipschitz constant for the loss function
@@ -197,6 +227,13 @@ protected:
                                   const Eigen::MatrixXd& y,
                                   double lower,
                                   double upper) const;
+
+  Eigen::MatrixXd domainSafePoint(
+    const Eigen::MatrixXd& mean,
+    const Eigen::MatrixXd& y,
+    double lower,
+    double upper,
+    const Eigen::VectorXd& observation_weights) const;
 
 private:
   const double lipschitz_constant;

@@ -61,18 +61,20 @@ public:
    * @param x_scales Vector of feature scales for normalization
    * @param y Response matrix (n samples x m responses)
    */
-  virtual void run(Eigen::VectorXd& beta0,
-                   Eigen::VectorXd& beta,
-                   Eigen::MatrixXd& eta,
-                   const Eigen::ArrayXd& lambda,
-                   const std::unique_ptr<Loss>& loss,
-                   const SortedL1Norm& penalty,
-                   const Eigen::VectorXd& gradient,
-                   const std::vector<int>& working_set,
-                   const Eigen::MatrixXd& x,
-                   const Eigen::VectorXd& x_centers,
-                   const Eigen::VectorXd& x_scales,
-                   const Eigen::MatrixXd& y) = 0;
+  virtual void run(
+    Eigen::VectorXd& beta0,
+    Eigen::VectorXd& beta,
+    Eigen::MatrixXd& eta,
+    const Eigen::ArrayXd& lambda,
+    const std::unique_ptr<Loss>& loss,
+    const SortedL1Norm& penalty,
+    const Eigen::VectorXd& gradient,
+    const std::vector<int>& working_set,
+    const Eigen::MatrixXd& x,
+    const Eigen::VectorXd& x_centers,
+    const Eigen::VectorXd& x_scales,
+    const Eigen::MatrixXd& y,
+    const Eigen::VectorXd& observation_weights = Eigen::VectorXd()) = 0;
 
   /**
    * @brief Pure virtual function defining the solver's optimization routine
@@ -90,18 +92,20 @@ public:
    * @param x_scales Vector of feature scales for normalization
    * @param y Response matrix (n samples x m responses)
    */
-  virtual void run(Eigen::VectorXd& beta0,
-                   Eigen::VectorXd& beta,
-                   Eigen::MatrixXd& eta,
-                   const Eigen::ArrayXd& lambda,
-                   const std::unique_ptr<Loss>& loss,
-                   const SortedL1Norm& penalty,
-                   const Eigen::VectorXd& gradient,
-                   const std::vector<int>& working_set,
-                   const Eigen::SparseMatrix<double>& x,
-                   const Eigen::VectorXd& x_centers,
-                   const Eigen::VectorXd& x_scales,
-                   const Eigen::MatrixXd& y) = 0;
+  virtual void run(
+    Eigen::VectorXd& beta0,
+    Eigen::VectorXd& beta,
+    Eigen::MatrixXd& eta,
+    const Eigen::ArrayXd& lambda,
+    const std::unique_ptr<Loss>& loss,
+    const SortedL1Norm& penalty,
+    const Eigen::VectorXd& gradient,
+    const std::vector<int>& working_set,
+    const Eigen::SparseMatrix<double>& x,
+    const Eigen::VectorXd& x_centers,
+    const Eigen::VectorXd& x_scales,
+    const Eigen::MatrixXd& y,
+    const Eigen::VectorXd& observation_weights = Eigen::VectorXd()) = 0;
 
   /**
    * @brief Pure virtual function defining the solver's optimization routine
@@ -119,18 +123,20 @@ public:
    * @param x_scales Vector of feature scales for normalization
    * @param y Response matrix (n samples x m responses)
    */
-  virtual void run(Eigen::VectorXd& beta0,
-                   Eigen::VectorXd& beta,
-                   Eigen::MatrixXd& eta,
-                   const Eigen::ArrayXd& lambda,
-                   const std::unique_ptr<Loss>& loss,
-                   const SortedL1Norm& penalty,
-                   const Eigen::VectorXd& gradient,
-                   const std::vector<int>& working_set,
-                   const Eigen::Map<Eigen::MatrixXd>& x,
-                   const Eigen::VectorXd& x_centers,
-                   const Eigen::VectorXd& x_scales,
-                   const Eigen::MatrixXd& y) = 0;
+  virtual void run(
+    Eigen::VectorXd& beta0,
+    Eigen::VectorXd& beta,
+    Eigen::MatrixXd& eta,
+    const Eigen::ArrayXd& lambda,
+    const std::unique_ptr<Loss>& loss,
+    const SortedL1Norm& penalty,
+    const Eigen::VectorXd& gradient,
+    const std::vector<int>& working_set,
+    const Eigen::Map<Eigen::MatrixXd>& x,
+    const Eigen::VectorXd& x_centers,
+    const Eigen::VectorXd& x_scales,
+    const Eigen::MatrixXd& y,
+    const Eigen::VectorXd& observation_weights = Eigen::VectorXd()) = 0;
 
   /**
    * @brief Pure virtual function defining the solver's optimization routine
@@ -148,18 +154,20 @@ public:
    * @param x_scales Vector of feature scales for normalization
    * @param y Response matrix (n samples x m responses)
    */
-  virtual void run(Eigen::VectorXd& beta0,
-                   Eigen::VectorXd& beta,
-                   Eigen::MatrixXd& eta,
-                   const Eigen::ArrayXd& lambda,
-                   const std::unique_ptr<Loss>& loss,
-                   const SortedL1Norm& penalty,
-                   const Eigen::VectorXd& gradient,
-                   const std::vector<int>& working_set,
-                   const Eigen::Map<Eigen::SparseMatrix<double>>& x,
-                   const Eigen::VectorXd& x_centers,
-                   const Eigen::VectorXd& x_scales,
-                   const Eigen::MatrixXd& y) = 0;
+  virtual void run(
+    Eigen::VectorXd& beta0,
+    Eigen::VectorXd& beta,
+    Eigen::MatrixXd& eta,
+    const Eigen::ArrayXd& lambda,
+    const std::unique_ptr<Loss>& loss,
+    const SortedL1Norm& penalty,
+    const Eigen::VectorXd& gradient,
+    const std::vector<int>& working_set,
+    const Eigen::Map<Eigen::SparseMatrix<double>>& x,
+    const Eigen::VectorXd& x_centers,
+    const Eigen::VectorXd& x_scales,
+    const Eigen::MatrixXd& y,
+    const Eigen::VectorXd& observation_weights = Eigen::VectorXd()) = 0;
 
 protected:
   JitNormalization jit_normalization; ///< JIT feature normalization strategy

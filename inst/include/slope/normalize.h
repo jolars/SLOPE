@@ -7,16 +7,168 @@
 
 #include "jit_normalization.h"
 #include "math.h"
+#include "observation_weights.h"
 #include <Eigen/SparseCore>
+#include <algorithm>
+#include <cmath>
+#include <limits>
 
 namespace slope {
+
+namespace detail {
+
+class WeightRangeSums
+{
+public:
+  explicit WeightRangeSums(const Eigen::VectorXd& weights)
+    : weights(weights)
+  {
+  }
+
+  double sum(Eigen::Index begin, Eigen::Index end);
+
+private:
+  const Eigen::VectorXd& weights;
+  Eigen::VectorXd sums;
+};
+
+template<typename T, typename F>
+void
+forEachWeightedColumnValue(const Eigen::MatrixBase<T>& x,
+                           const Eigen::VectorXd& weights,
+                           const int column,
+                           const Eigen::Index,
+                           WeightRangeSums*,
+                           F visit)
+{
+  for (Eigen::Index i = 0; i < x.rows(); ++i) {
+    if (weights(i) > 0.0) {
+      visit(x(i, column), weights(i));
+    }
+  }
+}
+
+template<typename T, typename F>
+void
+forEachWeightedColumnValue(const Eigen::SparseMatrixBase<T>& x,
+                           const Eigen::VectorXd& weights,
+                           const int column,
+                           const Eigen::Index support,
+                           WeightRangeSums* range_sums,
+                           F visit)
+{
+  Eigen::Index stored_rows = 0;
+  for (typename T::InnerIterator it(x.derived(), column); it; ++it) {
+    if (weights(it.row()) > 0.0) {
+      visit(it.value(), weights(it.row()));
+      ++stored_rows;
+    }
+  }
+
+  // Implicit zeros matter only when they occur on positive-weight rows.
+  if (stored_rows < support) {
+    double implicit_weight = 0.0;
+    if (range_sums) {
+      Eigen::Index next_row = 0;
+      for (typename T::InnerIterator it(x.derived(), column); it; ++it) {
+        implicit_weight += range_sums->sum(next_row, it.row());
+        next_row = it.row() + 1;
+      }
+      implicit_weight += range_sums->sum(next_row, weights.size());
+    }
+    visit(0.0, implicit_weight);
+  }
+}
+
+template<typename T>
+Eigen::VectorXd
+weightedFeatureCenters(const T& x,
+                       const std::string& type,
+                       const Eigen::VectorXd& weights)
+{
+  Eigen::VectorXd centers(x.cols());
+  const double total = weights.sum();
+  const Eigen::Index support = positiveWeightCount(weights);
+  for (Eigen::Index j = 0; j < x.cols(); ++j) {
+    double value =
+      type == "min" ? std::numeric_limits<double>::infinity() : 0.0;
+    forEachWeightedColumnValue(
+      x, weights, j, support, nullptr, [&](double entry, double weight) {
+        if (type == "min") {
+          value = std::min(value, entry);
+        } else {
+          value += (weight / total) * entry;
+        }
+      });
+    centers(j) = value;
+  }
+  return centers;
+}
+
+template<typename T>
+Eigen::VectorXd
+weightedFeatureScales(const T& x,
+                      const std::string& type,
+                      const Eigen::VectorXd& weights)
+{
+  Eigen::VectorXd scales(x.cols());
+  Eigen::VectorXd means;
+  if (type == "sd") {
+    means = weightedFeatureCenters(x, "mean", weights);
+  }
+  const double total = weights.sum();
+  const Eigen::Index support = positiveWeightCount(weights);
+  WeightRangeSums range_sums(weights);
+  for (Eigen::Index j = 0; j < x.cols(); ++j) {
+    double value = 0.0;
+    double minimum = std::numeric_limits<double>::infinity();
+    double maximum = -std::numeric_limits<double>::infinity();
+    forEachWeightedColumnValue(
+      x,
+      weights,
+      j,
+      support,
+      type == "sd" ? &range_sums : nullptr,
+      [&](double entry, double weight) {
+        if (type == "range") {
+          minimum = std::min(minimum, entry);
+          maximum = std::max(maximum, entry);
+        } else if (type == "max_abs") {
+          value = std::max(value, std::abs(entry));
+        } else if (type == "l1") {
+          value += (weight / total) * std::abs(entry);
+        } else {
+          double centered = entry;
+          if (type == "sd") {
+            minimum = std::min(minimum, entry);
+            maximum = std::max(maximum, entry);
+            centered -= means(j);
+          }
+          value = std::hypot(value, std::sqrt(weight / total) * centered);
+        }
+      });
+    if (type == "range") {
+      value = maximum - minimum;
+    } else if (type == "sd" && minimum == maximum) {
+      // Rounding in the mean must not give constant columns a nonzero scale.
+      value = 0.0;
+    } else if (type == "l1") {
+      value *= support;
+    } else if (type == "l2") {
+      value *= std::sqrt(support);
+    }
+    scales(j) = value;
+  }
+  return scales;
+}
+
+} // namespace detail
 
 /**
  * Compute centers.
  *
- * There are two supported centering types:
- * - "none": Do not compute centers and scales.
- * - "mean": Use arithmetic means.
+ * Supported types are "none", "manual", "mean", and "min". With observation
+ * weights, means use normalized weights, and minima ignore zero-weight rows.
  *
  * @tparam T The type of the input matrix.
  * @param x_centers A vector where the computed or provided centers will be
@@ -24,15 +176,27 @@ namespace slope {
  * @param x The input matrix.
  * @param type A string specifying the normalization type ("none", "manual", or
  * "standardization").
+ * @param observation_weights Optional nonnegative weights, one per row.
  *
  * @throws std::invalid_argument if the provided manual centers or scales have
  * invalid dimensions or contain non-finite values.
  */
 template<typename T>
 void
-computeCenters(Eigen::VectorXd& x_centers, const T& x, const std::string& type)
+computeCenters(Eigen::VectorXd& x_centers,
+               const T& x,
+               const std::string& type,
+               const Eigen::VectorXd& observation_weights = Eigen::VectorXd())
 {
   int p = x.cols();
+  Eigen::VectorXd weights;
+  if (observation_weights.size() > 0) {
+    weights =
+      detail::normalizeObservationWeights(observation_weights, x.rows());
+    if (detail::uniformObservationWeights(weights)) {
+      weights.resize(0);
+    }
+  }
 
   if (type == "manual") {
     if (x_centers.size() != p) {
@@ -43,6 +207,8 @@ computeCenters(Eigen::VectorXd& x_centers, const T& x, const std::string& type)
       throw std::invalid_argument("Centers must be finite");
     }
 
+  } else if (weights.size() > 0 && (type == "mean" || type == "min")) {
+    x_centers = detail::weightedFeatureCenters(x, type, weights);
   } else if (type == "mean") {
     x_centers = means(x);
   } else if (type == "min") {
@@ -55,9 +221,10 @@ computeCenters(Eigen::VectorXd& x_centers, const T& x, const std::string& type)
 /**
  * Compute scales
  *
- * There are two supported scaling types:
- * - "none": Do not compute centers and scales.
- * - "sd": Compute centers and scales using Welford’s algorithm.
+ * Supported types are "none", "manual", "sd", "l1", "l2", "max_abs", and
+ * "range". Weighted standard deviations use the population denominator.
+ * Weighted L1 and L2 norms normalize weights to the positive-weight row count
+ * to preserve the unweighted norm convention. Extrema ignore zero-weight rows.
  *
  * @tparam T The type of the input matrix.
  * @param x The input matrix.
@@ -65,15 +232,27 @@ computeCenters(Eigen::VectorXd& x_centers, const T& x, const std::string& type)
  * stored.
  * @param type A string specifying the normalization type ("none", "manual", or
  * "standardization").
+ * @param observation_weights Optional nonnegative weights, one per row.
  *
  * @throws std::invalid_argument if the provided manual centers or scales have
  * invalid dimensions or contain non-finite values.
  */
 template<typename T>
 void
-computeScales(Eigen::VectorXd& x_scales, const T& x, const std::string& type)
+computeScales(Eigen::VectorXd& x_scales,
+              const T& x,
+              const std::string& type,
+              const Eigen::VectorXd& observation_weights = Eigen::VectorXd())
 {
   int p = x.cols();
+  Eigen::VectorXd weights;
+  if (observation_weights.size() > 0) {
+    weights =
+      detail::normalizeObservationWeights(observation_weights, x.rows());
+    if (detail::uniformObservationWeights(weights)) {
+      weights.resize(0);
+    }
+  }
 
   if (type == "manual") {
     if (x_scales.size() != p) {
@@ -82,6 +261,10 @@ computeScales(Eigen::VectorXd& x_scales, const T& x, const std::string& type)
     if (!x_scales.allFinite()) {
       throw std::invalid_argument("Scales must be finite");
     }
+  } else if (weights.size() > 0 &&
+             (type == "sd" || type == "l1" || type == "l2" ||
+              type == "max_abs" || type == "range")) {
+    x_scales = detail::weightedFeatureScales(x, type, weights);
   } else if (type == "sd") {
     x_scales = stdDevs(x);
   } else if (type == "l1") {
@@ -115,6 +298,7 @@ computeScales(Eigen::VectorXd& x_scales, const T& x, const std::string& type)
  * "manual", or "standardization").
  * @param modify_x If true, modifies x in-place; otherwise, x remains unchanged
  * (centers/scales are still computed).
+ * @param observation_weights Optional nonnegative weights, one per row.
  *
  * @return true if normalization succeeds, false otherwise.
  */
@@ -125,12 +309,13 @@ normalize(Eigen::MatrixBase<T>& x,
           Eigen::VectorXd& x_scales,
           const std::string& centering_type,
           const std::string& scaling_type,
-          const bool modify_x)
+          const bool modify_x,
+          const Eigen::VectorXd& observation_weights = Eigen::VectorXd())
 {
   const int p = x.cols();
 
-  computeCenters(x_centers, x, centering_type);
-  computeScales(x_scales, x, scaling_type);
+  computeCenters(x_centers, x, centering_type, observation_weights);
+  computeScales(x_scales, x, scaling_type, observation_weights);
 
   // Handle zero-variance columns by setting their scale to 1.0
   // to avoid division by zero during normalization
@@ -160,12 +345,32 @@ normalize(Eigen::MatrixBase<T>& x,
   }
 
   if (modify_x && (center || scale)) {
-    for (int j = 0; j < p; ++j) {
-      if (center) {
-        x.col(j).array() -= x_centers(j);
+    const bool ignored_rows = observation_weights.size() > 0 &&
+                              (observation_weights.array() == 0.0).any();
+    if (ignored_rows) {
+      for (int j = 0; j < p; ++j) {
+        for (Eigen::Index i = 0; i < x.rows(); ++i) {
+          // Ignored extremes must not overflow and contaminate later products.
+          if (observation_weights(i) == 0.0) {
+            x(i, j) = 0.0;
+            continue;
+          }
+          if (center) {
+            x(i, j) -= x_centers(j);
+          }
+          if (scale) {
+            x(i, j) /= x_scales(j);
+          }
+        }
       }
-      if (scale) {
-        x.col(j).array() /= x_scales(j);
+    } else {
+      for (int j = 0; j < p; ++j) {
+        if (center) {
+          x.col(j).array() -= x_centers(j);
+        }
+        if (scale) {
+          x.col(j).array() /= x_scales(j);
+        }
       }
     }
   }
@@ -191,6 +396,7 @@ normalize(Eigen::MatrixBase<T>& x,
  * "manual", or "standardization").
  * @param scaling_type A string specifying the normalization type ("none",
  * "manual", or "standardization").
+ * @param observation_weights Optional nonnegative weights, one per row.
  *
  * @return true if normalization succeeds, false otherwise.
  */
@@ -201,10 +407,11 @@ normalize(Eigen::SparseMatrixBase<T>& x,
           Eigen::VectorXd& x_scales,
           const std::string& centering_type,
           const std::string& scaling_type,
-          const bool)
+          const bool,
+          const Eigen::VectorXd& observation_weights = Eigen::VectorXd())
 {
-  computeCenters(x_centers, x, centering_type);
-  computeScales(x_scales, x, scaling_type);
+  computeCenters(x_centers, x, centering_type, observation_weights);
+  computeScales(x_scales, x, scaling_type, observation_weights);
 
   // Handle zero-variance columns by setting their scale to 1.0
   // to avoid division by zero during normalization

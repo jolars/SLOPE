@@ -14,6 +14,7 @@
 #include "losses/setup_loss.h"
 #include "math.h"
 #include "normalize.h"
+#include "observation_weights.h"
 #include "regularization_sequence.h"
 #include "screening.h"
 #include "slope_fit.h"
@@ -34,6 +35,10 @@
  *  @brief Namespace containing SLOPE regression implementation
  */
 namespace slope {
+
+namespace detail {
+struct SlopeAccess;
+}
 
 /**
  * @brief Default no-op interrupt checker
@@ -133,6 +138,19 @@ public:
    * @param alpha_type The type of alpha, one of `"path"` and `"estimate"`.
    */
   void setAlphaType(const std::string& alpha_type);
+
+  /**
+   * @brief Sets the scale of user-supplied alpha values.
+   *
+   * @param alpha_scale One of "absolute" (the default) or "relative".
+   * Relative values passed to fit() and path() are multiplied by alpha_max,
+   * the smallest alpha giving zero coefficients for the current data,
+   * normalization, observation weights, and lambda sequence. Values must be
+   * finite and nonnegative; values above one are allowed. Automatic paths and
+   * noise-based alpha estimates are unaffected. Returned fits always store
+   * absolute alpha values.
+   */
+  void setAlphaScale(const std::string& alpha_scale);
 
   /**
    * @brief Sets the learning rate decrement.
@@ -378,11 +396,16 @@ public:
    * @tparam T Matrix type for feature input (supports dense or sparse matrices)
    * @param x Feature matrix of size n x p
    * @param y_in Response matrix of size n x m
-   * @param alpha Sequence of mixing parameters for elastic net regularization
+   * @param alpha Nonincreasing sequence of penalty scales. Empty input
+   * generates a path automatically. Values use the scale set by
+   * setAlphaScale().
    * @param lambda Sequence of regularization parameters (if empty, computed
    * automatically)
    * @param check_interrupt Optional lambda to check for user interrupt. It runs
    *   periodically during the path fitting.
+   * @param observation_weights Optional finite, nonnegative row weights with
+   * positive total weight. Empty weights give each row equal weight. Common
+   * rescaling leaves the fitted model unchanged.
    * @return SlopePath object containing full solution path and optimization
    * metrics
    *
@@ -395,13 +418,45 @@ public:
     const Eigen::MatrixXd& y_in,
     Eigen::ArrayXd alpha = Eigen::ArrayXd::Zero(0),
     Eigen::ArrayXd lambda = Eigen::ArrayXd::Zero(0),
-    std::function<bool()> check_interrupt = defaultInterruptChecker)
+    std::function<bool()> check_interrupt = defaultInterruptChecker,
+    const Eigen::VectorXd& observation_weights = Eigen::VectorXd())
+  {
+    return pathImpl(x,
+                    y_in,
+                    std::move(alpha),
+                    std::move(lambda),
+                    check_interrupt,
+                    observation_weights,
+                    false);
+  }
+
+private:
+  friend struct detail::SlopeAccess;
+
+  template<typename T>
+  SlopePath pathImpl(Eigen::EigenBase<T>& x,
+                     const Eigen::MatrixXd& y_in,
+                     Eigen::ArrayXd alpha,
+                     Eigen::ArrayXd lambda,
+                     std::function<bool()> check_interrupt,
+                     const Eigen::VectorXd& observation_weights,
+                     bool response_prepared)
   {
     using Eigen::MatrixXd;
     using Eigen::VectorXd;
 
     const int n = x.rows();
     const int p = x.cols();
+    const VectorXd weights =
+      detail::normalizeObservationWeights(observation_weights, n);
+    const int n_positive = detail::positiveWeightCount(weights);
+    if (!detail::uniformObservationWeights(weights) &&
+        (this->alpha_type == "estimate" ||
+         (lambda.size() == 0 && this->lambda_type == "gaussian"))) {
+      throw std::invalid_argument(
+        "Nonuniform observation weights are not supported for noise-based "
+        "alpha estimation or automatic Gaussian lambda correction");
+    }
 
     const int INTERRUPT_FREQ = 100;
     bool interrupt = false;
@@ -424,11 +479,12 @@ public:
                                        this->x_scales,
                                        this->centering_type,
                                        this->scaling_type,
-                                       this->modify_x);
+                                       this->modify_x,
+                                       weights);
 
     std::unique_ptr<Loss> loss = setupLoss(this->loss_type);
 
-    MatrixXd y = loss->preprocessResponse(y_in);
+    MatrixXd y = response_prepared ? y_in : loss->preprocessResponse(y_in);
 
     const int m = y.cols();
 
@@ -438,11 +494,12 @@ public:
     MatrixXd eta = MatrixXd::Zero(n, m); // linear predictor
 
     if (this->intercept) {
-      beta0 = loss->link(y.colwise().mean()).transpose();
+      beta0 = loss->link(detail::weightedMean(y, weights)).transpose();
       eta.rowwise() = beta0.transpose();
     }
 
     MatrixXd residual = loss->residual(eta, y);
+    detail::maskZeroWeightRows(residual, weights);
     VectorXd gradient(beta.size());
 
     // Path data
@@ -450,8 +507,12 @@ public:
     bool user_lambda = lambda.size() > 0;
 
     if (!user_lambda) {
-      lambda = lambdaSequence(
-        p * m, this->q, this->lambda_type, n, this->theta1, this->theta2);
+      lambda = lambdaSequence(p * m,
+                              this->q,
+                              this->lambda_type,
+                              n_positive,
+                              this->theta1,
+                              this->theta2);
     } else {
       if (lambda.size() != beta.size()) {
         throw std::invalid_argument(
@@ -489,7 +550,7 @@ public:
                    residual,
                    this->x_centers,
                    this->x_scales,
-                   Eigen::VectorXd::Ones(n),
+                   weights,
                    jit_normalization);
 
     int alpha_max_ind = whichMax(gradient.cwiseAbs());
@@ -501,12 +562,17 @@ public:
 
     if (alpha_type == "path" ||
         (alpha_type == "estimate" && alpha_estimate != 1)) {
-      if (alpha_min_ratio < 0) {
-        alpha_min_ratio = n > gradient.size() ? 1e-4 : 1e-2;
+      const double min_ratio = alpha_min_ratio < 0
+                                 ? (n_positive > gradient.size() ? 1e-4 : 1e-2)
+                                 : alpha_min_ratio;
+      alpha = regularizationPath(alpha, path_length, min_ratio, alpha_max);
+      if (user_alpha && alpha_scale == "relative") {
+        alpha *= alpha_max;
+        if (!alpha.isFinite().all()) {
+          throw std::invalid_argument(
+            "Relative alpha values must produce finite absolute penalties");
+        }
       }
-
-      alpha =
-        regularizationPath(alpha, path_length, alpha_min_ratio, alpha_max);
       path_length = alpha.size();
     } else if (alpha_type == "estimate" && alpha_estimate == -1) {
       if (loss_type != "quadratic") {
@@ -522,7 +588,7 @@ public:
       screening_rule->initialize(static_cast<int>(beta.size()), alpha_max_ind);
 
     // Path variables
-    double null_deviance = loss->deviance(eta, y);
+    double null_deviance = loss->deviance(eta, y, weights);
     double dev_prev = null_deviance;
 
     Timer timer;
@@ -570,7 +636,8 @@ public:
                                         this->x_centers,
                                         this->x_scales,
                                         jit_normalization,
-                                        this->intercept);
+                                        this->intercept,
+                                        weights);
       }
 
       std::optional<double> quadratic_ols_dual;
@@ -586,7 +653,8 @@ public:
                                                       y,
                                                       this->x_centers,
                                                       this->x_scales,
-                                                      jit_normalization);
+                                                      jit_normalization,
+                                                      weights);
       }
 
       std::vector<double> duals, primals, time;
@@ -600,27 +668,28 @@ public:
                      residual,
                      x_centers,
                      x_scales,
-                     Eigen::VectorXd::Ones(x.rows()),
+                     weights,
                      jit_normalization);
 
       screening_rule->screen(
         working_set, gradient, lambda_curr, lambda_prev, beta);
 
-      int it = 0;
+      int working_set_it = 0;
       int total_it = 0;
-      for (; it < this->max_it; ++it, ++total_it) {
+      for (; total_it < this->max_it; ++working_set_it, ++total_it) {
         // Compute primal, dual, and gap
         residual = loss->residual(eta, y);
+        detail::maskZeroWeightRows(residual, weights);
         updateGradient(gradient,
                        x.derived(),
                        residual,
                        working_set,
                        this->x_centers,
                        this->x_scales,
-                       Eigen::VectorXd::Ones(n),
+                       weights,
                        jit_normalization);
 
-        double primal = loss->loss(eta, y) +
+        double primal = loss->loss(eta, y, weights) +
                         sl1_norm.eval(beta(working_set),
                                       lambda_curr.head(working_set.size()));
 
@@ -630,10 +699,10 @@ public:
           gradient(working_set).cwiseAbs().maxCoeff() <=
             numerical_stationarity_tol &&
           (!this->intercept ||
-           residual.colwise().mean().cwiseAbs().maxCoeff() <=
+           detail::weightedMean(residual, weights).cwiseAbs().maxCoeff() <=
              numerical_stationarity_tol);
 
-        MatrixXd dual_point = loss->dualPoint(eta, y, this->intercept);
+        MatrixXd dual_point = loss->dualPoint(eta, y, this->intercept, weights);
         MatrixXd theta = dual_point;
         VectorXd dual_gradient = VectorXd::Zero(beta.size());
         updateGradient(dual_gradient,
@@ -642,14 +711,14 @@ public:
                        working_set,
                        this->x_centers,
                        this->x_scales,
-                       Eigen::VectorXd::Ones(n),
+                       weights,
                        jit_normalization);
         double dual_norm =
           sl1_norm.dualNorm(dual_gradient(working_set),
                             lambda_curr.head(working_set.size()),
                             constants::MAX_DIV);
         theta.array() /= std::max(1.0, dual_norm);
-        double dual = loss->dual(theta, y, Eigen::VectorXd::Ones(n));
+        double dual = loss->dual(theta, y, weights);
         if (quadratic_ols_dual.has_value() && numerically_stationary) {
           dual = std::max(dual, *quadratic_ols_dual);
         }
@@ -667,7 +736,8 @@ public:
                                            y,
                                            this->x_centers,
                                            this->x_scales,
-                                           jit_normalization);
+                                           jit_normalization,
+                                           weights);
           if (quadratic_ols_dual.has_value() && numerically_stationary) {
             full_dual = std::max(full_dual, *quadratic_ols_dual);
           }
@@ -688,14 +758,22 @@ public:
                                               numerically_stationary;
 
         if (dual_gap <= tol_scaled || unregularized_stationary ||
-            it == this->max_it) {
+            working_set_it + 1 == this->max_it) {
+          MatrixXd screening_residual = residual;
+          for (int i = 0; i < n; ++i) {
+            if (weights(i) == 0.0) {
+              screening_residual.row(i).setZero();
+            } else {
+              screening_residual.row(i) *= weights(i);
+            }
+          }
           bool no_violations =
             screening_rule->checkKktViolations(gradient,
                                                beta,
                                                lambda_curr,
                                                working_set,
                                                x.derived(),
-                                               residual,
+                                               screening_residual,
                                                this->x_centers,
                                                this->x_scales,
                                                jit_normalization);
@@ -710,7 +788,8 @@ public:
                                                y,
                                                this->x_centers,
                                                this->x_scales,
-                                               jit_normalization);
+                                               jit_normalization,
+                                               weights);
               if (quadratic_ols_dual.has_value() && numerically_stationary) {
                 full_dual = std::max(full_dual, *quadratic_ols_dual);
               }
@@ -719,11 +798,11 @@ public:
               break;
             }
           } else {
-            it = 0; // Restart if there are KKT violations
+            working_set_it = 0; // Restart if there are KKT violations
           }
         }
 
-        if (it % INTERRUPT_FREQ == 0) {
+        if (working_set_it % INTERRUPT_FREQ == 0) {
           bool local_interrupt = false;
 #ifdef _OPENMP
 #pragma omp critical(check_interrupt)
@@ -748,10 +827,11 @@ public:
                     x.derived(),
                     this->x_centers,
                     this->x_scales,
-                    y);
+                    y,
+                    weights);
       }
 
-      if (it == this->max_it) {
+      if (total_it == this->max_it) {
         WarningLogger::addWarning(
           WarningCode::MAXIT_REACHED,
           "Maximum number of iterations reached at step = " +
@@ -761,7 +841,7 @@ public:
       alpha_prev = alpha_curr;
 
       // Compute early stopping criteria
-      double dev = loss->deviance(eta, y);
+      double dev = loss->deviance(eta, y, weights);
       double dev_ratio = 1 - dev / null_deviance;
       double dev_change = path_step == 0 ? 1.0 : 1 - dev / dev_prev;
       dev_prev = dev;
@@ -798,7 +878,7 @@ public:
       if (!user_alpha) {
         int n_unique = unique(beta.cwiseAbs()).size();
         if (dev_ratio > dev_ratio_tol || dev_change < dev_change_tol ||
-            n_unique >= this->max_clusters.value_or(n + 1)) {
+            n_unique >= this->max_clusters.value_or(n_positive + 1)) {
           break;
         }
       }
@@ -807,6 +887,7 @@ public:
     return fits;
   }
 
+public:
   /**
    * @brief Fits a single SLOPE regression model for given alpha and lambda
    * values
@@ -814,7 +895,9 @@ public:
    * @tparam T Matrix type for feature input (supports dense or sparse matrices)
    * @param x Feature matrix of size n x p
    * @param y_in Response matrix of size n x m
-   * @param alpha Mixing parameter for elastic net regularization
+   * @param alpha Nonnegative penalty scale, interpreted according to
+   * setAlphaScale(). Defaults to 1.0, giving zero coefficients when the scale
+   * is relative and the lambda sequence has a positive entry.
    * @param lambda Vector of regularization parameters (if empty, computed
    * automatically)
    * @param check_interrupt Optional lambda to check for user interrupt. It runs
@@ -829,11 +912,13 @@ public:
                const Eigen::MatrixXd& y_in,
                const double alpha = 1.0,
                Eigen::ArrayXd lambda = Eigen::ArrayXd::Zero(0),
-               std::function<bool()> check_interrupt = defaultInterruptChecker)
+               std::function<bool()> check_interrupt = defaultInterruptChecker,
+               const Eigen::VectorXd& observation_weights = Eigen::VectorXd())
   {
     Eigen::ArrayXd alpha_arr(1);
     alpha_arr(0) = alpha;
-    SlopePath res = path(x, y_in, alpha_arr, lambda, check_interrupt);
+    SlopePath res =
+      path(x, y_in, alpha_arr, lambda, check_interrupt, observation_weights);
 
     return { res(0) };
   };
@@ -858,6 +943,8 @@ public:
    * @param x Design matrix with n observations and p predictors
    * @param y Response matrix
    * @param check_interrupt Optional lambda to check for user interrupt
+   * @param observation_weights Optional row weights. Only constant positive
+   * weights are supported by noise-based alpha estimation.
    * @return A SlopePath object containing the fitted model with estimated alpha
    * @throws std::runtime_error If maximum iterations reached or if too many
    * variables selected
@@ -866,14 +953,22 @@ public:
   SlopePath estimateAlpha(
     Eigen::EigenBase<T>& x,
     Eigen::MatrixXd& y,
-    std::function<bool()> check_interrupt = defaultInterruptChecker)
+    std::function<bool()> check_interrupt = defaultInterruptChecker,
+    const Eigen::VectorXd& observation_weights = Eigen::VectorXd())
   {
+    const auto weights =
+      detail::normalizeObservationWeights(observation_weights, x.rows());
+    if (!detail::uniformObservationWeights(weights)) {
+      throw std::invalid_argument("Nonuniform observation weights are not "
+                                  "supported for noise-based alpha estimation");
+    }
     int n = x.rows();
     int p = x.cols();
 
     // Create a copy with alpha type set to path to avoid recursion
     Slope model_copy = *this;
     model_copy.setAlphaType("path");
+    model_copy.setAlphaScale("absolute");
 
     std::vector<int> selected;
     Eigen::ArrayXd alpha(1);
@@ -883,8 +978,8 @@ public:
     if (n >= p + 30) {
       alpha(0) = estimateNoise(x, y, this->intercept) / n;
       this->alpha_estimate = alpha(0);
-      result =
-        model_copy.path(x, y, alpha, Eigen::ArrayXd::Zero(0), check_interrupt);
+      result = model_copy.path(
+        x, y, alpha, Eigen::ArrayXd::Zero(0), check_interrupt, weights);
     } else {
       for (int it = 0; it < this->alpha_est_maxit; ++it) {
         T x_selected = subsetCols(x.derived(), selected);
@@ -896,7 +991,7 @@ public:
         this->alpha_estimate = alpha(0);
 
         result = model_copy.path(
-          x, y, alpha, Eigen::ArrayXd::Zero(0), check_interrupt);
+          x, y, alpha, Eigen::ArrayXd::Zero(0), check_interrupt, weights);
         auto coefs = result.getCoefs().back();
 
         for (typename Eigen::SparseMatrix<double>::InnerIterator it(coefs, 0);
@@ -928,12 +1023,15 @@ public:
    *
    * @tparam T Matrix type for feature input (supports dense or sparse matrices)
    * @param fit Previously fitted SLOPE model containing coefficient estimates
-   * @param x Feature matrix of size n x p
+   * @param x Original feature matrix of size n x p, before normalization.
+   * Relaxation uses just-in-time normalization and does not modify x.
    * @param y_in Response vector of size n
    * @param gamma Relaxation parameter, proportion of SLOPE-penalized fit. Must
    * be between 0 and 1. Default is 0.0 which means fully relaxed.
    * @param beta0 Warm start intercept values (optional)
    * @param beta Warm start coefficient values (optional)
+   * @param observation_weights Optional row weights. Supply the fitting weights
+   * again when relaxing a weighted fit.
    * @return SlopeFit Object containing the relaxed model with unpenalized
    * coefficients
    */
@@ -943,20 +1041,79 @@ public:
                  const Eigen::VectorXd& y_in,
                  const double gamma = 0.0,
                  Eigen::VectorXd beta0 = Eigen::VectorXd(0),
-                 Eigen::VectorXd beta = Eigen::VectorXd(0))
+                 Eigen::VectorXd beta = Eigen::VectorXd(0),
+                 const Eigen::VectorXd& observation_weights = Eigen::VectorXd())
+  {
+    return relaxImpl(fit,
+                     x,
+                     y_in,
+                     gamma,
+                     std::move(beta0),
+                     std::move(beta),
+                     observation_weights,
+                     false);
+  }
+
+private:
+  struct RelaxationState
+  {
+    Eigen::SparseMatrix<int> pattern;
+    Eigen::VectorXd beta0;
+    Eigen::VectorXd beta;
+    bool initialized = false;
+  };
+
+  template<typename T>
+  SlopeFit relaxImpl(const SlopeFit& fit,
+                     T& x,
+                     const Eigen::MatrixXd& y_in,
+                     double gamma,
+                     Eigen::VectorXd beta0,
+                     Eigen::VectorXd beta,
+                     const Eigen::VectorXd& observation_weights,
+                     bool response_prepared,
+                     RelaxationState* state = nullptr)
   {
     using Eigen::MatrixXd;
     using Eigen::VectorXd;
 
     int n = x.rows();
     int p = x.cols();
+    const VectorXd weights =
+      detail::normalizeObservationWeights(observation_weights, n);
+    if (y_in.rows() != n || !isFinite(x) || !y_in.allFinite()) {
+      throw std::invalid_argument(
+        "Relaxation requires finite x and y with matching rows");
+    }
+    if (!std::isfinite(gamma) || gamma < 0.0 || gamma > 1.0) {
+      throw std::invalid_argument("gamma must be between zero and one");
+    }
+    if (gamma == 1.0) {
+      return fit;
+    }
 
     if (beta0.size() == 0) {
       beta0 = fit.getIntercepts(false);
     }
 
     if (beta.size() == 0) {
-      beta = fit.getCoefs(false);
+      beta = MatrixXd(fit.getCoefs(false)).reshaped();
+    }
+
+    auto working_set = activeSet(beta);
+    bool reuse_solution = false;
+    if (state != nullptr) {
+      auto pattern = patternMatrix(beta);
+      reuse_solution =
+        state->initialized && pattern.rows() == state->pattern.rows() &&
+        pattern.cols() == state->pattern.cols() &&
+        (pattern.cols() == 0 || pattern.isApprox(state->pattern));
+      if (reuse_solution) {
+        beta0 = state->beta0;
+        beta = state->beta;
+      } else {
+        state->pattern = std::move(pattern);
+      }
     }
 
     double alpha = fit.getAlpha();
@@ -966,139 +1123,192 @@ public:
     std::vector<double> primals, duals, time;
     timer.start();
 
-    auto jit_normalization =
-      normalize(x, x_centers, x_scales, centering_type, scaling_type, modify_x);
+    auto jit_normalization = normalize(
+      x, x_centers, x_scales, centering_type, scaling_type, false, weights);
 
     bool update_clusters = false;
 
     std::unique_ptr<Loss> loss = setupLoss(this->loss_type);
 
-    MatrixXd y = loss->preprocessResponse(y_in);
+    MatrixXd y = response_prepared ? y_in : loss->preprocessResponse(y_in);
 
     int m = y.cols();
 
-    Eigen::ArrayXd lambda_cumsum_relax = Eigen::ArrayXd::Zero(p * m + 1);
-
-    auto working_set = activeSet(beta);
-
-    Eigen::MatrixXd eta = linearPredictor(x,
-                                          working_set,
-                                          beta0,
-                                          beta,
-                                          x_centers,
-                                          x_scales,
-                                          jit_normalization,
-                                          intercept);
-    VectorXd gradient = VectorXd::Zero(p * m);
-    MatrixXd residual(n, m);
-    MatrixXd working_residual(n, m);
-
-    MatrixXd w = MatrixXd::Ones(n, m);
-    MatrixXd w_ones = MatrixXd::Ones(n, m);
-    MatrixXd z = y;
-
-    slope::Clusters clusters(beta);
-
-    std::mt19937 rng;
-
-    if (random_seed.has_value()) {
-      rng.seed(*random_seed);
-    } else {
-      rng.seed(std::random_device{}());
-    }
-
+    MatrixXd eta;
     int passes = 0;
 
-    for (int irls_it = 0; irls_it < max_it_outer_relax; irls_it++) {
-      residual = loss->residual(eta, y);
+    if (!reuse_solution) {
+      Eigen::ArrayXd lambda_cumsum_relax = Eigen::ArrayXd::Zero(p * m + 1);
 
-      if (collect_diagnostics) {
-        primals.push_back(loss->loss(eta, y));
-        duals.push_back(0.0);
-        time.push_back(timer.elapsed());
+      eta = linearPredictor(x,
+                            working_set,
+                            beta0,
+                            beta,
+                            x_centers,
+                            x_scales,
+                            jit_normalization,
+                            intercept);
+      VectorXd gradient = VectorXd::Zero(p * m);
+      MatrixXd residual(n, m);
+      MatrixXd working_residual(n, m);
+
+      MatrixXd w = MatrixXd::Ones(n, m);
+      MatrixXd w_ones = weights.replicate(1, m);
+      MatrixXd z = y;
+
+      slope::Clusters clusters(beta);
+
+      std::mt19937 rng;
+
+      if (random_seed.has_value()) {
+        rng.seed(*random_seed);
+      } else {
+        rng.seed(std::random_device{}());
       }
 
-      Eigen::VectorXd cluster_gradient = clusterGradient(beta,
-                                                         residual,
-                                                         clusters,
-                                                         x,
-                                                         w_ones,
-                                                         x_centers,
-                                                         x_scales,
-                                                         jit_normalization);
+      for (int irls_it = 0; irls_it < max_it_outer_relax; irls_it++) {
+        residual = loss->residual(eta, y);
+        detail::maskZeroWeightRows(residual, weights);
 
-      double norm_grad = cluster_gradient.lpNorm<Eigen::Infinity>();
+        if (collect_diagnostics) {
+          primals.push_back(loss->loss(eta, y, weights));
+          duals.push_back(0.0);
+          time.push_back(timer.elapsed());
+        }
 
-      if (norm_grad < tol_relax) {
-        break;
-      }
+        Eigen::VectorXd cluster_gradient = clusterGradient(beta,
+                                                           residual,
+                                                           clusters,
+                                                           x,
+                                                           w_ones,
+                                                           x_centers,
+                                                           x_scales,
+                                                           jit_normalization);
 
-      loss->updateWeightsAndWorkingResponse(w, z, eta, y);
-      working_residual = eta - z;
-      const VectorXd weight_sums = w.colwise().sum().transpose();
+        double norm_grad = cluster_gradient.lpNorm<Eigen::Infinity>();
+        if (intercept) {
+          norm_grad = std::max(
+            norm_grad,
+            detail::weightedMean(residual, weights).cwiseAbs().maxCoeff());
+        }
 
-      for (int inner_it = 0; inner_it < max_it_inner_relax; ++inner_it) {
-        passes++;
-
-        double max_abs_gradient = coordinateDescent(beta0,
-                                                    beta,
-                                                    working_residual,
-                                                    clusters,
-                                                    lambda_cumsum_relax,
-                                                    x,
-                                                    w,
-                                                    weight_sums,
-                                                    x_centers,
-                                                    x_scales,
-                                                    intercept,
-                                                    jit_normalization,
-                                                    update_clusters,
-                                                    rng,
-                                                    cd_type);
-
-        if (max_abs_gradient < tol_relax) {
+        if (norm_grad < tol_relax) {
           break;
         }
-      }
 
-      eta = working_residual + z;
+        loss->updateWeightsAndWorkingResponse(w, z, eta, y, weights);
+        working_residual = eta - z;
+        detail::maskZeroWeightRows(working_residual, weights);
+        const VectorXd weight_sums = w.colwise().sum().transpose();
 
-      if (irls_it == max_it_outer_relax) {
-        WarningLogger::addWarning(WarningCode::MAXIT_REACHED,
-                                  "Maximum number of IRLS iterations reached.");
+        for (int inner_it = 0; inner_it < max_it_inner_relax; ++inner_it) {
+          passes++;
+
+          double max_abs_gradient = coordinateDescent(beta0,
+                                                      beta,
+                                                      working_residual,
+                                                      clusters,
+                                                      lambda_cumsum_relax,
+                                                      x,
+                                                      w,
+                                                      weight_sums,
+                                                      x_centers,
+                                                      x_scales,
+                                                      intercept,
+                                                      jit_normalization,
+                                                      update_clusters,
+                                                      rng,
+                                                      cd_type);
+
+          if (max_abs_gradient < tol_relax) {
+            break;
+          }
+        }
+
+        eta = working_residual + z;
+
+        if (irls_it == max_it_outer_relax) {
+          WarningLogger::addWarning(
+            WarningCode::MAXIT_REACHED,
+            "Maximum number of IRLS iterations reached.");
+        }
       }
     }
 
-    double dev = loss->deviance(eta, y);
+    if (state != nullptr && !reuse_solution) {
+      // Cache before blending so later steps use their own penalized fit.
+      state->beta0 = beta0;
+      state->beta = beta;
+      state->initialized = true;
+    }
 
     if (gamma > 0) {
-      Eigen::VectorXd old_coefs = fit.getCoefs(false);
+      Eigen::VectorXd old_coefs = MatrixXd(fit.getCoefs(false)).reshaped();
       Eigen::VectorXd old_intercept = fit.getIntercepts(false);
       beta = (1 - gamma) * beta + gamma * old_coefs;
+      beta0 = (1 - gamma) * beta0 + gamma * old_intercept;
     }
 
-    SlopeFit fit_out{ beta0,
-                      beta.reshaped(p, m).sparseView(),
-                      clusters,
-                      alpha,
-                      fit.getLambda(),
-                      dev,
-                      fit.getNullDeviance(),
-                      primals,
-                      duals,
-                      time,
-                      passes,
-                      centering_type,
-                      scaling_type,
-                      intercept,
-                      x_centers,
-                      x_scales };
+    eta = linearPredictor(x,
+                          working_set,
+                          beta0,
+                          beta,
+                          x_centers,
+                          x_scales,
+                          jit_normalization,
+                          intercept);
+    const double dev = loss->deviance(eta, y, weights);
+    MatrixXd null_eta = MatrixXd::Zero(n, m);
+    if (intercept) {
+      null_eta.rowwise() = loss->link(detail::weightedMean(y, weights)).row(0);
+    }
+    const double null_dev = loss->deviance(null_eta, y, weights);
+    Clusters clusters(beta);
+
+    SlopeFit fit_out{ beta0,           beta.reshaped(p, m).sparseView(),
+                      clusters,        alpha,
+                      fit.getLambda(), dev,
+                      null_dev,        primals,
+                      duals,           time,
+                      passes,          centering_type,
+                      scaling_type,    intercept,
+                      x_centers,       x_scales };
 
     return fit_out;
   }
 
+  template<typename T>
+  SlopePath relaxPathImpl(const SlopePath& path,
+                          T& x,
+                          const Eigen::MatrixXd& y,
+                          double gamma,
+                          const Eigen::VectorXd& observation_weights,
+                          bool response_prepared)
+  {
+    std::vector<SlopeFit> fits;
+    fits.reserve(path.size());
+    RelaxationState state;
+    for (size_t i = 0; i < path.size(); ++i) {
+      fits.emplace_back(relaxImpl(path(i),
+                                  x,
+                                  y,
+                                  gamma,
+                                  {},
+                                  {},
+                                  observation_weights,
+                                  response_prepared,
+                                  &state));
+    }
+    return fits;
+  }
+
+public:
   /**
    * @brief Relaxes a fitted SLOPE path
+   *
+   * Reuses the unpenalized fit at consecutive steps with the same signed
+   * cluster pattern. Reused steps have zero optimization passes and empty
+   * diagnostic histories.
    *
    * @tparam T Matrix type for feature input (supports dense or sparse matrices)
    * @param path Previously fitted SLOPE path
@@ -1106,29 +1316,19 @@ public:
    * @param y Response vector of size n
    * @param gamma Relaxation parameter, proportion of SLOPE-penalized fit. Must
    * be between 0 and 1. Default is 0.0 which means fully relaxed.
+   * @param observation_weights Optional row weights, as in the fit overload.
    * @return SlopePath Object containing the relaxed model with unpenalized
    * coefficients
    */
   template<typename T>
-  SlopePath relax(const SlopePath& path,
-                  T& x,
-                  const Eigen::VectorXd& y,
-                  const double gamma = 0.0)
+  SlopePath relax(
+    const SlopePath& path,
+    T& x,
+    const Eigen::VectorXd& y,
+    const double gamma = 0.0,
+    const Eigen::VectorXd& observation_weights = Eigen::VectorXd())
   {
-    std::vector<SlopeFit> fits;
-
-    for (size_t i = 0; i < path.size(); i++) {
-      // TODO: Reinstate warm starts. Need to be careful about
-      // the warm started values though since they have to
-      // agree with the cluster or we will run into trouble.
-      // We can probably fix this by using the signs
-      // of the cluster object rather than the betas though.
-      auto relaxed_fit = relax(path(i), x, y, gamma);
-
-      fits.emplace_back(relaxed_fit);
-    }
-
-    return fits;
+    return relaxPathImpl(path, x, y, gamma, observation_weights, false);
   }
 
 private:
@@ -1156,6 +1356,7 @@ private:
   int path_length = 100;
   std::optional<int> max_clusters = std::nullopt;
   std::optional<int> random_seed = 0;
+  std::string alpha_scale = "absolute";
   std::string alpha_type = "path";
   std::string cd_type = "permuted";
   std::string centering_type = "mean";
@@ -1169,5 +1370,35 @@ private:
   Eigen::VectorXd x_centers;
   Eigen::VectorXd x_scales;
 };
+
+namespace detail {
+
+/** CV prepares responses once to keep class columns stable across folds. */
+struct SlopeAccess
+{
+  template<typename T>
+  static SlopePath path(Slope& model,
+                        Eigen::EigenBase<T>& x,
+                        const Eigen::MatrixXd& y,
+                        const Eigen::ArrayXd& alphas,
+                        const Eigen::VectorXd& weights)
+  {
+    return model.pathImpl(
+      x, y, alphas, {}, defaultInterruptChecker, weights, true);
+  }
+
+  template<typename T>
+  static SlopePath relax(Slope& model,
+                         const SlopePath& path,
+                         T& x,
+                         const Eigen::MatrixXd& y,
+                         double gamma,
+                         const Eigen::VectorXd& weights)
+  {
+    return model.relaxPathImpl(path, x, y, gamma, weights, true);
+  }
+};
+
+} // namespace detail
 
 } // namespace slope

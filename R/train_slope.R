@@ -8,6 +8,8 @@
 #' Collecting these measures is not particularly demanding computationally so it
 #' is almost always best to leave this argument as it is and then choose which
 #' argument to focus on in the call to [plot.TrainedSLOPE()].
+#' The initial fit on the full data supplies the absolute alphas used in
+#' every fold.
 #'
 #' @inheritParams SLOPE
 #' @param number number of folds (cross-validation)
@@ -16,6 +18,9 @@
 #' @param measure measure to try to optimize; note that you may supply
 #'   *multiple* values here and that, by default, all the possible measures for
 #'   the given model will be used.
+#' @param weights observation weights as in [SLOPE()]. Each training and
+#'   validation fold must have positive total weight. Weights apply to both
+#'   fitting and scoring within folds. The fold scores are averaged equally.
 #' @param ... other arguments to pass on to [SLOPE()]
 #'
 #' @return
@@ -27,7 +32,8 @@
 #'   values for the different metrics and their corresponding parameter values}
 #' \item{measure}{a `data.frame` listing the used metrics and their labels}
 #' \item{model}{the model fit to the entire data set}
-#' \item{training_data}{the training data used for tuning (`x` and `y`)}
+#' \item{training_data}{the training data used for tuning (`x`, `y`, and `weights`)}
+#' \item{family}{the model family used for tuning}
 #' \item{call}{the call}
 #'
 #' @export
@@ -50,7 +56,8 @@ trainSLOPE <- function(
   number = 10,
   repeats = 1,
   measure = c("mse", "mae", "deviance", "misclass", "auc"),
-  ...
+  ...,
+  weights = NULL
 ) {
   ocall <- match.call()
 
@@ -73,7 +80,7 @@ trainSLOPE <- function(
   stopifnot(NROW(x) > number, number > 1, repeats >= 1)
 
   # get initial penalty sequence
-  fit <- SLOPE(x, y, ...)
+  fit <- SLOPE(x, y, ..., weights = weights)
 
   # match measure against accepted measure for the given family
   family <- fit$family
@@ -137,8 +144,15 @@ trainSLOPE <- function(
 
     # arguments for SLOPE
     args <- utils::modifyList(
-      list(x = x_train, y = y_train, q = q, alpha = alpha),
-      list(...)
+      list(...),
+      list(
+        x = x_train,
+        y = y_train,
+        q = q,
+        alpha = alpha,
+        alpha_scale = "absolute",
+        weights = weights[-test_ind]
+      )
     )
 
     # fitting model
@@ -146,7 +160,15 @@ trainSLOPE <- function(
 
     s <- lapply(
       measure,
-      function(m) SLOPE::score(fit_id, x_test, y_test, measure = m)
+      function(m) {
+        SLOPE::score(
+          fit_id,
+          x_test,
+          y_test,
+          measure = m,
+          weights = weights[test_ind]
+        )
+      }
     )
 
     r[[i]] <- unlist(s)
@@ -223,7 +245,8 @@ trainSLOPE <- function(
         stringsAsFactors = FALSE
       ),
       model = fit,
-      training_data = list(x = x, y = y),
+      training_data = list(x = x, y = y, weights = weights),
+      family = family,
       call = ocall
     ),
     class = "TrainedSLOPE"

@@ -9,6 +9,10 @@ lambdaSequenceCpp <- function(n_lambda, q, theta1, theta2, lambda_type, n) {
     .Call(`_SLOPE_lambdaSequenceCpp`, n_lambda, q, theta1, theta2, lambda_type, n)
 }
 
+weightedBinaryAucCpp <- function(scores, labels, weights) {
+    .Call(`_SLOPE_weightedBinaryAucCpp`, scores, labels, weights)
+}
+
 cvSparseCpp <- function(x, y, cv_args, model_args) {
     .Call(`_SLOPE_cvSparseCpp`, x, y, cv_args, model_args)
 }

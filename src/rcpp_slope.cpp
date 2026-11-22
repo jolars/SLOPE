@@ -37,6 +37,7 @@ callSLOPE(T& x, const Eigen::MatrixXd& y, const Rcpp::List& control)
   auto lambda_type = as<std::string>(control["lambda_type"]);
   auto threads = as<int>(control["threads"]);
   auto gamma = as<double>(control["gamma"]);
+  auto weights = as<VectorXd>(control["weights"]);
 
   if (lambda_type != "user") {
     model.setLambdaType(lambda_type);
@@ -46,7 +47,7 @@ callSLOPE(T& x, const Eigen::MatrixXd& y, const Rcpp::List& control)
     slope::Threads::set(threads);
   }
 
-  slope::SlopePath path = model.path(x, y, alpha, lambda, checkInterrupt);
+  slope::SlopePath path = model.path(x, y, alpha, lambda, checkInterrupt, weights);
 
   std::vector<Eigen::SparseMatrix<double>> patterns;
 
@@ -64,7 +65,7 @@ callSLOPE(T& x, const Eigen::MatrixXd& y, const Rcpp::List& control)
   Eigen::SparseMatrix<double> pattern_matrix;
 
   if (gamma < 1) {
-    path = model.relax(path, x, y, gamma);
+    path = model.relax(path, x, y, gamma, weights);
   }
 
   return Rcpp::List::create(

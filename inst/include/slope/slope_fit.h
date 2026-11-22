@@ -55,7 +55,7 @@ public:
    * @param intercepts Vector of intercept terms
    * @param coefs Matrix of fitted coefficients
    * @param clusters Clusters of coefficients
-   * @param alpha Mixing parameter between L1 and SLOPE norms
+   * @param alpha Absolute penalty scale multiplying the lambda sequence
    * @param lambda Sequence of decreasing weights
    * @param deviance Final model deviance
    * @param null_deviance Null model deviance
@@ -156,7 +156,8 @@ public:
   const Eigen::ArrayXd& getLambda() const { return lambda; }
 
   /**
-   * @brief Gets the alpha (mixing) parameter used
+   * @brief Gets the absolute alpha penalty scale used, including when the
+   * input alpha was relative to alpha_max.
    */
   double getAlpha() const { return alpha; }
 

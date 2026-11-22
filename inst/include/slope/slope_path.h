@@ -123,7 +123,8 @@ public:
   }
 
   /**
-   * @brief Gets the alpha parameter sequence
+   * @brief Gets the absolute alpha penalty scales, including when the input
+   * alphas were relative to alpha_max.
    */
   Eigen::ArrayXd getAlpha() const
   {

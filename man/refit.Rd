@@ -20,7 +20,11 @@ stored in \code{object}.}
 parameters. If \code{NULL} (default), uses the first measure in the
 \code{TrainedSLOPE} object.}
 
-\item{...}{additional arguments passed to \code{\link[=SLOPE]{SLOPE()}}}
+\item{...}{additional arguments passed to \code{\link[=SLOPE]{SLOPE()}}. When refitting on the
+stored data, \code{weights} defaults to the original observation weights.
+Supply \code{weights = NULL} for equal weights or pass new observation weights.
+The selected alpha is absolute. To use a relative alpha, supply both
+\code{alpha} and \code{alpha_scale = "relative"}.}
 }
 \value{
 An object of class \code{'SLOPE'} fit with the optimal parameters
@@ -32,12 +36,7 @@ extract optimal parameters and refit.
 }
 \examples{
 # Cross-validation
-tune <- trainSLOPE(
-  bodyfat$x,
-  bodyfat$y,
-  q = c(0.1, 0.2),
-  measure = "mse"
-)
+tune <- trainSLOPE(bodyfat$x, bodyfat$y, q = c(0.1, 0.2), measure = "mse")
 
 # Refit with optimal parameters
 fit <- refit(tune)

@@ -5,6 +5,7 @@
 #include <slope/constants.h>
 #include <slope/losses/multinomial.h>
 #include <slope/math.h>
+#include <slope/observation_weights.h>
 #include <slope/utils.h>
 #include <stdexcept>
 #include <unordered_set>
@@ -37,34 +38,61 @@ Multinomial::loss(const Eigen::MatrixXd& eta, const Eigen::MatrixXd& y)
 }
 
 double
+Multinomial::loss(const Eigen::MatrixXd& eta,
+                  const Eigen::MatrixXd& y,
+                  const Eigen::VectorXd& observation_weights)
+{
+  const Eigen::VectorXd weights =
+    detail::normalizeObservationWeights(observation_weights, y.rows());
+  double value = 0.0;
+  for (Eigen::Index i = 0; i < y.rows(); ++i) {
+    if (weights(i) > 0.0) {
+      const double maximum = std::max(0.0, eta.row(i).maxCoeff());
+      const double sum_exp =
+        std::exp(-maximum) + (eta.row(i).array() - maximum).exp().sum();
+      value +=
+        weights(i) * (maximum + std::log(sum_exp) - y.row(i).dot(eta.row(i)));
+    }
+  }
+  return value / y.rows();
+}
+
+double
 Multinomial::dual(const Eigen::MatrixXd& theta,
                   const Eigen::MatrixXd& y,
-                  const Eigen::VectorXd&)
+                  const Eigen::VectorXd& observation_weights)
 {
   if (theta.rows() != y.rows() || theta.cols() != y.cols()) {
     throw std::invalid_argument(
       "Multinomial dual point and response dimensions must match");
   }
 
-  const Eigen::ArrayXXd mean = theta.array() + y.array();
+  const Eigen::VectorXd weights =
+    detail::normalizeObservationWeights(observation_weights, y.rows());
   double entropy = 0.0;
+  const double domain_tolerance = 32.0 * std::numeric_limits<double>::epsilon();
 
-  for (Eigen::Index i = 0; i < mean.rows(); ++i) {
+  for (Eigen::Index i = 0; i < y.rows(); ++i) {
+    if (weights(i) == 0.0) {
+      continue;
+    }
     double reference = 1.0;
-    for (Eigen::Index k = 0; k < mean.cols(); ++k) {
-      const double value = mean(i, k);
-      if (!std::isfinite(value) || value < 0.0) {
+    for (Eigen::Index k = 0; k < y.cols(); ++k) {
+      const double raw_value = theta(i, k) + y(i, k);
+      if (!std::isfinite(raw_value) || raw_value < -domain_tolerance) {
         throw std::domain_error(
           "Multinomial dual rows must be finite and lie in the simplex");
       }
-      entropy += xLogX(value);
+      const double value = std::max(0.0, raw_value);
+      entropy += weights(i) * xLogX(value);
       reference -= value;
     }
-    if (!std::isfinite(reference) || reference < 0.0) {
+    if (!std::isfinite(reference) || reference < -domain_tolerance) {
       throw std::domain_error(
         "Multinomial dual rows must be finite and lie in the simplex");
     }
-    entropy += xLogX(reference);
+    // Weighted proportions can land just outside a simplex face by roundoff.
+    entropy += weights(i) * xLogX(std::max(0.0, reference));
   }
 
   return -entropy / y.rows();
@@ -75,7 +103,18 @@ Multinomial::dualPoint(const Eigen::MatrixXd& eta,
                        const Eigen::MatrixXd& y,
                        const bool fit_intercept)
 {
-  Eigen::MatrixXd theta = residual(eta, y);
+  return dualPoint(eta, y, fit_intercept, Eigen::VectorXd());
+}
+
+Eigen::MatrixXd
+Multinomial::dualPoint(const Eigen::MatrixXd& eta,
+                       const Eigen::MatrixXd& y,
+                       const bool fit_intercept,
+                       const Eigen::VectorXd& observation_weights)
+{
+  const Eigen::VectorXd weights =
+    detail::normalizeObservationWeights(observation_weights, y.rows());
+  Eigen::MatrixXd theta = residualOnSupport(eta, y, weights);
   if (!fit_intercept) {
     return theta;
   }
@@ -84,12 +123,47 @@ Multinomial::dualPoint(const Eigen::MatrixXd& eta,
       "Multinomial dual point and response dimensions must match");
   }
 
-  theta.rowwise() -= theta.colwise().mean();
-  const Eigen::RowVectorXd proportions = y.colwise().mean();
-  const double reference_proportion = 1.0 - proportions.sum();
+  const Eigen::RowVectorXd proportions = detail::weightedMean(y, weights);
+  const Eigen::MatrixXd reference_response =
+    Eigen::VectorXd::Ones(y.rows()) - y.rowwise().sum();
+  const double reference_proportion =
+    std::max(0.0, detail::weightedMean(reference_response, weights)(0));
+  const bool reference_present = reference_proportion > 0.0;
+
+  if (!reference_present || (proportions.array() == 0.0).any()) {
+    // An absent class lies on a simplex face imposed by intercept stationarity.
+    // Condition on observed classes before centering to stay on that face.
+    theta.setZero();
+    for (Eigen::Index i = 0; i < y.rows(); ++i) {
+      if (weights(i) == 0.0) {
+        continue;
+      }
+      double maximum =
+        reference_present ? 0.0 : -std::numeric_limits<double>::infinity();
+      for (Eigen::Index k = 0; k < y.cols(); ++k) {
+        if (proportions(k) > 0.0) {
+          maximum = std::max(maximum, eta(i, k));
+        }
+      }
+      double denominator = reference_present ? std::exp(-maximum) : 0.0;
+      for (Eigen::Index k = 0; k < y.cols(); ++k) {
+        if (proportions(k) > 0.0) {
+          theta(i, k) = std::exp(eta(i, k) - maximum);
+          denominator += theta(i, k);
+        }
+      }
+      theta.row(i) /= denominator;
+      theta.row(i) -= y.row(i);
+    }
+  }
+
+  theta.rowwise() -= detail::weightedMean(theta, weights);
   double step = 1.0;
 
   for (Eigen::Index i = 0; i < theta.rows(); ++i) {
+    if (weights(i) == 0.0) {
+      continue;
+    }
     double target_reference = 1.0;
     for (Eigen::Index k = 0; k < theta.cols(); ++k) {
       const double target = y(i, k) + theta(i, k);
@@ -100,7 +174,7 @@ Multinomial::dualPoint(const Eigen::MatrixXd& eta,
       target_reference -= target;
     }
     const double reference_direction = target_reference - reference_proportion;
-    if (reference_direction < 0.0) {
+    if (reference_present && reference_direction < 0.0) {
       step = std::min(step, reference_proportion / -reference_direction);
     }
   }
@@ -111,6 +185,10 @@ Multinomial::dualPoint(const Eigen::MatrixXd& eta,
   }
 
   for (Eigen::Index i = 0; i < theta.rows(); ++i) {
+    if (weights(i) == 0.0) {
+      theta.row(i).setZero();
+      continue;
+    }
     for (Eigen::Index k = 0; k < theta.cols(); ++k) {
       const double anchor = proportions(k) - y(i, k);
       theta(i, k) = anchor + step * (theta(i, k) - anchor);
@@ -174,8 +252,8 @@ Eigen::MatrixXd
 Multinomial::hessianDiagonal(const Eigen::MatrixXd& eta)
 {
   Eigen::MatrixXd pr = inverseLink(eta);
-
-  return pr.array() * (1.0 - pr.array());
+  constexpr double min_hessian = constants::P_MIN * (1.0 - constants::P_MIN);
+  return (pr.array() * (1.0 - pr.array())).max(min_hessian);
 }
 
 Eigen::MatrixXd

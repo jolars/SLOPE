@@ -19,6 +19,23 @@ namespace slope {
 
 namespace detail {
 
+template<typename W, typename R>
+double
+weightedResidualSum(const Eigen::MatrixBase<W>& weights,
+                    const Eigen::MatrixBase<R>& residual)
+{
+  if (!(weights.array() == 0.0).any()) {
+    return weights.dot(residual);
+  }
+  double value = 0.0;
+  for (Eigen::Index i = 0; i < weights.size(); ++i) {
+    if (weights(i) != 0.0) {
+      value += weights(i) * residual(i);
+    }
+  }
+  return value;
+}
+
 class SparseClusterWorkspace
 {
 public:
@@ -103,6 +120,25 @@ computeGradientAndHessian(const Eigen::MatrixBase<T>& x,
   int p = x.cols();
 
   auto [k, j] = std::div(ind, p);
+
+  if ((w.col(k).array() == 0.0).any()) {
+    const bool center = jit_normalization == JitNormalization::Center ||
+                        jit_normalization == JitNormalization::Both;
+    const bool scale = jit_normalization == JitNormalization::Scale ||
+                       jit_normalization == JitNormalization::Both;
+    for (int i = 0; i < n; ++i) {
+      if (w(i, k) == 0.0) {
+        continue;
+      }
+      double value = x(i, j) - (center ? x_centers(j) : 0.0);
+      if (scale) {
+        value /= x_scales(j);
+      }
+      gradient += s * value * w(i, k) * residual(i, k);
+      hessian += value * value * w(i, k);
+    }
+    return { gradient / n, hessian / n };
+  }
 
   // TODO: Benchmark avoiding these copies in the dense path.
   Eigen::VectorXd residual_v = residual.col(k);
@@ -196,6 +232,10 @@ computeGradientAndHessian(const Eigen::SparseMatrixBase<T>& x,
     const double value = it.value();
     const double weight = w(i, k);
 
+    if (weight == 0.0) {
+      continue;
+    }
+
     weighted_x_residual_sum += value * weight * residual(i, k);
     weighted_x_sum += value * weight;
     weighted_x_squared_sum += value * value * weight;
@@ -210,7 +250,7 @@ computeGradientAndHessian(const Eigen::SparseMatrixBase<T>& x,
 
   if (center) {
     weighted_x_residual_sum -=
-      offset * w.col(k).cwiseProduct(residual.col(k)).sum();
+      offset * detail::weightedResidualSum(w.col(k), residual.col(k));
     weighted_x_squared_sum +=
       offset * offset * weight_sums(k) - 2.0 * offset * weighted_x_sum;
   }
@@ -321,8 +361,17 @@ computeClusterGradientAndHessian(const Eigen::MatrixBase<T>& x,
   double grad = 0;
 
   for (int k = 0; k < m; ++k) {
-    hess += x_s.col(k).cwiseAbs2().dot(w.col(k)) / n;
-    grad += x_s.col(k).cwiseProduct(w.col(k)).dot(residual.col(k)) / n;
+    if ((w.col(k).array() == 0.0).any()) {
+      for (int i = 0; i < n; ++i) {
+        if (w(i, k) != 0.0) {
+          hess += x_s(i, k) * x_s(i, k) * w(i, k) / n;
+          grad += x_s(i, k) * w(i, k) * residual(i, k) / n;
+        }
+      }
+    } else {
+      hess += x_s.col(k).cwiseAbs2().dot(w.col(k)) / n;
+      grad += x_s.col(k).cwiseProduct(w.col(k)).dot(residual.col(k)) / n;
+    }
   }
 
   return { hess, grad };
@@ -402,7 +451,9 @@ computeSparseClusterGradientAndHessian(const Eigen::SparseMatrixBase<T>& x,
     }
 
     for (typename T::InnerIterator it(x.derived(), j); it; ++it) {
-      workspace.add(it.row(), k, it.value() * scale);
+      if (w(it.row(), k) != 0.0) {
+        workspace.add(it.row(), k, it.value() * scale);
+      }
     }
   }
 
@@ -416,6 +467,10 @@ computeSparseClusterGradientAndHessian(const Eigen::SparseMatrixBase<T>& x,
     const double value = workspace.values.data()[index];
     const double weight = w(i, k);
 
+    if (weight == 0.0) {
+      continue;
+    }
+
     hess += value * value * weight;
     grad += value * weight * residual(i, k);
     weighted_sum(k) += value * weight;
@@ -426,7 +481,7 @@ computeSparseClusterGradientAndHessian(const Eigen::SparseMatrixBase<T>& x,
     for (int k = 0; k < m; ++k) {
       hess += -2 * offset(k) * weighted_sum(k) +
               std::pow(offset(k), 2) * weight_sums(k);
-      grad -= offset(k) * w.col(k).cwiseProduct(residual.col(k)).sum();
+      grad -= offset(k) * weightedResidualSum(w.col(k), residual.col(k));
     }
   }
 
@@ -696,7 +751,8 @@ coordinateDescent(Eigen::VectorXd& beta0,
 
   if (intercept) {
     for (int k = 0; k < residual.cols(); ++k) {
-      double beta0_update = residual.col(k).dot(w.col(k)) / n;
+      double beta0_update =
+        detail::weightedResidualSum(w.col(k), residual.col(k)) / n;
       residual.col(k).array() -= beta0_update;
       beta0(k) -= beta0_update;
     }

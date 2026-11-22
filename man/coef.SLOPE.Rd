@@ -18,8 +18,8 @@
 \arguments{
 \item{object}{an object of class \code{'SLOPE'}.}
 
-\item{alpha}{penalty parameter for SLOPE models; if \code{NULL}, the
-values used in the original fit will be used}
+\item{alpha}{absolute penalty parameter for SLOPE models. \code{NULL} uses the
+values stored in the original fit.}
 
 \item{exact}{if \code{TRUE} and the given parameter values differ from those in
 the original fit, the model will be refit by calling \code{\link[stats:update]{stats::update()}} on

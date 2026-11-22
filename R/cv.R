@@ -2,6 +2,8 @@
 #'
 #' This function trains a model fit by [SLOPE()] by tuning its parameters
 #' through cross-validation.
+#' Cross-validation generates its alpha path on the full data and uses the
+#' resulting absolute alphas in every fold and in the final refit.
 #'
 #' @inheritParams SLOPE
 #' @param q a vector of quantiles for the `q` parameter in SLOPE
@@ -10,6 +12,9 @@
 #' @param n_folds number of folds (cross-validation)
 #' @param n_repeats number of folds (cross-validation)
 #' @param measure DEPRECATED
+#' @param weights observation weights as in [SLOPE()]. Each training and
+#'   validation fold must have positive total weight. Weights apply to both
+#'   fitting and scoring within folds. The fold scores are averaged equally.
 #' @param refit logical; if `TRUE`, refits the model on the full dataset using
 #'   the optimal parameters. Default is `TRUE`.
 #' @param ... other arguments to pass on to [SLOPE()]
@@ -24,7 +29,8 @@
 #' \item{measure}{a `data.frame` listing the used metric and its label}
 #' \item{model}{the model fit to the entire dataset using optimal parameters
 #'   (only present if `refit = TRUE`)}
-#' \item{training_data}{the training data used for tuning (`x` and `y`)}
+#' \item{training_data}{the training data used for tuning (`x`, `y`, and `weights`)}
+#' \item{family}{the model family used for tuning}
 #' \item{call}{the call}
 #'
 #' @export
@@ -61,7 +67,8 @@ cvSLOPE <- function(
   n_repeats = 1,
   measure = c("mse", "mae", "deviance", "misclass", "auc"),
   refit = TRUE,
-  ...
+  ...,
+  weights = NULL
 ) {
   ocall <- match.call()
 
@@ -71,11 +78,11 @@ cvSLOPE <- function(
 
   stopifnot(NROW(x) > n_folds, n_folds > 1)
 
-  slope_args <- utils::modifyList(list(...), list(x = x, y = y))
+  slope_args <- utils::modifyList(
+    list(...),
+    list(x = x, y = y, weights = weights)
+  )
   model_args <- do.call(processSlopeArgs, slope_args)
-
-  x <- model_args$x
-  y <- model_args$y
 
   family <- model_args[["family"]]
 
@@ -100,7 +107,11 @@ cvSLOPE <- function(
 
   folds <- createFolds(n, n_folds, n_repeats)
 
-  cvCpp <- if (inherits(x, "sparseMatrix")) cvSparseCpp else cvDenseCpp
+  cvCpp <- if (inherits(model_args$x, "sparseMatrix")) {
+    cvSparseCpp
+  } else {
+    cvDenseCpp
+  }
 
   cv_args <- list(
     q = q,
@@ -109,7 +120,7 @@ cvSLOPE <- function(
     predefined_folds = folds
   )
 
-  res <- cvCpp(x, y, cv_args, model_args)
+  res <- cvCpp(model_args$x, model_args$y, cv_args, model_args)
 
   summary_list <- lapply(res[["results"]], function(results_i) {
     means <- results_i[["mean_scores"]]
@@ -129,7 +140,7 @@ cvSLOPE <- function(
   })
   summary <- do.call(rbind, summary_list)
 
-  comparator <- if (measure %in% c("deviance", "mse", "mae")) {
+  comparator <- if (measure %in% c("deviance", "mse", "mae", "misclass")) {
     which.min
   } else {
     which.max
@@ -168,7 +179,8 @@ cvSLOPE <- function(
       data = res$results,
       optima = optima,
       measure = data.frame(measure = measure, label = labels, row.names = NULL),
-      training_data = list(x = x, y = y),
+      training_data = list(x = x, y = y, weights = weights),
+      family = family,
       call = ocall
     ),
     class = "TrainedSLOPE"
@@ -178,14 +190,16 @@ cvSLOPE <- function(
     opt_params <- optima[1, ]
 
     fit_args <- utils::modifyList(
+      list(...),
       list(
         x = x,
         y = y,
+        weights = weights,
         q = opt_params$q,
         alpha = opt_params$alpha,
+        alpha_scale = "absolute",
         gamma = if ("gamma" %in% names(opt_params)) opt_params$gamma else gamma
-      ),
-      list(...)
+      )
     )
 
     result$model <- do.call(SLOPE, fit_args)

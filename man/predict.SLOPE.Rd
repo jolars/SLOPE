@@ -63,8 +63,8 @@ a call to \code{\link[=SLOPE]{SLOPE()}}}
 
 \item{x}{new data}
 
-\item{alpha}{penalty parameter for SLOPE models; if \code{NULL}, the
-values used in the original fit will be used}
+\item{alpha}{absolute penalty parameter for SLOPE models. \code{NULL} uses the
+values stored in the original fit.}
 
 \item{type}{type of prediction; \code{"link"} returns the linear predictors,
 \code{"response"} returns the result of applying the link function,

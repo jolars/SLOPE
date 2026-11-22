@@ -34,6 +34,7 @@ cvImpl(T& x,
   slope::Slope model = setupModel(model_args);
 
   auto lambda_type = as<std::string>(model_args["lambda_type"]);
+  auto weights = as<VectorXd>(model_args["weights"]);
 
   if (lambda_type != "user") {
     model.setLambdaType(lambda_type);
@@ -50,7 +51,7 @@ cvImpl(T& x,
   cv_config.predefined_folds =
     as<std::vector<std::vector<std::vector<int>>>>(cv_args["predefined_folds"]);
 
-  auto res = crossValidate(model, x, y, cv_config);
+  auto res = crossValidate(model, x, y, cv_config, weights);
 
   return Rcpp::List::create(Named("results") = wrap(res.results),
                             Named("best_params") = wrap(res.best_params),

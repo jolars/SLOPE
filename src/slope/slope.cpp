@@ -90,6 +90,13 @@ Slope::setAlphaType(const std::string& alpha_type)
 }
 
 void
+Slope::setAlphaScale(const std::string& alpha_scale)
+{
+  validateOption(alpha_scale, { "absolute", "relative" }, "alpha_scale");
+  this->alpha_scale = alpha_scale;
+}
+
+void
 Slope::setAlphaMinRatio(double alpha_min_ratio)
 {
   if (alpha_min_ratio <= 0 || alpha_min_ratio >= 1) {
