@@ -81,12 +81,7 @@ function, no such scaling is attempted.
 # compute different penalization sequences
 bh <- regularizationWeights(100, q = 0.2, type = "bh")
 
-gaussian <- regularizationWeights(
-  100,
-  q = 0.2,
-  n = 300,
-  type = "gaussian"
-)
+gaussian <- regularizationWeights(100, q = 0.2, n = 300, type = "gaussian")
 
 oscar <- regularizationWeights(
   100,

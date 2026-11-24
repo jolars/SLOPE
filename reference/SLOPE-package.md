@@ -25,6 +25,9 @@ Useful links:
 
 Authors:
 
+- Johan Larsson <johan@jolars.co>
+  ([ORCID](https://orcid.org/0000-0002-4029-5945))
+
 - Jonas Wallin <jonas.wallin@stat.lu.se>
   ([ORCID](https://orcid.org/0000-0003-0381-6593))
 

@@ -130,8 +130,8 @@ intercept require positive total observation weight in every class.</p></dd>
 
 
 <dt id="arg-center">center<a class="anchor" aria-label="anchor" href="#arg-center"></a></dt>
-<dd><p>whether to center predictors or not by their mean. Defaults
-to <code>TRUE</code> if <code>x</code> is dense and <code>FALSE</code> otherwise.</p></dd>
+<dd><p>whether to center predictors or not by their mean. Defaults to
+<code>TRUE</code> if <code>x</code> is dense and <code>FALSE</code> otherwise.</p></dd>
 
 
 <dt id="arg-scale">scale<a class="anchor" aria-label="anchor" href="#arg-scale"></a></dt>
@@ -154,11 +154,10 @@ using Algorithm 5 in Bogdan et al. (2015).</p></li>
 
 
 <dt id="arg-lambda">lambda<a class="anchor" aria-label="anchor" href="#arg-lambda"></a></dt>
-<dd><p>either a character vector indicating the method used
-to construct the lambda path or a numeric non-decreasing
-vector with length equal to the number
-of coefficients in the model; see section <strong>Regularization sequences</strong>
-for details.</p></dd>
+<dd><p>either a character vector indicating the method used to
+construct the lambda path or a numeric non-decreasing vector with length
+equal to the number of coefficients in the model; see section
+<strong>Regularization sequences</strong> for details.</p></dd>
 
 
 <dt id="arg-alpha-min-ratio">alpha_min_ratio<a class="anchor" aria-label="anchor" href="#arg-alpha-min-ratio"></a></dt>
@@ -167,56 +166,56 @@ for details.</p></dd>
 
 
 <dt id="arg-path-length">path_length<a class="anchor" aria-label="anchor" href="#arg-path-length"></a></dt>
-<dd><p>length of regularization path; note that the path
-returned may still be shorter due to the early termination criteria
-given by <code>tol_dev_change</code>, <code>tol_dev_ratio</code>, and <code>max_variables</code>.</p></dd>
+<dd><p>length of regularization path; note that the path returned
+may still be shorter due to the early termination criteria given by
+<code>tol_dev_change</code>, <code>tol_dev_ratio</code>, and <code>max_variables</code>.</p></dd>
 
 
 <dt id="arg-q">q<a class="anchor" aria-label="anchor" href="#arg-q"></a></dt>
-<dd><p>parameter controlling the shape of the lambda sequence, with
-usage varying depending on the type of path used and has no effect
-is a custom <code>lambda</code> sequence is used. Must be greater than <code>1e-6</code> and
-smaller than 1.</p></dd>
+<dd><p>parameter controlling the shape of the lambda sequence, with usage
+varying depending on the type of path used and has no effect is a custom
+<code>lambda</code> sequence is used. Must be greater than <code>1e-6</code> and smaller than 1.</p></dd>
 
 
 <dt id="arg-theta-">theta1<a class="anchor" aria-label="anchor" href="#arg-theta-"></a></dt>
-<dd><p>parameter controlling the shape of the lambda sequence
-when <code>lambda == "OSCAR"</code>. This parameter basically sets the intercept
-for the lambda sequence and is equivalent to \(\lambda_1\) in the
-original OSCAR formulation.</p></dd>
+<dd><p>parameter controlling the shape of the lambda sequence when
+<code>lambda == "OSCAR"</code>. This parameter basically sets the intercept for the
+lambda sequence and is equivalent to \(\lambda_1\) in the original OSCAR
+formulation.</p></dd>
 
 
 <dt id="arg-theta-">theta2<a class="anchor" aria-label="anchor" href="#arg-theta-"></a></dt>
-<dd><p>parameter controlling the shape of the lambda sequence
-when <code>lambda == "OSCAR"</code>. This parameter basically sets the slope
-for the lambda sequence and is equivalent to \(\lambda_2\) in the
-original OSCAR formulation.</p></dd>
+<dd><p>parameter controlling the shape of the lambda sequence when
+<code>lambda == "OSCAR"</code>. This parameter basically sets the slope for the lambda
+sequence and is equivalent to \(\lambda_2\) in the original OSCAR
+formulation.</p></dd>
 
 
 <dt id="arg-tol-dev-change">tol_dev_change<a class="anchor" aria-label="anchor" href="#arg-tol-dev-change"></a></dt>
-<dd><p>the regularization path is stopped if the
-fractional change in deviance falls below this value; note that this is
-automatically set to 0 if a alpha is manually entered</p></dd>
+<dd><p>the regularization path is stopped if the fractional
+change in deviance falls below this value; note that this is automatically
+set to 0 if a alpha is manually entered</p></dd>
 
 
 <dt id="arg-tol-dev-ratio">tol_dev_ratio<a class="anchor" aria-label="anchor" href="#arg-tol-dev-ratio"></a></dt>
-<dd><p>the regularization path is stopped if the
-deviance ratio \(1 - \mathrm{deviance}/\mathrm{(null-deviance)}
-  \) is above this threshold</p></dd>
+<dd><p>the regularization path is stopped if the deviance ratio
+\(1 - \mathrm{deviance}/\mathrm{(null-deviance)}
+  \)
+is above this threshold</p></dd>
 
 
 <dt id="arg-max-variables">max_variables<a class="anchor" aria-label="anchor" href="#arg-max-variables"></a></dt>
-<dd><p>criterion for stopping the path in terms of the
-maximum number of unique, nonzero coefficients in absolute value in model.
-For the multinomial family, this value will be multiplied internally with
-the number of levels of the response minus one.</p></dd>
+<dd><p>criterion for stopping the path in terms of the maximum
+number of unique, nonzero coefficients in absolute value in model. For the
+multinomial family, this value will be multiplied internally with the
+number of levels of the response minus one.</p></dd>
 
 
 <dt id="arg-solver">solver<a class="anchor" aria-label="anchor" href="#arg-solver"></a></dt>
 <dd><p>type of solver use, either <code>"auto"</code>, <code>"hybrid"</code>, <code>"pgd"</code>, or
-<code>"fista"</code>; <code>"auto"</code> means that the solver is automatically selected,
-which currently means that <code>"hybrid"</code> is used for all objectives
-except multinomial ones, in which case FISTA (<code>"fista"</code>) is used.</p></dd>
+<code>"fista"</code>; <code>"auto"</code> means that the solver is automatically selected, which
+currently means that <code>"hybrid"</code> is used for all objectives except
+multinomial ones, in which case FISTA (<code>"fista"</code>) is used.</p></dd>
 
 
 <dt id="arg-max-passes">max_passes<a class="anchor" aria-label="anchor" href="#arg-max-passes"></a></dt>
@@ -229,33 +228,33 @@ duality gap</p></dd>
 
 
 <dt id="arg-threads">threads<a class="anchor" aria-label="anchor" href="#arg-threads"></a></dt>
-<dd><p>number of threads to use in the solver; if <code>NULL</code>, half
-of the available (logical) threads will be used</p></dd>
+<dd><p>number of threads to use in the solver; if <code>NULL</code>, half of the
+available (logical) threads will be used</p></dd>
 
 
 <dt id="arg-diagnostics">diagnostics<a class="anchor" aria-label="anchor" href="#arg-diagnostics"></a></dt>
-<dd><p>whether to save diagnostics from the solver
-(timings and other values depending on type of solver)</p></dd>
+<dd><p>whether to save diagnostics from the solver (timings and
+other values depending on type of solver)</p></dd>
 
 
 <dt id="arg-patterns">patterns<a class="anchor" aria-label="anchor" href="#arg-patterns"></a></dt>
-<dd><p>whether to return the SLOPE pattern
-(cluster, ordering, and sign information) as a list of sparse
-matrices, one for each step on the path.</p></dd>
+<dd><p>whether to return the SLOPE pattern (cluster, ordering, and
+sign information) as a list of sparse matrices, one for each step on the
+path.</p></dd>
 
 
 <dt id="arg-gamma">gamma<a class="anchor" aria-label="anchor" href="#arg-gamma"></a></dt>
 <dd><p>relaxation mixing parameter, between 0 and 1. Has no effect if
-set to 0. If larger than 0, the solver will mix the coefficients
-from the ordinary SLOPE solutions with the coefficients from the
-relaxed solutions (fitting OLS on the SLOPE pattern).</p></dd>
+set to 0. If larger than 0, the solver will mix the coefficients from the
+ordinary SLOPE solutions with the coefficients from the relaxed solutions
+(fitting OLS on the SLOPE pattern).</p></dd>
 
 
 <dt id="arg-cd-type">cd_type<a class="anchor" aria-label="anchor" href="#arg-cd-type"></a></dt>
 <dd><p>Type of coordinate descent to use, either <code>"cyclical"</code> or
-<code>"permuted"</code>. The former means that the cluster are cycled through
-in descending order of their coefficients' magnitudes, while the
-latter means that the clusters are permuted randomly for each pass.</p></dd>
+<code>"permuted"</code>. The former means that the cluster are cycled through in
+descending order of their coefficients' magnitudes, while the latter means
+that the clusters are permuted randomly for each pass.</p></dd>
 
 
 <dt id="arg-tol-abs">tol_abs<a class="anchor" aria-label="anchor" href="#arg-tol-abs"></a></dt>
@@ -377,19 +376,18 @@ the sorted L1-norm. In ordinary least-squares regression, \(f(\beta)\) is
 simply the squared norm of the least-squares residuals. See section
 <strong>Families</strong> for specifics regarding the various types of \(f(\beta)\)
 (model families) that are allowed in <code>SLOPE()</code>.</p>
-<p>By default, <code>SLOPE()</code> fits a path of models, each corresponding to
-a separate regularization sequence, starting from
-the null (intercept-only) model to an almost completely unregularized
-model. These regularization sequences are parameterized using
-\(\lambda\) and \(\alpha\), with only \(\alpha\) varying along the
-path. The length of the path can be manually, but will terminate
-prematurely depending on
-arguments <code>tol_dev_change</code>, <code>tol_dev_ratio</code>, and <code>max_variables</code>.
-This means that unless these arguments are modified, the path is not
-guaranteed to be of length <code>path_length</code>.</p>
+<p>By default, <code>SLOPE()</code> fits a path of models, each corresponding to a separate
+regularization sequence, starting from the null (intercept-only) model to an
+almost completely unregularized model. These regularization sequences are
+parameterized using \(\lambda\) and \(\alpha\), with only \(\alpha\)
+varying along the path. The length of the path can be manually, but will
+terminate prematurely depending on arguments <code>tol_dev_change</code>,
+<code>tol_dev_ratio</code>, and <code>max_variables</code>. This means that unless these arguments
+are modified, the path is not guaranteed to be of length <code>path_length</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="families">Families<a class="anchor" aria-label="anchor" href="#families"></a></h2>
+
 
 
 <p><strong>Gaussian</strong></p>
@@ -427,31 +425,28 @@ with \(y_{ik}\) being the element in a \(n\) by \((m-1)\) matrix, where
     <h2 id="regularization-sequences">Regularization Sequences<a class="anchor" aria-label="anchor" href="#regularization-sequences"></a></h2>
 
 
-<p>There are multiple ways of specifying the <code>lambda</code> sequence
-in <code>SLOPE()</code>. It is, first of all, possible to select the sequence manually
-by
-using a non-increasing
-numeric vector, possibly of length one, as argument instead of a character.
-The greater the differences are between
-consecutive values along the sequence, the more clustering behavior
-will the model exhibit. Note, also, that the scale of the \(\lambda\)
-vector makes no difference if <code>alpha = NULL</code>, since <code>alpha</code> will be
-selected automatically to ensure that the model is completely sparse at the
-beginning and almost unregularized at the end. If, however, both
-<code>alpha</code> and <code>lambda</code> are manually specified, then the scales of both do
-matter, so make sure to choose them wisely.</p>
-<p>Instead of choosing the sequence manually, one of the following
-automatically generated sequences may be chosen.</p>
+<p>There are multiple ways of specifying the <code>lambda</code> sequence in <code>SLOPE()</code>. It
+is, first of all, possible to select the sequence manually by using a
+non-increasing numeric vector, possibly of length one, as argument instead of
+a character. The greater the differences are between consecutive values along
+the sequence, the more clustering behavior will the model exhibit. Note,
+also, that the scale of the \(\lambda\) vector makes no difference if
+<code>alpha = NULL</code>, since <code>alpha</code> will be selected automatically to ensure that
+the model is completely sparse at the beginning and almost unregularized at
+the end. If, however, both <code>alpha</code> and <code>lambda</code> are manually specified, then
+the scales of both do matter, so make sure to choose them wisely.</p>
+<p>Instead of choosing the sequence manually, one of the following automatically
+generated sequences may be chosen.</p>
 <p><strong>BH (Benjamini–Hochberg)</strong></p>
-<p>If <code>lambda = "bh"</code>, the sequence used is that referred to
-as \(\lambda^{(\mathrm{BH})}\) by Bogdan et al, which sets
+<p>If <code>lambda = "bh"</code>, the sequence used is that referred to as
+\(\lambda^{(\mathrm{BH})}\) by Bogdan et al, which sets
 \(\lambda\) according to
 $$
   \lambda_i = \Phi^{-1}(1 - iq/(2p)),
 $$
 for \(i=1,\dots,p\), where \(\Phi^{-1}\) is the quantile
-function for the standard normal distribution and \(q\) is a parameter
-that can be set by the user in the call to <code>SLOPE()</code>.</p>
+function for the standard normal distribution and \(q\) is a parameter that
+can be set by the user in the call to <code>SLOPE()</code>.</p>
 <p><strong>Gaussian</strong></p>
 <p>This penalty sequence is related to BH, such that
 $$
@@ -460,10 +455,9 @@ $$
 $$
 for \(i=1,\dots,p\), where \(w(k) = 1/(n-k-1)\). We let
 \(\lambda_1 = \lambda^{(\mathrm{BH})}_1\) and
-adjust the sequence to make sure that it's non-increasing.
-Note that if \(p\) is large relative
-to \(n\), this option will result in a constant sequence, which is
-usually not what you would want.</p>
+adjust the sequence to make sure that it's non-increasing. Note that if
+\(p\) is large relative to \(n\), this option will result in a constant
+sequence, which is usually not what you would want.</p>
 <p><strong>OSCAR</strong></p>
 <p>This sequence comes from Bondell and Reich and is a linear non-increasing
 sequence, such that
@@ -474,17 +468,16 @@ for \(i = 1,\dots,p\). We use the parametrization from Zhong and Kwok
 (2021) but use \(\theta_1\) and \(\theta_2\) instead of \(\lambda_1\)
 and \(\lambda_2\) to avoid confusion and abuse of notation.</p>
 <p><strong>lasso</strong></p>
-<p>SLOPE is exactly equivalent to the
-lasso when the sequence of regularization weights is constant, i.e.
+<p>SLOPE is exactly equivalent to the lasso when the sequence of regularization
+weights is constant, i.e.
 $$
   \lambda_i = 1
 $$
-for \(i = 1,\dots,p\). Here, again, we stress that the fact that
-all \(\lambda\) are equal to one does not matter as long as
-<code>alpha == NULL</code> since we scale the vector automatically.
-Note that this option is only here for academic interest and
-to highlight the fact that SLOPE is
-a generalization of the lasso. There are more efficient packages, such as
+for \(i = 1,\dots,p\). Here, again, we stress that the fact that all
+\(\lambda\) are equal to one does not matter as long as <code>alpha == NULL</code>
+since we scale the vector automatically. Note that this option is only here
+for academic interest and to highlight the fact that SLOPE is a
+generalization of the lasso. There are more efficient packages, such as
 <strong>glmnet</strong> and <strong>biglasso</strong>, for fitting the lasso.</p>
     </div>
     <div class="section level2">
@@ -494,10 +487,10 @@ a generalization of the lasso. There are more efficient packages, such as
 
 <p>There are currently three solvers available for SLOPE: Hybrid (Beck and
 Teboulle 2009), proximal gradient descent (PGD), and FISTA (Beck and
-Teboulle, 2009). The hybrid method is the preferred and generally
-fastest method and is therefore the default for the Gaussian and
-binomial families, but not currently available for multinomial and
-disabled for Poisson due to convergence issues.</p>
+Teboulle, 2009). The hybrid method is the preferred and generally fastest
+method and is therefore the default for the Gaussian and binomial families,
+but not currently available for multinomial and disabled for Poisson due to
+convergence issues.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -506,8 +499,8 @@ SLOPE – adaptive variable selection via convex optimization. The Annals of
 Applied Statistics, 9(3), 1103–1140.</p>
 <p>Larsson, J., Klopfenstein, Q., Massias, M., &amp; Wallin, J. (2023). Coordinate
 descent for SLOPE. In F. Ruiz, J. Dy, &amp; J.-W. van de Meent (Eds.),
-Proceedings of the 26th international conference on artificial
-intelligence and statistics (Vol. 206, pp. 4802–4821). PMLR.
+Proceedings of the 26th international conference on artificial intelligence
+and statistics (Vol. 206, pp. 4802–4821). PMLR.
 https://proceedings.mlr.press/v206/larsson23a.html</p>
 <p>Bondell, H. D., &amp; Reich, B. J. (2008). Simultaneous Regression Shrinkage,
 Variable Selection, and Supervised Clustering of Predictors with OSCAR.

@@ -74,35 +74,34 @@ SLOPE() (or elsewhere)."><meta property="og:image" content="https://jolars.githu
 
 
 <dl><dt id="arg-n-lambda">n_lambda<a class="anchor" aria-label="anchor" href="#arg-n-lambda"></a></dt>
-<dd><p>The number of lambdas to generate. This should typically
-be equal to the number of predictors in your data set.</p></dd>
+<dd><p>The number of lambdas to generate. This should typically be
+equal to the number of predictors in your data set.</p></dd>
 
 
 <dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
-<dd><p>The type of lambda sequence to use. See documentation for
-in <code><a href="SLOPE.html">SLOPE()</a></code>, including that related to the <code>lambda</code> parameter in that
+<dd><p>The type of lambda sequence to use. See documentation for in
+<code><a href="SLOPE.html">SLOPE()</a></code>, including that related to the <code>lambda</code> parameter in that
 function.</p></dd>
 
 
 <dt id="arg-q">q<a class="anchor" aria-label="anchor" href="#arg-q"></a></dt>
-<dd><p>parameter controlling the shape of the lambda sequence, with
-usage varying depending on the type of path used and has no effect
-is a custom <code>lambda</code> sequence is used. Must be greater than <code>1e-6</code> and
-smaller than 1.</p></dd>
+<dd><p>parameter controlling the shape of the lambda sequence, with usage
+varying depending on the type of path used and has no effect is a custom
+<code>lambda</code> sequence is used. Must be greater than <code>1e-6</code> and smaller than 1.</p></dd>
 
 
 <dt id="arg-theta-">theta1<a class="anchor" aria-label="anchor" href="#arg-theta-"></a></dt>
-<dd><p>parameter controlling the shape of the lambda sequence
-when <code>lambda == "OSCAR"</code>. This parameter basically sets the intercept
-for the lambda sequence and is equivalent to \(\lambda_1\) in the
-original OSCAR formulation.</p></dd>
+<dd><p>parameter controlling the shape of the lambda sequence when
+<code>lambda == "OSCAR"</code>. This parameter basically sets the intercept for the
+lambda sequence and is equivalent to \(\lambda_1\) in the original OSCAR
+formulation.</p></dd>
 
 
 <dt id="arg-theta-">theta2<a class="anchor" aria-label="anchor" href="#arg-theta-"></a></dt>
-<dd><p>parameter controlling the shape of the lambda sequence
-when <code>lambda == "OSCAR"</code>. This parameter basically sets the slope
-for the lambda sequence and is equivalent to \(\lambda_2\) in the
-original OSCAR formulation.</p></dd>
+<dd><p>parameter controlling the shape of the lambda sequence when
+<code>lambda == "OSCAR"</code>. This parameter basically sets the slope for the lambda
+sequence and is equivalent to \(\lambda_2\) in the original OSCAR
+formulation.</p></dd>
 
 
 <dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
@@ -117,8 +116,8 @@ original OSCAR formulation.</p></dd>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Please see <code><a href="SLOPE.html">SLOPE()</a></code> for detailed information regarding the parameters in
 this function, in particular the section <em>Regularization Sequences</em>.</p>
-<p>Note that these sequences are automatically scaled (unless a value for
-the <code>alpha</code> parameter is manually supplied) when using <code><a href="SLOPE.html">SLOPE()</a></code>. In this
+<p>Note that these sequences are automatically scaled (unless a value for the
+<code>alpha</code> parameter is manually supplied) when using <code><a href="SLOPE.html">SLOPE()</a></code>. In this
 function, no such scaling is attempted.</p>
     </div>
     <div class="section level2">
@@ -131,12 +130,7 @@ function, no such scaling is attempted.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># compute different penalization sequences</span></span></span>
 <span class="r-in"><span><span class="va">bh</span> <span class="op">&lt;-</span> <span class="fu">regularizationWeights</span><span class="op">(</span><span class="fl">100</span>, q <span class="op">=</span> <span class="fl">0.2</span>, type <span class="op">=</span> <span class="st">"bh"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">gaussian</span> <span class="op">&lt;-</span> <span class="fu">regularizationWeights</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="fl">100</span>,</span></span>
-<span class="r-in"><span>  q <span class="op">=</span> <span class="fl">0.2</span>,</span></span>
-<span class="r-in"><span>  n <span class="op">=</span> <span class="fl">300</span>,</span></span>
-<span class="r-in"><span>  type <span class="op">=</span> <span class="st">"gaussian"</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">gaussian</span> <span class="op">&lt;-</span> <span class="fu">regularizationWeights</span><span class="op">(</span><span class="fl">100</span>, q <span class="op">=</span> <span class="fl">0.2</span>, n <span class="op">=</span> <span class="fl">300</span>, type <span class="op">=</span> <span class="st">"gaussian"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">oscar</span> <span class="op">&lt;-</span> <span class="fu">regularizationWeights</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="fl">100</span>,</span></span>

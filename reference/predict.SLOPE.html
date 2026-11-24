@@ -116,8 +116,8 @@
 
 
 <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
-<dd><p>an object of class <code>"SLOPE"</code>, typically the result of
-a call to <code><a href="SLOPE.html">SLOPE()</a></code></p></dd>
+<dd><p>an object of class <code>"SLOPE"</code>, typically the result of a call to
+<code><a href="SLOPE.html">SLOPE()</a></code></p></dd>
 
 
 <dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
@@ -131,21 +131,20 @@ values stored in the original fit.</p></dd>
 
 <dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
 <dd><p>type of prediction; <code>"link"</code> returns the linear predictors,
-<code>"response"</code> returns the result of applying the link function,
-and <code>"class"</code> returns class predictions.</p></dd>
+<code>"response"</code> returns the result of applying the link function, and
+<code>"class"</code> returns class predictions.</p></dd>
 
 
 <dt id="arg-simplify">simplify<a class="anchor" aria-label="anchor" href="#arg-simplify"></a></dt>
-<dd><p>if <code>TRUE</code>, <code><a href="https://rdrr.io/r/base/drop.html" class="external-link">base::drop()</a></code> will be called before returning
-the coefficients to drop extraneous dimensions</p></dd>
+<dd><p>if <code>TRUE</code>, <code><a href="https://rdrr.io/r/base/drop.html" class="external-link">base::drop()</a></code> will be called before returning the
+coefficients to drop extraneous dimensions</p></dd>
 
 
 <dt id="arg-exact">exact<a class="anchor" aria-label="anchor" href="#arg-exact"></a></dt>
 <dd><p>if <code>TRUE</code> and the given parameter values differ from those in
 the original fit, the model will be refit by calling <code><a href="https://rdrr.io/r/stats/update.html" class="external-link">stats::update()</a></code> on
-the object with the new parameters. If <code>FALSE</code>, the predicted values
-will be based on interpolated coefficients from the original
-penalty path.</p></dd>
+the object with the new parameters. If <code>FALSE</code>, the predicted values will
+be based on interpolated coefficients from the original penalty path.</p></dd>
 
 
 <dt id="arg-sigma">sigma<a class="anchor" aria-label="anchor" href="#arg-sigma"></a></dt>

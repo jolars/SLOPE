@@ -85,14 +85,13 @@ values stored in the original fit.</p></dd>
 <dt id="arg-exact">exact<a class="anchor" aria-label="anchor" href="#arg-exact"></a></dt>
 <dd><p>if <code>TRUE</code> and the given parameter values differ from those in
 the original fit, the model will be refit by calling <code><a href="https://rdrr.io/r/stats/update.html" class="external-link">stats::update()</a></code> on
-the object with the new parameters. If <code>FALSE</code>, the predicted values
-will be based on interpolated coefficients from the original
-penalty path.</p></dd>
+the object with the new parameters. If <code>FALSE</code>, the predicted values will
+be based on interpolated coefficients from the original penalty path.</p></dd>
 
 
 <dt id="arg-simplify">simplify<a class="anchor" aria-label="anchor" href="#arg-simplify"></a></dt>
-<dd><p>if <code>TRUE</code>, <code><a href="https://rdrr.io/r/base/drop.html" class="external-link">base::drop()</a></code> will be called before returning
-the coefficients to drop extraneous dimensions</p></dd>
+<dd><p>if <code>TRUE</code>, <code><a href="https://rdrr.io/r/base/drop.html" class="external-link">base::drop()</a></code> will be called before returning the
+coefficients to drop extraneous dimensions</p></dd>
 
 
 <dt id="arg-intercept">intercept<a class="anchor" aria-label="anchor" href="#arg-intercept"></a></dt>
@@ -101,8 +100,8 @@ intercept is included as the first row of the returned array.</p></dd>
 
 
 <dt id="arg-scale">scale<a class="anchor" aria-label="anchor" href="#arg-scale"></a></dt>
-<dd><p>whether to return the coefficients in the original scale
-or in the normalized scale.</p></dd>
+<dd><p>whether to return the coefficients in the original scale or in
+the normalized scale.</p></dd>
 
 
 <dt id="arg-sigma">sigma<a class="anchor" aria-label="anchor" href="#arg-sigma"></a></dt>
@@ -111,8 +110,8 @@ or in the normalized scale.</p></dd>
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>arguments that are passed on to <code><a href="https://rdrr.io/r/stats/update.html" class="external-link">stats::update()</a></code> (and therefore
-also to <code><a href="SLOPE.html">SLOPE()</a></code>) if <code>exact = TRUE</code> and the given penalty
-is not in <code>object</code></p></dd>
+also to <code><a href="SLOPE.html">SLOPE()</a></code>) if <code>exact = TRUE</code> and the given penalty is not in
+<code>object</code></p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -121,11 +120,10 @@ is not in <code>object</code></p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>If <code>exact = FALSE</code> and <code>alpha</code> is not in <code>object</code>,
-then the returned coefficients will be approximated by linear interpolation.
-If coefficients from another type of penalty sequence
-(with a different <code>lambda</code>) are required, however,
-please use <code><a href="SLOPE.html">SLOPE()</a></code> to refit the model.</p>
+    <p>If <code>exact = FALSE</code> and <code>alpha</code> is not in <code>object</code>, then the returned
+coefficients will be approximated by linear interpolation. If coefficients
+from another type of penalty sequence (with a different <code>lambda</code>) are
+required, however, please use <code><a href="SLOPE.html">SLOPE()</a></code> to refit the model.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
