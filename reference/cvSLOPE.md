@@ -75,7 +75,8 @@ cvSLOPE(
   [`SLOPE()`](https://jolars.github.io/SLOPE/reference/SLOPE.md). Each
   training and validation fold must have positive total weight. Weights
   apply to both fitting and scoring within folds. The fold scores are
-  averaged equally.
+  averaged equally. For multinomial models with an intercept, each
+  training fold must have positive total weight in every class.
 
 ## Value
 

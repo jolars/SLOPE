@@ -67,7 +67,8 @@ SLOPE(
 
 - intercept:
 
-  whether to fit an intercept
+  whether to fit an intercept. Multinomial models with an intercept
+  require positive total observation weight in every class.
 
 - center:
 
