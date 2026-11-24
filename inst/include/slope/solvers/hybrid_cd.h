@@ -751,8 +751,11 @@ coordinateDescent(Eigen::VectorXd& beta0,
 
   if (intercept) {
     for (int k = 0; k < residual.cols(); ++k) {
+      if (weight_sums(k) <= 0.0) {
+        continue;
+      }
       double beta0_update =
-        detail::weightedResidualSum(w.col(k), residual.col(k)) / n;
+        detail::weightedResidualSum(w.col(k), residual.col(k)) / weight_sums(k);
       residual.col(k).array() -= beta0_update;
       beta0(k) -= beta0_update;
     }

@@ -1,3 +1,4 @@
+#include <Eigen/Cholesky>
 #include <algorithm>
 #include <cassert>
 #include <cmath>
@@ -59,7 +60,7 @@ Multinomial::lossWithNormalizedWeights(const Eigen::MatrixXd& eta,
       const double sum_exp =
         std::exp(-maximum) + (eta.row(i).array() - maximum).exp().sum();
       value +=
-        weights(i) * (maximum + std::log(sum_exp) - y.row(i).dot(eta.row(i)));
+        weights(i) * ((maximum - y.row(i).dot(eta.row(i))) + std::log(sum_exp));
     }
   }
   return value / y.rows();
@@ -262,6 +263,53 @@ Multinomial::hessianDiagonal(const Eigen::MatrixXd& eta)
   Eigen::MatrixXd pr = inverseLink(eta);
   constexpr double min_hessian = constants::P_MIN * (1.0 - constants::P_MIN);
   return (pr.array() * (1.0 - pr.array())).max(min_hessian);
+}
+
+void
+Multinomial::refineIntercept(Eigen::VectorXd& beta0,
+                             Eigen::MatrixXd& eta,
+                             const Eigen::MatrixXd& y,
+                             const Eigen::VectorXd& weights)
+{
+  const bool has_zero_weights = (weights.array() == 0.0).any();
+  Eigen::MatrixXd safe_eta;
+  if (has_zero_weights) {
+    safe_eta = eta;
+    detail::maskZeroWeightRows(safe_eta, weights);
+  }
+  const Eigen::MatrixXd probabilities =
+    inverseLink(has_zero_weights ? safe_eta : eta);
+  const Eigen::VectorXd gradient =
+    (weights.transpose() * (probabilities - y)).transpose();
+  if (!gradient.allFinite() ||
+      gradient.lpNorm<Eigen::Infinity>() <=
+        16.0 * std::numeric_limits<double>::epsilon() * y.rows()) {
+    return;
+  }
+
+  const Eigen::MatrixXd weighted_probabilities =
+    probabilities.array().colwise() * weights.array();
+  Eigen::MatrixXd hessian = -probabilities.transpose() * weighted_probabilities;
+  hessian.diagonal() =
+    ((1.0 - probabilities.array()) * weighted_probabilities.array())
+      .colwise()
+      .sum()
+      .transpose();
+  const Eigen::LDLT<Eigen::MatrixXd> factor(hessian);
+  Eigen::VectorXd direction = -gradient / y.rows();
+  if (factor.info() == Eigen::Success && factor.isPositive()) {
+    const Eigen::VectorXd newton = factor.solve(-gradient);
+    if (newton.allFinite() && gradient.dot(newton) < 0.0) {
+      direction = newton;
+    }
+  }
+
+  Eigen::MatrixXd trial_eta = eta.rowwise() + direction.transpose();
+  const double step = detail::backtrackLoss(*this, eta, trial_eta, y, weights);
+  if (step > 0.0) {
+    beta0 += step * direction;
+    eta.swap(trial_eta);
+  }
 }
 
 Eigen::MatrixXd

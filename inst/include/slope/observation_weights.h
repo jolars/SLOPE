@@ -64,6 +64,20 @@ validateBinomialClassWeights(const Eigen::MatrixXd& y,
   }
 }
 
+inline void
+validateMultinomialClassWeights(const Eigen::MatrixXd& y,
+                                const Eigen::VectorXd& weights)
+{
+  const auto positive_weight = weights.array() > 0.0;
+  const bool reference_present =
+    (positive_weight && (y.rowwise().sum().array() == 0.0)).any();
+  if (!reference_present || ((weights.transpose() * y).array() <= 0.0).any()) {
+    throw std::invalid_argument(
+      "Multinomial fits with an intercept require positive total weight in "
+      "every class");
+  }
+}
+
 inline Eigen::Index
 positiveWeightCount(const Eigen::VectorXd& weights)
 {

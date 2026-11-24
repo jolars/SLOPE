@@ -244,4 +244,19 @@ private:
   const double lipschitz_constant;
 };
 
+namespace detail {
+
+// Backtrack on the objective within floating-point precision. Convexity
+// bounds the penalty along the step by interpolation of the endpoint values.
+double
+backtrackLoss(Loss& loss,
+              const Eigen::MatrixXd& eta,
+              Eigen::MatrixXd& trial_eta,
+              const Eigen::MatrixXd& y,
+              const Eigen::VectorXd& weights,
+              double penalty = 0.0,
+              double trial_penalty = 0.0);
+
+} // namespace detail
+
 } // namespace slope

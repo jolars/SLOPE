@@ -53,7 +53,8 @@ internally.}
 
 \item{family}{model family (objective); see \strong{Families} for details.}
 
-\item{intercept}{whether to fit an intercept}
+\item{intercept}{whether to fit an intercept. Multinomial models with an
+intercept require positive total observation weight in every class.}
 
 \item{center}{whether to center predictors or not by their mean. Defaults
 to \code{TRUE} if \code{x} is dense and \code{FALSE} otherwise.}

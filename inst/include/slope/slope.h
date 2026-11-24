@@ -11,6 +11,7 @@
 #include "estimate_alpha.h"
 #include "logger.h"
 #include "losses/loss.h"
+#include "losses/multinomial.h"
 #include "losses/setup_loss.h"
 #include "math.h"
 #include "normalize.h"
@@ -476,8 +477,12 @@ private:
 
     std::unique_ptr<Loss> loss = setupLoss(this->loss_type);
     MatrixXd y = response_prepared ? y_in : loss->preprocessResponse(y_in);
+    auto* multinomial =
+      this->intercept ? dynamic_cast<Multinomial*>(loss.get()) : nullptr;
     if (this->intercept && this->loss_type == "logistic") {
       detail::validateBinomialClassWeights(y, weights);
+    } else if (multinomial) {
+      detail::validateMultinomialClassWeights(y, weights);
     }
 
     auto jit_normalization = normalize(x.derived(),
@@ -837,6 +842,9 @@ private:
                     this->x_scales,
                     y,
                     weighted ? weights : no_weights);
+        if (multinomial) {
+          multinomial->refineIntercept(beta0, eta, y, weights);
+        }
       }
 
       if (total_it == this->max_it) {
@@ -1102,8 +1110,12 @@ private:
 
     std::unique_ptr<Loss> loss = setupLoss(this->loss_type);
     MatrixXd y = response_prepared ? y_in : loss->preprocessResponse(y_in);
+    auto* multinomial =
+      this->intercept ? dynamic_cast<Multinomial*>(loss.get()) : nullptr;
     if (this->intercept && this->loss_type == "logistic") {
       detail::validateBinomialClassWeights(y, weights);
+    } else if (multinomial) {
+      detail::validateMultinomialClassWeights(y, weights);
     }
 
     if (beta0.size() == 0) {
@@ -1141,6 +1153,7 @@ private:
       x, x_centers, x_scales, centering_type, scaling_type, false, weights);
 
     bool update_clusters = false;
+    const bool safeguard = loss_type != "quadratic";
 
     int m = y.cols();
 
@@ -1214,6 +1227,12 @@ private:
         detail::maskZeroWeightRows(working_residual, weights);
         const VectorXd weight_sums = w.colwise().sum().transpose();
 
+        VectorXd old_beta0, old_beta;
+        if (safeguard) {
+          old_beta0 = beta0;
+          old_beta = beta;
+        }
+
         for (int inner_it = 0; inner_it < max_it_inner_relax; ++inner_it) {
           passes++;
 
@@ -1238,7 +1257,29 @@ private:
           }
         }
 
-        eta = working_residual + z;
+        if (safeguard) {
+          MatrixXd trial_eta = working_residual + z;
+          const double step =
+            detail::backtrackLoss(*loss, eta, trial_eta, y, weights);
+          if (step == 0.0) {
+            beta0.swap(old_beta0);
+            beta.swap(old_beta);
+            break;
+          }
+          if (step < 1.0) {
+            beta0 = (1.0 - step) * old_beta0 + step * beta0;
+            beta = (1.0 - step) * old_beta + step * beta;
+            for (int k = 0; k < clusters.size(); ++k) {
+              clusters.setCoeff(k, std::abs(beta(*clusters.cbegin(k))));
+            }
+          }
+          eta.swap(trial_eta);
+        } else {
+          eta = working_residual + z;
+        }
+        if (multinomial) {
+          multinomial->refineIntercept(beta0, eta, y, weights);
+        }
       }
     }
 

@@ -167,7 +167,8 @@
 #'   positive constant leaves the fit unchanged. Nonuniform weights require an
 #'   alpha path or supplied alpha values and a lambda sequence other than
 #'   `"gaussian"`.
-#' @param intercept whether to fit an intercept
+#' @param intercept whether to fit an intercept. Multinomial models with an
+#'   intercept require positive total observation weight in every class.
 #' @param center whether to center predictors or not by their mean. Defaults to
 #'   `TRUE` if `x` is dense and `FALSE` otherwise.
 #' @param scale type of scaling to apply to predictors.

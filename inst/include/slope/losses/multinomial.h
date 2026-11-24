@@ -79,6 +79,17 @@ public:
    */
   Eigen::MatrixXd hessianDiagonal(const Eigen::MatrixXd& eta) override;
 
+  /** @brief Takes a damped Newton step for the joint intercept.
+   * @param beta0 Intercept vector to update.
+   * @param eta Linear predictor including the intercept.
+   * @param y Prepared response matrix.
+   * @param weights Normalized observation weights.
+   */
+  void refineIntercept(Eigen::VectorXd& beta0,
+                       Eigen::MatrixXd& eta,
+                       const Eigen::MatrixXd& y,
+                       const Eigen::VectorXd& weights);
+
   /**
    * @brief The link function
    * @param mu Mean.

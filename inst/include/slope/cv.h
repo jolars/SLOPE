@@ -420,6 +420,9 @@ crossValidate(Slope model,
     }
 
     if (had_exception) {
+#ifdef _OPENMP
+      Eigen::setNbThreads(0);
+#endif
       std::string error_message = "Exception(s) during cross-validation:\n";
       for (int i = 0; i < n_evals; ++i) {
         if (!thread_errors[i].empty()) {

@@ -16,6 +16,8 @@
 #' @param weights observation weights as in [SLOPE()]. Each training and
 #'   validation fold must have positive total weight. Weights apply to both
 #'   fitting and scoring within folds. The fold scores are averaged equally.
+#'   For multinomial models with an intercept, each training fold must have
+#'   positive total weight in every class.
 #' @param refit logical; if `TRUE`, refits the model on the full dataset using
 #'   the optimal parameters. Default is `TRUE`.
 #' @param ... other arguments to pass on to [SLOPE()]

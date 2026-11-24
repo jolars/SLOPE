@@ -8,6 +8,7 @@
 
 #include "../clusters.h"
 #include "../losses/loss.h"
+#include "../losses/quadratic.h"
 #include "../sorted_l1_norm.h"
 #include "hybrid_cd.h"
 #include "pgd.h"
@@ -181,6 +182,18 @@ private:
                    y,
                    observation_weights);
 
+    if (this->cd_iterations == 0) {
+      return;
+    }
+
+    const bool safeguard =
+      dynamic_cast<const Quadratic*>(loss.get()) == nullptr;
+    VectorXd pgd_beta0, pgd_beta;
+    if (safeguard) {
+      pgd_beta0 = beta0;
+      pgd_beta = beta;
+    }
+
     Clusters clusters(beta);
 
     // TODO: Make these parameters and initialize once
@@ -239,10 +252,31 @@ private:
       }
     }
 
-    // The residual is kept up to date, but not eta. So we need to compute
-    // it here.
-    eta = residual + z;
-    // TODO: register convergence status
+    if (!safeguard) {
+      eta = residual + z;
+      return;
+    }
+
+    MatrixXd trial_eta = residual + z;
+    const auto working_lambda = lambda.head(working_set.size());
+    const double step =
+      detail::backtrackLoss(*loss,
+                            eta,
+                            trial_eta,
+                            y,
+                            weights,
+                            penalty.eval(pgd_beta(working_set), working_lambda),
+                            penalty.eval(beta(working_set), working_lambda));
+    if (step == 0.0) {
+      beta0.swap(pgd_beta0);
+      beta.swap(pgd_beta);
+      return;
+    }
+    if (step < 1.0) {
+      beta0 = (1.0 - step) * pgd_beta0 + step * beta0;
+      beta = (1.0 - step) * pgd_beta + step * beta;
+    }
+    eta.swap(trial_eta);
   }
 
   double computeObjective(const SortedL1Norm& penalty,

@@ -85,3 +85,40 @@ test_that("score works for multinomial data subsets with missing classes", {
   expect_true(all(is.finite(s2)))
   expect_true(all(is.finite(s3)))
 })
+
+test_that("multinomial intercepts require positive class weights", {
+  x <- matrix(rep(c(-1, 1, 1, -1), 3), ncol = 1)
+  y <- factor(rep(1:3, each = 4))
+
+  expect_error(
+    SLOPE(
+      x,
+      y,
+      family = "multinomial",
+      weights = c(rep(1, 8), rep(0, 4)),
+      alpha = 0.1
+    ),
+    "positive total weight in every class"
+  )
+
+  args <- list(
+    x = x,
+    y = y,
+    family = "multinomial",
+    weights = c(rep(1, 8), 0, 0, 0, 1),
+    alpha = 0.1,
+    measure = "deviance",
+    n_folds = 2,
+    refit = FALSE
+  )
+
+  set.seed(42)
+  expect_error(
+    do.call(cvSLOPE, args),
+    "positive total weight in every class"
+  )
+
+  set.seed(42)
+  fit <- do.call(cvSLOPE, c(args, list(intercept = FALSE)))
+  expect_true(all(is.finite(fit$data[[1]]$score)))
+})

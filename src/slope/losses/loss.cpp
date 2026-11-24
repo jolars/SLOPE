@@ -200,4 +200,34 @@ Loss::domainSafePoint(const Eigen::MatrixXd& mean,
   return theta;
 }
 
+namespace detail {
+
+double
+backtrackLoss(Loss& loss,
+              const Eigen::MatrixXd& eta,
+              Eigen::MatrixXd& trial_eta,
+              const Eigen::MatrixXd& y,
+              const Eigen::VectorXd& weights,
+              const double penalty,
+              double trial_penalty)
+{
+  const double objective =
+    loss.lossWithNormalizedWeights(eta, y, weights) + penalty;
+  const double roundoff =
+    8.0 * std::numeric_limits<double>::epsilon() * std::abs(objective);
+  for (double step = 1.0; step >= std::numeric_limits<double>::epsilon();
+       step *= 0.5) {
+    const double value =
+      loss.lossWithNormalizedWeights(trial_eta, y, weights) + trial_penalty;
+    if (std::isfinite(value) && value <= objective + roundoff) {
+      return step;
+    }
+    trial_eta = 0.5 * trial_eta + 0.5 * eta;
+    trial_penalty = 0.5 * trial_penalty + 0.5 * penalty;
+  }
+  return 0.0;
+}
+
+} // namespace detail
+
 } // namespace slope
