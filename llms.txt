@@ -91,7 +91,7 @@ across all releases.
 
 Machine-readable software metadata and the preferred paper citation are
 available in
-[CITATION.cff](https://jolars.github.io/SLOPE/CITATION.cff).
+[CITATION.cff](https://github.com/jolars/SLOPE/blob/main/CITATION.cff).
 
 ## Versioning
 
