@@ -103,7 +103,7 @@ export its citation. The concept DOI `10.5281/zenodo.17475844` identifies
 SLOPE across all releases.
 
 Machine-readable software metadata and the preferred paper citation are
-available in [CITATION.cff](CITATION.cff).
+available in [CITATION.cff](https://github.com/jolars/SLOPE/blob/main/CITATION.cff).
 
 ## Versioning
 
