@@ -1,3 +1,14 @@
+# SLOPE 2.2.0
+
+## Features
+
+- support observation weights and relative alpha values ([`a1d92fb`](https://github.com/jolars/SLOPE/commit/a1d92fbe1fe0f1189fa28aca5355e6b8aaae738a))
+
+## Bug fixes
+
+- update libslope to 6.7.0 ([`ce7c8ce`](https://github.com/jolars/SLOPE/commit/ce7c8cefabe7f7d0f08acc502f6fdc11d309cdf8))
+- correct weighted fits and cross-validation paths ([`7b3b45a`](https://github.com/jolars/SLOPE/commit/7b3b45a73006baf2885f94f379b1e2477ba06deb))
+
 # SLOPE 2.1.1
 
 ## Bug fixes
