@@ -28,8 +28,8 @@ internally.}
 
 \item{q}{a vector of quantiles for the \code{q} parameter in SLOPE}
 
-\item{gamma}{relaxation parameter for SLOPE. Default is \code{0.0}, which
-implies to relaxation of the penalty.}
+\item{gamma}{relaxation parameter for SLOPE. Default is \code{0.0}, which implies
+to relaxation of the penalty.}
 
 \item{n_folds}{number of folds (cross-validation)}
 
@@ -92,10 +92,10 @@ fit <- refit(
 coef(fit)
 }
 \seealso{
-Other model-tuning: 
-\code{\link{plot.TrainedSLOPE}()},
-\code{\link{refit}()},
-\code{\link{summary.TrainedSLOPE}()},
-\code{\link{trainSLOPE}()}
+Other model-tuning:
+\code{\link[=plot.TrainedSLOPE]{plot.TrainedSLOPE()}},
+\code{\link[=refit]{refit()}},
+\code{\link[=summary.TrainedSLOPE]{summary.TrainedSLOPE()}},
+\code{\link[=trainSLOPE]{trainSLOPE()}}
 }
 \concept{model-tuning}

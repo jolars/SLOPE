@@ -27,12 +27,12 @@ print(fit, digits = 1)
 \seealso{
 \code{\link[=SLOPE]{SLOPE()}}, \code{\link[=print.SLOPE]{print.SLOPE()}}
 
-Other SLOPE-methods: 
-\code{\link{coef.SLOPE}()},
-\code{\link{deviance.SLOPE}()},
-\code{\link{plot.SLOPE}()},
-\code{\link{predict.SLOPE}()},
-\code{\link{score}()},
-\code{\link{summary.SLOPE}()}
+Other SLOPE-methods:
+\code{\link[=coef.SLOPE]{coef.SLOPE()}},
+\code{\link[=deviance.SLOPE]{deviance.SLOPE()}},
+\code{\link[=plot.SLOPE]{plot.SLOPE()}},
+\code{\link[=predict.SLOPE]{predict.SLOPE()}},
+\code{\link[=score]{score()}},
+\code{\link[=summary.SLOPE]{summary.SLOPE()}}
 }
 \concept{SLOPE-methods}

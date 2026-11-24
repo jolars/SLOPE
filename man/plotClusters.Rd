@@ -30,22 +30,22 @@ plotted. Default to TRUE}
 \item{show_alpha}{logical, indicating whether labels with alpha values or
 steps in the path should be plotted.}
 
-\item{alpha_steps}{a vector of integer alpha steps to plot. If \code{NULL},
-all the steps are plotted.}
+\item{alpha_steps}{a vector of integer alpha steps to plot. If \code{NULL}, all
+the steps are plotted.}
 
-\item{palette}{a character string specifying the color palette to use for
-the clusters. This is passed to \code{\link[grDevices:palettes]{grDevices::hcl.colors()}}.}
+\item{palette}{a character string specifying the color palette to use for the
+clusters. This is passed to \code{\link[grDevices:hcl.colors]{grDevices::hcl.colors()}}.}
 
 \item{...}{additional arguments passed to \code{\link[graphics:image]{graphics::image()}}.}
 }
 \value{
-Invisibly returns NULL. The function is called for its
-side effect of producing a plot.
+Invisibly returns NULL. The function is called for its side effect of
+producing a plot.
 }
 \description{
-Note that this function requires the \code{patterns} argument to be set to
-\code{TRUE} in the call to \code{\link[=SLOPE]{SLOPE()}}. Calling this function on a
-\code{SLOPE} object without patterns will result in an error.
+Note that this function requires the \code{patterns} argument to be set to \code{TRUE}
+in the call to \code{\link[=SLOPE]{SLOPE()}}. Calling this function on a \code{SLOPE} object without
+patterns will result in an error.
 }
 \examples{
 set.seed(10)

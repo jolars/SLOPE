@@ -5,11 +5,10 @@
 \alias{wine}
 \title{Wine Cultivars}
 \format{
-178 observations from 13 variables represented as a list consisting
-of a categorical response vector \code{y}
-with three levels: \emph{A}, \emph{B}, and \emph{C} representing different
-cultivars of wine as well as \code{x}: a sparse feature matrix of class
-'dgCMatrix' with the following variables:
+178 observations from 13 variables represented as a list consisting of a
+categorical response vector \code{y} with three levels: \emph{A}, \emph{B}, and \emph{C}
+representing different cultivars of wine as well as \code{x}: a sparse feature
+matrix of class 'dgCMatrix' with the following variables:
 \describe{
 \item{alcohol}{alcoholic content}
 \item{malic}{malic acid}
@@ -37,11 +36,11 @@ School of Information and Computer Science.
 wine
 }
 \description{
-A data set of results from chemical analysis of wines grown in Italy
-from three different cultivars.
+A data set of results from chemical analysis of wines grown in Italy from
+three different cultivars.
 }
 \seealso{
-Other datasets: 
+Other datasets:
 \code{\link{abalone}},
 \code{\link{bodyfat}},
 \code{\link{heart}},

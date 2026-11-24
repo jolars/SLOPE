@@ -23,6 +23,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Johan Larsson \email{johan@jolars.co} (\href{https://orcid.org/0000-0002-4029-5945}{ORCID})
   \item Jonas Wallin \email{jonas.wallin@stat.lu.se} (\href{https://orcid.org/0000-0003-0381-6593}{ORCID})
   \item Malgorzata Bogdan (\href{https://orcid.org/0000-0002-0657-4342}{ORCID})
   \item Ewout van den Berg

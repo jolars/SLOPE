@@ -19,14 +19,14 @@
 
 \item{intercept}{whether to plot the intercept}
 
-\item{x_variable}{what to plot on the x axis. \code{"alpha"} plots
-the scaling parameter for the sequence, \code{"deviance_ratio"} plots
-the fraction of deviance explained, and \code{"step"} plots step number.}
+\item{x_variable}{what to plot on the x axis. \code{"alpha"} plots the scaling
+parameter for the sequence, \code{"deviance_ratio"} plots the fraction of
+deviance explained, and \code{"step"} plots step number.}
 
 \item{magnitudes}{whether to plot the magnitudes of the coefficients}
 
-\item{add_labels}{whether to add labels (numbers) on the right side
-of the plot for each coefficient (only used when the path contains multiple
+\item{add_labels}{whether to add labels (numbers) on the right side of the
+plot for each coefficient (only used when the path contains multiple
 solutions)}
 
 \item{mark_zero}{whether to add a vertical line at zero in the dot chart
@@ -36,15 +36,15 @@ solutions)}
 For a single solution: arguments passed to \code{\link[graphics:dotchart]{graphics::dotchart()}}.}
 }
 \value{
-Invisibly returns NULL. The function is called for its
-side effect of producing a plot.
+Invisibly returns NULL. The function is called for its side effect of
+producing a plot.
 }
 \description{
-Plot the fitted model's regression
-coefficients along the regularization path. When the path contains a single
-solution (only one alpha value), a dot chart is displayed showing the
-coefficient values. When the path contains multiple solutions, a line plot
-is displayed showing how coefficients evolve along the regularization path.
+Plot the fitted model's regression coefficients along the regularization
+path. When the path contains a single solution (only one alpha value), a dot
+chart is displayed showing the coefficient values. When the path contains
+multiple solutions, a line plot is displayed showing how coefficients evolve
+along the regularization path.
 }
 \examples{
 # Multiple solutions along regularization path
@@ -62,12 +62,12 @@ plot(fit_multi)
 \seealso{
 \code{\link[=SLOPE]{SLOPE()}}, \code{\link[=plotDiagnostics]{plotDiagnostics()}}
 
-Other SLOPE-methods: 
-\code{\link{coef.SLOPE}()},
-\code{\link{deviance.SLOPE}()},
-\code{\link{predict.SLOPE}()},
-\code{\link{print.SLOPE}()},
-\code{\link{score}()},
-\code{\link{summary.SLOPE}()}
+Other SLOPE-methods:
+\code{\link[=coef.SLOPE]{coef.SLOPE()}},
+\code{\link[=deviance.SLOPE]{deviance.SLOPE()}},
+\code{\link[=predict.SLOPE]{predict.SLOPE()}},
+\code{\link[=print.SLOPE]{print.SLOPE()}},
+\code{\link[=score]{score()}},
+\code{\link[=summary.SLOPE]{summary.SLOPE()}}
 }
 \concept{SLOPE-methods}

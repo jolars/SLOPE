@@ -20,11 +20,11 @@
 )
 }
 \arguments{
-\item{x}{an object of class \code{'TrainedSLOPE'}, typically from a call
-to \code{\link[=cvSLOPE]{cvSLOPE()}}}
+\item{x}{an object of class \code{'TrainedSLOPE'}, typically from a call to
+\code{\link[=cvSLOPE]{cvSLOPE()}}}
 
-\item{plot_min}{whether to mark the location of the penalty corresponding
-to the best prediction score}
+\item{plot_min}{whether to mark the location of the penalty corresponding to
+the best prediction score}
 
 \item{ci_alpha}{alpha (opacity) for fill in confidence limits}
 
@@ -33,8 +33,8 @@ confidence limits}
 
 \item{ci_col}{color for border of confidence limits}
 
-\item{plot_args}{list of additional arguments to pass to \code{\link[=plot]{plot()}},
-which sets up the plot frame}
+\item{plot_args}{list of additional arguments to pass to \code{\link[=plot]{plot()}}, which sets
+up the plot frame}
 
 \item{polygon_args}{list of additional arguments to pass to
 \code{\link[graphics:polygon]{graphics::polygon()}}, which fills the confidence limits}
@@ -45,8 +45,8 @@ which sets up the plot frame}
 \item{abline_args}{list of additional arguments to pass to
 \code{\link[graphics:abline]{graphics::abline()}}, which plots the minimum}
 
-\item{index}{an optional index, to plot only one (the index-th) set
-of the parameter combinations.}
+\item{index}{an optional index, to plot only one (the index-th) set of the
+parameter combinations.}
 
 \item{measure}{any of the measures used in the call to \code{\link[=trainSLOPE]{trainSLOPE()}}. If
 \code{measure = "auto"} then deviance will be used for binomial and multinomial
@@ -73,10 +73,10 @@ tune <- cvSLOPE(
 plot(tune, ci_col = "salmon", index = 1)
 }
 \seealso{
-Other model-tuning: 
-\code{\link{cvSLOPE}()},
-\code{\link{refit}()},
-\code{\link{summary.TrainedSLOPE}()},
-\code{\link{trainSLOPE}()}
+Other model-tuning:
+\code{\link[=cvSLOPE]{cvSLOPE()}},
+\code{\link[=refit]{refit()}},
+\code{\link[=summary.TrainedSLOPE]{summary.TrainedSLOPE()}},
+\code{\link[=trainSLOPE]{trainSLOPE()}}
 }
 \concept{model-tuning}

@@ -56,8 +56,8 @@ internally.}
 \item{intercept}{whether to fit an intercept. Multinomial models with an
 intercept require positive total observation weight in every class.}
 
-\item{center}{whether to center predictors or not by their mean. Defaults
-to \code{TRUE} if \code{x} is dense and \code{FALSE} otherwise.}
+\item{center}{whether to center predictors or not by their mean. Defaults to
+\code{TRUE} if \code{x} is dense and \code{FALSE} otherwise.}
 
 \item{scale}{type of scaling to apply to predictors.
 \itemize{
@@ -78,76 +78,75 @@ the last to the almost-saturated model, and
 using Algorithm 5 in Bogdan et al. (2015).
 }}
 
-\item{lambda}{either a character vector indicating the method used
-to construct the lambda path or a numeric non-decreasing
-vector with length equal to the number
-of coefficients in the model; see section \strong{Regularization sequences}
-for details.}
+\item{lambda}{either a character vector indicating the method used to
+construct the lambda path or a numeric non-decreasing vector with length
+equal to the number of coefficients in the model; see section
+\strong{Regularization sequences} for details.}
 
 \item{alpha_min_ratio}{smallest value for \code{lambda} as a fraction of
 \code{lambda_max}; used in the selection of \code{alpha} when \code{alpha = "path"}.}
 
-\item{path_length}{length of regularization path; note that the path
-returned may still be shorter due to the early termination criteria
-given by \code{tol_dev_change}, \code{tol_dev_ratio}, and \code{max_variables}.}
+\item{path_length}{length of regularization path; note that the path returned
+may still be shorter due to the early termination criteria given by
+\code{tol_dev_change}, \code{tol_dev_ratio}, and \code{max_variables}.}
 
-\item{q}{parameter controlling the shape of the lambda sequence, with
-usage varying depending on the type of path used and has no effect
-is a custom \code{lambda} sequence is used. Must be greater than \code{1e-6} and
-smaller than 1.}
+\item{q}{parameter controlling the shape of the lambda sequence, with usage
+varying depending on the type of path used and has no effect is a custom
+\code{lambda} sequence is used. Must be greater than \code{1e-6} and smaller than 1.}
 
-\item{theta1}{parameter controlling the shape of the lambda sequence
-when \code{lambda == "OSCAR"}. This parameter basically sets the intercept
-for the lambda sequence and is equivalent to \eqn{\lambda_1} in the
-original OSCAR formulation.}
+\item{theta1}{parameter controlling the shape of the lambda sequence when
+\code{lambda == "OSCAR"}. This parameter basically sets the intercept for the
+lambda sequence and is equivalent to \eqn{\lambda_1} in the original OSCAR
+formulation.}
 
-\item{theta2}{parameter controlling the shape of the lambda sequence
-when \code{lambda == "OSCAR"}. This parameter basically sets the slope
-for the lambda sequence and is equivalent to \eqn{\lambda_2} in the
-original OSCAR formulation.}
+\item{theta2}{parameter controlling the shape of the lambda sequence when
+\code{lambda == "OSCAR"}. This parameter basically sets the slope for the lambda
+sequence and is equivalent to \eqn{\lambda_2} in the original OSCAR
+formulation.}
 
-\item{tol_dev_change}{the regularization path is stopped if the
-fractional change in deviance falls below this value; note that this is
-automatically set to 0 if a alpha is manually entered}
+\item{tol_dev_change}{the regularization path is stopped if the fractional
+change in deviance falls below this value; note that this is automatically
+set to 0 if a alpha is manually entered}
 
-\item{tol_dev_ratio}{the regularization path is stopped if the
-deviance ratio \eqn{1 - \mathrm{deviance}/\mathrm{(null-deviance)}
-  }{1 - deviance/(null deviance)} is above this threshold}
+\item{tol_dev_ratio}{the regularization path is stopped if the deviance ratio
+\eqn{1 - \mathrm{deviance}/\mathrm{(null-deviance)}
+  }{1 - deviance/(null deviance)}
+is above this threshold}
 
-\item{max_variables}{criterion for stopping the path in terms of the
-maximum number of unique, nonzero coefficients in absolute value in model.
-For the multinomial family, this value will be multiplied internally with
-the number of levels of the response minus one.}
+\item{max_variables}{criterion for stopping the path in terms of the maximum
+number of unique, nonzero coefficients in absolute value in model. For the
+multinomial family, this value will be multiplied internally with the
+number of levels of the response minus one.}
 
 \item{solver}{type of solver use, either \code{"auto"}, \code{"hybrid"}, \code{"pgd"}, or
-\code{"fista"}; \code{"auto"} means that the solver is automatically selected,
-which currently means that \code{"hybrid"} is used for all objectives
-except multinomial ones, in which case FISTA (\code{"fista"}) is used.}
+\code{"fista"}; \code{"auto"} means that the solver is automatically selected, which
+currently means that \code{"hybrid"} is used for all objectives except
+multinomial ones, in which case FISTA (\code{"fista"}) is used.}
 
 \item{max_passes}{maximum number of passes (outer iterations) for solver}
 
 \item{tol}{stopping criterion for the solvers in terms of the relative
 duality gap}
 
-\item{threads}{number of threads to use in the solver; if \code{NULL}, half
-of the available (logical) threads will be used}
+\item{threads}{number of threads to use in the solver; if \code{NULL}, half of the
+available (logical) threads will be used}
 
-\item{diagnostics}{whether to save diagnostics from the solver
-(timings and other values depending on type of solver)}
+\item{diagnostics}{whether to save diagnostics from the solver (timings and
+other values depending on type of solver)}
 
-\item{patterns}{whether to return the SLOPE pattern
-(cluster, ordering, and sign information) as a list of sparse
-matrices, one for each step on the path.}
+\item{patterns}{whether to return the SLOPE pattern (cluster, ordering, and
+sign information) as a list of sparse matrices, one for each step on the
+path.}
 
 \item{gamma}{relaxation mixing parameter, between 0 and 1. Has no effect if
-set to 0. If larger than 0, the solver will mix the coefficients
-from the ordinary SLOPE solutions with the coefficients from the
-relaxed solutions (fitting OLS on the SLOPE pattern).}
+set to 0. If larger than 0, the solver will mix the coefficients from the
+ordinary SLOPE solutions with the coefficients from the relaxed solutions
+(fitting OLS on the SLOPE pattern).}
 
 \item{cd_type}{Type of coordinate descent to use, either \code{"cyclical"} or
-\code{"permuted"}. The former means that the cluster are cycled through
-in descending order of their coefficients' magnitudes, while the
-latter means that the clusters are permuted randomly for each pass.}
+\code{"permuted"}. The former means that the cluster are cycled through in
+descending order of their coefficients' magnitudes, while the latter means
+that the clusters are permuted randomly for each pass.}
 
 \item{tol_abs}{DEPRECATED}
 
@@ -247,18 +246,17 @@ simply the squared norm of the least-squares residuals. See section
 \strong{Families} for specifics regarding the various types of \eqn{f(\beta)}
 (model families) that are allowed in \code{SLOPE()}.
 
-By default, \code{SLOPE()} fits a path of models, each corresponding to
-a separate regularization sequence, starting from
-the null (intercept-only) model to an almost completely unregularized
-model. These regularization sequences are parameterized using
-\eqn{\lambda} and \eqn{\alpha}, with only \eqn{\alpha} varying along the
-path. The length of the path can be manually, but will terminate
-prematurely depending on
-arguments \code{tol_dev_change}, \code{tol_dev_ratio}, and \code{max_variables}.
-This means that unless these arguments are modified, the path is not
-guaranteed to be of length \code{path_length}.
+By default, \code{SLOPE()} fits a path of models, each corresponding to a separate
+regularization sequence, starting from the null (intercept-only) model to an
+almost completely unregularized model. These regularization sequences are
+parameterized using \eqn{\lambda} and \eqn{\alpha}, with only \eqn{\alpha}
+varying along the path. The length of the path can be manually, but will
+terminate prematurely depending on arguments \code{tol_dev_change},
+\code{tol_dev_ratio}, and \code{max_variables}. This means that unless these arguments
+are modified, the path is not guaranteed to be of length \code{path_length}.
 }
 \section{Families}{
+
 
 \strong{Gaussian}
 
@@ -311,27 +309,24 @@ with \eqn{y_{ik}} being the element in a \eqn{n} by \eqn{(m-1)} matrix, where
 
 \section{Regularization Sequences}{
 
-There are multiple ways of specifying the \code{lambda} sequence
-in \code{SLOPE()}. It is, first of all, possible to select the sequence manually
-by
-using a non-increasing
-numeric vector, possibly of length one, as argument instead of a character.
-The greater the differences are between
-consecutive values along the sequence, the more clustering behavior
-will the model exhibit. Note, also, that the scale of the \eqn{\lambda}
-vector makes no difference if \code{alpha = NULL}, since \code{alpha} will be
-selected automatically to ensure that the model is completely sparse at the
-beginning and almost unregularized at the end. If, however, both
-\code{alpha} and \code{lambda} are manually specified, then the scales of both do
-matter, so make sure to choose them wisely.
+There are multiple ways of specifying the \code{lambda} sequence in \code{SLOPE()}. It
+is, first of all, possible to select the sequence manually by using a
+non-increasing numeric vector, possibly of length one, as argument instead of
+a character. The greater the differences are between consecutive values along
+the sequence, the more clustering behavior will the model exhibit. Note,
+also, that the scale of the \eqn{\lambda} vector makes no difference if
+\code{alpha = NULL}, since \code{alpha} will be selected automatically to ensure that
+the model is completely sparse at the beginning and almost unregularized at
+the end. If, however, both \code{alpha} and \code{lambda} are manually specified, then
+the scales of both do matter, so make sure to choose them wisely.
 
-Instead of choosing the sequence manually, one of the following
-automatically generated sequences may be chosen.
+Instead of choosing the sequence manually, one of the following automatically
+generated sequences may be chosen.
 
 \strong{BH (Benjamini--Hochberg)}
 
-If \code{lambda = "bh"}, the sequence used is that referred to
-as \eqn{\lambda^{(\mathrm{BH})}}{\lambda^(BH)} by Bogdan et al, which sets
+If \code{lambda = "bh"}, the sequence used is that referred to as
+\eqn{\lambda^{(\mathrm{BH})}}{\lambda^(BH)} by Bogdan et al, which sets
 \eqn{\lambda} according to
 \deqn{
   \lambda_i = \Phi^{-1}(1 - iq/(2p)),
@@ -339,8 +334,8 @@ as \eqn{\lambda^{(\mathrm{BH})}}{\lambda^(BH)} by Bogdan et al, which sets
   \lambda_i = \Phi^-1(1 - iq/(2p)),
 }
 for \eqn{i=1,\dots,p}, where \eqn{\Phi^{-1}}{\Phi^-1} is the quantile
-function for the standard normal distribution and \eqn{q} is a parameter
-that can be set by the user in the call to \code{SLOPE()}.
+function for the standard normal distribution and \eqn{q} is a parameter that
+can be set by the user in the call to \code{SLOPE()}.
 
 \strong{Gaussian}
 
@@ -353,10 +348,9 @@ This penalty sequence is related to BH, such that
 }
 for \eqn{i=1,\dots,p}, where \eqn{w(k) = 1/(n-k-1)}. We let
 \eqn{\lambda_1 = \lambda^{(\mathrm{BH})}_1}{\lambda_1 = \lambda^(BH)_1} and
-adjust the sequence to make sure that it's non-increasing.
-Note that if \eqn{p} is large relative
-to \eqn{n}, this option will result in a constant sequence, which is
-usually not what you would want.
+adjust the sequence to make sure that it's non-increasing. Note that if
+\eqn{p} is large relative to \eqn{n}, this option will result in a constant
+sequence, which is usually not what you would want.
 
 \strong{OSCAR}
 
@@ -371,17 +365,16 @@ and \eqn{\lambda_2} to avoid confusion and abuse of notation.
 
 \strong{lasso}
 
-SLOPE is exactly equivalent to the
-lasso when the sequence of regularization weights is constant, i.e.
+SLOPE is exactly equivalent to the lasso when the sequence of regularization
+weights is constant, i.e.
 \deqn{
   \lambda_i = 1
 }
-for \eqn{i = 1,\dots,p}. Here, again, we stress that the fact that
-all \eqn{\lambda} are equal to one does not matter as long as
-\code{alpha == NULL} since we scale the vector automatically.
-Note that this option is only here for academic interest and
-to highlight the fact that SLOPE is
-a generalization of the lasso. There are more efficient packages, such as
+for \eqn{i = 1,\dots,p}. Here, again, we stress that the fact that all
+\eqn{\lambda} are equal to one does not matter as long as \code{alpha == NULL}
+since we scale the vector automatically. Note that this option is only here
+for academic interest and to highlight the fact that SLOPE is a
+generalization of the lasso. There are more efficient packages, such as
 \strong{glmnet} and \strong{biglasso}, for fitting the lasso.
 }
 
@@ -390,10 +383,10 @@ a generalization of the lasso. There are more efficient packages, such as
 
 There are currently three solvers available for SLOPE: Hybrid (Beck and
 Teboulle 2009), proximal gradient descent (PGD), and FISTA (Beck and
-Teboulle, 2009). The hybrid method is the preferred and generally
-fastest method and is therefore the default for the Gaussian and
-binomial families, but not currently available for multinomial and
-disabled for Poisson due to convergence issues.
+Teboulle, 2009). The hybrid method is the preferred and generally fastest
+method and is therefore the default for the Gaussian and binomial families,
+but not currently available for multinomial and disabled for Poisson due to
+convergence issues.
 }
 
 \examples{
@@ -425,8 +418,8 @@ Applied Statistics, 9(3), 1103–1140.
 
 Larsson, J., Klopfenstein, Q., Massias, M., & Wallin, J. (2023). Coordinate
 descent for SLOPE. In F. Ruiz, J. Dy, & J.-W. van de Meent (Eds.),
-Proceedings of the 26th international conference on artificial
-intelligence and statistics (Vol. 206, pp. 4802–4821). PMLR.
+Proceedings of the 26th international conference on artificial intelligence
+and statistics (Vol. 206, pp. 4802–4821). PMLR.
 https://proceedings.mlr.press/v206/larsson23a.html
 
 Bondell, H. D., & Reich, B. J. (2008). Simultaneous Regression Shrinkage,

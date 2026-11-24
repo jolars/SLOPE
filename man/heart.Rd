@@ -5,11 +5,10 @@
 \alias{heart}
 \title{Heart Disease}
 \format{
-270 observations from 17 variables represented as a list consisting
-of a binary factor response vector \code{y},
-with levels 'absence' and 'presence' indicating the absence or presence of
-heart disease and \code{x}: a sparse feature matrix of class 'dgCMatrix' with the
-following variables:
+270 observations from 17 variables represented as a list consisting of a
+binary factor response vector \code{y}, with levels 'absence' and 'presence'
+indicating the absence or presence of heart disease and \code{x}: a sparse feature
+matrix of class 'dgCMatrix' with the following variables:
 \describe{
 \item{age}{age}
 \item{bp}{diastolic blood pressure}
@@ -51,12 +50,12 @@ Diagnostic attributes of patients classified as having heart disease or not.
 
 The original dataset contained 13 variables. The nominal of these were
 dummycoded, removing the first category. No precise information regarding
-variables \code{chest_pain}, \code{thal} and \code{ecg} could be found, which explains
-their obscure definitions here.
+variables \code{chest_pain}, \code{thal} and \code{ecg} could be found, which explains their
+obscure definitions here.
 }
 
 \seealso{
-Other datasets: 
+Other datasets:
 \code{\link{abalone}},
 \code{\link{bodyfat}},
 \code{\link{student}},

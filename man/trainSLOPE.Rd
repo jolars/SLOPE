@@ -24,19 +24,18 @@ internally.}
 \item{y}{the response, which for \code{family = "gaussian"} must be numeric; for
 \code{family = "binomial"} or \code{family = "multinomial"}, it can be a factor.}
 
-\item{q}{parameter controlling the shape of the lambda sequence, with
-usage varying depending on the type of path used and has no effect
-is a custom \code{lambda} sequence is used. Must be greater than \code{1e-6} and
-smaller than 1.}
+\item{q}{parameter controlling the shape of the lambda sequence, with usage
+varying depending on the type of path used and has no effect is a custom
+\code{lambda} sequence is used. Must be greater than \code{1e-6} and smaller than 1.}
 
 \item{number}{number of folds (cross-validation)}
 
 \item{repeats}{number of repeats for each fold (for repeated \emph{k}-fold cross
 validation)}
 
-\item{measure}{measure to try to optimize; note that you may
-supply \emph{multiple} values here and that, by default,
-all the possible measures for the given model will be used.}
+\item{measure}{measure to try to optimize; note that you may supply
+\emph{multiple} values here and that, by default, all the possible measures for
+the given model will be used.}
 
 \item{...}{other arguments to pass on to \code{\link[=SLOPE]{SLOPE()}}}
 
@@ -82,10 +81,10 @@ tune <- trainSLOPE(
 )
 }
 \seealso{
-Other model-tuning: 
-\code{\link{cvSLOPE}()},
-\code{\link{plot.TrainedSLOPE}()},
-\code{\link{refit}()},
-\code{\link{summary.TrainedSLOPE}()}
+Other model-tuning:
+\code{\link[=cvSLOPE]{cvSLOPE()}},
+\code{\link[=plot.TrainedSLOPE]{plot.TrainedSLOPE()}},
+\code{\link[=refit]{refit()}},
+\code{\link[=summary.TrainedSLOPE]{summary.TrainedSLOPE()}}
 }
 \concept{model-tuning}

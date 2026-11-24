@@ -5,8 +5,7 @@
 \alias{abalone}
 \title{Abalone}
 \format{
-A list with two items representing 211 observations from
-9 variables
+A list with two items representing 211 observations from 9 variables
 \describe{
 \item{sex}{sex of abalone, 1 for female}
 \item{infant}{indicates that the person is an infant}
@@ -21,22 +20,22 @@ A list with two items representing 211 observations from
 }
 }
 \source{
-Pace, R. Kelley and Ronald Barry, Sparse Spatial Autoregressions,
-Statistics and Probability Letters, 33 (1997) 291-297.
+Pace, R. Kelley and Ronald Barry, Sparse Spatial Autoregressions, Statistics
+and Probability Letters, 33 (1997) 291-297.
 }
 \usage{
 abalone
 }
 \description{
 This data set contains observations of abalones. The goal is to predict the
-age of an individual abalone given physical measurements such as sex,
-weight, and height.
+age of an individual abalone given physical measurements such as sex, weight,
+and height.
 }
 \details{
 Only a stratified sample of 211 rows of the original data set are used here.
 }
 \seealso{
-Other datasets: 
+Other datasets:
 \code{\link{bodyfat}},
 \code{\link{heart}},
 \code{\link{student}},

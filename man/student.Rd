@@ -5,11 +5,11 @@
 \alias{student}
 \title{Student Performance}
 \format{
-382 observations from 13 variables represented as a list consisting
-of a binary factor response matrix \code{y} with two responses: \code{portugese} and
-\code{math} for the final scores in period three for the respective subjects.
-The list also contains \code{x}: a sparse feature matrix of class
-'dgCMatrix' with the following variables:
+382 observations from 13 variables represented as a list consisting of a
+binary factor response matrix \code{y} with two responses: \code{portugese} and \code{math}
+for the final scores in period three for the respective subjects. The list
+also contains \code{x}: a sparse feature matrix of class 'dgCMatrix' with the
+following variables:
 \describe{
 \item{school_ms}{student's primary school, 1 for Mousinho da Silveira and 0
 for Gabriel Pereira}
@@ -38,36 +38,36 @@ the specified job roles}
 }
 }
 \source{
-P. Cortez and A. Silva. Using Data Mining to Predict Secondary School
-Student Performance. In A. Brito and J. Teixeira Eds., Proceedings of 5th
-FUture BUsiness TEChnology Conference (FUBUTEC 2008) pp. 5-12, Porto,
-Portugal, April, 2008, EUROSIS, ISBN 978-9077381-39-7.
+P. Cortez and A. Silva. Using Data Mining to Predict Secondary School Student
+Performance. In A. Brito and J. Teixeira Eds., Proceedings of 5th FUture
+BUsiness TEChnology Conference (FUBUTEC 2008) pp. 5-12, Porto, Portugal,
+April, 2008, EUROSIS, ISBN 978-9077381-39-7.
 
-Dua, D. and Karra Taniskidou, E. (2017). UCI Machine Learning
-Repository \url{http://archive.ics.uci.edu/ml/}. Irvine, CA: University of
-California, School of Information and Computer Science.
+Dua, D. and Karra Taniskidou, E. (2017). UCI Machine Learning Repository
+\url{http://archive.ics.uci.edu/ml/}. Irvine, CA: University of California,
+School of Information and Computer Science.
 }
 \usage{
 student
 }
 \description{
-A data set of the attributes of 382 students in secondary education
-collected from two schools. The goal is to predict the
-grade in math and Portugese at the end of the third period. See the
-cited sources for additional information.
+A data set of the attributes of 382 students in secondary education collected
+from two schools. The goal is to predict the grade in math and Portugese at
+the end of the third period. See the cited sources for additional
+information.
 }
 \section{Preprocessing}{
 
-All of the grade-specific predictors were dropped from the data set.
-(Note that it is not clear from the source why some of these predictors are
-specific to each grade, such as which parent is the student's guardian.)
-The categorical variables were dummy-coded. Only the final grades (G3)
-were kept as dependent variables, whilst the
-first and second period grades were dropped.
+All of the grade-specific predictors were dropped from the data set. (Note
+that it is not clear from the source why some of these predictors are
+specific to each grade, such as which parent is the student's guardian.) The
+categorical variables were dummy-coded. Only the final grades (G3) were kept
+as dependent variables, whilst the first and second period grades were
+dropped.
 }
 
 \seealso{
-Other datasets: 
+Other datasets:
 \code{\link{abalone}},
 \code{\link{bodyfat}},
 \code{\link{heart}},

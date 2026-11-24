@@ -5,8 +5,7 @@
 \alias{bodyfat}
 \title{Bodyfat}
 \format{
-A list with two items representing 252 observations from
-14 variables
+A list with two items representing 252 observations from 14 variables
 \describe{
 \item{age}{age (years)}
 \item{weight}{weight (lbs)}
@@ -30,14 +29,13 @@ http://lib.stat.cmu.edu/datasets/bodyfat
 bodyfat
 }
 \description{
-The response (\code{y}) corresponds to
-estimates of percentage of body fat from application of
-Siri's 1956 equation to measurements of underwater weighing, as well as
-age, weight, height, and a variety of
-body circumference measurements.
+The response (\code{y}) corresponds to estimates of percentage of body fat from
+application of Siri's 1956 equation to measurements of underwater weighing,
+as well as age, weight, height, and a variety of body circumference
+measurements.
 }
 \seealso{
-Other datasets: 
+Other datasets:
 \code{\link{abalone}},
 \code{\link{heart}},
 \code{\link{student}},

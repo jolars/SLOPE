@@ -12,8 +12,8 @@
 \item{...}{ignored}
 }
 \value{
-For Gaussian models this is twice the residual sums of squares. For
-all other models, two times the negative loglikelihood is returned.
+For Gaussian models this is twice the residual sums of squares. For all other
+models, two times the negative loglikelihood is returned.
 }
 \description{
 Model Deviance
@@ -25,12 +25,12 @@ deviance(fit)
 \seealso{
 \code{\link[=SLOPE]{SLOPE()}}
 
-Other SLOPE-methods: 
-\code{\link{coef.SLOPE}()},
-\code{\link{plot.SLOPE}()},
-\code{\link{predict.SLOPE}()},
-\code{\link{print.SLOPE}()},
-\code{\link{score}()},
-\code{\link{summary.SLOPE}()}
+Other SLOPE-methods:
+\code{\link[=coef.SLOPE]{coef.SLOPE()}},
+\code{\link[=plot.SLOPE]{plot.SLOPE()}},
+\code{\link[=predict.SLOPE]{predict.SLOPE()}},
+\code{\link[=print.SLOPE]{print.SLOPE()}},
+\code{\link[=score]{score()}},
+\code{\link[=summary.SLOPE]{summary.SLOPE()}}
 }
 \concept{SLOPE-methods}

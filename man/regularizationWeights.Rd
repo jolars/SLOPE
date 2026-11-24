@@ -14,27 +14,26 @@ regularizationWeights(
 )
 }
 \arguments{
-\item{n_lambda}{The number of lambdas to generate. This should typically
-be equal to the number of predictors in your data set.}
+\item{n_lambda}{The number of lambdas to generate. This should typically be
+equal to the number of predictors in your data set.}
 
-\item{type}{The type of lambda sequence to use. See documentation for
-in \code{\link[=SLOPE]{SLOPE()}}, including that related to the \code{lambda} parameter in that
+\item{type}{The type of lambda sequence to use. See documentation for in
+\code{\link[=SLOPE]{SLOPE()}}, including that related to the \code{lambda} parameter in that
 function.}
 
-\item{q}{parameter controlling the shape of the lambda sequence, with
-usage varying depending on the type of path used and has no effect
-is a custom \code{lambda} sequence is used. Must be greater than \code{1e-6} and
-smaller than 1.}
+\item{q}{parameter controlling the shape of the lambda sequence, with usage
+varying depending on the type of path used and has no effect is a custom
+\code{lambda} sequence is used. Must be greater than \code{1e-6} and smaller than 1.}
 
-\item{theta1}{parameter controlling the shape of the lambda sequence
-when \code{lambda == "OSCAR"}. This parameter basically sets the intercept
-for the lambda sequence and is equivalent to \eqn{\lambda_1} in the
-original OSCAR formulation.}
+\item{theta1}{parameter controlling the shape of the lambda sequence when
+\code{lambda == "OSCAR"}. This parameter basically sets the intercept for the
+lambda sequence and is equivalent to \eqn{\lambda_1} in the original OSCAR
+formulation.}
 
-\item{theta2}{parameter controlling the shape of the lambda sequence
-when \code{lambda == "OSCAR"}. This parameter basically sets the slope
-for the lambda sequence and is equivalent to \eqn{\lambda_2} in the
-original OSCAR formulation.}
+\item{theta2}{parameter controlling the shape of the lambda sequence when
+\code{lambda == "OSCAR"}. This parameter basically sets the slope for the lambda
+sequence and is equivalent to \eqn{\lambda_2} in the original OSCAR
+formulation.}
 
 \item{n}{The number of rows (observations) in the design matrix.}
 }
@@ -49,20 +48,15 @@ This function generates sequences of regularizations weights for use in
 Please see \code{\link[=SLOPE]{SLOPE()}} for detailed information regarding the parameters in
 this function, in particular the section \emph{Regularization Sequences}.
 
-Note that these sequences are automatically scaled (unless a value for
-the \code{alpha} parameter is manually supplied) when using \code{\link[=SLOPE]{SLOPE()}}. In this
+Note that these sequences are automatically scaled (unless a value for the
+\code{alpha} parameter is manually supplied) when using \code{\link[=SLOPE]{SLOPE()}}. In this
 function, no such scaling is attempted.
 }
 \examples{
 # compute different penalization sequences
 bh <- regularizationWeights(100, q = 0.2, type = "bh")
 
-gaussian <- regularizationWeights(
-  100,
-  q = 0.2,
-  n = 300,
-  type = "gaussian"
-)
+gaussian <- regularizationWeights(100, q = 0.2, n = 300, type = "gaussian")
 
 oscar <- regularizationWeights(
   100,

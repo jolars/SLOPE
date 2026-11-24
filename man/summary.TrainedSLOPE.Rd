@@ -13,8 +13,7 @@
 \item{...}{other arguments (currently ignored)}
 }
 \value{
-An object of class \code{'summary_TrainedSLOPE'} with the following
-components:
+An object of class \code{'summary_TrainedSLOPE'} with the following components:
 \item{call}{the call that produced the model}
 \item{measure}{the performance measure(s) used}
 \item{optima}{optimal parameter values and corresponding performance}
@@ -23,8 +22,8 @@ components:
 \item{n_models}{total number of models evaluated}
 }
 \description{
-Produces a summary of a trained SLOPE model from cross-validation,
-including information about the optimal parameters and performance metrics.
+Produces a summary of a trained SLOPE model from cross-validation, including
+information about the optimal parameters and performance metrics.
 }
 \examples{
 tune <- cvSLOPE(
@@ -39,10 +38,10 @@ summary(tune)
 \seealso{
 \code{\link[=cvSLOPE]{cvSLOPE()}}, \code{\link[=trainSLOPE]{trainSLOPE()}}, \code{\link[=print.summary_TrainedSLOPE]{print.summary_TrainedSLOPE()}}
 
-Other model-tuning: 
-\code{\link{cvSLOPE}()},
-\code{\link{plot.TrainedSLOPE}()},
-\code{\link{refit}()},
-\code{\link{trainSLOPE}()}
+Other model-tuning:
+\code{\link[=cvSLOPE]{cvSLOPE()}},
+\code{\link[=plot.TrainedSLOPE]{plot.TrainedSLOPE()}},
+\code{\link[=refit]{refit()}},
+\code{\link[=trainSLOPE]{trainSLOPE()}}
 }
 \concept{model-tuning}

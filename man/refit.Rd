@@ -49,10 +49,10 @@ predict(fit, bodyfat$x)
 \seealso{
 \code{\link[=SLOPE]{SLOPE()}}
 
-Other model-tuning: 
-\code{\link{cvSLOPE}()},
-\code{\link{plot.TrainedSLOPE}()},
-\code{\link{summary.TrainedSLOPE}()},
-\code{\link{trainSLOPE}()}
+Other model-tuning:
+\code{\link[=cvSLOPE]{cvSLOPE()}},
+\code{\link[=plot.TrainedSLOPE]{plot.TrainedSLOPE()}},
+\code{\link[=summary.TrainedSLOPE]{summary.TrainedSLOPE()}},
+\code{\link[=trainSLOPE]{trainSLOPE()}}
 }
 \concept{model-tuning}

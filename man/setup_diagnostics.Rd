@@ -7,8 +7,8 @@
 setup_diagnostics(res)
 }
 \arguments{
-\item{res}{the result from calling the C++ routine used to fit a model
-in SLOPE}
+\item{res}{the result from calling the C++ routine used to fit a model in
+SLOPE}
 }
 \value{
 A data.frame

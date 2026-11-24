@@ -15,9 +15,9 @@ createFolds(n, n_folds, n_repeats = 1)
 process with different fold assignments. Default is 1.}
 }
 \value{
-A list of length \code{n_repeats}. Each element contains a list of
-\code{n_folds} integer vectors representing the indices (0-based)
-of observations in each fold.
+A list of length \code{n_repeats}. Each element contains a list of \code{n_folds}
+integer vectors representing the indices (0-based) of observations in each
+fold.
 }
 \description{
 Internal function that creates fold assignments for k-fold cross-validation,

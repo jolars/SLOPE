@@ -14,9 +14,8 @@ sortedL1Prox(x, lambda, method)
 \arguments{
 \item{x}{A vector. In SLOPE, this is the vector of coefficients.}
 
-\item{lambda}{A non-negative and decreasing sequence
-of weights for the Sorted L1 Norm. Needs to be the same length as
-\code{x}.}
+\item{lambda}{A non-negative and decreasing sequence of weights for the
+Sorted L1 Norm. Needs to be the same length as \code{x}.}
 
 \item{method}{DEPRECATED}
 }

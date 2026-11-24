@@ -23,24 +23,23 @@ values stored in the original fit.}
 
 \item{exact}{if \code{TRUE} and the given parameter values differ from those in
 the original fit, the model will be refit by calling \code{\link[stats:update]{stats::update()}} on
-the object with the new parameters. If \code{FALSE}, the predicted values
-will be based on interpolated coefficients from the original
-penalty path.}
+the object with the new parameters. If \code{FALSE}, the predicted values will
+be based on interpolated coefficients from the original penalty path.}
 
-\item{simplify}{if \code{TRUE}, \code{\link[base:drop]{base::drop()}} will be called before returning
-the coefficients to drop extraneous dimensions}
+\item{simplify}{if \code{TRUE}, \code{\link[base:drop]{base::drop()}} will be called before returning the
+coefficients to drop extraneous dimensions}
 
 \item{intercept}{whether to include the intercept in the output. The
 intercept is included as the first row of the returned array.}
 
-\item{scale}{whether to return the coefficients in the original scale
-or in the normalized scale.}
+\item{scale}{whether to return the coefficients in the original scale or in
+the normalized scale.}
 
 \item{sigma}{deprecated. Please use \code{alpha} instead.}
 
 \item{...}{arguments that are passed on to \code{\link[stats:update]{stats::update()}} (and therefore
-also to \code{\link[=SLOPE]{SLOPE()}}) if \code{exact = TRUE} and the given penalty
-is not in \code{object}}
+also to \code{\link[=SLOPE]{SLOPE()}}) if \code{exact = TRUE} and the given penalty is not in
+\code{object}}
 }
 \value{
 Coefficients from the model.
@@ -49,11 +48,10 @@ Coefficients from the model.
 This function returns coefficients from a model fit by \code{\link[=SLOPE]{SLOPE()}}.
 }
 \details{
-If \code{exact = FALSE} and \code{alpha} is not in \code{object},
-then the returned coefficients will be approximated by linear interpolation.
-If coefficients from another type of penalty sequence
-(with a different \code{lambda}) are required, however,
-please use \code{\link[=SLOPE]{SLOPE()}} to refit the model.
+If \code{exact = FALSE} and \code{alpha} is not in \code{object}, then the returned
+coefficients will be approximated by linear interpolation. If coefficients
+from another type of penalty sequence (with a different \code{lambda}) are
+required, however, please use \code{\link[=SLOPE]{SLOPE()}} to refit the model.
 }
 \examples{
 fit <- SLOPE(mtcars$mpg, mtcars$vs, path_length = 10)
@@ -63,12 +61,12 @@ coef(fit, scale = "normalized")
 \seealso{
 \code{\link[=predict.SLOPE]{predict.SLOPE()}}, \code{\link[=SLOPE]{SLOPE()}}
 
-Other SLOPE-methods: 
-\code{\link{deviance.SLOPE}()},
-\code{\link{plot.SLOPE}()},
-\code{\link{predict.SLOPE}()},
-\code{\link{print.SLOPE}()},
-\code{\link{score}()},
-\code{\link{summary.SLOPE}()}
+Other SLOPE-methods:
+\code{\link[=deviance.SLOPE]{deviance.SLOPE()}},
+\code{\link[=plot.SLOPE]{plot.SLOPE()}},
+\code{\link[=predict.SLOPE]{predict.SLOPE()}},
+\code{\link[=print.SLOPE]{print.SLOPE()}},
+\code{\link[=score]{score()}},
+\code{\link[=summary.SLOPE]{summary.SLOPE()}}
 }
 \concept{SLOPE-methods}

@@ -58,8 +58,8 @@
 )
 }
 \arguments{
-\item{object}{an object of class \code{"SLOPE"}, typically the result of
-a call to \code{\link[=SLOPE]{SLOPE()}}}
+\item{object}{an object of class \code{"SLOPE"}, typically the result of a call to
+\code{\link[=SLOPE]{SLOPE()}}}
 
 \item{x}{new data}
 
@@ -67,17 +67,16 @@ a call to \code{\link[=SLOPE]{SLOPE()}}}
 values stored in the original fit.}
 
 \item{type}{type of prediction; \code{"link"} returns the linear predictors,
-\code{"response"} returns the result of applying the link function,
-and \code{"class"} returns class predictions.}
+\code{"response"} returns the result of applying the link function, and
+\code{"class"} returns class predictions.}
 
-\item{simplify}{if \code{TRUE}, \code{\link[base:drop]{base::drop()}} will be called before returning
-the coefficients to drop extraneous dimensions}
+\item{simplify}{if \code{TRUE}, \code{\link[base:drop]{base::drop()}} will be called before returning the
+coefficients to drop extraneous dimensions}
 
 \item{exact}{if \code{TRUE} and the given parameter values differ from those in
 the original fit, the model will be refit by calling \code{\link[stats:update]{stats::update()}} on
-the object with the new parameters. If \code{FALSE}, the predicted values
-will be based on interpolated coefficients from the original
-penalty path.}
+the object with the new parameters. If \code{FALSE}, the predicted values will
+be based on interpolated coefficients from the original penalty path.}
 
 \item{sigma}{deprecated. Please use \code{alpha} instead.}
 
@@ -96,12 +95,12 @@ predict(fit, with(mtcars, cbind(mpg, hp)), type = "class")
 \seealso{
 \code{\link[stats:predict]{stats::predict()}}, \code{\link[stats:predict.glm]{stats::predict.glm()}}
 
-Other SLOPE-methods: 
-\code{\link{coef.SLOPE}()},
-\code{\link{deviance.SLOPE}()},
-\code{\link{plot.SLOPE}()},
-\code{\link{print.SLOPE}()},
-\code{\link{score}()},
-\code{\link{summary.SLOPE}()}
+Other SLOPE-methods:
+\code{\link[=coef.SLOPE]{coef.SLOPE()}},
+\code{\link[=deviance.SLOPE]{deviance.SLOPE()}},
+\code{\link[=plot.SLOPE]{plot.SLOPE()}},
+\code{\link[=print.SLOPE]{print.SLOPE()}},
+\code{\link[=score]{score()}},
+\code{\link[=summary.SLOPE]{summary.SLOPE()}}
 }
 \concept{SLOPE-methods}

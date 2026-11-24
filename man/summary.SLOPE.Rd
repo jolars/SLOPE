@@ -14,8 +14,7 @@
 }
 \value{
 An object of class \code{"summary_SLOPE"} with the following components:
-\item{call}{the call that produced the model}
-\item{family}{the model family}
+\item{call}{the call that produced the model} \item{family}{the model family}
 \item{n_obs}{number of observations}
 \item{n_predictors}{number of predictors}
 \item{has_intercept}{whether an intercept was fit}
@@ -26,8 +25,8 @@ An object of class \code{"summary_SLOPE"} with the following components:
 \item{path_summary}{data frame summarizing the regularization path}
 }
 \description{
-Produces a summary of a fitted SLOPE model, including information about
-the regularization path, model family, and fitted values.
+Produces a summary of a fitted SLOPE model, including information about the
+regularization path, model family, and fitted values.
 }
 \examples{
 fit <- SLOPE(heart$x, heart$y)
@@ -41,12 +40,12 @@ summary(fit_multi)
 \seealso{
 \code{\link[=SLOPE]{SLOPE()}}, \code{\link[=print.summary_SLOPE]{print.summary_SLOPE()}}
 
-Other SLOPE-methods: 
-\code{\link{coef.SLOPE}()},
-\code{\link{deviance.SLOPE}()},
-\code{\link{plot.SLOPE}()},
-\code{\link{predict.SLOPE}()},
-\code{\link{print.SLOPE}()},
-\code{\link{score}()}
+Other SLOPE-methods:
+\code{\link[=coef.SLOPE]{coef.SLOPE()}},
+\code{\link[=deviance.SLOPE]{deviance.SLOPE()}},
+\code{\link[=plot.SLOPE]{plot.SLOPE()}},
+\code{\link[=predict.SLOPE]{predict.SLOPE()}},
+\code{\link[=print.SLOPE]{print.SLOPE()}},
+\code{\link[=score]{score()}}
 }
 \concept{SLOPE-methods}

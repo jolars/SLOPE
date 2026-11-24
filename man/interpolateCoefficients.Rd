@@ -14,8 +14,8 @@ interpolateCoefficients(beta, intercepts, interpolation_list)
 \item{interpolation_list}{a list generated from \code{\link[=interpolatePenalty]{interpolatePenalty()}}}
 }
 \value{
-A matrix (or list of matrices) with new coefficients based
-on linearly interpolating from new and old lambda values.
+A matrix (or list of matrices) with new coefficients based on linearly
+interpolating from new and old lambda values.
 }
 \description{
 Interpolate Coefficients

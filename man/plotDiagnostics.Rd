@@ -19,13 +19,12 @@ plotDiagnostics(
 \code{time} plots the wall-clock time.}
 }
 \value{
-Invisibly returns NULL. The function is called for its
-side effect of producing a plot.
+Invisibly returns NULL. The function is called for its side effect of
+producing a plot.
 }
 \description{
-This function plots various diagnostics collected during
-the model fitting resulting from a call to \code{\link[=SLOPE]{SLOPE()}} \emph{provided that
-\code{diagnostics = TRUE}}.
+This function plots various diagnostics collected during the model fitting
+resulting from a call to \code{\link[=SLOPE]{SLOPE()}} \emph{provided that \code{diagnostics = TRUE}}.
 }
 \examples{
 x <- SLOPE(abalone$x, abalone$y, diagnostics = TRUE)
